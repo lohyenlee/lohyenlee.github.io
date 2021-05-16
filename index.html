@@ -1,148 +1,114 @@
 <!DOCTYPE html>
 <html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="w3.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
 
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    canvas {
-      border: 1px solid #d3d3d3;
-      background-color: #303030;
-    }
-  </style>
-</head>
+<body>
 
-<body onload="startAnimation()">
+  <!-- Navigation -->
+  <nav class="w3-bar w3-black">
+    <a href="#home" class="w3-button w3-bar-item">Home</a>
+    <a href="#band" class="w3-button w3-bar-item">Stuff</a>
+    <a href="#tour" class="w3-button w3-bar-item">Stuff2</a>
+    <a href="#contact" class="w3-button w3-bar-item">Contact</a>
+  </nav>
 
+  <!-- Slide Show -->
+  <!-- <section>
+  <img class="mySlides" src="img_band_la.jpg"
+  style="width:100%">
+  <img class="mySlides" src="img_band_ny.jpg"
+  style="width:100%">
+  <img class="mySlides" src="img_band_chicago.jpg"
+  style="width:100%">
+</section> -->
+
+  <!-- Band Description -->
+  <section class="w3-container w3-center w3-content" style="max-width:600px">
+    <h2>Yen Lee Loh on GitHub</h2>
+    <p class="w3-justify">
+      Experimental website for hosting HTML5 pages and other stuff. Lorem ipsum lorem
+      ipsum lorem
+      ipsum lorem
+      ipsum lorem
+      ipsum lorem
+    </p>
+    <p>
+    <ol>
+      <li>
+        <a href="pendulum.html">
+          Pendulum simulation
+        </a>
+      </li>
+      <li>
+        <a href="pendulum.html">
+          Pendulum simulation
+        </a>
+      </li>
+      <li>
+        <a href="pendulum.html">
+          Pendulum simulation
+        </a>
+      </li>
+      <li>
+        <a href="pendulum.html">
+          Pendulum simulation
+        </a>
+      </li>
+    </ol>
+    </p>
+  </section>
+
+  <!-- Band Members -->
+  <section class="w3-row-padding w3-center w3-light-grey">
+    <!-- <article class="w3-third">
+    <p>John</p>
+    <img src="img_bandmember.jpg" alt="Random Name" style="width:100%">
+    <p>John is the smartest.</p>
+  </article>
+  <article class="w3-third">
+    <p>Paul</p>
+    <img src="img_bandmember.jpg" alt="Random Name" style="width:100%">
+    <p>Paul is the prettiest.</p>
+  </article>
+  <article class="w3-third">
+    <p>Ringo</p>
+    <img src="img_bandmember.jpg" alt="Random Name" style="width:100%">
+    <p>Ringo is the funniest.</p>
+  </article> -->
+  </section>
+
+  <!-- Footer -->
+  <footer class="w3-container w3-padding-64 w3-center w3-black w3-xlarge">
+    <a href="#"><i class="fa fa-facebook-official"></i></a>
+    <a href="#"><i class="fa fa-pinterest-p"></i></a>
+    <a href="#"><i class="fa fa-twitter"></i></a>
+    <a href="#"><i class="fa fa-flickr"></i></a>
+    <a href="#"><i class="fa fa-linkedin"></i></a>
+    <p class="w3-medium">
+      Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a>
+    </p>
+  </footer>
 
   <script>
-    var xPivot, yPivot;
-    var theta = 30 * Math.PI / 180; // angular displacement
-    var omega = 0;                // angular velocity
-    var g = 9.81;                 // accel due to gravity (SI)
-    var dt = 0.02;                // time interval (SI)
-    var l = 4.00;                 // pendulum length (SI)
-    var buttonIncrPressed = false;
-    var buttonDecrPressed = false;
-    var canvas, ctx, frameNo, interval;
+    // Automatic Slideshow - change image every 3 seconds
+    var myIndex = 0;
+    carousel();
 
-    function startAnimation() {
-      canvas = document.createElement("canvas");
-      canvas.width = 512;
-      canvas.height = 512;
-      ctx = canvas.getContext("2d");
-      frameNo = 0;
-      xPivot = canvas.width / 2;
-      yPivot = 0;
-      ctx.font = "10px Arial";
-      sanitize();  // push "l" value to input field
-      document.body.insertBefore(canvas, document.body.childNodes[0]);
-      interval = setInterval(updateAnimation, 1000 * dt); // interval in milliseconds
-      //clearInterval(interval);
-    }
-
-    function drawLine(ctx, r1, r2) {
-      ctx.beginPath();
-      ctx.moveTo(...r1);
-      ctx.lineTo(...r2);
-      ctx.stroke();
-    }
-    function drawCircle(ctx, x, y, radius, fill, stroke, strokeWidth) {
-      ctx.beginPath();
-      ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
-      ctx.fill();
-      //if (fill) { ctx.fillStyle = fill; ctx.fill(); }
-      if (stroke) { ctx.lineWidth = strokeWidth; ctx.strokeStyle = stroke; ctx.stroke(); }
-    }
-
-    const majorTickLen = 20; // in pixels
-    const medTickLen = 15;
-    const minorTickLen = 8;
-    const majorTickSpacing = 50; // in cm
-    const medTickSpacing = 10; // in cm
-    const minorTickSpacing = 5; // in cm
-
-    function updateAnimation() {
-      //-------- SOLVE ODE: d^2 theta/dt^2 = -g/l*sin(theta)
-      omega -= g / l * Math.sin(theta) * dt;
-      theta += omega * dt;
-      //-------- RESPOND TO BUTTONS
-      if (buttonIncrPressed) changeLength(+.01);
-      else if (buttonDecrPressed) changeLength(-.01);
-      //-------- DRAW PENDULUM
-      var len = l * 100; // scaled length (1 pixel = 1 cm)
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      var xBob = xPivot + len * Math.sin(theta);
-      var yBob = yPivot + len * Math.cos(theta);
-      ctx.strokeStyle = "white";
-      ctx.fillStyle = "white";
-      drawLine(ctx, [xPivot, yPivot], [xBob, yBob]);
-      drawCircle(ctx, xBob, yBob, 5);
-      //-------- DRAW RULER
-      ctx.strokeStyle = "#99ffff";     
-      ctx.fillStyle = "#ccffff";    // text color
-   
-      drawLine(ctx, [xPivot, yPivot], [xPivot, yPivot+400]);
-      for (n = 0; n <= 400; n += minorTickSpacing) {  // distance in centimeters
-        var b;
-        if (n % medTickSpacing) b = minorTickLen;
-        else if (n % majorTickSpacing) b = medTickLen;
-        else b = majorTickLen; // minor and major ticks
-        drawLine(ctx,
-          [xPivot, yPivot + n],
-          [xPivot + b, yPivot + n]);
+    function carousel() {
+      var i;
+      var x = document.getElementsByClassName("mySlides");
+      for (i = 0; i < x.length; i++) {
+        x[i].style.display = "none";
       }
-      ctx.textAlign = "right";      // horizontal alignment 
-      ctx.textBaseline = "middle";  // vertical alignment
-      for (n = 0; n <= 400; n += majorTickSpacing) {  // distance in centimeters
-        ctx.fillText(n / 100 + " m", xPivot-2, yPivot + n);
-      }
-      //-------- DRAW PROTRACTOR
-      ctx.strokeStyle = "#ffffcc";        
-      for (n = -45; n <= 45; ++n) {
-        var s = Math.sin(n * Math.PI / 180);
-        var c = Math.cos(n * Math.PI / 180);
-        var a = len + 7;
-        var b = (n % 5) ? a + minorTickLen : a + majorTickLen; // minor and major ticks
-        drawLine(ctx,
-          [xPivot + a * s, yPivot + a * c],
-          [xPivot + b * s, yPivot + b * c]);
-      }
-
-      // Alternative method using ctx.rotate to do rotations (possibly faster?)
-      //ctx.save();
-      //ctx.translate(xPivot, yPivot);
-      //ctx.rotate(theta);
-      //ctx.fillStyle = "white"; ctx.fillRect(0, 0, len, 1);
-      //ctx.restore();
+      myIndex++;
+      if (myIndex > x.length) { myIndex = 1 }
+      x[myIndex - 1].style.display = "block";
+      setTimeout(carousel, 3000);
     }
-
-    function updateLength() {
-      l = parseFloat(document.getElementById("inputF").value);
-      sanitize();
-    }
-    function changeLength(val) {
-      l += val;
-      sanitize();
-    }
-    function sanitize() {
-      if (l < .4) l = .4; else if (l > 4) l = 4;
-      document.getElementById("inputF").value = l.toFixed(2);
-    }
-
-
   </script>
-
-  <div>
-    <label for="inputF"> Pendulum length in meters: </label>
-    <input type="text" id="inputF" name="inputF" minlength="1" maxlength="5" size="5" required value=""
-      oninput="updateLength()">
-    <button onmousedown="buttonIncrPressed=true" onmouseup="buttonIncrPressed=false">Longer</button>
-    <button onmousedown="buttonDecrPressed=true" onmouseup="buttonDecrPressed=false">Shorter</button>
-    <!-- <button onmousedown="changeLength(+0.1)" onmouseup="changeLength(0)">Longer</button>
-    <button onmousedown="changeLength(-0.1)" onmouseup="changeLength(0)">Shorter</button> -->
-    <p>The length of this pendulum is 2 meters. Measure the period using a stopwatch! </p>
-    <p>TBD: allow user to "drag" and "throw" pendulum bob to change amplitude.</p>
-  </div>
 
 </body>
 
