@@ -2,7 +2,8 @@
 <html>
 
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width,user-scalable=no">
+  <!-- content="width=device-width, initial-scale=1.0" /> -->
 </head>
 
 <body onload="init()">
@@ -23,6 +24,18 @@
       ctx.beginPath();
       ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
       ctx.fill();
+    }
+
+    document.body.ontouchstart = function (e) {
+      if (e && e.preventDefault) { e.preventDefault(); }
+      if (e && e.stopPropagation) { e.stopPropagation(); }
+      return false;
+    }
+
+    document.body.ontouchmove = function (e) {
+      if (e && e.preventDefault) { e.preventDefault(); }
+      if (e && e.stopPropagation) { e.stopPropagation(); }
+      return false;
     }
 
     //-------- MAIN CODE  --------
@@ -66,8 +79,40 @@
       canvas.addEventListener("mousemove", doMouseMove);
       canvas.addEventListener("mouseup", doMouseUp);
       canvas.addEventListener("mouseout", doMouseUp);
+      canvas.addEventListener("touchmove", doTouchMove);
+
       interval = setInterval(update, 1000 * dt); // interval in milliseconds
     }
+
+
+
+
+    // function getPosition(e) {
+    //   var position = { x: null, y: null };
+
+    //   if (Modernizr.touch) { //global variable detecting touch support
+    //     if (e.touches && e.touches.length > 0) {
+    //       position.x = e.touches[0].pageX - canvasPosition.x;
+    //       position.y = e.touches[0].pageY - canvasPosition.y;
+    //     }
+    //   }
+    //   else {
+    //     position.x = e.pageX - canvasPosition.x;
+    //     position.y = e.pageY - canvasPosition.y;
+    //   }
+
+    //   return position;
+    // }
+    // canvas.on(eventName, function (e) {
+    //   e.preventDefault();
+
+    //   var position = getPosition(e);
+    //   //do something with position here
+
+    //   return false;
+    // });
+
+
 
     function update() {
       //-------- SOLVE ODE: d^2 theta/dt^2 = -g/l*sin(theta)
@@ -139,6 +184,13 @@
         l = norm(x - xPivot, y - yPivot) / scale;
       }
     }
+    function doTouchMove(event) {
+      if (grabbed) {
+        const x = event.pageX, y = event.pageY;
+        theta = Math.atan2(x - xPivot, y - yPivot);
+        l = norm(x - xPivot, y - yPivot) / scale;
+      }
+    }   
     function doMouseUp(event) {
       if (grabbed) {
         grabbed = false;
