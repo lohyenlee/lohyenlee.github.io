@@ -10,7 +10,7 @@
 
   <!-- ================ JAVASCRIPT CODE -->
   <script>
-    //-------- UTILITIES --------
+    //================ UTILITY FUNCTIONS
     const clamp = (num, min, max) => Math.min(Math.max(num, min), max)
     const norm = (dx, dy) => Math.sqrt(dx * dx + dy * dy)
 
@@ -26,91 +26,100 @@
       ctx.fill();
     }
 
-    document.body.ontouchstart = function (e) {
-      if (e && e.preventDefault) { e.preventDefault(); }
-      if (e && e.stopPropagation) { e.stopPropagation(); }
-      return false;
-    }
-
-    document.body.ontouchmove = function (e) {
-      if (e && e.preventDefault) { e.preventDefault(); }
-      if (e && e.stopPropagation) { e.stopPropagation(); }
-      return false;
-    }
-
-    //-------- MAIN CODE  --------
-    var xPivot, yPivot;
-    var xBob, yBob;
-    var theta = 30 * Math.PI / 180; // angular displacement
-    var omega = 0;                // angular velocity
-    var g = 9.81;                 // accel due to gravity (SI)
-    var dt = 0.02;                // time interval (SI)
-    var l = 2.00;                 // pendulum length (SI)
-    var scale;
-    var buttonIncrPressed = false;
-    var buttonDecrPressed = false;
-    var canvas, ctx, interval;
+    //================ GLOBAL VARIABLES
+    const lmin = .25, lmax = 4;
+    const protractorRadius = 200; // in pixels
+    const rulerLength = 4; // in m
     const majorTickLen = 20; // in pixels
     const medTickLen = 15;
     const minorTickLen = 8;
     const majorTickSpacing = 50; // in cm
     const medTickSpacing = 10; // in cm
     const minorTickSpacing = 5; // in cm
+    const g = 9.81;                 // accel due to gravity (SI)
+    const dt = 0.02;                // time interval (SI)
+    var scale;
+    var xPivot, yPivot, xBob, yBob;
+    var theta = 30 * Math.PI / 180; // angular displacement
+    var omega = 0;                // angular velocity
+    var l = 3.00;                 // pendulum length (SI)
+    var buttonIncrPressed = false;
+    var buttonDecrPressed = false;
     var grabbed = false; // whether user is dragging pendulum bob
-
-    function init() {
+    var canvas, ctx, interval;
+    
+  //================ MAIN CODE
+  function init() {
       canvas = document.createElement("canvas");
+      canvas.style.backgroundColor = "#EEEEEE";
+      canvas.style.border = "none"; //2px solid black";
+      ctx = canvas.getContext("2d");
+      ctx.font = "10px Arial";
       //-------- MOBILE-FRIENDLY DIMENSIONING --------
       var w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
       var h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-      canvas.width = clamp(w, 400, 600);
+      canvas.width = w - 16; //clamp(w, 100, 600);
       canvas.height = canvas.width;   // make it square
       scale = 0.22 * canvas.width; // number of pixels corresponding to 1 meter
       xPivot = canvas.width / 2;
       yPivot = 15;
-      canvas.style.backgroundColor = "#EEEEEE";
-      canvas.style.border = "2px solid black";
-      ctx = canvas.getContext("2d");
-      ctx.font = "10px Arial";
+
+      //canvas.style = "touch-action: none;";
       //-------- LAUNCH --------
       sanitize();  // push "l" value to input field
       document.body.insertBefore(canvas, document.body.childNodes[0]);
-      canvas.addEventListener("mousedown", doMouseDown);
-      canvas.addEventListener("mousemove", doMouseMove);
-      canvas.addEventListener("mouseup", doMouseUp);
-      canvas.addEventListener("mouseout", doMouseUp);
-      canvas.addEventListener("touchmove", doTouchMove);
+      canvas.addEventListener("mousedown", doMouseDown, false);
+      canvas.addEventListener("mousemove", doMouseMove, false);
+      canvas.addEventListener("mouseup", doMouseUp, false);
+      canvas.addEventListener("mouseout", doMouseUp, false);
+      canvas.addEventListener("touchstart", doTouchStart, false);
+      canvas.addEventListener("touchmove", doTouchMove, false);
+      canvas.addEventListener("touchend", doTouchEnd, false);
 
       interval = setInterval(update, 1000 * dt); // interval in milliseconds
     }
 
-
-
-
-    // function getPosition(e) {
-    //   var position = { x: null, y: null };
-
-    //   if (Modernizr.touch) { //global variable detecting touch support
-    //     if (e.touches && e.touches.length > 0) {
-    //       position.x = e.touches[0].pageX - canvasPosition.x;
-    //       position.y = e.touches[0].pageY - canvasPosition.y;
-    //     }
-    //   }
-    //   else {
-    //     position.x = e.pageX - canvasPosition.x;
-    //     position.y = e.pageY - canvasPosition.y;
-    //   }
-
-    //   return position;
-    // }
-    // canvas.on(eventName, function (e) {
-    //   e.preventDefault();
-
-    //   var position = getPosition(e);
-    //   //do something with position here
-
-    //   return false;
-    // });
+    function doTouchStart(e) {
+      e.preventDefault();
+      //e.stopPropagation();
+      const x = e.touches[0].pageX, y = e.touches[0].pageY;
+      //alert ("x"+ x + "  y=" + y);
+      const r = norm(x - xBob, y - yBob);
+      if (r < 25) {
+        grabbed = true;
+        theta = Math.atan2(x - xPivot, y - yPivot);
+      }
+    }
+    function doTouchMove(e) {
+      e.preventDefault();
+      //e.stopPropagation();
+      if (grabbed) {
+        const x = e.touches[0].pageX, y = e.touches[0].pageY;
+        theta = Math.atan2(x - xPivot, y - yPivot);
+        //l = norm(x - xPivot, y - yPivot) / scale;
+      }
+    }
+    function doTouchEnd(e) {
+      if (grabbed) { grabbed = false; omega = 0; }
+    }
+    function doMouseDown(e) {
+      const x = e.pageX, y = e.pageY;
+      const r = norm(x - xBob, y - yBob);
+      if (r < 25) {
+        grabbed = true;
+        theta = Math.atan2(x - xPivot, y - yPivot);
+      }
+    }
+    function doMouseMove(e) {
+      if (grabbed) {
+        const x = e.pageX, y = e.pageY;
+        theta = Math.atan2(x - xPivot, y - yPivot);
+        //l = norm(x - xPivot, y - yPivot) / scale;
+      }
+    }
+    function doMouseUp(e) {
+      if (grabbed) { grabbed = false; omega = 0; }
+    }
 
 
 
@@ -131,12 +140,12 @@
       ctx.strokeStyle = "black";
       ctx.fillStyle = "black";
       drawLine(ctx, [xPivot, yPivot], [xBob, yBob]);
-      if (grabbed) ctx.fillStyle = "red";
+      if (grabbed) ctx.fillStyle = "#660000";
       drawCircle(ctx, xBob, yBob, 5);
       //-------- DRAW RULER
       ctx.strokeStyle = ctx.fillStyle = "#339999";
-      drawLine(ctx, [xPivot, yPivot], [xPivot, yPivot + 4 * scale]);
-      for (n = 0; n <= 4 * 100; n += minorTickSpacing) {  // distance in centimeters
+      drawLine(ctx, [xPivot, yPivot], [xPivot, yPivot + rulerLength * scale]);
+      for (n = 0; n <= rulerLength * 100; n += minorTickSpacing) {  // distance in centimeters
         var b;
         if (n % medTickSpacing) b = minorTickLen;
         else if (n % majorTickSpacing) b = medTickLen;
@@ -147,7 +156,7 @@
       }
       ctx.textAlign = "right";      // horizontal alignment 
       ctx.textBaseline = "middle";  // vertical alignment
-      for (n = 0; n <= 400; n += majorTickSpacing) {  // distance in centimeters
+      for (n = 0; n <= rulerLength * 100; n += majorTickSpacing) {  // distance in centimeters
         ctx.fillText(n * 0.01 + " m", xPivot - 2, yPivot + n * 0.01 * scale);
       }
       //-------- DRAW PROTRACTOR
@@ -157,7 +166,7 @@
       for (n = -90; n <= 90; ++n) {
         var s = Math.sin(n * Math.PI / 180);
         var c = Math.cos(n * Math.PI / 180);
-        var a1 = len + 7;
+        var a1 = protractorRadius; // fixed at 200 pixels len + 7
         var a2 = a1 + ((n % 5) ? minorTickLen : majorTickLen);
         var a3 = a1 + 1.5 * majorTickLen;
         drawLine(ctx,
@@ -169,34 +178,8 @@
     }
 
 
-    function doMouseDown(event) {
-      const x = event.pageX, y = event.pageY;
-      const r = norm(x - xBob, y - yBob);
-      if (r < 25) {
-        grabbed = true;
-        theta = Math.atan2(x - xPivot, y - yPivot);
-      }
-    }
-    function doMouseMove(event) {
-      if (grabbed) {
-        const x = event.pageX, y = event.pageY;
-        theta = Math.atan2(x - xPivot, y - yPivot);
-        l = norm(x - xPivot, y - yPivot) / scale;
-      }
-    }
-    function doTouchMove(event) {
-      if (grabbed) {
-        const x = event.pageX, y = event.pageY;
-        theta = Math.atan2(x - xPivot, y - yPivot);
-        l = norm(x - xPivot, y - yPivot) / scale;
-      }
-    }   
-    function doMouseUp(event) {
-      if (grabbed) {
-        grabbed = false;
-        omega = 0;
-      }
-    }
+
+
     function updateLength() {
       l = parseFloat(document.getElementById("inputF").value);
       sanitize();
@@ -206,7 +189,7 @@
       sanitize();
     }
     function sanitize() {
-      if (l < .4) l = .4; else if (l > 4) l = 4;
+      if (l < lmin) l = lmin; else if (l > lmax) l = lmax;
       document.getElementById("inputF").value = l.toFixed(2);
     }
 
@@ -216,15 +199,17 @@
 
   <!-- ================ HTML DOCUMENTATION -->
   <div>
-    <label for="inputF"> Pendulum length in meters: </label>
+    <label for="inputF"> Length(m): </label>
     <input type="text" id="inputF" name="inputF" minlength="1" maxlength="5" size="5" required value=""
       oninput="updateLength()">
-    <button onmousedown="buttonIncrPressed=true" onmouseup="buttonIncrPressed=false">Longer</button>
-    <button onmousedown="buttonDecrPressed=true" onmouseup="buttonDecrPressed=false">Shorter</button>
-    <!-- <button onmousedown="changeLength(+0.1)" onmouseup="changeLength(0)">Longer</button>
-    <button onmousedown="changeLength(-0.1)" onmouseup="changeLength(0)">Shorter</button> -->
-    <p>The length of this pendulum is 2 meters. Measure the period using a stopwatch! </p>
-    <p>TBD: allow user to "drag" and "throw" pendulum bob to change amplitude.</p>
+    <button onmousedown="buttonIncrPressed=true" onmouseup="buttonIncrPressed=false"
+      ontouchstart="buttonIncrPressed=true" ontouchend="buttonIncrPressed=false">
+      Longer</button>
+    <button onmousedown="buttonDecrPressed=true" onmouseup="buttonDecrPressed=false"
+      ontouchstart="buttonDecrPressed=true" ontouchend="buttonDecrPressed=false">
+      Shorter</button>
+    <p>Measure the period of this pendulum using a stopwatch.
+      Drag the bob to change the length of the pendulum and the swing amplitude! </p>
   </div>
 
 </body>
