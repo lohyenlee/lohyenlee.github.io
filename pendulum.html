@@ -58,7 +58,7 @@
       //-------- MOBILE-FRIENDLY DIMENSIONING --------
       var w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
       var h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-      canvas.width = w - 16; //clamp(w, 100, 600);
+      canvas.width = clamp(w-16, 300, 600);
       canvas.height = canvas.width;   // make it square
       scale = 0.22 * canvas.width; // number of pixels corresponding to 1 meter
       xPivot = canvas.width / 2;
