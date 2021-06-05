@@ -124,6 +124,7 @@
     function init() {
       //-------- PREVENT DOUBLE-CLICK ZOOM --------
       document.body.addEventListener("dblclick",function(e){ 
+        alert ("dblclick: prevent default action!");
     	  e.preventDefault(); 
       }) 
       //-------- MOBILE-FRIENDLY DIMENSIONING --------
