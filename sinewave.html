@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+</head>
+
+<body onload="init()">
+
+  <!-- ================ JAVASCRIPT CODE -->
+  <script>
+    /*=======================================
+    MATH UTILITY FUNCTIONS
+    =======================================*/
+    const clamp = (num, min, max) => Math.min(Math.max(num, min), max)
+    const norm = (dx, dy) => Math.sqrt(dx * dx + dy * dy)
+    //----------------
+    // Round up or down to the nearest number of the form 1x10^n, 2x10^n, or 5x10^n
+    //----------------
+    function roundUpNicely(x) {
+      let n = Math.floor(Math.log10(x)); // exponent n 
+      let p = Math.pow(10, n);  // 10^n
+      let m = x / p;   // mantissa
+      if (m > 5) return [10 * p, 50 * p, 100 * p];
+      else if (m > 2) return [5 * p, 10 * p, 20 * p];
+      else if (m > 1) return [2 * p, 10 * p, 50 * p];
+      else return [p, 5 * p, 10 * p];
+    }
+    /*=======================================
+    GRAPHICS UTILITY FUNCTIONS AND ASSOCIATED GLOBAL VARIABLES
+    =======================================*/
+    function drawLine(ctx, r1, r2) {
+      ctx.beginPath();
+      ctx.moveTo(...r1);
+      ctx.lineTo(...r2);
+      ctx.stroke();
+    }
+    function drawCircle(ctx, x, y, radius) {
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+
+    var Xorg, Yorg, xscal, yscal;
+    function rescale(x, x1, x2, y1, y2) { return y1 + (y2 - y1) / (x2 - x1) * (x - x1); }
+    function setAxes(xmin, xmax, ymin, ymax, Xmin, Xmax, Ymin, Ymax) {
+      xscal = (Xmax - Xmin) / (xmax - xmin); Xorg = Xmin - xscal * xmin;
+      yscal = (Ymax - Ymin) / (ymax - ymin); Yorg = Ymin - yscal * ymin;
+    }
+    function XFromx(x) { return Xorg + xscal * x; }
+    function YFromy(y) { return Yorg + yscal * y; }
+    function drawAxes(ctx) {
+      drawLine (ctx, [0, Yorg], [ctx.canvas.width, Yorg]);
+      drawLine (ctx, [Xorg, 0], [Xorg, ctx.canvas.height]);
+    }
+    function drawTicks(ctx) {
+      const minPixelsPerDiv = 4;
+      const [xC, xB, xA] = roundUpNicely(minPixelsPerDiv / xscal);
+      let nmin = Math.ceil(xmin / xC);
+      let nmax = Math.floor(xmax / xC);
+      let nC = 1, nB = xB / xC, nA = xA / xC;
+      let tickLenC = 0.8;
+      let tickLenB = 1.2;
+      let tickLenA = 1.6;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      for (n = nmin; n <= nmax; n += nC) {
+        //---- Major, minor, or medium tick marks
+        let l = tickLenA;
+        if (n % nB) l = tickLenC;
+        else if (n % nA) l = tickLenB;
+        x = n * xC;
+        drawLine(ctx, [XFromx(x), YFromy(0)], [XFromx(x), YFromy(l)]);
+        //---- Major tick marks
+        if (l == tickLenA) {
+          ctx.fillText(x, XFromx(x), YFromy(-.1));
+        }
+      }
+    }
+    function plotFunc(ctx, f, xmin, xmax, nmax = 100) {
+      ctx.beginPath();
+      for (n = 0; n < nmax; ++n) {
+        x = rescale(n, 0, nmax - 1, xmin, xmax);
+        y = myFunc(x);
+        if (n == 0) ctx.moveTo(XFromx(x), YFromy(y));
+        else ctx.lineTo(XFromx(x), YFromy(y));
+      }
+      ctx.stroke();
+    }
+    function plotList(ctx, xlist, ylist) {
+      ctx.beginPath();
+      n = xlist.length;
+      for (n = 0; n < nmax; ++n) {
+        x = xlist[n];
+        y = ylist[n];
+        if (n == 0) ctx.moveTo(XFromx(x), YFromy(y));
+        else ctx.lineTo(XFromx(x), YFromy(y));
+      }
+      ctx.stroke();
+    }
+
+
+    //================ GLOBAL SIMULATION VARIABLES
+    var canvas, ctx;
+    let interval, t = 0, tstep = 0.05; // update interval in seconds
+
+    //================ MAIN CODE
+    function init() {
+      canvas = document.createElement("canvas");
+      ctx = canvas.getContext("2d");
+      //-------- MOBILE-FRIENDLY DIMENSIONING --------
+      let w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+      let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+      canvas.style.background = "#CCCCCC";
+      canvas.style.border = "1px solid black";
+      canvas.width = clamp(w - 16, 300, 600); // set canvas width according to window width
+      canvas.height = canvas.width;           // make canvas square
+      //-------- LAUNCH --------
+      document.body.insertBefore(canvas, document.body.childNodes[0]);
+      interval = setInterval(update, 1000 * tstep); // interval in milliseconds
+      update ();
+      //alert ([xC,xB,xA]);
+      //document.write(" a = " , xstep);      
+    }
+
+    function myFunc(x) { return 7 + 4 * Math.sin(x - t);  }
+    function update() {
+      t += tstep;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      //-------- SET SCALING AND TRANSLATION GLOBAL PARAMETERS
+      xmin = -5;
+      xmax = +4;
+      ymin = -10;
+      ymax = +20;
+      setAxes(xmin, xmax, ymin, ymax, 0, canvas.width, canvas.height, 0);
+      
+      //-------- DRAW AXES AND TICKS
+      ctx.strokeStyle = "#000000"; ctx.lineWidth = 1;
+      drawAxes(ctx);
+      drawTicks(ctx);
+      //-------- DEMONSTRATE plotFunc
+      ctx.strokeStyle = "#993333"; ctx.lineWidth = 2;
+      plotFunc(ctx, myFunc, xmin, xmax, 500);
+      //-------- DEMONSTRATE plotList
+      ctx.strokeStyle = "#3399CC"; ctx.lineWidth = 1;
+      nmax = 500;
+      xlist = new Array(nmax);
+      ylist = new Array(nmax);
+      for (n = 0; n < nmax; ++n) xlist[n] = rescale(n, 0, nmax - 1, xmin, xmax);
+      for (n = 0; n < nmax; ++n) ylist[n] = 7 + 4 * Math.cos(xlist[n] - t);
+      plotList(ctx, xlist, ylist);
+
+    }
+
+  </script>
+
+  <!-- ================ HTML DOCUMENTATION -->
+  <div>
+    <p>Plot a traveling wave. </p>
+  </div>
+
+</body>
+
+</html>
