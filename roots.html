@@ -122,11 +122,15 @@
     var canvas, ctx;
 
     function init() {
-      canvas = document.createElement("canvas");
-      ctx = canvas.getContext("2d");
+      //-------- PREVENT DOUBLE-CLICK ZOOM --------
+      document.body.addEventListener("dblclick",function(e){ 
+    	  e.preventDefault(); 
+      }) 
       //-------- MOBILE-FRIENDLY DIMENSIONING --------
       let w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
       let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+      canvas = document.createElement("canvas");
+      ctx = canvas.getContext("2d");
       canvas.style.background = "#DDDDDD";
       canvas.style.border = "1px solid black";
       canvas.width = clamp(w - 16, 300, 500); // set canvas width according to window width
