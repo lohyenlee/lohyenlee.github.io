@@ -10,78 +10,91 @@
   <!-- ================ JAVASCRIPT CODE -->
   <script>
     /*=======================================
-    MATH UTILITY FUNCTIONS
-    =======================================*/
+MATH UTILITY FUNCTIONS
+=======================================*/
     const clamp = (num, min, max) => Math.min(Math.max(num, min), max)
     const norm = (dx, dy) => Math.sqrt(dx * dx + dy * dy)
-    //----------------
-    // Round up or down to the nearest number of the form 1x10^n, 2x10^n, or 5x10^n
-    //----------------
-    function roundUpNicely(x) {
-      let n = Math.floor(Math.log10(x)); // exponent n 
-      let p = Math.pow(10, n);  // 10^n
-      let m = x / p;   // mantissa
-      if (m > 5) return [10 * p, 50 * p, 100 * p];
-      else if (m > 2) return [5 * p, 10 * p, 20 * p];
-      else if (m > 1) return [2 * p, 10 * p, 50 * p];
-      else return [p, 5 * p, 10 * p];
-    }
+
     /*=======================================
-    GRAPHICS UTILITY FUNCTIONS AND ASSOCIATED GLOBAL VARIABLES
+    GRAPHICS UTILITY FUNCTIONS: GRAPHICS PRIMITIVES
     =======================================*/
     function drawLine(ctx, r1, r2) {
       ctx.beginPath();
-      ctx.moveTo(...r1);
-      ctx.lineTo(...r2);
+      ctx.moveTo(...r1); ctx.lineTo(...r2);
       ctx.stroke();
     }
-    function drawCircle(ctx, x, y, radius) {
+    function drawCircle(ctx, x, y, r, s = false, f = false) {
       ctx.beginPath();
-      ctx.arc(x, y, radius, 0, 2 * Math.PI);
-      ctx.fill();
+      ctx.arc(x, y, r, 0, 2 * Math.PI);
+      if (s) ctx.stroke(); if (f) ctx.fill();
     }
 
+    /*=======================================
+    GRAPHICS UTILITY FUNCTIONS: PLOTTING FUNCTIONS AND ASSOCIATED GLOBAL VARIABLES
+    If we were serious about this, we would store these global variables in an object
+    to encapsulate it so that they don't interact with user-defined code.
+    =======================================*/
+    var xmin, xmax, ymin, ymax, Xmin, Xmax, Ymin, Ymax;
     var Xorg, Yorg, xscal, yscal;
+
     function rescale(x, x1, x2, y1, y2) { return y1 + (y2 - y1) / (x2 - x1) * (x - x1); }
-    function setAxes(xmin, xmax, ymin, ymax, Xmin, Xmax, Ymin, Ymax) {
+    function setAxes() { //xmin, xmax, ymin, ymax, Xmin, Xmax, Ymin, Ymax) {
       xscal = (Xmax - Xmin) / (xmax - xmin); Xorg = Xmin - xscal * xmin;
       yscal = (Ymax - Ymin) / (ymax - ymin); Yorg = Ymin - yscal * ymin;
     }
     function XFromx(x) { return Xorg + xscal * x; }
     function YFromy(y) { return Yorg + yscal * y; }
     function drawAxes(ctx) {
-      drawLine (ctx, [0, Yorg], [ctx.canvas.width, Yorg]);
-      drawLine (ctx, [Xorg, 0], [Xorg, ctx.canvas.height]);
+      drawLine(ctx, [0, Yorg], [ctx.canvas.width, Yorg]);
+      drawLine(ctx, [Xorg, 0], [Xorg, ctx.canvas.height]);
     }
-    function drawTicks(ctx) {
-      const minPixelsPerDiv = 4;
-      const [xC, xB, xA] = roundUpNicely(minPixelsPerDiv / xscal);
-      let nmin = Math.ceil(xmin / xC);
-      let nmax = Math.floor(xmax / xC);
-      let nC = 1, nB = xB / xC, nA = xA / xC;
-      let tickLenC = 0.8;
-      let tickLenB = 1.2;
-      let tickLenA = 1.6;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "top";
-      for (n = nmin; n <= nmax; n += nC) {
-        //---- Major, minor, or medium tick marks
-        let l = tickLenA;
-        if (n % nB) l = tickLenC;
-        else if (n % nA) l = tickLenB;
-        x = n * xC;
-        drawLine(ctx, [XFromx(x), YFromy(0)], [XFromx(x), YFromy(l)]);
-        //---- Major tick marks
-        if (l == tickLenA) {
-          ctx.fillText(x, XFromx(x), YFromy(-.1));
-        }
+    function chooseTickParameters(x) {
+      let n = Math.floor(Math.log10(x)); // exponent n 
+      let p = Math.pow(10, n);  // 10^n
+      let m = x / p;   // mantissa
+      if (m > 5) return [10 * p, 5, 10, 10];   // xstep = 10x10^n
+      else if (m > 2) return [5 * p, 2, 4, 4]; // xstep = 5x10^n
+      else if (m > 1) return [2 * p, 5, 25, 5];
+      else return [p, 5, 10, 10]; // [xstep, nB, nA, nT]
+    }
+    function drawTicks(ctx, tickSpacing = 3, tickLengths = [6, 10, 14]) {
+      //const tickSpacing = 4; // minimum spacing between ticks, in pixels
+      //const tickLengths = [6, 9, 12]; // lengths of minor, med, and major ticks, in pixels
+      let nmin, nmax, lC, lB, lA, xstep, nB, nA, nT;
+      //======= DRAW X AXIS TICKS
+      [xstep, nB, nA, nT] = chooseTickParameters(tickSpacing / xscal);
+      nmin = Math.ceil(xmin / xstep);
+      nmax = Math.floor(xmax / xstep);
+      lC = tickLengths[0] / Math.abs(yscal); // length of minor ticks in world coords
+      lB = tickLengths[1] / Math.abs(yscal);
+      lA = tickLengths[2] / Math.abs(yscal);
+      ctx.textAlign = "center"; ctx.textBaseline = "top";
+      for (n = nmin; n <= nmax; ++n) {
+        let l = (n % nB) ? lC : (n % nA ? lB : lA); // maj, min, or med tick?
+        let x = n * xstep;
+        if (n != 0) drawLine(ctx, [XFromx(x), YFromy(0)], [XFromx(x), YFromy(l)]);
+        if (n % nT == 0 && x != 0) ctx.fillText(x, XFromx(x), YFromy(-.1)); // tick text?
+      }
+      //======= DRAW Y AXIS TICKS
+      [ystep, nB, nA, nT] = chooseTickParameters(tickSpacing / Math.abs(yscal));
+      nmin = Math.ceil(Math.min(ymin, ymax) / ystep);
+      nmax = Math.floor(Math.max(ymin, ymax) / ystep);
+      lC = tickLengths[0] / Math.abs(xscal);
+      lB = tickLengths[1] / Math.abs(xscal);
+      lA = tickLengths[2] / Math.abs(xscal);
+      ctx.textAlign = "right"; ctx.textBaseline = "middle";
+      for (n = nmin; n <= nmax; ++n) {
+        let l = (n % nB) ? lC : (n % nA ? lB : lA); // maj, min, or med tick?
+        let y = n * ystep;
+        if (n != 0) drawLine(ctx, [XFromx(0), YFromy(y)], [XFromx(l), YFromy(y)]);
+        if (n % nT == 0 && y != 0) ctx.fillText(y, XFromx(-.1), YFromy(y));
       }
     }
     function plotFunc(ctx, f, xmin, xmax, nmax = 100) {
       ctx.beginPath();
       for (n = 0; n < nmax; ++n) {
-        x = rescale(n, 0, nmax - 1, xmin, xmax);
-        y = myFunc(x);
+        let x = rescale(n, 0, nmax - 1, xmin, xmax);
+        let y = myFunc(x);
         if (n == 0) ctx.moveTo(XFromx(x), YFromy(y));
         else ctx.lineTo(XFromx(x), YFromy(y));
       }
@@ -89,16 +102,14 @@
     }
     function plotList(ctx, xlist, ylist) {
       ctx.beginPath();
-      n = xlist.length;
+      let n = xlist.length;
       for (n = 0; n < nmax; ++n) {
-        x = xlist[n];
-        y = ylist[n];
+        let x = xlist[n], y = ylist[n];
         if (n == 0) ctx.moveTo(XFromx(x), YFromy(y));
         else ctx.lineTo(XFromx(x), YFromy(y));
       }
       ctx.stroke();
     }
-
 
     //================ GLOBAL SIMULATION VARIABLES
     var canvas, ctx;
@@ -106,42 +117,41 @@
 
     //================ MAIN CODE
     function init() {
-      canvas = document.createElement("canvas");
-      ctx = canvas.getContext("2d");
+      //-------- PREVENT DOUBLE-CLICK ZOOM ON MOBILE DEVICES --------      
+      document.body.addEventListener("dblclick", function (e) { e.preventDefault(); })
       //-------- MOBILE-FRIENDLY DIMENSIONING --------
       let w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
       let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-      canvas.style.background = "#CCCCCC";
+      canvas = document.createElement("canvas");
+      ctx = canvas.getContext("2d");
+      canvas.style.background = "#DDDDDD";
       canvas.style.border = "1px solid black";
-      canvas.width = clamp(w - 16, 300, 600); // set canvas width according to window width
+      canvas.width = clamp(w - 16, 300, 500); // set canvas width according to window width
       canvas.height = canvas.width;           // make canvas square
       //-------- LAUNCH --------
       document.body.insertBefore(canvas, document.body.childNodes[0]);
       interval = setInterval(update, 1000 * tstep); // interval in milliseconds
-      update ();
-      //alert ([xC,xB,xA]);
-      //document.write(" a = " , xstep);      
+      update();
     }
 
-    function myFunc(x) { return 7 + 4 * Math.sin(x - t);  }
+    function myFunc(x) { return 7 + 4 * Math.sin(x - t); }
     function update() {
       t += tstep;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      //-------- SET SCALING AND TRANSLATION GLOBAL PARAMETERS
-      xmin = -5;
-      xmax = +4;
-      ymin = -10;
-      ymax = +20;
-      setAxes(xmin, xmax, ymin, ymax, 0, canvas.width, canvas.height, 0);
-      
+      //-------- SET GLOBAL PARAMETERS FOR WORLD AND VIEWPORT LIMITS
+      xmin = -5; xmax = +5; ymin = -10; ymax = +20;
+      Xmin = 0; Xmax = canvas.width; Ymin = canvas.height; Ymax = 0;
+      //-------- INFER GLOBAL PARAMETERS FOR SCALING AND TRANSLATION
+      setAxes();
       //-------- DRAW AXES AND TICKS
-      ctx.strokeStyle = "#000000"; ctx.lineWidth = 1;
+      ctx.strokeStyle = ctx.fillStyle = "#000000";
+      ctx.lineWidth = 1;
       drawAxes(ctx);
       drawTicks(ctx);
-      //-------- DEMONSTRATE plotFunc
+      //-------- DEMONSTRATE plotFunc WITH A SINE FUNCTION
       ctx.strokeStyle = "#993333"; ctx.lineWidth = 2;
-      plotFunc(ctx, myFunc, xmin, xmax, 500);
-      //-------- DEMONSTRATE plotList
+      plotFunc(ctx, myFunc, xmin, xmax, 500); 
+      //-------- DEMONSTRATE plotList WITH A COSINE FUNCTION
       ctx.strokeStyle = "#3399CC"; ctx.lineWidth = 1;
       nmax = 500;
       xlist = new Array(nmax);
@@ -149,7 +159,6 @@
       for (n = 0; n < nmax; ++n) xlist[n] = rescale(n, 0, nmax - 1, xmin, xmax);
       for (n = 0; n < nmax; ++n) ylist[n] = 7 + 4 * Math.cos(xlist[n] - t);
       plotList(ctx, xlist, ylist);
-
     }
 
   </script>
