@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HTML5 Demo</title>
+</head>
+<body>
+
+<!--======== HTML CODE ========-->
+<h1> Testing toFixed() </h1>
+<p> Type a string into the box.  Then press Enter. </p>
+
+<p>
+<label style="display: inline-block; color: blue; background-color: aqua; width: 10em;" for="objInput"> Input: </label>
+<input type="text" id="objInput" required value="12.3456" onchange="roundIt()"></input>	
+</p>
+
+<p>
+<l
+<label style="display: inline-block; color: blue; background-color: aqua; width: 10em;" for="objOutput"> Output: </label>
+<div>sdfasf</div>
+<textarea id="objOutput"></textarea>
+</p>
+
+<!--======== JAVASCRIPT CODE ========-->
+<script>
+
+
+
+var objInput = document.getElementById ("objInput");
+
+function roundIt () {
+	let objInput = document.getElementById ("objInput");
+	let objOutput = document.getElementById ("objOutput");
+  let inval =  objInput.value;
+  let s = " ";
+  let n = inval.length;
+  for (let i=0; i<n; ++i) {
+    s += inval.charAt(i);
+    s += " ";
+  }
+  objOutput.value = s;
+  objOutput.style.color = "red";
+}
+        
+</script>
+</body>
+</html>

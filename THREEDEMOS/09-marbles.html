@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Marble game ....Yen Lee Loh </title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+</head>
+
+<body>
+
+  <div>
+    ASDFSDFASF
+  </div>
+
+
+  <script type="module">
+    //================================
+    // SOUND 
+    //================================
+    var mySound;   // global variable
+    initSounds();  // called as part of module
+    function initSounds() { mySound = new sound("Tink.mp3"); }
+    function sound(src) {
+      this.sound = document.createElement("audio");
+      this.sound.src = src;
+      this.sound.setAttribute("preload", "auto");
+      this.sound.setAttribute("controls", "none");
+      this.sound.style.display = "none";
+      document.body.appendChild(this.sound);
+      this.play = function () { this.sound.play(); }
+      this.stop = function () { this.sound.pause(); }
+    }
+
+    //================================
+    // GRAPHICS 
+    //================================
+    //-------- Load THREE.js from CDN
+    //import * as THREE from 'https://cdn.skypack.dev/three@0.129.0';
+    //import { FlyControls } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/FlyControls.js';
+    //-------- Load THREE.js from current directory on a HTTP server
+    import * as THREE from './three.module.js';
+    import { FlyControls } from './FlyControls.js';
+
+    let camera, scene, renderer, controls, group;
+    let meshBall;
+    const mouse = new THREE.Vector2();
+    //const raycaster = new THREE.Raycaster();
+    const clock = new THREE.Clock();
+    let woodTexture;
+    init();
+
+    function myPrismGeometry(nSides = 6, radius = 1, thickness = 1, extrudeSteps = 1, rotationAngle = 0) {
+      //-------- Construct regular polygon
+      const points = [];
+      for (let n = 0; n < nSides; ++n) {
+        let phi = 2 * Math.PI * n / nSides + rotationAngle;
+        points.push(new THREE.Vector2(radius * Math.cos(phi), radius * Math.sin(phi)));
+      }
+      const shape = new THREE.Shape(points);
+      //-------- Extrude along straight line
+      const extrudeSettings = {
+        steps: extrudeSteps,
+        depth: thickness,
+        bevelEnabled: false
+      };
+      return new THREE.ExtrudeGeometry(shape, extrudeSettings);
+    }
+    var hexagonGeometry; // must be var
+    var hexagonMaterial;
+    function addHexagonOnGround(i, j) {
+      let material = new THREE.MeshPhongMaterial({ color: 0x333333 });
+      switch ((i + j) % 3) {
+        case 0: material.color.setHex(0x999999); break;
+        case 1: material.color.setHex(0x888888); break;
+        default: material.color.setHex(0x777777);
+      }
+      const mesh = new THREE.Mesh(hexagonGeometry, material);
+      mesh.position.x = 1 * i - 0.5 * j;
+      mesh.position.y = 0.86602540378 * j;
+      mesh.position.z = -1;
+      mesh.receiveShadow = true;
+      scene.add(mesh);
+    }
+    function addHexagon(i, j) {
+      //hexagonMaterial = new THREE.MeshPhongMaterial({ color: 0x996633 });
+      hexagonMaterial = new THREE.MeshPhongMaterial({ color: 0x999999 });
+      hexagonMaterial.map = woodTexture;
+
+      const mesh = new THREE.Mesh(hexagonGeometry, hexagonMaterial);
+      mesh.position.x = 1 * i - 0.5 * j;
+      mesh.position.y = 0.86602540378 * j;
+      mesh.position.z = 0;
+      scene.add(mesh);
+    }
+
+    function init() {
+      //-------- PRELOADER STUFF
+      const loader = new THREE.TextureLoader();
+      woodTexture = loader.load('wood2.jpg');
+      hexagonGeometry = myPrismGeometry(6, 1.0 / Math.sqrt(3), 1, 1, Math.PI / 6);
+      //-------- IMPORTANT PARAMETERS
+      const imax = 10;
+      const jmax = 10;
+      let xCenter = imax / 2 - 0.5 * jmax / 2;
+      let yCenter = 0.86602540378 * jmax / 2;
+      let camDist = imax * 1.;
+      //-------- SCENE, CAMERA, LIGHTS
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x111111);
+      camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+      //camera.position.set(0, 0, 10); camera.lookAt(0, 0, 0); // top view
+      camera.position.set(xCenter, -.2 * camDist, .7 * camDist); camera.lookAt(xCenter, yCenter, 0); // side view
+      scene.add(new THREE.AmbientLight(0x333333));
+      {
+        const light = new THREE.DirectionalLight(0xCCCCCC, 1.0);
+        light.position.set(0, 0, 0);
+        light.target.position.set(1, 1, -1);
+        light.castShadow = true;
+        light.shadow.camera.near = .1;
+        light.shadow.camera.far = 1000;
+        light.shadow.mapSize.width = 1024;
+        light.shadow.mapSize.height = 1024;
+        scene.add(light); scene.add(light.target);
+      }
+      {
+        const light = new THREE.SpotLight(0xFFFFFF, 0.25);
+        light.position.set(0, 0, 12);
+        light.target.position.set(2, 2, 0);//(xCenter, yCenter, 0);
+        light.angle = Math.PI / 180 * 15;
+        light.castShadow = true;
+        light.shadow.camera.near = .1;
+        light.shadow.camera.far = 1000;
+        light.shadow.mapSize.width = 1024;
+        light.shadow.mapSize.height = 1024;
+        scene.add(light); scene.add(light.target);
+      }
+      //-------- REAL BASEPLATE
+      // {
+      //   const geometry = new THREE.PlaneGeometry(30, 30); // this is centered on (0,0,0);
+      //   const material = new THREE.MeshPhongMaterial({ color: 0x339933, side: THREE.DoubleSide });
+      //   const mesh = new THREE.Mesh(geometry, material);
+      //   mesh.position.z = -1;
+      //   //mesh.receiveShadow = true;
+      //   scene.add(mesh);
+      // }
+      //-------- GROUND (PLAYING FIELD)
+      {
+        const si = `
+0001111
+0011111
+0111111
+1111111
+1111110
+1111100
+1111000
+        `.trim().split('\n');
+        let imax = si.length;
+        let jmax = Math.max(...(si.map(el => el.length)));
+        for (let i = 0; i < imax; ++i) {
+          for (let j = 0; j < jmax; ++j) {
+            if (si[i].charAt(j) == '1')
+              //addHexagonOnGround(i, j);
+              addHexagonOnGround(j, imax - 1 - i);
+          }
+        }
+      }
+      //-------- OBSTACLES
+      {
+        const si = `
+0000000
+0010001
+0000000
+0000000
+0000010
+0100000
+1111000
+        `.trim().split('\n');
+        let imax = si.length;
+        let jmax = Math.max(...(si.map(el => el.length)));
+        for (let i = 0; i < imax; ++i) {
+          for (let j = 0; j < jmax; ++j) {
+            if (si[i].charAt(j) == '1')
+              //addHexagonOnGround(i, j);
+              addHexagon(j, imax - 1 - i);
+          }
+        }
+      }
+      //======== Make the tetromino
+      // group = new THREE.Group();
+      // scene.add(group);
+      //-------- BALL
+      meshBall = new THREE.Mesh(
+        new THREE.SphereGeometry(0.5, 32, 32),
+        new THREE.MeshPhongMaterial()
+      );
+      meshBall.material.map = loader.load('earthmap1k.jpg');
+      meshBall.position.set(2, 2, .5);
+      meshBall.castShadow = true;
+      scene.add(meshBall);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFShadowMap;
+
+      controls = new FlyControls(camera, renderer.domElement);
+      controls.movementSpeed = 10;
+      controls.domElement = renderer.domElement;
+      controls.rollSpeed = Math.PI / 24;
+      controls.autoForward = false;
+      controls.dragToLook = true;
+
+      document.body.insertBefore(renderer.domElement, document.body.firstChild);
+      window.addEventListener('resize', onWindowResize);
+      //document.addEventListener('click', onClick);
+      window.addEventListener('keydown', onKeyDown);
+      requestAnimationFrame(animate);
+    }
+
+    var vx = 1; // marble velocity
+    var vy = 0;
+    var r = .5;  // marble radius
+
+    function animate(timeCurrent) {
+      const dt = clock.getDelta(); // time in seconds since last call to clock.getDelta()
+
+      //-------- Rolling without slipping
+      meshBall.position.x += vx * dt;
+      meshBall.position.y += vy * dt;
+      meshBall.rotateOnWorldAxis(new THREE.Vector3(-vy, vx, 0), dt / r);
+      if (meshBall.position.x > 5) { vx = -1; mySound.play(); }
+      if (meshBall.position.x < 1) { vx = +1; mySound.play(); }
+
+      //-------- Boilerplate
+      controls.update(dt);
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.render(scene, camera);
+    }
+
+    function onKeyDown(event) {
+      switch (event.keyCode) {
+        case 64 + 9: vx = 0; vy = +1; break;
+        case 64 + 10: vx = -1; vy = 0; break;
+        case 64 + 11: vx = 0; vy = -1; break;
+        case 64 + 12: vx = +1; vy = 0; break;
+        case 32: mySound.play();
+
+      }
+    }
+
+    // function onClick(event) {
+    //   event.preventDefault();
+    //   //if (isDragging == true) return;// need to somehow catch thi.. before .. or just do it on mousedown
+
+    //   mouse.x = (event.offsetX / window.innerWidth) * 2 - 1;  //clientX is bad
+    //   mouse.y = - (event.offsetY / window.innerHeight) * 2 + 1; //offsetX is exptal
+    //   raycaster.setFromCamera(mouse, camera);
+
+    //   const intersections = raycaster.intersectObjects(draggables, true);
+    //   if (intersections.length > 0) {
+    //     const object = intersections[0].object; // topmost object under click
+    //     object.material.emissive.set(0x333333 - object.material.emissive.getHex());  //.emissive.set
+    //   }
+    //   renderer.render(scene, camera);
+    // }
+  </script>
+
+</body>
+
+</html>
