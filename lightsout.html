@@ -14,7 +14,7 @@
     const norm = (dx, dy) => Math.sqrt(dx * dx + dy * dy)
 
     //================ GLOBAL SIMULATION VARIABLES
-    let xmax, ymax, imax, a, b, state;
+    let xmax, ymax, imax, a, b, state;  // should also "let solution" etc.
     let canvas, ctx;
 
     //================ MAIN CODE
@@ -27,14 +27,15 @@
       canvas = document.createElement("canvas");
       ctx = canvas.getContext("2d");
       canvas.style.background = "#FFF";
-      canvas.style.border = "1px solid black";
-      canvas.style.margin = "16px";
+      canvas.style.display = "block"; //?
+      canvas.style.margin = "auto"; // centered?
+      //canvas.style.margin = "16px";
       // canvas.width = clamp(w - 64, 240, 500); // set canvas width according to window width
       canvas.width = 240;                 // just commit
       canvas.height = canvas.width;       // make canvas square
       //-------- LAUNCH
       document.body.insertBefore(canvas, document.body.childNodes[0]);
-      canvas.addEventListener("click", doClick, false);
+      canvas.addEventListener("click", onClick, false);
       newGame(5, 5);
     }
     function newGame(xmaxPar, ymaxPar) {
@@ -43,7 +44,7 @@
       //-------- Scramble to get initial state
       state = new Array(imax);
       solution = new Array(imax);
-      for (i = 0; i < imax; ++i) solution[i] = 0;
+      for (i = 0; i < imax; ++i) solution[i] = 0;  // should "let" local vars
       for (i = 0; i < imax; ++i) state[i] = 0;
       for (x = 0; x < xmax; ++x) {
         for (y = 0; y < ymax; ++y) {
@@ -95,7 +96,7 @@
         }
       }
     }
-    function doClick(event) {
+    function onClick(event) {
       x = event.offsetX; // experimental - may getb rokn
       y = event.offsetY;
       x = Math.floor(x / a);
@@ -105,18 +106,60 @@
       }
       updateCanvas();
     }
+
+    function onButton1Click(event) {
+      let s = "";
+      for (y = 0; y < ymax; ++y) {
+        for (x = 0; x < xmax; ++x) {
+          s += state[x + xmax * y];
+        }
+        s += "\n";
+      }
+      textarea1.value = s;
+      textarea1.select();
+      textarea1.setSelectionRange(0, 99999); /* For mobile devices */
+      document.execCommand("copy");
+    }
+    function onButton2Click(event) {
+      let si = textarea1.value.trim().split('\n');
+      ymax = si.length;
+      xmax = Math.max(...(si.map(el => el.length)));
+      //alert("Loading " + xmax + " x " + ymax + " board...");
+      imax = xmax * ymax;
+      //-------- Scramble to get initial state
+      state = new Array(imax);
+      for (i = 0; i < imax; ++i) solution[i] = 0;  // we don't know soln
+      for (i = 0; i < imax; ++i) state[i] = 0;
+      for (x = 0; x < xmax; ++x) {
+        for (y = 0; y < ymax; ++y) {
+          if (si[y].charAt(x) == "1") state[x + xmax*y] = 1;
+        }
+      }
+      updateCanvas();
+    }
   </script>
 
-  <!-- background-color: powderblue;  -->
-  <div style="max-width: 400px; margin: 0 0 16px 16px;">
+  <!-- background-color: powderblue;max-width: 400px;   -->
+  <div style="width: 240px; margin: auto;">
     <button type="button" onclick="newGame(3,3)"> 3x3 </button>
     <button type="button" onclick="newGame(4,4)"> 4x4 </button>
     <button type="button" onclick="newGame(5,5)"> 5x5 </button>
     <button type="button" onclick="newGame(6,6)"> 6x6 </button>
     <button type="button" onclick="cheat()"> Cheat </button>
+  </div>
+  <div style="width: 240px; margin: auto;">
     <p> Click each square to toggle it and its neighbors. Try to turn all the lights out! </p>
   </div>
 
+  <div style="max-width: 240px; margin: auto;">
+    <button id="button1" onclick="onButton1Click()">Save game state to clipboard </button>
+    <button id="button2" onclick="onButton2Click()">Load game state from text area </button>
+    <br />
+    <textarea id="textarea1" rows="6" cols="8" style="font-family: monospace;"></textarea>
+  </div>
+  <!-- <div>
+    <input type="file" id="input1" onchange="onInput1Change()">
+  </div> -->
 </body>
 
 </html>
