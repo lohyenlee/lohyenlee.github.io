@@ -94,7 +94,7 @@
       ctx.beginPath();
       for (n = 0; n < nmax; ++n) {
         let x = rescale(n, 0, nmax - 1, xmin, xmax);
-        let y = myFunc(x);
+        let y = f(x);
         if (n == 0) ctx.moveTo(XFromx(x), YFromy(y));
         else ctx.lineTo(XFromx(x), YFromy(y));
       }

@@ -26,6 +26,11 @@
     bottom: 0;
     height: inherit;
   }
+
+  .myButton {
+    display: block;
+    margin: 8px 4px 8px 4px;
+  }
 </style>
 
 <body>
@@ -55,28 +60,27 @@
     id="myOverlay"></div>
 
   <!-- Main content: shift it to the right by 250 pixels when the sidebar is visible -->
-  <div class="w3-main" style="margin-left:250px">
+  <div class="w3-main" style="margin-left: 250px">
 
     <div class="w3-row w3-padding-64">
       <div class="w3-container">
         <h1 class="w3-text-green">Yen Lee Loh on GitHub</h1>
-        <p>This is an experimental website for hosting HTML5 pages and other stuff.        
+        <p>This is an experimental website for hosting HTML5 pages and other stuff.
         </p>
 
-
-        <div class="row" style="column-gap: 40px;">
-          <div class="column" style="float: left; width: 45%;">          
-            <a href="pendulum.html" class="w3-btn w3-block w3-green w3-margin-top">Pendulum simulation</a>
-            <a href="lightsout.html" class="w3-btn w3-block w3-green w3-margin-top"> Lights Out game</a>
-            <a href="sinewave.html" class="w3-btn w3-block w3-green w3-margin-top">Animated plot</a>
-            <a href="roots.html" class="w3-btn w3-block w3-green w3-margin-top"> Roots of polynomial</a>
+        <div class="row">
+          <div class="column" style="float: left; width: 50%;">
+            <a href="pendulum.html" class="w3-btn w3-green myButton">Pendulum simulation</a>
+            <a href="lightsout.html" class="w3-btn w3-green myButton "> Lights Out game</a>
+            <a href="sinewave.html" class="w3-btn w3-green myButton ">Animated plot</a>
+            <a href="roots.html" class="w3-btn w3-green myButton "> Roots of polynomial</a>
           </div>
-          <div class="column" style="float: right; width: 45%;">
-            <a href="THREEDEMOS/" class="w3-btn w3-block w3-green w3-margin-top"> THREE.js demos</a>
-            <a href="THREEDEMOS/01-basic.html" class="w3-btn w3-block w3-green w3-margin-top"> 01 </a>
-            <a href="THREEDEMOS/05-drag.html" class="w3-btn w3-block w3-green w3-margin-top"> 05 </a>
-            <a href="THREEDEMOS/07-rolling.html" class="w3-btn w3-block w3-green w3-margin-top"> 07 </a>
-            <a href="THREEDEMOS/09-marbles.html" class="w3-btn w3-block w3-green w3-margin-top"> 09 </a>
+          <div class="column" style="float: right; width: 50%;">
+            <a href="THREEDEMOS/" class="w3-btn w3-green myButton"> THREE.js demos</a>
+            <a href="THREEDEMOS/01-basic.html" class="w3-btn w3-green myButton"> 01-basic </a>
+            <a href="THREEDEMOS/05-drag.html" class="w3-btn w3-green myButton"> 05-drag </a>
+            <a href="THREEDEMOS/07-rolling.html" class="w3-btn w3-green myButton"> 07-rolling </a>
+            <a href="THREEDEMOS/09-marbles.html" class="w3-btn w3-green myButton"> 09-marbles </a>
           </div>
 
         </div>
@@ -86,7 +90,7 @@
       <footer id="myFooter">
         <div class="w3-container w3-theme-l1">
           <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a>.
-          Last modified <span id="lastModified"></span>.</p>
+            Last modified <span id="lastModified"></span>.</p>
         </div>
       </footer>
 
@@ -96,12 +100,9 @@
     <script>
       // Populate the lastModified paragraph in the footer
       document.getElementById("lastModified").innerHTML = document.lastModified;
-      // Get the Sidebar
-      var mySidebar = document.getElementById("mySidebar");
-      // Get the DIV with overlay effect
-      var overlayBg = document.getElementById("myOverlay");
-      // Toggle between showing and hiding the sidebar, and add overlay effect
-      function w3_open() {
+      var mySidebar = document.getElementById("mySidebar"); // get Sidebar
+      var overlayBg = document.getElementById("myOverlay"); // get div with Overlay
+      function w3_open() { // Toggle show/hide Sidebar and add Overlay effect
         if (mySidebar.style.display === 'block') {
           mySidebar.style.display = 'none';
           overlayBg.style.display = "none";
@@ -110,8 +111,7 @@
           overlayBg.style.display = "block";
         }
       }
-      // Close the sidebar with the close button
-      function w3_close() {
+      function w3_close() { // Close Sidebar
         mySidebar.style.display = "none";
         overlayBg.style.display = "none";
       }

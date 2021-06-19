@@ -3,7 +3,6 @@
 
 <head>
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <!-- <meta name="viewport" content="width=device-width,user-scalable=no"> -->
 </head>
 
 <body onload="init()">
@@ -46,11 +45,14 @@
     }
     function XFromx(x) { return Xorg + xscal * x; }
     function YFromy(y) { return Yorg + yscal * y; }
+    function xFromX(X) { return (X-Xorg)/xscal; }
+    function yFromY(Y) { return (Y-Yorg)/yscal; }
     function drawAxes(ctx) {
       drawLine(ctx, [0, Yorg], [ctx.canvas.width, Yorg]);
       drawLine(ctx, [Xorg, 0], [Xorg, ctx.canvas.height]);
     }
-    function chooseTickParameters(x) {
+    function chooseTickParameters(x) { 
+      // NEED TO UPDATE THIS SO THAT HORIZONTAL TICK LABEL SPACINGS ARE LARGER (i.e., increase nT for x)
       let n = Math.floor(Math.log10(x)); // exponent n 
       let p = Math.pow(10, n);  // 10^n
       let m = x / p;   // mantissa
@@ -58,6 +60,9 @@
       else if (m > 2) return [5 * p, 2, 4, 4]; // xstep = 5x10^n
       else if (m > 1) return [2 * p, 5, 25, 5];
       else return [p, 5, 10, 10]; // [xstep, nB, nA, nT]
+    }
+    function formatNumber(x) {
+      return +(Math.round(x/0.0001)*0.0001).toFixed(7);
     }
     function drawTicks(ctx, tickSpacing = 3, tickLengths = [6, 10, 14]) {
       //const tickSpacing = 4; // minimum spacing between ticks, in pixels
@@ -75,7 +80,7 @@
         let l = (n % nB) ? lC : (n % nA ? lB : lA); // maj, min, or med tick?
         let x = n * xstep;
         if (n != 0) drawLine(ctx, [XFromx(x), YFromy(0)], [XFromx(x), YFromy(l)]);
-        if (n % nT == 0 && x != 0) ctx.fillText(x, XFromx(x), YFromy(-.1)); // tick text?
+        if (n % nT == 0 && x != 0) ctx.fillText(formatNumber(x), XFromx(x), YFromy(-.1)); // tick text?
       }
       //======= DRAW Y AXIS TICKS
       [ystep, nB, nA, nT] = chooseTickParameters(tickSpacing / Math.abs(yscal));
@@ -89,7 +94,7 @@
         let l = (n % nB) ? lC : (n % nA ? lB : lA); // maj, min, or med tick?
         let y = n * ystep;
         if (n != 0) drawLine(ctx, [XFromx(0), YFromy(y)], [XFromx(l), YFromy(y)]);
-        if (n % nT == 0 && y != 0) ctx.fillText(y, XFromx(-.1), YFromy(y));
+        if (n % nT == 0 && y != 0) ctx.fillText(formatNumber(y), XFromx(-.1), YFromy(y));
       }
     }
     function plotFunc(ctx, f, xmin, xmax, nmax = 100) {
@@ -112,9 +117,8 @@
       }
       ctx.stroke();
     }
-
     function clearLog() { document.getElementById("outputElement").innerHTML = ""; }
-    function writeLog(s) { document.getElementById("outputElement").innerHTML += s + "<br />"; }
+    function writeLog(s) { document.getElementById("outputElement").innerHTML += "<code>" + s + "</code><br />"; }
 
     /*=======================================
     GLOBAL SIMULATION VARIABLES AND MAIN CODE
@@ -123,23 +127,34 @@
 
     function init() {
       //-------- PREVENT DOUBLE-CLICK ZOOM --------
-      document.body.addEventListener("dblclick",function(e){ 
+      document.body.addEventListener("dblclick", function (e) {
         //alert ("dblclick: prevent default action!");
-    	  e.preventDefault(); 
-      }) 
+        e.preventDefault();
+      })
       //-------- MOBILE-FRIENDLY DIMENSIONING --------
       let w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
       let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
       canvas = document.createElement("canvas");
       ctx = canvas.getContext("2d");
-      canvas.style.background = "#DDDDDD";
+      canvas.style.background = "#EEEEEE";
       canvas.style.border = "1px solid black";
-      canvas.width = clamp(w - 16, 300, 500); // set canvas width according to window width
-      canvas.height = canvas.width;           // make canvas square
+      canvas.width = clamp(w - 16, 300, 1280); // set canvas width according to window width
+      canvas.height = clamp(h - 16 - 120, 200, 1000);
       //-------- LAUNCH --------
+      window.addEventListener('resize', onWindowResize);
+      canvas.addEventListener('click', onClick);
+      canvas.addEventListener('mousemove', onMouseMove);
       document.body.insertBefore(canvas, document.body.childNodes[0]);
       update();
     }
+    function onWindowResize() {
+      let w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+      let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+      canvas.width = clamp(w - 16, 300, 1280); // set canvas width according to window width
+      canvas.height = clamp(h - 16 - 120, 200, 1000);
+      update();
+    }
+
     function rootsQuadratic(b, c) {
       writeLog("Quadratic");
       writeLog("Discriminant = " + (b * b / 4 - c));
@@ -189,72 +204,81 @@
       return [z1, z2, z3, z4]
     }
 
-    var coeff = [-3., -1., 1., 1., 0.]; // coefficients of quartic (increasing powers)
-    function myFunc(x) {
-      return coeff[0] + coeff[1] * x + coeff[2] * x ** 2 + coeff[3] * x ** 3 + coeff[4] * x ** 4;
+    var xi=1, vi, g=1, viSelected=2, tFinal=3,xFinal=3;
+    function pathFunctionXt(t) {
+      let vm = Math.sqrt(2 * g * xi + vi ** 2);
+      return xi + vi ** 2 / (2 * g) - g / 2 * (t - vi / g - 2 * vm / g * Math.floor((g * t - vi) / (2 * vm) + 0.5)) ** 2;
     }
     function update() {
       clearLog();
-
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       //-------- SET GLOBAL PARAMETERS FOR WORLD AND VIEWPORT LIMITS
-      xmin = -5; xmax = +5; ymin = -10; ymax = +10;
+      xmin = -2; xmax = +10; ymin = -1; ymax = +5;
       Xmin = 0; Xmax = canvas.width; Ymin = canvas.height; Ymax = 0;
       //-------- INFER GLOBAL PARAMETERS FOR SCALING AND TRANSLATION
       setAxes();
       //-------- DRAW AXES AND TICKS
-      ctx.strokeStyle = ctx.fillStyle = "#000000";
-      ctx.lineWidth = 1;
-      drawAxes(ctx);
-      drawTicks(ctx);
-
-      //-------- GENERATE RANDOM COEFFICIENTS FOR CUBIC (OR QUARTIC??)
-      for (i = 0; i <= 4; ++i) {
-        coeff[i] = Math.round((Math.random() - .5) * 6);
-      }
-      writeLog(
-        "Solve Az^4 + Bz^3 + Cz^2 + Dz + E = 0 where<br />" +
-        "A = " + coeff[4] + "<br />B = " + coeff[3] + "<br />C = " + coeff[2]
-        + "<br />D = " + coeff[1] + "<br />E = " + coeff[0]
-      );
-
+      ctx.strokeStyle = ctx.fillStyle = "#000000"; ctx.lineWidth = 1;
+      drawAxes(ctx); drawTicks(ctx);
+      //-------- SET COEFFS
+      writeLog("xi = " + xi + ", viSelected = " + viSelected);
       //-------- DEMONSTRATE plotFunc
-      ctx.strokeStyle = ctx.fillStyle = "#336699"; ctx.lineWidth = 2;
-      plotFunc(ctx, myFunc, xmin, xmax, 500);
-      //-------- ADD SOME MARKERS
-      if (coeff[4] != 0)
-        zlist = rootsQuartic(coeff[3] / coeff[4], coeff[2] / coeff[4], coeff[1] / coeff[4], coeff[0] / coeff[4]);
-      else if (coeff[3] != 0)
-        zlist = rootsCubic(coeff[2] / coeff[3], coeff[1] / coeff[3], coeff[0] / coeff[3]);
-      else if (coeff[2] != 0)
-        zlist = rootsQuadratic(coeff[1] / coeff[2], coeff[0] / coeff[2]);
-      else if (coeff[1] != 0) {
-        writeLog("  Linear: az+b=0 so z=-b/a");
-        zlist = -coeff[0] / coeff[1];
-      } else
-        zlist = [];
-
-      var i = zlist.length; while (i--) {
-        z = zlist[i];
-        if (Math.abs(z.im) < 1e-8) {  // Plot only real roots
-          x = z.re;
-          drawCircle(ctx, XFromx(x), YFromy(0), 5, false, true);
-        }
+      let tmin = 0;
+      let tmax = xmax;
+      ctx.strokeStyle = ctx.fillStyle = "#336699"; ctx.lineWidth = .15;
+      for (let u=-5; u<=5; u+=.1) {
+        vi = u; // set velocity
+        plotFunc(ctx, pathFunctionXt, tmin, tmax, 500);
+      }
+      ctx.strokeStyle = ctx.fillStyle = "#336699"; ctx.lineWidth = 1;
+      for (let imult=-1; imult<=1; imult+=1) {
+        vi = viSelected + imult * .05; // perturbed initial velocities
+        plotFunc(ctx, pathFunctionXt, tmin, tmax, 1000);
       }
 
-
+      //-------- ADD MARKER SHOWING ENDPOINT?
+      ctx.strokeStyle = ctx.fillStyle = "#FF3333"; ctx.lineWidth = 1;
+      drawCircle(ctx, XFromx(tFinal), YFromy(xFinal), 4, false, true);
+      
+      //-------- ADD MARKERS (FOR FOCAL POINTS, EVENTUALLY)
+      ctx.strokeStyle = ctx.fillStyle = "#336699"; ctx.lineWidth = 1;
+      let tlist = [1, 2, 3];
+      var k = tlist.length; while (k--) {
+        let t = tlist[k];
+        let x = pathFunctionXt(t);
+        drawCircle(ctx, XFromx(t), YFromy(x), 5, false, true);
+      }
+      
     }
+
+
+    function onClick(event) {
+      event.preventDefault();
+      let x = xFromX (event.offsetX);
+      let y = yFromY (event.offsetY);
+      tFinal = x;
+      xFinal = y;
+      viSelected = (xFinal-1.0)/tFinal;
+      update();
+    }
+    function onMouseMove(event) {
+      event.preventDefault();
+      let x = xFromX (event.offsetX);
+      let y = yFromY (event.offsetY);
+      tFinal = x;
+      xFinal = y;
+      viSelected = (xFinal-1.0)/tFinal;
+      update();
+    }
+    
 
   </script>
 
   <!-- ================ HTML DOCUMENTATION -->
-  <div style="font-family: Courier;">
-    <button onclick="update()"> Randomize </button>
-    <p id="outputElement">This will get overwritten </p>
+  <div>
+    <p id="outputElement">This message area will get overwritten </p>
   </div>
-  <div></div>
-  <p>This HTML5 demo implements closed-form formulas for quartics. There are some pathological situations where the
-    formulas fail!</p>
+  <p>Path enumeration problem for classical bouncer.</p>
   </div>
 
 </body>
