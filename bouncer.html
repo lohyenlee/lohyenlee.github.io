@@ -252,6 +252,7 @@
     }
 
 
+    //======== TBD: CLICK TO SET FINAL POINT
     function onClick(event) {
       event.preventDefault();
       let x = xFromX (event.offsetX);
@@ -261,17 +262,18 @@
       viSelected = (xFinal-1.0)/tFinal;
       update();
     }
+    //======== TBD: MOUSE MOVE TO CHOOSE INITIAL VELOCITY?
     function onMouseMove(event) {
       event.preventDefault();
       let x = xFromX (event.offsetX);
       let y = yFromY (event.offsetY);
       tFinal = x;
       xFinal = y;
+      //======== DE
       viSelected = (xFinal-1.0)/tFinal;
       update();
     }
     
-
   </script>
 
   <!-- ================ HTML DOCUMENTATION -->
