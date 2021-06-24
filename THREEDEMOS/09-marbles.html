@@ -6,7 +6,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
   <style>
-    #info {
+    #msg1 {
       position: absolute;
       top: 24px;
       width: 100%;
@@ -17,11 +17,33 @@
       font-family: monospace;
       font-size: 24px;
     }
+
+    #msg2 {
+      position: absolute;
+      top: 64px;
+      width: 100%;
+      text-align: center;
+      color: white;
+      z-index: 100;
+      display: block;
+      font-family: monospace;
+      font-size: 16px;
+    }
+
+    .body {
+      background-color: black;
+    }
+
+    .button1 {
+      z-index: 100;
+      font-family: serif;
+      font-size: 24px;
+    }
   </style>
 
 </head>
 
-<body>
+<body class="body">
 
   <script type="module">
     //================================
@@ -38,6 +60,11 @@
       this.stop = function () { this.sound.pause(); }
     }
 
+    //     const soundEffect = new Audio();
+    // soundEffect.play();
+    // soundEffect.src = 'path/to/file.mp3';
+    // soundEffect.play();
+
     //================================
     // GRAPHICS 
     //================================
@@ -48,7 +75,8 @@
     import * as THREE from './three.module.js';
     import { FlyControls } from './FlyControls.js';
 
-    var camera, scene, renderer, controls, group; // could allocate right here to make sure we never "new" again
+    const groundColors = [0x999999, 0x888888, 0x777777];
+    const obstacleColors = [0x9996633, 0x885522, 0x774411];
     const clock = new THREE.Clock();
     const mouse = new THREE.Vector2();
     const raycaster = new THREE.Raycaster();
@@ -56,10 +84,12 @@
     const balls = [];
     const selectables = [];
     var isAnimating = false;
+    var camera, scene, renderer, controls, group; // could allocate right here to make sure we never "new" again
 
     //================================
     // GAME VARIABLES
     //================================
+    var level = 0;
     var imax, jmax;  // board size (bounding parallelogram)
     var board = [];      // array of integers representing state of each hex on the board
     var xn = [], yn = [], zn = [];
@@ -69,7 +99,9 @@
     //================================
     // PRELOAD SOUNDS AND TEXTURES 
     //================================
-    const mySound = new sound("Tink.mp3");
+    //const mySound = new sound('Tink.mp3');
+    const mySound = new Audio();
+    mySound.src = 'Tink.mp3';
     const loader = new THREE.TextureLoader();
     const woodTexture = loader.load('wood2.jpg', onLoad);
     const marbleTexture = loader.load('marble1.jpg', onLoad);
@@ -79,28 +111,25 @@
     const ambientLight = new THREE.AmbientLight(0x333333);
     const dirLight = new THREE.DirectionalLight(0xCCCCCC, 1.0);
     const spotLight = new THREE.SpotLight(0xFFFFFF, 0.25);
-
-    const groundColors = [0x999999, 0x888888, 0x777777];
-    const obstacleColors = [0x9996633, 0x885522, 0x774411];
+    const backgroundColor = new THREE.Color(0x111111);
     const boardString0 = `
 111111
 311114
 111111
         `;
     var levelMaps = [boardString0];
-
-
-    const fileName = "level-maps.txt";
+    const fileName = "level-maps.txt"; // user may need to clear browser cache if this file is edited...
     var fileContent = "";
-    fetch(fileName).then((r) => { r.text().then((d) => { fileContent = d; }) })
-    //fetch(fileName).then((r) => { r.text().then((d) => { fileContent = d; alert(fileContent); }) })
+    fetch(fileName).then((r) => { r.text().then((d) => { fileContent = d; readyToStart(); }) })
+
+
 
     //================================
     // UTILITIES
     //================================
     function wipeArray(arr) { arr.splice(0, arr.length); }
-    function setMessage(str) { info.innerHTML = str; }
-
+    function setMessage(str) { msg1.innerHTML = str; }
+    function setMessage2(str) { msg2.innerHTML = str; }
     function markPoint(x, y, z) { //  Usage: markPoint(xCenter, yCenter, 0.1);   For debugging only!!!
       let mesh = new THREE.Mesh(
         new THREE.SphereGeometry(.1, 8, 8),
@@ -111,7 +140,6 @@
 
     }
     function onLoad(texture) { if (camera) renderer.render(scene, camera); }
-
     function myPrismGeometry(nSides = 6, radius = 1, thickness = 1, extrudeSteps = 1, rotationAngle = 0) {
       //-------- Construct regular polygon
       const points = [];
@@ -124,7 +152,6 @@
       const extrudeSettings = { steps: extrudeSteps, depth: thickness, bevelEnabled: false };
       return new THREE.ExtrudeGeometry(shape, extrudeSettings);
     }
-
     function addHexagon(i, j) {
       let material = phongMaterial.clone(); // alow different color, but use same shader
       material.color.setHex(groundColors[(i + j) % 3]);
@@ -135,7 +162,6 @@
       scene.add(mesh);
       return mesh;
     }
-
     function setupBoard(mapString) {
       const si = mapString.trim().split('\n');
       jmax = si.length;
@@ -166,7 +192,6 @@
       object.material.color.setHex(groundColors[(i + j) % 3]);
       object.scale.z = 1;
     }
-
     function fitCameraAroundRectangle(cameraFoV, cameraDownwardTilt, cameraAspect, xmin, xmax, ymin, ymax) {
       let theta = cameraFoV / 2 * Math.PI / 180;
       let alpha = cameraDownwardTilt * Math.PI / 180; // camera direction wrt horizontal
@@ -210,17 +235,24 @@
       // camera.position.set(0, 0, 100);      
     }
 
-    function initGame() {  // this is the first-time initGame code
-      camera = new THREE.PerspectiveCamera(30, 1, 1, 1000);
 
+    //================================
+    // PREPARE TO START
+    //================================
+    function readyToStart() {
+      reloadLevelMaps();
+      alert(levelMaps.length);
+
+      camera = new THREE.PerspectiveCamera(30, 1, 1, 1000);
       scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x111111);
+      scene.background = backgroundColor;
 
       renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFShadowMap;
+      document.body.insertBefore(renderer.domElement, document.body.firstChild);
 
       controls = new FlyControls(camera, renderer.domElement);
       controls.movementSpeed = 10;
@@ -229,7 +261,16 @@
       controls.autoForward = false;
       controls.dragToLook = true;
 
-      document.body.insertBefore(renderer.domElement, document.body.firstChild);
+      setMessage("Click anywhere to start!");
+      document.addEventListener('click', initGame);
+    }
+    //================================
+    // INITIALIZE EVERYTHING FOR THE FIRST TIME
+    //================================
+    function initGame() {
+      document.removeEventListener("click", initGame);
+      mySound.play();
+
       window.addEventListener('resize', onResize);
       window.addEventListener('keydown', onKeyDown);
       window.addEventListener('mousedown', onMouseDown);
@@ -239,46 +280,33 @@
       document.querySelector('#prevLevelButton').addEventListener('click', prevLevel);
       document.querySelector('#nextLevelButton').addEventListener('click', nextLevel);
 
-      setTimeout (reloadLevelMaps, 1000); // should really STALL till these are loaded
       resetGame();
-      //requestAnimationFrame(animate); // for debugging
-
-
     }
-
-
-
-    var level = 0;
     function reloadLevelMaps() {
       //------- HOPEFULLY BY THE TIME THIS FUNCTION GETS CALLED, LEVEL MAPS HAVE LOADED
-      if (fileContent == "") {alert ("Maps not loaded yet!"); return; }
+      if (fileContent == "") { alert("Maps not loaded yet!"); return; }
       levelMaps = fileContent.split('-');
     }
     function prevLevel() {
       reloadLevelMaps();
       if (level <= 0) { setMessage("This is the first level!"); return; }
       level -= 1;
-      setMessage("Loading Level " + level);
       resetGame();
     }
     function nextLevel() {
       reloadLevelMaps();
       if (level >= levelMaps.length - 1) { setMessage("This is the last level!"); return; }
       level += 1;
-      setMessage("Loading Level " + level);
       resetGame();
     }
-    function resetGame() { // this resets the game WITHOUT repeating the one-time things
-      //-------- SETUP BOARD (MATH)
-      wipeArray(board); // is this overkill?
-      wipeArray(xn);
-      wipeArray(yn);
-      wipeArray(zn);
-      wipeArray(vx);
-      wipeArray(vy);
-      wipeArray(vz);
-      setupBoard(levelMaps[level]);
-      //-------- DISPOSE OF OLD SCENE AND OBJECTS
+    //================================
+    // RESET GAME WITHOUT 
+    //================================
+    function resetGame() {
+      //-------- DISPOSE OF EVERYTHING INCLUDING OLD SCENE AND OBJECTS
+      wipeArray(board); // this might be overkill
+      wipeArray(xn); wipeArray(yn); wipeArray(zn);
+      wipeArray(vx); wipeArray(vy); wipeArray(vz);
       wipeArray(selectables);
       wipeArray(balls);
       scene.traverse(function (obj) {
@@ -289,6 +317,9 @@
       });
       scene.remove.apply(scene, scene.children); // is this overkill now?
       renderer.renderLists.dispose();
+      //-------- SETUP BOARD (mathematical representation)
+      setupBoard(levelMaps[level]);
+      setMessage("Level " + level);
       //-------- SETUP TILES (GRAPHICS)
       wipeArray(tiles);
       tiles.length = imax * jmax;
@@ -398,7 +429,7 @@
       const gameSpeed = 3;
       let dt = clock.getDelta(); // time in seconds since last call to clock.getDelta()
       dt = Math.min(dt, 0.05); // cap dt at some sensible value, so that ball doesn't go too far
-      setMessage("Delta time(ms) = " + Math.round(dt * 1000));
+      setMessage2("Delta time(ms) = " + Math.round(dt * 1000));
 
       let ballsLeft = 0;
       for (let n = 0; n < balls.length; ++n) if (zn[n] > -5) ballsLeft += 1;
@@ -443,8 +474,7 @@
             if (board[i + imax * j] == 4) {
               tiles[i + imax * j].material.color.setHex(0x99FF99);
               mySound.play();
-              //setTimeout(function () { 
-              setMessage("Congratulations!  You won!");// }, 100);
+              setMessage("Level " + level + " complete!");
             }
             //-------- Are there obstacles directly ahead of ball, or to L or R?
             // [uL,vL] = hexCoordsRotate([u,v], +60):  [1,0] -> [1,1], [1,1] -> [0,1], [0,1] -> [-1,0]
@@ -518,46 +548,21 @@
       renderer.render(scene, camera);
     }
 
-    //================================
-    // START THE GAME!
-    //================================
-    initGame();
-
   </script>
 
-  <div id="info">Click ball to launch it!</div>
-
-  <!-- could really put a div here ....  position: absolute;  -->
-
-  <button id="goButton" style="
-  z-index: 100; display: inline; font-size: 24px; font-family: 'serif'; position: relative; left: +16px; top: -60px; 
-  ">Go!</button>
-
-  <button id="resetButton" style="
-z-index: 100; display: inline; font-size: 24px; font-family: 'serif'; position: relative; left: +128px; top: -60px; 
-">Reset</button>
-
-  <button id="prevLevelButton" style="
-z-index: 100; display: inline; font-size: 24px; font-family: 'serif'; position: relative; left: +128px; top: -60px; 
-">Previous level</button>
-
-  <button id="nextLevelButton" style="
-  z-index: 100; display: inline; font-size: 24px; font-family: 'serif'; position: relative; left: +128px; top: -60px; 
-  ">Next level</button>
-
-
-
-
-  <div>
-    <h1>
-      TBD...
-    </h1>
-    <p>
-      Need to have textures on LAUNCH hexes showing initGameial position(s) and initGameial velocit(ies) of balls.
-    </p>
+  <div id="msg1">Loading ...</div>
+  <div id="msg2">[Message box 2] </div>
+  <div
+    style="
+  z-index: 100; 
+  display: inline; font-size: 24px; font-family: 'serif'; position: absolute; bottom: 20px; width: 100%; text-align: center;">
+    <button id="prevLevelButton" class="button1"> &lt; </button>
+    <button id="goButton" class="button1">Go</button>
+    <button id="resetButton" class="button1">Reset</button>
+    <button id="nextLevelButton" class="button1"> &gt; </button>
   </div>
 
-
+  <!-- Need to have textures on LAUNCH hexes showing initGameial position(s) and initGameial velocit(ies) of balls. -->
 
 </body>
 
