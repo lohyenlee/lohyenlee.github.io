@@ -22,7 +22,6 @@
       color: white;
       z-index: 100;
       display: block;
-      /* font-family: Calibri, Arial, Verdana, sans-serif; */
       font-family: 'Titillium Web', sans-serif;
       font-size: 36px;
     }
@@ -44,6 +43,7 @@
       font-family: 'Titillium Web', sans-serif;
       font-size: 24px;
       width: 72px;
+      text-align: center;
       margin-left: 0px;
       margin-right: 0px;
     }
@@ -434,7 +434,7 @@
         vy[n] = Math.sin(k * Math.PI / 3);
       }
       clock.getDelta(); // reset clock
-      tFractional = 0.0; isAnimating = true; requestAnimationFrame(animate);
+      tFractional = 1.01; isAnimating = true; requestAnimationFrame(animate);
     }
 
     function animate(timeCurrent) {
