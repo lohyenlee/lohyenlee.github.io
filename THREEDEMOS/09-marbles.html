@@ -47,8 +47,8 @@
       margin: 0;
       padding: 0;
       border-radius: 8px;
-      border-style: outset;
-      background-color: light-gray;
+      /* border-style: outset; */
+      background: #EEE;
       color: black;
     }
   </style>
@@ -62,7 +62,7 @@
     // SOUND 
     // https://curtisrobinson.medium.com/how-to-auto-play-audio-in-safari-with-javascript-21d50b0a2765
     //================================
-     var audioContext = new (window.AudioContext || window.webkitAudioContext)()
+    var audioContext = new (window.AudioContext || window.webkitAudioContext)()
     function loadSound(filename) {
       var sound = { volume: 1, audioBuffer: null }
       var ajax = new XMLHttpRequest()
@@ -71,7 +71,7 @@
       ajax.onload = function () {
         audioContext.decodeAudioData(
           ajax.response,
-          function (buffer) {sound.audioBuffer = buffer},
+          function (buffer) { sound.audioBuffer = buffer },
           function (error) { debugger }
         )
       }
@@ -101,7 +101,7 @@
       sound.volume = volume
       if (sound.gainNode) sound.gainNode.gain.value = volume
     }
-    
+
     //================================
     // GRAPHICS 
     //================================
@@ -332,7 +332,7 @@
     //================================
     function initGame() {
       document.removeEventListener("click", initGame);
-      playSound(soundNothing); 
+      playSound(soundNothing);
       window.addEventListener('resize', onResize);
       window.addEventListener('mousedown', onMouseDown);
       document.querySelector('#goButton').addEventListener('click', launchBalls);
@@ -559,9 +559,9 @@
           if ((board[i + imax * j] & 0xF) == 4) {
 
             //let ballNum = (board[i + imax * j] >> 4) & 0xF;   // ball number (0-15) corresponding to hex
-            
+
             // stupid GUI-reliant way: match colors
-            if (balls[n].material.color.getHex() == tiles[i + imax * j].material.color.getHex()) { 
+            if (balls[n].material.color.getHex() == tiles[i + imax * j].material.color.getHex()) {
 
               tiles[i + imax * j].material.emissive.setHex(0x666666);
               // Need to switch OFF the emissive to indicate that you only win if all balls
@@ -604,11 +604,11 @@
             playSound(soundTock);
           }
           else if (sR == 2) { // Turn CCW
-            u = uL; v = vL;[vx[n], vy[n]] = cartFromHex(u, v); 
+            u = uL; v = vL;[vx[n], vy[n]] = cartFromHex(u, v);
             playSound(soundTock);
-          } 
+          }
           else if (sL == 2) {  // Turn CW
-            u = uR; v = vR;[vx[n], vy[n]] = cartFromHex(u, v); 
+            u = uR; v = vR;[vx[n], vy[n]] = cartFromHex(u, v);
             playSound(soundTock);
           }
         }
@@ -634,19 +634,13 @@
       raycaster.setFromCamera(mouse, camera);
       const intersections = raycaster.intersectObjects(selectables, true);
       if (intersections.length > 0) {
-        const object = intersections[0].object; // topmost object under click
-        // if (object.name == "BALL") { // user clicked a ball
-        //   resetBalls(); launchBalls();
-        // }
-        // else 
-        {  // user clicked a hex
-          let i, j;
-          [i, j] = hexFromCart(object.position.x, object.position.y);
-          i = Math.round(i);
-          j = Math.round(j);
-          if (board[i + imax * j] == 1) { raise(i, j); }
-          else if (board[i + imax * j] == 2) { lower(i, j); }
-        }
+        const object = intersections[0].object; // topmost object under click - assumed to be a hex
+        let i, j;
+        [i, j] = hexFromCart(object.position.x, object.position.y);
+        i = Math.round(i);
+        j = Math.round(j);
+        if (board[i + imax * j] == 1) { raise(i, j); }
+        else if (board[i + imax * j] == 2) { lower(i, j); }
       }
       renderer.render(scene, camera);
     }
