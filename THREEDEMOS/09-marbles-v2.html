@@ -2,11 +2,7 @@
 <html lang="en">
 
 <head>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@700&display=swap" rel="stylesheet">
-
-  <title>Hexball by Yen Lee Loh </title>
+  <title>Marble game ....Yen Lee Loh </title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
   <style>
@@ -22,9 +18,8 @@
       color: white;
       z-index: 100;
       display: block;
-      /* font-family: Calibri, Arial, Verdana, sans-serif; */
-      font-family: 'Titillium Web', sans-serif;
-      font-size: 36px;
+      font-family: monospace;
+      font-size: 24px;
     }
 
     #msg2 {
@@ -41,7 +36,7 @@
 
     .button1 {
       z-index: 100;
-      font-family: 'Titillium Web', sans-serif;
+      font-family: serif;
       font-size: 24px;
       width: 72px;
       margin-left: 0px;
@@ -67,7 +62,7 @@
 
     const groundColors = [0x999999, 0x888888, 0x777777];
     const obstacleColors = [0x996633, 0x885522, 0x774411];
-    const ballColor = [0xFF6666, 0xFFCC66, 0xFFFFCC, 0x99FF99, 0x33FFFF, 0x3399FF, 0xCC33FF, 0x336699, 0x996633, 0x993366];
+    const ballColor = [0xFF3333, 0xFF9933, 0xFFFF99, 0x99FF99, 0x33FFFF, 0x3399FF, 0xCC33FF, 0x336699, 0x996633, 0x993366];
     const clock = new THREE.Clock();
     const mouse = new THREE.Vector2();
     const raycaster = new THREE.Raycaster();
@@ -81,13 +76,12 @@
     // GAME VARIABLES
     //================================
     var level = 0;
-    var levelName;        // name of current level
-    var tFractional = 0;  // fractional time elapsed since last "grid event"
-    var imax, jmax;       // board size (bounding parallelogram)
-    var board = [];       // array of integers representing state of each hex on the board
+    var tFractional = 0; // fractional time elapsed since last "grid event"
+    var imax, jmax;  // board size (bounding parallelogram)
+    var board = [];      // array of integers representing state of each hex on the board
     var xn = [], yn = [], zn = [];
     var vx = [], vy = [], vz = [];   // ball velocity
-    const r = .5;         // ball radius (mainly for rendering, though)
+    const r = .5;     // ball radius (mainly for rendering, though)
     var ww = new THREE.Vector3();  // workspace vector (to avoid having to make new THREE.Vectors())
 
     //================================
@@ -95,7 +89,7 @@
     //================================
     const mySound = new Audio(); mySound.src = 'Tink.mp3';
     const loader = new THREE.TextureLoader();
-    //const woodTexture = loader.load('wood2.jpg');
+    const woodTexture = loader.load('wood2.jpg');
     const marbleTexture = loader.load('marble1.jpg');
     const ballGeometry = new THREE.SphereGeometry(0.5, 32, 32);
     const hexagonGeometry = myPrismGeometry(6, 1.0 / Math.sqrt(3), 1, 1, Math.PI / 6);
@@ -155,7 +149,6 @@
     }
     function setupBoard(mapString) {
       const si = mapString.trim().split('\n');
-      levelName = si.shift(); // remove first item from list, and return
       jmax = si.length;
       imax = Math.max(...(si.map(el => el.length)));
       board.length = imax * jmax;
@@ -163,7 +156,8 @@
       for (let j = 0; j < jmax; ++j) {
         for (let i = 0; i < imax; ++i) {
           let c = si[jmax - 1 - j].charAt(i);
-          if (c == '1') board[i + imax * j] = 1; // flat
+          if (c == '0') board[i + imax * j] = 0;      // void
+          else if (c == '1') board[i + imax * j] = 1; // flat
           else if (c == '2') board[i + imax * j] = 2; // obstacle
           else if (c >= 'a' && c <= 'z') { // launchpad
             let ballNum = c.charCodeAt(0) - 'a'.charCodeAt(0);
@@ -173,8 +167,6 @@
             let ballNum = c.charCodeAt(0) - 'A'.charCodeAt(0);
             board[i + imax * j] = 4 | (ballNum << 4);
           }
-          else if (c == '0' || c === undefined) board[i + imax * j] = 0;      // void
-          else board[i + imax * j] = 0;      // also void          
         }
       }
       //-------- Make a second pass to determine launch directions and colors
@@ -275,7 +267,6 @@
 
       setMessage("Click anywhere to start!");
       document.addEventListener('click', initGame);
-      //initGame ();
     }
     //================================
     // INITIALIZE EVERYTHING FOR THE FIRST TIME
@@ -324,7 +315,7 @@
       renderer.renderLists.dispose();
       //-------- SETUP BOARD (mathematical representation)
       setupBoard(levelMaps[level]);
-      setMessage(levelName); //"Level " + level);
+      setMessage("Level " + level);
       //-------- SETUP TILES (GRAPHICS)
       tiles.length = imax * jmax;
       for (let i = 0; i < imax; ++i) {
@@ -369,7 +360,7 @@
       dirLight.shadow.mapSize.height = 1024;
       scene.add(dirLight); scene.add(dirLight.target);
       spotLight.position.set(0, 0, 4);
-      spotLight.target.position.set(0, 0, 9); // basically deactivated
+      spotLight.target.position.set(2, 2, 0);//(xCenter, yCenter, 0);
       spotLight.angle = Math.PI / 180 * 15;
       spotLight.castShadow = true;
       spotLight.shadow.camera.near = .1;
@@ -394,9 +385,6 @@
       wipeArray(vx); wipeArray(vy); wipeArray(vz);
       for (let i = 0; i < imax; ++i) {
         for (let j = 0; j < jmax; ++j) {
-          // clear any "emissive" hexes
-          if ((board[i + imax * j] & 0xF) > 0) tiles[i + imax * j].material.emissive.setHex(0);
-
           if ((board[i + imax * j] & 0xF) == 3) { // launch site
 
             let k = (board[i + imax * j] >> 8);   // launch direction (0,1,2,3,4,5)
@@ -415,7 +403,7 @@
             ball.position.set(x, y, .5);
             scene.add(ball);
             balls.push(ball);
-            //selectables.push(ball);
+            selectables.push(ball);
             vx.push(0);
             vy.push(0);
             vz.push(0);
@@ -424,7 +412,6 @@
       }
     }
     function launchBalls() {
-      resetBalls(); // slightly overkill but I prefer this, so that repeatedly clicking Go works.
       for (let n = 0; n < balls.length; ++n) {
         let i, j;
         [i, j] = hexFromCart(xn[n], yn[n]); // get ball position integer position vector
@@ -432,10 +419,19 @@
         let k = (board[i + imax * j] >> 8);   // launch direction (0,1,2,3,4,5)
         vx[n] = Math.cos(k * Math.PI / 3);
         vy[n] = Math.sin(k * Math.PI / 3);
+        // switch (k) {
+        //   case 0: vx[n] = 1; vy[n] = 0; break;
+        //   case 1: vx[n] = 1; vy[n] = 1; break;
+        //   case 2: vx[n] = 0; vy[n] = 1; break;
+        //   case 3: vx[n] = -1; vy[n] = 0; break;
+        //   case 4: vx[n] = -1; vy[n] = -1; break;
+        //   default: vx[n] = 0; vy[n] = -1; // this is case 5
+        // }        
       }
-      clock.getDelta(); // reset clock
+      clock.getDelta(); // reset clock?
       tFractional = 0.0; isAnimating = true; requestAnimationFrame(animate);
     }
+
 
     function animate(timeCurrent) {
       const gameSpeed = 3;
@@ -443,7 +439,7 @@
       dt = Math.min(dt, 0.05); // cap dt at some sensible value, so that ball doesn't go too far
       tFractional += gameSpeed * dt;
       //setMessage2("FPS: " + Math.round(1 / dt));
-      //setMessage2("tFRactional: " + tFractional);
+      setMessage2("tFRactional: " + tFractional);
 
       //-------- Have all balls fallen into the abyss?
       let ballsLeft = 0;
@@ -451,8 +447,8 @@
       if (ballsLeft == 0) { resetBalls(); isAnimating = false; }
       //setMessage2("ballsLeft = "+ballsLeft);
 
-      //-------- Evolve ball positions
       for (let n = 0; n < balls.length; ++n) {
+
         if (zn[n] < 0.5) {
           //-------- BALL IS FALLING VERTICALLY
           vx[n] = 0;
@@ -474,88 +470,71 @@
           //balls[n].rotateOnWorldAxis(vv.normalize(), gameSpeed * dt * vv.length() / r);
           ww.x = -vy[n]; ww.y = vx[n]; ww.z = 0;
           balls[n].rotateOnWorldAxis(ww.normalize(), gameSpeed * dt * ww.length() / r);
-          //-------- Shine spotlight on ball 0 
+          //-------- Shine light on ball 0 
           spotLight.target.position.set(xn[0], yn[0], zn[0]);
-        }
-      }
+          //-------- Determine nearest hex (i,j) to ball, and how near it is (distFromSite)
+          let i1, j1, i, j;
+          let u, v, vmag, uL, vL, uR, vR;
+          let sF, sL, sR; // board state in forward, left, and right directions
 
-      //-------- If fractional time exceeds 1, snap to grid and check for collisions!
-      if (tFractional > 1) {
-        let i1, j1, i, j;
-        let u, v, vmag, uL, vL, uR, vR;
-        let sF, sL, sR; // board state in forward, left, and right directions
+          if (tFractional > 1) {
+            tFractional -= 1;
+            //-------- Snap to grid (crude method)
+            // there is a better way ---- we should probably change dt here etc.
+            tFractional = 0;
+            [i1, j1] = hexFromCart(xn[n], yn[n]); // integer position vector
+            i = Math.round(i1);
+            j = Math.round(j1);
+            //distFromSite = Math.sqrt((i1 - i) ** 2 + (j1 - j) ** 2);
+            [xn[n], yn[n]] = cartFromHex(i, j);
 
-        //tFractional -= 1;
-        tFractional = 0;
 
-        //-------- First snap to grid
-        for (let n = 0; n < balls.length; ++n) {
-          [i1, j1] = hexFromCart(xn[n], yn[n]);
-          i = Math.round(i1);
-          j = Math.round(j1); // integer position vector
-          [xn[n], yn[n]] = cartFromHex(i, j);
-        }
-        //-------- Now consider falling-into-voids and ball-obstacle collisions
-        for (let n = 0; n < balls.length; ++n) {
-          [i1, j1] = hexFromCart(xn[n], yn[n]);
-          i = Math.round(i1);
-          j = Math.round(j1); // get integer position vector once again
-          //-------- Is ball off-board, or on a void hex?
-          if (i < 0 || i >= imax || j < 0 || j >= jmax || board[i + imax * j] == 0) {
-            vx[n] = vy[n] = 0; vz[n] = -0.001;
-            mySound.play();
-          }
-          //-------- Is ball on the correct goal hex?
-          if ((board[i + imax * j] & 0xF) == 4) {
 
-            //let ballNum = (board[i + imax * j] >> 4) & 0xF;   // ball number (0-15) corresponding to hex
-            
-            // stupid GUI-reliant way: match colors
-            if (balls[n].material.color.getHex() == tiles[i + imax * j].material.color.getHex()) { 
+            //-------- Find integer velocity vector in hexagonal coordinates
+            [u, v] = hexFromCart(vx[n], vy[n]);
+            vmag = Math.sqrt(u ** 2 + v ** 2);
+            u = Math.round(u / vmag);
+            v = Math.round(v / vmag);
+            //-------- Is ball off-board, or on a void hex?
+            if (i < 0 || i >= imax || j < 0 || j >= jmax || board[i + imax * j] == 0) {
+              vx[n] = vy[n] = 0; vz[n] = -0.001;
+              mySound.play();
+            }
+            //-------- Is ball on a goal hex?
+            if ((board[i + imax * j] & 0xF) == 4) {
 
-              tiles[i + imax * j].material.emissive.setHex(0x666666);
-              // Need to switch OFF the emissive to indicate that you only win if all balls
-              // arrive at all goals simultaneously
+              tiles[i + imax * j].material.emissive.setHex(0x666666); // how would we make this temporary?
+
               //-------- Are ALL balls on a goal hex? (Would be better to maintain a bool array)
-              // also, code below does not check for color matching
               let win = true;
               for (let nn = 0; nn < balls.length; ++nn) {
                 let i, j;[i, j] = hexFromCart(xn[nn], yn[nn]); // integer position vector
                 i = Math.round(i); j = Math.round(j);
                 if ((board[i + imax * j] & 0xF) != 4) {
-                  win = false; break;
+                  win = false; return;
                 }
               }
               if (win) {
                 mySound.play();
-                setMessage("Level Complete!");
+                setMessage("Level " + level + " complete!");
                 isAnimating = false;
               }
-
             }
+            //-------- Are there obstacles directly ahead of ball, or to L or R?
+            // [uL,vL] = hexCoordsRotate([u,v], +60):  [1,0] -> [1,1], [1,1] -> [0,1], [0,1] -> [-1,0]
+            // [uR,vR] = rotate([u,v], -60)
+            uL = u - v; vL = u;
+            uR = v; vR = v - u;
+            sF = board[(i + u) + imax * (j + v)];
+            sL = board[(i + uL) + imax * (j + vL)];
+            sR = board[(i + uR) + imax * (j + vR)];
+            if (sF == 2) { u = -u; v = -v;[vx[n], vy[n]] = cartFromHex(u, v); }
+            if (sR == 2) { u = uL; v = vL;[vx[n], vy[n]] = cartFromHex(u, v); }
+            if (sL == 2) { u = uR; v = vR;[vx[n], vy[n]] = cartFromHex(u, v); }
+          }
+        } // end if
 
-          }
-          //-------- Find integer velocity vector in hexagonal coordinates
-          [u, v] = hexFromCart(vx[n], vy[n]);
-          vmag = Math.sqrt(u ** 2 + v ** 2);
-          u = Math.round(u / vmag);
-          v = Math.round(v / vmag);
-          //-------- Are there obstacles directly ahead of ball, or to L or R?
-          // [uL,vL] = hexCoordsRotate([u,v], +60):  [1,0] -> [1,1], [1,1] -> [0,1], [0,1] -> [-1,0]
-          // [uR,vR] = rotate([u,v], -60)
-          uL = u - v; vL = u;
-          uR = v; vR = v - u;
-          sF = board[(i + u) + imax * (j + v)];
-          sL = board[(i + uL) + imax * (j + vL)];
-          sR = board[(i + uR) + imax * (j + vR)];
-          //if (n == 1) setMessage(sF + "  " + sL + "  " + sR)
-          if (sF == 2 || (sR == 2 && sL == 2)) {  // Bounce backwards
-            u = -u; v = -v;[vx[n], vy[n]] = cartFromHex(u, v);
-          }
-          else if (sR == 2) { u = uL; v = vL;[vx[n], vy[n]] = cartFromHex(u, v); } // Turn CCW
-          else if (sL == 2) { u = uR; v = vR;[vx[n], vy[n]] = cartFromHex(u, v); } // Turn CW
-        }
-      }
+      } // end for loop over balls
 
 
       //-------- Boilerplate
@@ -578,11 +557,10 @@
       const intersections = raycaster.intersectObjects(selectables, true);
       if (intersections.length > 0) {
         const object = intersections[0].object; // topmost object under click
-        // if (object.name == "BALL") { // user clicked a ball
-        //   resetBalls(); launchBalls();
-        // }
-        // else 
-        {  // user clicked a hex
+        if (object.name == "BALL") { // user clicked a ball
+          resetBalls(); launchBalls();
+        }
+        else {  // user clicked a hex
           let i, j;
           [i, j] = hexFromCart(object.position.x, object.position.y);
           i = Math.round(i);
