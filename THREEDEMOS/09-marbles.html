@@ -15,24 +15,24 @@
     }
 
     #msg1 {
+      z-index: 100;
       position: absolute;
       top: 24px;
       width: 100%;
       text-align: center;
       color: white;
-      z-index: 100;
       display: block;
       font-family: 'Titillium Web', sans-serif;
       font-size: 3rem;
     }
 
     #msg2 {
+      z-index: 100;
       position: absolute;
       top: 64px;
       width: 100%;
       text-align: center;
       color: white;
-      z-index: 100;
       display: block;
       font-family: monospace;
       font-size: 2rem;
@@ -41,8 +41,8 @@
     .button1 {
       z-index: 100;
       font-family: 'Titillium Web', sans-serif;
-      font-size: 2rem;
-      width: 20%;
+      font-size: 1.75rem;
+      width: 23%;
       text-align: center;
       margin: 0;
       padding: 0;
@@ -54,6 +54,50 @@
 <body class="body">
 
   <script type="module">
+    //================================
+    // SOUND 
+    // https://curtisrobinson.medium.com/how-to-auto-play-audio-in-safari-with-javascript-21d50b0a2765
+    //================================
+     var audioContext = new (window.AudioContext || window.webkitAudioContext)()
+    function loadSound(filename) {
+      var sound = { volume: 1, audioBuffer: null }
+      var ajax = new XMLHttpRequest()
+      ajax.open("GET", filename, true)
+      ajax.responseType = "arraybuffer"
+      ajax.onload = function () {
+        audioContext.decodeAudioData(
+          ajax.response,
+          function (buffer) {sound.audioBuffer = buffer},
+          function (error) { debugger }
+        )
+      }
+      ajax.onerror = function () { debugger }
+      ajax.send()
+      return sound
+    }
+    function playSound(sound) {
+      if (!sound.audioBuffer) return false
+      var source = audioContext.createBufferSource()
+      if (!source) return false
+      source.buffer = sound.audioBuffer
+      if (!source.start) source.start = source.noteOn
+      if (!source.start) return false
+      var gainNode = audioContext.createGain()
+      gainNode.gain.value = sound.volume
+      source.connect(gainNode)
+      gainNode.connect(audioContext.destination)
+      source.start(0)
+      sound.gainNode = gainNode
+      return true
+    }
+    function stopSound(sound) {
+      if (sound.gainNode) sound.gainNode.gain.value = 0
+    }
+    function setSoundVolume(sound, volume) {
+      sound.volume = volume
+      if (sound.gainNode) sound.gainNode.gain.value = volume
+    }
+    
     //================================
     // GRAPHICS 
     //================================
@@ -78,22 +122,11 @@
     var camera, scene, renderer, controls, group; // could allocate right here to make sure we never "new" again
 
     //================================
-    // GAME VARIABLES
-    //================================
-    var level = 0;
-    var levelName;        // name of current level
-    var tFractional = 0;  // fractional time elapsed since last "grid event"
-    var imax, jmax;       // board size (bounding parallelogram)
-    var board = [];       // array of integers representing state of each hex on the board
-    var xn = [], yn = [], zn = [];
-    var vx = [], vy = [], vz = [];   // ball velocity
-    const r = .5;         // ball radius (mainly for rendering, though)
-    var ww = new THREE.Vector3();  // workspace vector (to avoid having to make new THREE.Vectors())
-
-    //================================
     // PRELOAD AND PREPARE SOUNDS AND TEXTURES 
     //================================
-    const mySound = new Audio(); mySound.src = 'Tink.mp3';
+    var soundNothing = loadSound("nothing.wav")
+    var soundDing = loadSound("ding.wav")
+    var soundTock = loadSound("tock.mp3")
     const loader = new THREE.TextureLoader();
     //const woodTexture = loader.load('wood2.jpg');
     const marbleTexture = loader.load('marble1.jpg');
@@ -116,6 +149,19 @@
     const fileName = "level-maps.txt"; // user may need to clear browser cache if this file is edited...
     var fileContent = "";
     fetch(fileName).then((r) => { r.text().then((d) => { fileContent = d; readyToStart(); }) })
+
+    //================================
+    // GAME VARIABLES
+    //================================
+    var level = 0;
+    var levelName;        // name of current level
+    var tFractional = 0;  // fractional time elapsed since last "grid event"
+    var imax, jmax;       // board size (bounding parallelogram)
+    var board = [];       // array of integers representing state of each hex on the board
+    var xn = [], yn = [], zn = [];
+    var vx = [], vy = [], vz = [];   // ball velocity
+    const r = .5;         // ball radius (mainly for rendering, though)
+    var ww = new THREE.Vector3();  // workspace vector (to avoid having to make new THREE.Vectors())
 
     //================================
     // UTILITIES
@@ -282,7 +328,7 @@
     //================================
     function initGame() {
       document.removeEventListener("click", initGame);
-      mySound.play();
+      playSound(soundNothing); 
       window.addEventListener('resize', onResize);
       window.addEventListener('mousedown', onMouseDown);
       document.querySelector('#goButton').addEventListener('click', launchBalls);
@@ -503,7 +549,7 @@
           //-------- Is ball off-board, or on a void hex?
           if (i < 0 || i >= imax || j < 0 || j >= jmax || board[i + imax * j] == 0) {
             vx[n] = vy[n] = 0; vz[n] = -0.001;
-            mySound.play();
+            //playSound(soundTock);  // should play sound of falling into abyss
           }
           //-------- Is ball on the correct goal hex?
           if ((board[i + imax * j] & 0xF) == 4) {
@@ -527,7 +573,7 @@
                 }
               }
               if (win) {
-                mySound.play();
+                playSound(soundDing);
                 setMessage("Level Complete!");
                 isAnimating = false;
               }
@@ -551,9 +597,16 @@
           //if (n == 1) setMessage(sF + "  " + sL + "  " + sR)
           if (sF == 2 || (sR == 2 && sL == 2)) {  // Bounce backwards
             u = -u; v = -v;[vx[n], vy[n]] = cartFromHex(u, v);
+            playSound(soundTock);
           }
-          else if (sR == 2) { u = uL; v = vL;[vx[n], vy[n]] = cartFromHex(u, v); } // Turn CCW
-          else if (sL == 2) { u = uR; v = vR;[vx[n], vy[n]] = cartFromHex(u, v); } // Turn CW
+          else if (sR == 2) { // Turn CCW
+            u = uL; v = vL;[vx[n], vy[n]] = cartFromHex(u, v); 
+            playSound(soundTock);
+          } 
+          else if (sL == 2) {  // Turn CW
+            u = uR; v = vR;[vx[n], vy[n]] = cartFromHex(u, v); 
+            playSound(soundTock);
+          }
         }
       }
 
