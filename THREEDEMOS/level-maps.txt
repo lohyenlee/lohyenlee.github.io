@@ -20,11 +20,11 @@ cc111
 0000C
 -
 Level 3: Make a 180
-0001
-dd11
-1111
-D11
-01
+00001
+0dd11
+01111
+D111
+001
 -
 Level 4: Avoid the Void
 000111

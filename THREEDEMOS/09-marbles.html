@@ -48,7 +48,7 @@
       padding: 0;
       border-radius: 8px;
       /* border-style: outset; */
-      background: #EEE;
+      background: #CCC;
       color: black;
     }
   </style>
@@ -129,8 +129,10 @@
     // PRELOAD AND PREPARE SOUNDS AND TEXTURES 
     //================================
     var soundNothing = loadSound("nothing.wav")
-    var soundDing = loadSound("ding.wav")
+    var soundDing = loadSound("ding.mp3")
     var soundTock = loadSound("tock.mp3")
+    var soundFall = loadSound("fall.mp3")
+    var soundWin = loadSound("win.mp3")
     const loader = new THREE.TextureLoader();
     //const woodTexture = loader.load('wood2.jpg');
     const marbleTexture = loader.load('marble1.jpg');
@@ -540,6 +542,8 @@
 
         //-------- First snap to grid
         for (let n = 0; n < balls.length; ++n) {
+          if (vz[n]<0) continue;  // if ball is already falling, skip it
+
           [i1, j1] = hexFromCart(xn[n], yn[n]);
           i = Math.round(i1);
           j = Math.round(j1); // integer position vector
@@ -547,13 +551,15 @@
         }
         //-------- Now consider falling-into-voids and ball-obstacle collisions
         for (let n = 0; n < balls.length; ++n) {
+          if (vz[n]<0) continue;  // if ball is already falling, skip it
+
           [i1, j1] = hexFromCart(xn[n], yn[n]);
           i = Math.round(i1);
           j = Math.round(j1); // get integer position vector once again
           //-------- Is ball off-board, or on a void hex?
           if (i < 0 || i >= imax || j < 0 || j >= jmax || board[i + imax * j] == 0) {
             vx[n] = vy[n] = 0; vz[n] = -0.001;
-            //playSound(soundTock);  // should play sound of falling into abyss
+            playSound(soundFall);  // should play sound of falling into abyss
           }
           //-------- Is ball on the correct goal hex?
           if ((board[i + imax * j] & 0xF) == 4) {
@@ -564,6 +570,8 @@
             if (balls[n].material.color.getHex() == tiles[i + imax * j].material.color.getHex()) {
 
               tiles[i + imax * j].material.emissive.setHex(0x666666);
+              playSound(soundDing);
+              
               // Need to switch OFF the emissive to indicate that you only win if all balls
               // arrive at all goals simultaneously
               //-------- Are ALL balls on a goal hex? (Would be better to maintain a bool array)
@@ -577,7 +585,7 @@
                 }
               }
               if (win) {
-                playSound(soundDing);
+                playSound(soundWin);
                 setMessage("Level Complete!");
                 isAnimating = false;
               }
