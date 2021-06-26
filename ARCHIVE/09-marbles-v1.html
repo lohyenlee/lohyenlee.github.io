@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Marble game ....Yen Lee Loh </title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <style>
+    .body {
+      background-color: black;
+    }
+
+    #msg1 {
+      position: absolute;
+      top: 24px;
+      width: 100%;
+      text-align: center;
+      color: white;
+      z-index: 100;
+      display: block;
+      font-family: monospace;
+      font-size: 24px;
+    }
+
+    #msg2 {
+      position: absolute;
+      top: 64px;
+      width: 100%;
+      text-align: center;
+      color: white;
+      z-index: 100;
+      display: block;
+      font-family: monospace;
+      font-size: 16px;
+    }
+    
+    .button1 {
+      z-index: 100;
+      font-family: serif;
+      font-size: 24px;
+    }
+  </style>
+
+</head>
+
+<body class="body">
+
+  <script type="module">
+    //================================
+    // GRAPHICS 
+    //================================
+    //-------- Load THREE.js from CDN
+    //import * as THREE from 'https://cdn.skypack.dev/three@0.129.0';
+    //import { FlyControls } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/FlyControls.js';
+    //-------- Load THREE.js from current directory on a HTTP server (python3 -m http.server 8000)
+    import * as THREE from './three.module.js';
+    import { FlyControls } from './FlyControls.js';
+
+    const groundColors = [0x999999, 0x888888, 0x777777];
+    const obstacleColors = [0x9996633, 0x885522, 0x774411];
+    const clock = new THREE.Clock();
+    const mouse = new THREE.Vector2();
+    const raycaster = new THREE.Raycaster();
+    const tiles = []; // array of Objects representing hexagons
+    const balls = [];
+    const selectables = [];
+    var isAnimating = false;
+    var camera, scene, renderer, controls, group; // could allocate right here to make sure we never "new" again
+
+    //================================
+    // GAME VARIABLES
+    //================================
+    var level = 0;
+    var imax, jmax;  // board size (bounding parallelogram)
+    var board = [];      // array of integers representing state of each hex on the board
+    var xn = [], yn = [], zn = [];
+    var vx = [], vy = [], vz = [];   // ball velocity
+    var r = .5;     // ball radius (mainly for rendering, though)
+
+    //================================
+    // PRELOAD AND PREPARE SOUNDS AND TEXTURES 
+    //================================
+    const mySound = new Audio(); mySound.src = 'Tink.mp3';
+    const loader = new THREE.TextureLoader();
+    const woodTexture = loader.load('wood2.jpg', onLoad);
+    const marbleTexture = loader.load('marble1.jpg', onLoad);
+    const ballGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+    const hexagonGeometry = myPrismGeometry(6, 1.0 / Math.sqrt(3), 1, 1, Math.PI / 6);
+    const phongMaterial = new THREE.MeshPhongMaterial();
+    const arrowTexture = loader.load('arrow2.jpg', onLoad);
+    arrowTexture.offset.x = .5;
+    arrowTexture.offset.y = .5;
+    arrowTexture.center.x = 0;
+    arrowTexture.center.y = 0;
+    arrowTexture.wrapS = THREE.RepeatWrapping;
+    arrowTexture.wrapT = THREE.RepeatWrapping;
+    arrowTexture.repeat = new THREE.Vector2 (.4, .4);
+    const ambientLight = new THREE.AmbientLight(0x333333);
+    const dirLight = new THREE.DirectionalLight(0xCCCCCC, 1.0);
+    const spotLight = new THREE.SpotLight(0xFFFFFF, 0.25);
+    const backgroundColor = new THREE.Color(0x111111);
+    const boardString0 = `
+111111
+aa111A
+111111
+        `;
+    var levelMaps = [boardString0];
+    const fileName = "level-maps.txt"; // user may need to clear browser cache if this file is edited...
+    var fileContent = "";
+    fetch(fileName).then((r) => { r.text().then((d) => { fileContent = d; readyToStart(); }) })
+
+    //================================
+    // UTILITIES
+    //================================
+    function wipeArray(arr) { arr.splice(0, arr.length); }
+    function setMessage(str) { msg1.innerHTML = str; }
+    function setMessage2(str) { msg2.innerHTML = str; }
+    function markPoint(x, y, z) { //  Usage: markPoint(xCenter, yCenter, 0.1);   For debugging only!!!
+      let mesh = new THREE.Mesh(
+        new THREE.SphereGeometry(.1, 8, 8),
+        new THREE.MeshPhongMaterial()
+      );
+      mesh.position.set(x, y, z);
+      scene.add(mesh);
+
+    }
+    function onLoad(texture) { if (camera) renderer.render(scene, camera); }
+    function myPrismGeometry(nSides = 6, radius = 1, thickness = 1, extrudeSteps = 1, rotationAngle = 0) {
+      //-------- Construct regular polygon
+      const points = [];
+      for (let n = 0; n < nSides; ++n) {
+        let phi = 2 * Math.PI * n / nSides + rotationAngle;
+        points.push(new THREE.Vector2(radius * Math.cos(phi), radius * Math.sin(phi)));
+      }
+      const shape = new THREE.Shape(points);
+      //-------- Extrude along straight line
+      const extrudeSettings = { steps: extrudeSteps, depth: thickness, bevelEnabled: false };
+      return new THREE.ExtrudeGeometry(shape, extrudeSettings);
+    }
+    function addHexagon(i, j) {
+      let material = phongMaterial.clone(); // alow different color, but use same shader
+      material.color.setHex(groundColors[(i + j) % 3]);
+      const mesh = new THREE.Mesh(hexagonGeometry, material);
+      [mesh.position.x, mesh.position.y] = cartFromHex(i, j);
+      mesh.position.z = -1;
+      mesh.receiveShadow = true;
+      scene.add(mesh);
+      return mesh;
+    }
+    function setupBoard(mapString) {
+      const si = mapString.trim().split('\n');
+      jmax = si.length;
+      imax = Math.max(...(si.map(el => el.length)));
+      board.length = imax * jmax;
+      //-------- Make a first pass to determine types of hexes
+      for (let j = 0; j < jmax; ++j) {
+        for (let i = 0; i < imax; ++i) {
+          let c = si[jmax - 1 - j].charAt(i);
+          if (c == '0') board[i + imax * j] = 0;      // void
+          else if (c == '1') board[i + imax * j] = 1; // flat
+          else if (c == '2') board[i + imax * j] = 2; // obstacle
+          else if (c >= 'a' && c <= 'z') { board[i + imax * j] = 3; }// launchpad
+          else if (c >= 'A' && c <= 'Z') board[i + imax * j] = 4; // goal
+        }
+      }
+      //-------- Make a second pass to determine launch directions
+      for (let j = 0; j < jmax; ++j) {
+        for (let i = 0; i < imax; ++i) {
+          if (board[i + imax * j] == 3) { // if this is a launchpad...
+            // Examine adjacent hexes to determine launch direction
+            let k = 999;
+            if (board[(i + 1) + imax * j] == 3) {
+              board[(i + 1) + imax * j] = 1; k = 0;
+            }
+            else if (board[(i + 1) + imax * (j + 1)] == 3) {
+              board[(i + 1) + imax * (j + 1)] = 1; k = 1;
+            }
+            else if (board[(i + 0) + imax * (j - 1)] == 3) {
+              board[(i + 0) + imax * (j - 1)] = 1; k = 5;
+            }
+            if (k != 999) {
+              board[i + imax * j] |= (k << 4);
+              //alert(i + " , " + j + " ... k= " + k);
+            }
+          }
+        }
+      }
+    }
+    function raise(i, j) {
+      board[i + imax * j] = 2;
+      let object = tiles[i + imax * j];
+      object.material.color.setHex(obstacleColors[(i + j) % 3]);
+      object.scale.z = 1.75;
+    }
+    function lower(i, j) {
+      board[i + imax * j] = 1;
+      let object = tiles[i + imax * j];
+      object.material.color.setHex(groundColors[(i + j) % 3]);
+      object.scale.z = 1;
+    }
+    function fitCameraAroundRectangle(cameraFoV, cameraDownwardTilt, cameraAspect, xmin, xmax, ymin, ymax) {
+      let theta = cameraFoV / 2 * Math.PI / 180;
+      let alpha = cameraDownwardTilt * Math.PI / 180; // camera direction wrt horizontal
+      let xc = (xmin + xmax) / 2;
+      let yc = (ymin + ymax) / 2;
+      let w = xmax - xmin;
+      let h = ymax - ymin;
+      let Y = h / 2 * Math.sin(2 * alpha) / Math.sin(2 * theta);
+      let Z = (Y - h / 2) * Math.tan(alpha + theta);
+      let alphaTrue = Math.atan(Z / Y);
+      let d1 = Math.sqrt(Y ** 2 + Z ** 2);
+      let d2 = w * cameraAspect / 2 / Math.tan(theta);
+      let d;
+      if (d1 > d2) { d = d1; } // camera distance determined by vertical size
+      else { d = d2; alphaTrue = alpha; }  // determined by horizontal size
+      camera.fov = cameraFoV;
+      camera.aspect = 1 / cameraAspect;
+      camera.rotation.x = Math.PI / 2 - alpha;
+      camera.position.set(xc, yc - d * Math.cos(alphaTrue), d * Math.sin(alphaTrue));
+    }
+    function resetCamera() {
+      let xmin = 1e38, xmax = -1e38, ymin = 1e38, ymax = -1e38;
+      for (let i = 0; i < imax; ++i) {
+        for (let j = 0; j < jmax; ++j) {
+          if (board[i + imax * j] >= 1) { // we need a hex prism at this position
+            let x, y;
+            [x, y] = cartFromHex(i, j);
+            xmin = Math.min(xmin, x); xmax = Math.max(xmax, x);
+            ymin = Math.min(ymin, y); ymax = Math.max(ymax, y);
+          }
+        }
+      }
+      fitCameraAroundRectangle(50, 45, window.innerHeight / window.innerWidth,
+        xmin - 1.5, xmax + 1.5, ymin - 2, ymax + 5);
+      camera.updateProjectionMatrix();
+      //camera.position.set(0, 0, 100); camera.lookAt(0, 0, 0); // top view
+      // camera = new THREE.OrthographicCamera(
+      //   -5, 5,
+      //   5*window.innerHeight/window.innerWidth, -5*window.innerHeight/window.innerWidth,
+      //   1, 1000);
+      // camera.position.set(0, 0, 100);      
+    }
+
+
+    //================================
+    // PREPARE TO START
+    //================================
+    function readyToStart() {
+      loadLevelMaps();
+      
+      camera = new THREE.PerspectiveCamera(30, 1, 1, 1000);
+      scene = new THREE.Scene();
+      scene.background = backgroundColor;
+
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFShadowMap;
+      document.body.insertBefore(renderer.domElement, document.body.firstChild);
+
+      controls = new FlyControls(camera, renderer.domElement);
+      controls.movementSpeed = 10;
+      controls.domElement = renderer.domElement;
+      controls.rollSpeed = Math.PI / 24;
+      controls.autoForward = false;
+      controls.dragToLook = true;
+
+      setMessage("Click anywhere to start!");
+      document.addEventListener('click', initGame);
+    }
+    //================================
+    // INITIALIZE EVERYTHING FOR THE FIRST TIME
+    //================================
+    function initGame() {
+      document.removeEventListener("click", initGame);
+      mySound.play();
+      window.addEventListener('resize', onResize);
+      window.addEventListener('keydown', onKeyDown);
+      window.addEventListener('mousedown', onMouseDown);
+      document.querySelector('#goButton').addEventListener('click', launchBalls);
+      document.querySelector('#resetButton').addEventListener('click', resetGame);
+      document.querySelector('#prevLevelButton').addEventListener('click', prevLevel);
+      document.querySelector('#nextLevelButton').addEventListener('click', nextLevel);
+      resetGame();
+    }
+    function loadLevelMaps() {
+      if (fileContent == "") { alert("Level maps failed to load!"); return; }
+      levelMaps = fileContent.split('-');
+    }
+    function prevLevel() {
+      if (level <= 0) { setMessage("Level " + level + " is the first level!"); return; }
+      level -= 1;
+      resetGame();
+    }
+    function nextLevel() {
+      if (level >= levelMaps.length - 1) { setMessage("Level " + level + " is the last level!"); return; }
+      level += 1;
+      resetGame();
+    }
+    //================================
+    // RESET GAME WITHOUT 
+    //================================
+    function resetGame() {
+      //-------- DISPOSE OF EVERYTHING INCLUDING OLD SCENE AND OBJECTS
+      wipeArray(board); // this might be overkill
+      wipeArray(xn); wipeArray(yn); wipeArray(zn);
+      wipeArray(vx); wipeArray(vy); wipeArray(vz);
+      wipeArray(selectables); wipeArray(tiles); wipeArray(balls);
+      scene.traverse(function (obj) {
+        if (obj.type === 'Mesh') {
+          obj.geometry.dispose();
+          obj.material.dispose();
+        }
+      });
+      scene.remove.apply(scene, scene.children); // is this overkill now?
+      renderer.renderLists.dispose();
+      //-------- SETUP BOARD (mathematical representation)
+      setupBoard(levelMaps[level]);
+      setMessage("Level " + level);
+      //-------- SETUP TILES (GRAPHICS)
+      tiles.length = imax * jmax;
+      for (let i = 0; i < imax; ++i) {
+        for (let j = 0; j < jmax; ++j) {
+          if (board[i + imax * j] != 0) { // we need a hexagonal prism at this position
+            let tile = addHexagon(i, j);
+            tiles[i + imax * j] = tile;
+            selectables.push(tile);
+
+            //---- Now we need to set the properties of that prism
+            if (board[i + imax * j] == 2) { // obstacle hex
+              raise(i, j);
+            }
+            else if ((board[i + imax * j] & 0xF) == 3) { // launch hex
+              let k = (board[i + imax * j] >> 4);   // launch direction (0,1,2,3,4,5)
+              tiles[i + imax * j].material = phongMaterial.clone(); // may leak memory?
+              let tex2 = arrowTexture.clone();
+              tex2.rotation = k * Math.PI / 3; // going to need 6 differnent textures, one with each rotation      
+              tex2.needsUpdate = true;
+              tiles[i + imax * j].material.map = tex2;
+              tiles[i + imax * j].material.color.setHex(0x99FFFF);
+            }
+            else if (board[i + imax * j] == 4) { // goal hex
+              tiles[i + imax * j].material.color.setHex(0xFFFF99);
+            }
+          }
+        }
+      }
+      //-------- RESET CAMERA
+      resetCamera();
+      //-------- LIGHTS
+      scene.add(ambientLight);
+      dirLight.position.set(0, 0, 0);
+      dirLight.target.position.set(1, 1, -1);
+      dirLight.castShadow = true;
+      dirLight.shadow.camera.near = .1;
+      dirLight.shadow.camera.far = 1000;
+      dirLight.shadow.mapSize.width = 1024;
+      dirLight.shadow.mapSize.height = 1024;
+      scene.add(dirLight); scene.add(dirLight.target);
+      spotLight.position.set(0, 0, 4);
+      spotLight.target.position.set(2, 2, 0);//(xCenter, yCenter, 0);
+      spotLight.angle = Math.PI / 180 * 15;
+      spotLight.castShadow = true;
+      spotLight.shadow.camera.near = .1;
+      spotLight.shadow.camera.far = 1000;
+      spotLight.shadow.mapSize.width = 1024;
+      spotLight.shadow.mapSize.height = 1024;
+      scene.add(spotLight); scene.add(spotLight.target);
+      //-------- BALLS
+      resetBalls();
+      renderer.render(scene, camera);
+    }
+    function cartFromHex(i, j) {
+      return [i - 0.5 * j, 0.86602540378 * j];
+    }
+    function hexFromCart(x, y) {
+      return [x + 0.5773502691896258 * y, 1.1547005383792517 * y];
+    }
+    function resetBalls() {
+      for (let n = balls.length - 1; n >= 0; --n) { scene.remove(balls[n]); }
+      balls.length = 0;
+      for (let i = 0; i < imax; ++i) {
+        for (let j = 0; j < jmax; ++j) {
+          if ((board[i + imax * j] & 0xF) == 3) { // launch site
+
+            let ball = new THREE.Mesh(ballGeometry, new THREE.MeshPhongMaterial());
+            ball.material.map = marbleTexture;
+            ball.material.color.setHex (0x33FFFF); // should follow board[i+imax*j]&??? settings
+            ball.castShadow = true;
+            ball.name = "BALL"; // identifies this object as a ball (as opposed to a tile)
+            let x, y;
+            [x, y] = cartFromHex(i, j);
+            xn.push(x);
+            yn.push(y);
+            zn.push(.5);
+            ball.position.set(x, y, .5);
+            scene.add(ball);
+            balls.push(ball);
+            selectables.push(ball);
+            vx.push(0);
+            vy.push(0);
+            vz.push(0);
+          }
+        }
+      }
+    }
+    function launchBalls() {
+      for (let n = 0; n < balls.length; ++n) {
+        vx[n] = 1; // should be resetting velocities according to launch
+      }
+      clock.getDelta(); // reset clock?
+      isAnimating = true; requestAnimationFrame(animate);
+    }
+
+
+    function animate(timeCurrent) {
+      let shouldSnap = false;
+      const gameSpeed = 3;
+      let dt = clock.getDelta(); // time in seconds since last call to clock.getDelta()
+      dt = Math.min(dt, 0.05); // cap dt at some sensible value, so that ball doesn't go too far
+      setMessage2("FPS: " + Math.round(1/dt));
+
+      let ballsLeft = 0;
+      for (let n = 0; n < balls.length; ++n) if (zn[n] > -5) ballsLeft += 1;
+      if (ballsLeft == 0) { resetBalls(); isAnimating = false; }
+
+      for (let n = 0; n < balls.length; ++n) {
+
+        if (zn[n] < 0.5) {
+          //-------- BALL IS FALLING VERTICALLY
+          vx[n] = 0;
+          vy[n] = 0;
+          vz[n] -= 10.0 * dt; // accelerate downwards
+          xn[n] += vx[n] * gameSpeed * dt;
+          yn[n] += vy[n] * gameSpeed * dt;
+          zn[n] += vz[n] * gameSpeed * dt;
+          balls[n].position.set(xn[n], yn[n], zn[n]);
+        }
+        else {
+          //-------- BALL IS ROLLING WITHOUT SLIPPING
+          //-------- Determine nearest hex (i,j) to ball, and how near it is (distFromSite)
+          let i1, j1, i, j, distFromSite;
+          let u, v, vmag, uL, vL, uR, vR;
+          let sF, sL, sR; // board state in forward, left, and right directions
+
+          [i1, j1] = hexFromCart(xn[n], yn[n]); // integer position vector
+          i = Math.round(i1);
+          j = Math.round(j1);
+          distFromSite = Math.sqrt((i1 - i) ** 2 + (j1 - j) ** 2);
+
+          if (distFromSite < .03) {
+            //-------- Find integer velocity vector in hexagonal coordinates
+            [u, v] = hexFromCart(vx[n], vy[n]);
+            vmag = Math.sqrt(u ** 2 + v ** 2);
+            u = Math.round(u / vmag);
+            v = Math.round(v / vmag);
+            //-------- Is ball off-board, or on a void hex?
+            if (i < 0 || i >= imax || j < 0 || j >= jmax || board[i + imax * j] == 0) {
+              vx[n] = vy[n] = 0; vz[n] = -0.001; shouldSnap = true;
+              mySound.play();
+            }
+            //-------- Is ball on a goal hex?
+            if (board[i + imax * j] == 4) {
+              tiles[i + imax * j].material.color.setHex(0x99FF99); // how would we make this temporary?
+              mySound.play();
+              setMessage("Level " + level + " complete!");
+            }
+            //-------- Are there obstacles directly ahead of ball, or to L or R?
+            // [uL,vL] = hexCoordsRotate([u,v], +60):  [1,0] -> [1,1], [1,1] -> [0,1], [0,1] -> [-1,0]
+            // [uR,vR] = rotate([u,v], -60)
+            uL = u - v; vL = u;
+            uR = v; vR = v - u;
+            sF = board[(i + u) + imax * (j + v)];
+            sL = board[(i + uL) + imax * (j + vL)];
+            sR = board[(i + uR) + imax * (j + vR)];
+            if (sF == 2) { u = -u; v = -v;[vx[n], vy[n]] = cartFromHex(u, v); shouldSnap = true; }
+            if (sR == 2) { u = uL; v = vL;[vx[n], vy[n]] = cartFromHex(u, v); shouldSnap = true; }
+            if (sL == 2) { u = uR; v = vR;[vx[n], vy[n]] = cartFromHex(u, v); shouldSnap = true; }
+          }
+          if (shouldSnap) {
+            [xn[n], yn[n]] = cartFromHex(i, j);
+          }
+          xn[n] += vx[n] * gameSpeed * dt;
+          yn[n] += vy[n] * gameSpeed * dt;
+          zn[n] += vz[n] * gameSpeed * dt;
+          balls[n].position.set(xn[n], yn[n], zn[n]);
+          {
+            let vv = new THREE.Vector3(-vy[n], vx[n], 0); // might leak
+            balls[n].rotateOnWorldAxis(vv.normalize(), gameSpeed * dt * vv.length() / r);
+          }
+
+          spotLight.target.position.set (xn[0], yn[0], zn[0]);
+        }
+
+      }
+
+
+      //-------- Boilerplate
+      controls.update(dt);
+      renderer.render(scene, camera);
+      if (isAnimating) requestAnimationFrame(animate);
+    }
+
+    function onResize() {
+      resetCamera();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.render(scene, camera);
+    }
+
+    function onKeyDown(event) {
+      // switch (String.fromCharCode(event.keyCode)) {
+      //   case 'I': vx = 0; vy = +1; break;
+      //   case 'J': vx = -1; vy = 0; break;
+      //   case 'K': vx = 0; vy = -1; break;
+      //   case 'L': vx = +1; vy = 0; break;
+      // }
+    }
+
+    function onMouseDown(event) {
+      event.preventDefault();
+      mouse.x = (event.offsetX / window.innerWidth) * 2 - 1;  //clientX is bad
+      mouse.y = - (event.offsetY / window.innerHeight) * 2 + 1; //offsetX is exptal
+      raycaster.setFromCamera(mouse, camera);
+      const intersections = raycaster.intersectObjects(selectables, true);
+      if (intersections.length > 0) {
+        const object = intersections[0].object; // topmost object under click
+        if (object.name == "BALL") { //==========  alert ("YOU ClICKED BALL!");
+          resetBalls(); launchBalls();
+        }
+        else {
+          let i, j;
+          [i, j] = hexFromCart(object.position.x, object.position.y);
+          i = Math.round(i);
+          j = Math.round(j);
+          if (board[i + imax * j] == 1) { raise(i, j); }
+          else if (board[i + imax * j] == 2) { lower(i, j); }
+        }
+      }
+      renderer.render(scene, camera);
+    }
+
+  </script>
+
+  <div id="msg1">Loading ...</div>
+  <div id="msg2"></div>    <!-- Message box 2]  -->
+  <div
+    style="
+  z-index: 100; 
+  display: inline; font-size: 24px; font-family: 'serif'; position: absolute; bottom: 20px; width: 100%; text-align: center;">
+    <button id="prevLevelButton" class="button1"> &lt; </button>
+    <button id="goButton" class="button1">Go</button>
+    <button id="resetButton" class="button1">Reset</button>
+    <button id="nextLevelButton" class="button1"> &gt; </button>
+  </div>
+
+  <!-- Need to have textures on LAUNCH hexes showing initGameial position(s) and initGameial velocit(ies) of balls. -->
+
+</body>
+
+</html>

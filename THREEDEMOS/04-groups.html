@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<!--  To run this locally on a Mac or Linux computer:
+  In a terminal:   python3 -m http.server
+  In the browser:  http://localhost:8000/THREEDEMOS    -->
+
+<head>
+  <meta charset="utf-8">
+  <title>WebGL Demo edited by YLL using three.js </title>
+
+<body>
+
+  <script type="module">
+    import * as THREE from './three.module.js';
+
+    let camera, scene, renderer;
+    let group1, mesh1, mesh2;
+
+    init();
+    
+    function init() {
+      const loader = new THREE.TextureLoader();
+
+      camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.001, 100);
+      camera.position.z = 10;
+      scene = new THREE.Scene();
+
+      mesh1 = new THREE.Mesh(
+        new THREE.SphereGeometry(2.0, 32, 32),
+        new THREE.MeshPhongMaterial({ color: 0x996633 })
+      );
+
+      mesh2 = new THREE.Mesh(
+        new THREE.SphereGeometry(2.0, 32, 32),
+        new THREE.MeshPhongMaterial()
+      );
+      mesh2.material.map = loader.load('earthmap1k.jpg');
+      mesh2.material.bumpMap = loader.load('earthbump1k.jpg');
+      mesh2.material.bumpScale = 0.05;
+      mesh2.material.specularMap = loader.load('earthspec1k.jpg');
+      mesh2.material.specular = new THREE.Color(0x222222);
+      mesh2.position.x = 5.0;
+
+      group1 = new THREE.Group();
+      group1.attach(mesh1);
+      group1.attach(mesh2);
+      scene.add(group1);
+
+      let light = new THREE.PointLight(0xFFFFFF);
+      light.position.set(-10, 15, 50);
+      scene.add(light);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      window.addEventListener('resize', onWindowResize);
+
+      requestAnimationFrame(animate);
+    }
+
+  
+    var timeStart = 0; // cannot use let
+    var timePrev = 0; // cannot use let?
+    function animate(timeCurrent) {
+      if (timeStart == 0) timeStart = timeCurrent;
+      const timeSinceStart = timeCurrent - timeStart; // in milliseconds
+      const timeSincePrev = timeSinceStart - timePrev; // in milliseconds
+      timePrev = timeSinceStart;
+
+      const linearVel = .1; 
+      const angVel = Math.PI / 180.0 * 5; // 5 degrees per second
+      group1.position.y += linearVel * timeSincePrev * 0.001;
+      mesh1.rotation.y += angVel * timeSincePrev * 0.001;
+      mesh2.rotation.y += angVel * timeSincePrev * 0.001;
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+    
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      render();
+    }
+
+    
+
+  </script>
+  </head>
+
+  <div>
+    See instructions in the HTML source code.
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Hello world </title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+</head>
+
+<body class="body">
+
+  <script type="module">
+
+    //================================
+    // GRAPHICS 
+    //================================
+    //-------- Load THREE.js from CDN
+    //import * as THREE from 'https://cdn.skypack.dev/three@0.129.0';
+    //import { FlyControls } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/FlyControls.js';
+    //-------- Load THREE.js from current directory on a HTTP server (python3 -m http.server 8000)
+    import * as THREE from './three.module.js';
+    import { FlyControls } from './FlyControls.js';
+
+    //=======================================================
+    // INITIALIZATION (ONE-TIME)
+    // These steps involve allocating new objects
+    // and modifying data structures such as the scene graph.
+    // These operations are expensive and memory-leak-prone.
+    // Therefore we do them only once.
+    //=======================================================
+    //-------- TEXTURE LOADER
+    const loader = new THREE.TextureLoader();
+    const wood1 = loader.load('wood1.jpg');
+    const wood2 = loader.load('wood2.jpg');
+    const wood3 = loader.load('wood3.jpg');
+    const marble1 = loader.load('marble1.jpg');
+    const earthMap = loader.load('earthmap1k.jpg');
+    const earthBump = loader.load('earthbump1k.jpg');
+    const earthSpec = loader.load('earthspec1k.jpg');
+    //-------- COLORS
+    const backgroundColor = new THREE.Color(0x111111);
+    //-------- CAMERA, SCENE, RENDERER
+    const camera = new THREE.PerspectiveCamera(50, 768 / 512, 0.001, 100);
+    const scene = new THREE.Scene(); scene.background = backgroundColor;
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    document.body.insertBefore(renderer.domElement, document.body.firstChild);
+    //-------- CLOCK (NEEDED FOR CONTROLS TO WORK PROPERLY)
+    const clock = new THREE.Clock();
+    //-------- CONTROLS
+    const controls = new FlyControls(camera, renderer.domElement);
+    //-------- LIGHTS
+    const ambientLight = new THREE.AmbientLight(0x333333);
+    const dirLight = new THREE.DirectionalLight(0xFFFFFF, 0.7);
+    const spotLight = new THREE.SpotLight(0xFFFFCC, 0.5);
+    scene.add(ambientLight);
+    scene.add(dirLight); scene.add(dirLight.target);
+    scene.add(spotLight); scene.add(spotLight.target);
+    //-------- PERMANENT MESHES
+    let ground, box, ball, tube;
+    {
+      const geometry = new THREE.PlaneGeometry(6, 4, 10, 10);
+      const material = new THREE.MeshPhongMaterial(); 
+      material.color.setHex(0x339933);
+      material.side = THREE.DoubleSide;
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.receiveShadow = true;
+      scene.add(mesh);
+      ground = mesh;
+    }
+    {
+      const geometry = new THREE.BoxGeometry(1, 1, 1);
+      const material = new THREE.MeshPhongMaterial(); material.map = wood1;
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.x = -2;
+      mesh.position.z = .5;
+      mesh.castShadow = true;
+      scene.add(mesh);
+      box = mesh;
+    }
+    {
+      const geometry = new THREE.SphereGeometry(.5, 32, 32);
+      const material = new THREE.MeshPhongMaterial();
+      material.map = earthMap;
+      material.bumpMap = earthBump;
+      material.bumpScale = 0.05*10;
+      material.specularMap = earthSpec;
+      material.specular = new THREE.Color(0x222222);
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.x = -2;
+      mesh.position.z = 1;
+      mesh.position.z = 1.5;
+      mesh.castShadow = true;
+      scene.add(mesh);
+      ball = mesh;
+    }
+    {
+      const geometry = new THREE.TorusGeometry(.5, .2, 32, 32);
+      const material = new THREE.MeshPhongMaterial(); material.map = wood2;
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.x = -2;
+      mesh.position.z = 2.5;
+      mesh.castShadow = true;
+      scene.add(mesh);
+      tube = mesh;
+    }
+    {
+      const geometry = new THREE.CylinderGeometry(.5, .2, 2, 32);
+      const material = new THREE.MeshPhongMaterial(); material.map = marble1;
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.x = 2;
+      mesh.position.z = 1;
+      mesh.rotation.x = Math.PI / 2;
+      mesh.castShadow = true;
+      scene.add(mesh);
+    }
+    //=======================================================
+    // RE-INITIALIZATION
+    // These steps do not require new memory allocation.
+    // This code may be placed in a "reInit()" function.
+    //=======================================================
+    document.body.background = backgroundColor;
+    camera.position.x = 0;
+    camera.position.y = -5;
+    camera.position.z = 4;
+    camera.lookAt(0, 0, 1);
+    camera.position.x = .3;
+    // Set camera position and orientation in this sequence
+    // to ensure correct vertical orientation
+    //camera.updateProjectionMatrix (); // this might be necessary
+
+    dirLight.position.set(-3, -1, 5);
+    dirLight.target.position.set(0, 0, 0);
+    dirLight.castShadow = true;
+    dirLight.shadow.camera.near = .1;
+    dirLight.shadow.camera.far = 1000;
+    dirLight.shadow.mapSize.width = 1024;
+    dirLight.shadow.mapSize.height = 1024;
+
+    spotLight.position.set(4, -1, 7);
+    spotLight.target.position.set(-1, 0, 0);
+    spotLight.angle = Math.PI / 180 * 10;
+    spotLight.castShadow = true;
+    spotLight.shadow.camera.near = .1;
+    spotLight.shadow.camera.far = 1000;
+    spotLight.shadow.mapSize.width = 1024;
+    spotLight.shadow.mapSize.height = 1024;
+
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(768, 512); //window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
+    controls.movementSpeed = 10;
+    controls.domElement = renderer.domElement;
+    controls.rollSpeed = Math.PI / 24;
+    controls.autoForward = false;
+    controls.dragToLook = true;
+    //=======================================================
+    // LAUNCH THE MAIN LOOP
+    //=======================================================
+    //renderer.render(scene, camera); // do a one-shot render
+    clock.getDelta(); // set clock
+    requestAnimationFrame(animate); // start the animation loop
+    //================================
+    // THE ANIMATE FUNCTION
+    //================================
+    var t = 0;
+    function animate() {
+      let dt = clock.getDelta(); // time in seconds since last call to clock.getDelta()
+      controls.update(dt);
+      t += dt;
+      box.rotation.z += 1.0*dt;
+      ball.rotation.z += 1.0*dt;
+      tube.rotation.y += 1.0*dt;
+      spotLight.target.position.y = 1.0 * Math.sin(0.3*t);
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+
+  </script>
+
+
+  <p>
+    To run this locally on a Mac or Linux computer, first launch a terminal and type
+    <code>python3 -m http.server</code>.
+    Then point a browser at the URL
+    <a href="http://localhost:8000/THREEDEMOS">http://localhost:8000/THREEDEMOS</a>
+    or whatever is the name of the folder containing this HTML file.
+  </p>
+  <p>Use the FlyControls to navigate (Q,W,E,R,A,S,D,F, and arrow keys). </p>
+
+</body>
+
+</html>

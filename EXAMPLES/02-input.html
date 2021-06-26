@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>HTML5 Demo</title>
+</head>
+
+<body>
+
+  <!--======== HTML CODE ========-->
+  <h1> Math.sqrt and toFixed </h1>
+  <p> Type a number into the box, then press Enter. </p>
+
+  <p>
+    <label style="display: inline-block; width: 10em;" for="input1"> Enter the value of x: </label>
+    <input id="input1" placeholder="Enter text"></input>
+  </p>
+
+
+  <p>
+    <label style="display: inline-block; width: 10em;" for="output2"> You typed: </label>
+    <span id="output2">asdfasdf</span>
+  </p>
+
+  <p>
+    <label style="display: inline-block; width: 10em;" for="output1"> The square root of x is: </label>
+    <span id="output1">asdfasdf</span>
+  </p>
+
+
+  <p id="values"></p>
+
+  <!--======== JAVASCRIPT CODE ========-->
+  <script>
+
+    input1.addEventListener("input", onInput);
+    input1.addEventListener("change", onChange);
+
+    function onInput(e) {
+      output2.innerHTML = e.target.value + "    (inputType: " + e.inputType + ")";
+    }
+    function onChange() {
+      //var objInput = document.getElementById ("objInput");
+      let x = parseFloat(input1.value);
+      output1.innerHTML = Math.sqrt(x).toFixed(3);
+    }
+
+  </script>
+</body>
+
+</html>

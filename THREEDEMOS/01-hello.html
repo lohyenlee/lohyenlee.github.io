@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Hello world </title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+</head>
+
+<body class="body">
+
+  <script type="module">
+
+    //================================
+    // GRAPHICS 
+    //================================
+    //-------- Load THREE.js from CDN
+    //import * as THREE from 'https://cdn.skypack.dev/three@0.129.0';
+    //import { FlyControls } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/FlyControls.js';
+    //-------- Load THREE.js from current directory on a HTTP server (python3 -m http.server 8000)
+    import * as THREE from './three.module.js';
+    import { FlyControls } from './FlyControls.js';
+
+    //=======================================================
+    // INITIALIZATION (ONE-TIME)
+    // These steps involve allocating new objects
+    // and modifying data structures such as the scene graph.
+    // These operations are expensive and memory-leak-prone.
+    // Therefore we do them only once.
+    //=======================================================
+    //-------- COLORS
+    const backgroundColor = new THREE.Color(0x111111);
+    //-------- CAMERA, SCENE, RENDERER
+    const camera = new THREE.PerspectiveCamera(50, 768/512, 0.001, 100);
+    const scene = new THREE.Scene(); scene.background = backgroundColor;
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    document.body.insertBefore(renderer.domElement, document.body.firstChild);
+    //-------- CLOCK (NEEDED FOR CONTROLS TO WORK PROPERLY)
+    const clock = new THREE.Clock();
+    //-------- CONTROLS
+    const controls = new FlyControls(camera, renderer.domElement);
+    //-------- OBJECTS (PERMANENT ONES)
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const material = new THREE.MeshNormalMaterial();  //THREE.PhongMaterial ();
+    const mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+    //=======================================================
+    // RE-INITIALIZATION
+    // These steps do not require new memory allocation.
+    // This code may be placed in a "reInit()" function.
+    //=======================================================
+    document.body.background = backgroundColor;
+    camera.position.x = 0;
+    camera.position.y = 2;
+    camera.position.z = 3;
+    camera.lookAt(0, 0, 0);
+    camera.position.x = 1; // There is a good reason for doing things in this sequence
+    //camera.updateProjectionMatrix (); // this might be necessary
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(768, 512); //window.innerWidth, window.innerHeight);
+    controls.movementSpeed = 10;
+    controls.domElement = renderer.domElement;
+    controls.rollSpeed = Math.PI / 24;
+    controls.autoForward = false;
+    controls.dragToLook = true;
+    //=======================================================
+    // LAUNCH THE MAIN LOOP
+    //=======================================================
+    //renderer.render(scene, camera); // do a one-shot render
+    clock.getDelta(); // set clock
+    requestAnimationFrame(animate); // start the animation loop
+    //================================
+    // THE ANIMATE FUNCTION
+    //================================
+    function animate() {
+      let dt = clock.getDelta(); // time in seconds since last call to clock.getDelta()
+      controls.update(dt);
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+
+  </script>
+
+
+  <p>
+    To run this locally on a Mac or Linux computer, first launch a terminal and type
+    <code>python3 -m http.server</code>.
+    Then point a browser at the URL
+    <a href="http://localhost:8000/THREEDEMOS">http://localhost:8000/THREEDEMOS</a>
+    or whatever is the name of the folder containing this HTML file.
+  </p>
+  <p>Use the FlyControls to navigate (Q,W,E,R,A,S,D,F, and arrow keys). </p>
+
+</body>
+
+</html>

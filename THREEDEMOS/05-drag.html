@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>three.js webgl - drag controls - edited by YLL </title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+</head>
+
+<body>
+
+  <div id="info">
+    ASDFSDFASF
+  </div>
+
+
+  <script type="module">
+    //-------- Load THREE.js from CDN
+    //import * as THREE from 'https://cdn.skypack.dev/three@0.129.0';
+    //import { DragControls } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/DragControls.js';
+
+    //-------- Load THREE.js from localhost (must be running server)
+    import * as THREE from './three.module.js';
+    import { DragControls } from './DragControls.js';
+    // the above doesn't work in Safari for weird reason -- Safari tries to look in the "build" directory
+
+    let camera, scene, renderer, controls, group;
+    let isDragging = false;
+    const mouse = new THREE.Vector2();
+    const raycaster = new THREE.Raycaster();
+    const objects = [];
+
+    init();
+
+    function init() {
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xCCCCCC);
+      scene.add(new THREE.AmbientLight(0x333333));
+
+      const light = new THREE.SpotLight(0xFFFFFF, 1.5);
+      light.position.set(0, 0, 100);
+      light.angle = Math.PI / 9;
+
+      light.castShadow = true;
+      light.shadow.camera.near = 1;
+      light.shadow.camera.far = 1000;
+      light.shadow.mapSize.width = 1024;
+      light.shadow.mapSize.height = 1024;
+
+      scene.add(light);
+      scene.add(light.target);// not sure if this is really needed
+
+      camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+      camera.position.set(0, -30, 10);
+      camera.lookAt(0, 0, 5);
+
+      //group = new THREE.Group();
+      //scene.add(group);
+
+      const geometry = new THREE.SphereGeometry(5, 24, 24);
+
+      for (let i = 0; i < 5; ++i) {
+
+        const object = new THREE.Mesh(
+          geometry,
+          new THREE.MeshPhongMaterial({ color: 0x6666CC })
+        );
+        object.position.x = (Math.random() - .5) * 20;
+        object.position.y = Math.random() * 1 - 2;
+        object.position.z = i * 3;
+        // object.rotation.x = Math.random() * .6;
+        object.scale.z = .3;
+
+        object.castShadow = true;
+        object.receiveShadow = true;
+
+        scene.add(object);
+        objects.push(object);
+      }
+
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFShadowMap;
+
+      //document.body.appendChild(renderer.domElement);
+      document.body.insertBefore(renderer.domElement, document.body.firstChild);
+
+      controls = new DragControls([...objects], camera, renderer.domElement);
+      controls.addEventListener('drag', onDrag);
+      controls.addEventListener('dragend', onDragEnd);
+
+      window.addEventListener('resize', onWindowResize);
+      document.addEventListener('click', onClick);
+      window.addEventListener('keydown', onKeyDown);
+      window.addEventListener('keyup', onKeyUp);
+
+      render();
+    }
+
+    function onDrag() { isDragging = true; render(); }
+    function onDragEnd() { isDragging = false; }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      render();
+    }
+
+    function onKeyDown(event) {
+      //enableSelection = (event.keyCode === 16) ? true : false;
+      if (event.keyCode == 65) {camera.position.x -= 1; render();}
+      else {camera.position.x += 1; render();}
+    }
+
+    function onKeyUp() {
+      //enableSelection = false;
+    }
+
+    function onClick(event) {
+      event.preventDefault();
+      if (isDragging == true) return;// need to somehow catch thi.. before .. or just do it on mousedown
+
+      mouse.x = (event.offsetX / window.innerWidth) * 2 - 1;  //clientX is bad
+      mouse.y = - (event.offsetY / window.innerHeight) * 2 + 1; //offsetX is exptal
+      raycaster.setFromCamera(mouse, camera);
+
+      const intersections = raycaster.intersectObjects(objects, true);
+      if (intersections.length > 0) {
+        const object = intersections[0].object; // topmost object under click
+        object.material.color.set(0x7FFFFF - object.material.color.getHex());  //.emissive.set
+      }
+
+      render();
+    }
+
+    function render() {
+      renderer.render(scene, camera);
+    }
+
+  </script>
+
+</body>
+
+</html>
