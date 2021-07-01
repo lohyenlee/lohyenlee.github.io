@@ -8,10 +8,33 @@
 
   <title>Hexball by Yen Lee Loh </title>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <meta name="viewport" content="width=device-width, height=device-height, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
   <style>
     .body {
       background-color: black;
+    }
+
+    h1 {
+      font-size: 20vmin; padding: 0px; margin: 2vmin;
+    }
+
+    h2 {
+      font-size: 10vmin; padding: 0px; margin: 0vmin;
+    }
+    h3 {
+      font-size: 6vmin;  padding: 0px; margin: 2vmin;
+    }
+
+    p {
+      font-size: 4vmin; text-align: center; width: 100%;
+    }
+
+    #splash {
+      width: 80%; margin: auto; text-align: center;
+      vertical-align: middle;
+      color: #CFF;
+      font-family: 'Titillium Web', sans-serif;
+      text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black, 4px 4px 8px #999;
     }
 
     #msg1 {
@@ -134,12 +157,13 @@
     var soundFall = loadSound("fall.mp3")
     var soundWin = loadSound("win.mp3")
     const loader = new THREE.TextureLoader();
-    //const woodTexture = loader.load('wood2.jpg', render);
-    const marbleTexture = loader.load('marble1.jpg', render);  // doesn't always work --- need to queue properly?
+    var newTextureWasLoaded = false;
+    function onLoad() { newTextureWasLoaded = true; }
+    const marbleTexture = loader.load('marble1.jpg', onLoad);  // doesn't always work --- need to queue properly?
     const ballGeometry = new THREE.SphereGeometry(0.5, 32, 32);
     const hexagonGeometry = myPrismGeometry(6, 1.0 / Math.sqrt(3), 1, 1, Math.PI / 6);
     const phongMaterial = new THREE.MeshPhongMaterial();
-    const arrowTexture = loader.load('arrow2.jpg', render);
+    const arrowTexture = loader.load('arrow2.jpg', onLoad);
     arrowTexture.offset.x = .5;
     arrowTexture.offset.y = .5;
     arrowTexture.center.x = 0;
@@ -215,7 +239,7 @@
       for (let j = 0; j < jmax; ++j) {
         for (let i = 0; i < imax; ++i) {
           let c = si[jmax - 1 - j].charAt(i);
-          if (c == '1' || c=='.') board[i + imax * j] = 1; // flat
+          if (c == '1' || c == '.') board[i + imax * j] = 1; // flat
           else if (c == '2') board[i + imax * j] = 2; // obstacle
           else if (c >= 'a' && c <= 'z') { // launchpad
             let ballNum = c.charCodeAt(0) - 'a'.charCodeAt(0);
@@ -318,7 +342,6 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFShadowMap;
-      document.body.insertBefore(renderer.domElement, document.body.firstChild);
 
       controls = new FlyControls(camera, renderer.domElement);
       controls.movementSpeed = 10;
@@ -327,16 +350,21 @@
       controls.autoForward = false;
       controls.dragToLook = true;
 
-      //setMessage("Click anywhere to start!");
-      //document.addEventListener('click', initGame);
-      initGame();
+      //      setMessage("Click anywhere to start!");
+      document.addEventListener('click', initGame);
+      //initGame();
     }
-    //================================
+    //==========================================
     // INITIALIZE EVERYTHING FOR THE FIRST TIME
-    //================================
-    function initGame() {
+    //==========================================
+    function initGame() {      
       document.removeEventListener("click", initGame);
+      document.getElementById("msg1").style.display = 'inline';
+      document.getElementById("msg2").style.display = 'inline';
+      document.getElementById("controls").style.display = 'block';
       playSound(soundNothing);
+      document.body.insertBefore(renderer.domElement, document.body.firstChild);
+      document.getElementById("splash").style.display = 'none';
       window.addEventListener('resize', onResize);
       window.addEventListener('mousedown', onMouseDown);
       document.querySelector('#goButton').addEventListener('click', launchBalls);
@@ -359,9 +387,9 @@
       level += 1;
       resetGame();
     }
-    //================================
-    // RESET GAME WITHOUT 
-    //================================
+    //========================================================
+    // RESET GAME WITH MINIMAL "new" AND "dispose" OPERATIONS
+    //========================================================
     function resetGame() {
       //-------- DISPOSE OF EVERYTHING INCLUDING OLD SCENE AND OBJECTS
       wipeArray(board); // this might be overkill
@@ -657,12 +685,18 @@
 
   </script>
 
-  <div id="msg1">Loading ...</div>
-  <div id="msg2"></div> <!-- Message box 2]  -->
-  <div
-    style="
-  z-index: 100; 
-  display: inline; font-size: 24px; font-family: 'serif'; position: absolute; bottom: 8px; width: 100%; text-align: center;">
+  <div id="splash">
+    <h1> Hexball </h1>
+    <h3> A puzzle game by</h3>
+    <h2> Yen Lee Loh</h2>
+    <br />
+    <p> Raise or lower the terrain to guide the balls to the goals.  Click anywhere to start!</p>
+  </div>
+  <div id="msg1" style="display: none;">Loading ...</div>
+  <div id="msg2" style="display: none;"></div> <!-- Message box 2]  -->
+  <div id="controls" style="
+  z-index: 100; display: none;
+   font-size: 24px; font-family: 'serif'; position: absolute; bottom: 8px; width: 100%; text-align: center;">
     <button id="prevLevelButton" class="button1"> &lt; </button>
     <button id="goButton" class="button1">&nbsp;&nbsp;Go&nbsp;&nbsp;</button>
     <button id="resetButton" class="button1">Reset</button>
