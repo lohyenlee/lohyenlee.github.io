@@ -387,7 +387,8 @@
     }
     function loadLevelMaps() {
       if (fileContent == "") { alert("Level maps failed to load!"); return; }
-      levelMaps = fileContent.split(/---/);
+      //levelMaps = fileContent.split(/---/);
+      levelMaps = fileContent.split(/\-\-\-/);
     }
     function prevLevel() {
       if (level <= 0) { /*setMessage("Level " + level + " is the first level!"); */ return; }
