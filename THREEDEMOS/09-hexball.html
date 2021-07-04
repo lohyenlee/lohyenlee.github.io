@@ -177,14 +177,14 @@
     const ballGeometry = new THREE.SphereGeometry(0.5, 32, 32);
     const hexagonGeometry = myPrismGeometry(6, 1.0 / Math.sqrt(3), 1, 1, Math.PI / 6);
     const phongMaterial = new THREE.MeshPhongMaterial();
-    const arrowTexture = loader.load('arrow2.jpg', onLoad);
+    const arrowTexture = loader.load('arrow.jpg', onLoad);
     arrowTexture.offset.x = .5;
     arrowTexture.offset.y = .5;
     arrowTexture.center.x = 0;
     arrowTexture.center.y = 0;
     arrowTexture.wrapS = THREE.RepeatWrapping;
     arrowTexture.wrapT = THREE.RepeatWrapping;
-    arrowTexture.repeat = new THREE.Vector2(.4, .4);
+    arrowTexture.repeat = new THREE.Vector2(1, 1);
     const ambientLight = new THREE.AmbientLight(0x333333);
     const dirLight = new THREE.DirectionalLight(0xCCCCCC, 1.0);
     const spotLight = new THREE.SpotLight(0xFFFFFF, 0.25);
