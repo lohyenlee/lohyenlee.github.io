@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+
+<body onload="init()">
+
+  <script>
+
+    function drawLine(ctx, r1, r2) {
+      ctx.beginPath();
+      ctx.moveTo(...r1);
+      ctx.lineTo(...r2);
+      ctx.stroke();
+    }
+    function fillCircle(ctx, x, y, radius) {
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
+      ctx.fill();
+    }
+
+    let canvas, ctx;
+    let x0, y0;
+
+    function init() {
+      canvas = document.createElement("canvas");
+      canvas.width = 800;
+      canvas.height = 512;
+      canvas.style.background = "#CCC";
+      canvas.style.borderStyle = "solid";
+      canvas.style.borderWidth = "20px";
+      ctx = canvas.getContext("2d");
+      frameNo = 0;
+      xPivot = canvas.width / 2;
+      yPivot = 0;
+      ctx.font = "10px Arial";
+      document.body.insertBefore(canvas, document.body.childNodes[0]);
+      canvas.addEventListener("mousedown", doMouseDown, false);
+    }
+
+    function doMouseDown(event) {
+      x = event.offsetX;  //event.pageX;
+      y = event.offsetY;  //event.pageY;      
+      ctx.fillStyle = "red";
+      fillCircle(ctx, x, y, 16);
+      ctx.strokeStyle = "blue";
+      ctx.lineWidth = 2;
+      if (x0) drawLine(ctx, [x0, y0], [x, y]);
+      x0 = x;
+      y0 = y;
+    }
+  </script>
+
+  <div>
+    <p> Click to draw circles </p>
+  </div>
+
+</body>
+
+</html>
