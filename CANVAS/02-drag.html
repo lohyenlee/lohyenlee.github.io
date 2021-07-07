@@ -9,37 +9,54 @@
 
   <script type="module">
 
-    const colorDefault = "#99F";
+    //=======================================
+    //  MATH UTILITY FUNCTIONS
+    //=======================================
+    const clamp = (num, min, max) => Math.min(Math.max(num, min), max)
+    function pointInPolygon(xn, yn, x, y) {
+      let i, j, n = xn.length, inside = false;
+      for (i = 0, j = n - 1; i < n; j = i++) {
+        if (((yn[i] > y) != (yn[j] > y))
+          && (x < (xn[j] - xn[i]) * (y - yn[i]) / (yn[j] - yn[i]) + xn[i]))
+          inside = !inside;
+      }
+      return inside;
+    }
+
+    const colorDefault = "#66F";
     const colorHighlight = "#FF9";
     //=================================================
-    // Ellipse, Rectangle, and Polygon are all shapes
-    // (they could extend class Shape)
+    // GEOMETRIC CLASSES: Shape, Ellipse, Rectangle, Triangle, Polygon
     //=================================================
-    class Ellipse {
+    class Shape {
+      constructor(x, y) {
+        this.x = x; this.y = y;
+      }
+    }
+    class Ellipse extends Shape {
       constructor(x, y, a, b) {
+        super(x,y);
         this.x = x; this.y = y; this.a = a; this.b = b;
         this.c = colorDefault;
       }
       draw() {
-        ctx.fillStyle = this.c;
-        ctx.lineWidth = 1;
+        ctx.fillStyle = this.c; ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.ellipse(this.x, this.y, this.a, this.b, 0, 0, 2 * Math.PI);
-        ctx.stroke();
-        ctx.fill();
+        ctx.stroke(); ctx.fill();
       }
       contains(x, y) {
         return ((x - this.x) / this.a) ** 2 + ((y - this.y) / this.b) ** 2 < 1;
       }
     }
-
-    class Rectangle {
+    class Rectangle extends Shape {
       constructor(x, y, w, h) {
+        super(x,y);
         this.x = x; this.y = y; this.w = w; this.h = h;
         this.c = colorDefault;
       }
       draw() {
-        ctx.fillStyle = this.c;
+        ctx.fillStyle = this.c; ctx.lineWidth = 1;
         ctx.fillRect(this.x, this.y, this.w, this.h);
         ctx.strokeRect(this.x, this.y, this.w, this.h);
       }
@@ -47,9 +64,9 @@
         return (x > this.x) && (x < (this.x + this.w)) && (y > this.y) && (y < (this.y + this.h));
       }
     }
-
-    class Triangle {
+    class Triangle extends Shape {
       constructor(x, y, ax, ay, bx, by) {
+        super(x,y);
         this.x = x; this.y = y;
         this.ax = ax; this.ay = ay;
         this.bx = bx; this.by = by;
@@ -62,7 +79,7 @@
         ctx.beginPath();
         ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.lineTo(x3, y3);
         ctx.closePath();
-        ctx.fillStyle = this.c;
+        ctx.fillStyle = this.c; ctx.lineWidth = 2;
         ctx.stroke();
         ctx.fill();
       }
@@ -74,27 +91,57 @@
         return pointInPolygon(xn, yn, x, y);
       }
     }
-
-    function pointInPolygon(xn, yn, x, y) {
-      let i, j, n = xn.length;
-      let inside = false;
-      for (i = 0, j = n - 1; i < n; j = i++) {
-        if (((yn[i] > y) != (yn[j] > y))
-          && (x < (xn[j] - xn[i]) * (y - yn[i]) / (yn[j] - yn[i]) + xn[i]))
-          inside = !inside;
+    class Polygon extends Shape {
+      constructor(...args) {
+        super(args[0],args[1]);
+        let n = args.length;
+        this.xn = [];
+        this.yn = [];
+        for (let i = 0; i < n; i += 2) {
+          this.xn.push(args[i]);
+          this.yn.push(args[i + 1]);
+        }
+        this.x = this.xn[0]; this.y = this.yn[0];
+        n = this.xn.length;
+        for (let i = 0; i < n; ++i) {
+          this.xn[i] = this.xn[i] - this.x; // store coords relative to first point
+          this.yn[i] = this.yn[i] - this.y;
+        }
+        this.c = colorDefault;
       }
-      return inside;
+      draw() {
+        ctx.beginPath();
+        ctx.moveTo(this.x, this.y);
+        let n = this.xn.length;
+        for (let i = 1; i < n; ++i) {
+          ctx.lineTo(this.x + this.xn[i], this.y + this.yn[i]);
+        }
+        ctx.closePath();
+        ctx.fillStyle = this.c; ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fill();
+
+      }
+      contains(x, y) {
+        let xn = [];
+        let yn = [];
+        let n = this.xn.length;
+        for (let i = 0; i < n; ++i) {
+          xn[i] = this.xn[i] + this.x;
+          yn[i] = this.yn[i] + this.y;
+        }
+        return pointInPolygon(xn, yn, x, y);
+      }
     }
 
 
     //=================================================
     // Dragging event handlers
-    // also need to to Touchstart and touchmove
     //=================================================
     let selection = null;
     let xAnchor, yAnchor, xOrig, yOrig;
     function onMouseDown(event) {
-      event.preventDefault();      
+      event.preventDefault();
       const x = event.offsetX, y = event.offsetY;
       let n = shapes.length;
       for (let i = n - 1; i >= 0; --i) { // backwards in depth order
@@ -114,7 +161,7 @@
     function onMouseMove(event) {
       event.preventDefault();
       if (selection) {
-        const x = event.offsetX, y = event.offsetY;    
+        const x = event.offsetX, y = event.offsetY;
         selection.x = xOrig + x - xAnchor; // this assumes that the shape has a property called "x"...
         selection.y = yOrig + y - yAnchor;
         render();
@@ -125,7 +172,7 @@
       if (selection) { selection.c = colorDefault; selection = null; render(); }
     }
     function onTouchStart(event) {
-      event.preventDefault();
+      if (event.touches.length==1) event.preventDefault();
       const x = event.touches[0].pageX, y = event.touches[0].pageY;
       let n = shapes.length;
       for (let i = n - 1; i >= 0; --i) { // backwards in depth order
@@ -155,14 +202,11 @@
       event.preventDefault();
       if (selection) { selection.c = colorDefault; selection = null; render(); }
     }
-    
+
     function render() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       let n = shapes.length;
-      for (let i = 0; i < n; ++i) {
-        let shape = shapes[i];
-        shape.draw();
-      }
+      for (let i = 0; i < n; ++i) shapes[i].draw();
     }
 
     //===============================================
@@ -171,19 +215,22 @@
     let canvas, ctx;
     let shapes = [];
 
-    shapes.push(new Rectangle(50, 100, 100, 50));
-    shapes.push(new Rectangle(50, 200, 80, 80));
+    shapes.push(new Rectangle(50, 200, 100, 50));
     shapes.push(new Ellipse(300, 300, 50, 80));
     shapes.push(new Triangle(10, 10, 100, 0, 50, 50));
-
+    shapes.push(new Polygon(200, 100, 100, 200, 20, 150, 20, 80, 150, 70));
+    shapes.push(new Polygon(50, 300, 150,300, 150,350,50,350));
+    
     //-------- PREVENT DOUBLE-CLICK ZOOM ON MOBILE DEVICES --------      
     document.body.addEventListener("dblclick", function (e) { e.preventDefault(); })
-
+    //-------- MOBILE-FRIENDLY DIMENSIONING --------
+    let w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
     canvas = document.createElement("canvas");
-    canvas.width = 400;
-    canvas.height = 600;
-    canvas.style.background = "#CCC";
     ctx = canvas.getContext("2d");
+    canvas.width = clamp(w - 16, 300, 500); // set canvas width according to window width
+    canvas.height = canvas.width;           // make canvas square
+    canvas.style.background = "#CCC";
     ctx.font = "10px Arial";
     document.body.insertBefore(canvas, document.body.childNodes[0]);
     canvas.addEventListener("touchstart", onTouchStart, false);
@@ -197,7 +244,7 @@
   </script>
 
   <div>
-    <p> Click and drag to move shapes? </p>
+    <p> Click and drag to move shapes </p>
   </div>
 
 </body>
