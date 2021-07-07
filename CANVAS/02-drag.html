@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+
+<body>
+
+  <script type="module">
+
+    const colorDefault = "#99F";
+    const colorHighlight = "#FF9";
+    //=================================================
+    // Ellipse, Rectangle, and Polygon are all shapes
+    // (they could extend class Shape)
+    //=================================================
+    class Ellipse {
+      constructor(x, y, a, b) {
+        this.x = x; this.y = y; this.a = a; this.b = b;
+        this.c = colorDefault;
+      }
+      draw() {
+        ctx.fillStyle = this.c;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.ellipse(this.x, this.y, this.a, this.b, 0, 0, 2 * Math.PI);
+        ctx.stroke();
+        ctx.fill();
+      }
+      contains(x, y) {
+        return ((x - this.x) / this.a) ** 2 + ((y - this.y) / this.b) ** 2 < 1;
+      }
+    }
+
+    class Rectangle {
+      constructor(x, y, w, h) {
+        this.x = x; this.y = y; this.w = w; this.h = h;
+        this.c = colorDefault;
+      }
+      draw() {
+        ctx.fillStyle = this.c;
+        ctx.fillRect(this.x, this.y, this.w, this.h);
+        ctx.strokeRect(this.x, this.y, this.w, this.h);
+      }
+      contains(x, y) {
+        return (x > this.x) && (x < (this.x + this.w)) && (y > this.y) && (y < (this.y + this.h));
+      }
+    }
+
+    class Triangle {
+      constructor(x, y, ax, ay, bx, by) {
+        this.x = x; this.y = y;
+        this.ax = ax; this.ay = ay;
+        this.bx = bx; this.by = by;
+        this.c = colorDefault;
+      }
+      draw() {
+        let x1 = this.x, y1 = this.y;
+        let x2 = this.x + this.ax, y2 = this.y + this.ay;
+        let x3 = this.x + this.bx, y3 = this.y + this.by;
+        ctx.beginPath();
+        ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.lineTo(x3, y3);
+        ctx.closePath();
+        ctx.fillStyle = this.c;
+        ctx.stroke();
+        ctx.fill();
+      }
+      contains(x, y) {
+        let x1 = this.x, y1 = this.y, x2 = this.x + this.ax, y2 = this.y + this.ay;
+        let x3 = this.x + this.bx, y3 = this.y + this.by;
+        let xn = [x1, x2, x3];
+        let yn = [y1, y2, y3];
+        return pointInPolygon(xn, yn, x, y);
+      }
+    }
+
+    function pointInPolygon(xn, yn, x, y) {
+      let i, j, n = xn.length;
+      let inside = false;
+      for (i = 0, j = n - 1; i < n; j = i++) {
+        if (((yn[i] > y) != (yn[j] > y))
+          && (x < (xn[j] - xn[i]) * (y - yn[i]) / (yn[j] - yn[i]) + xn[i]))
+          inside = !inside;
+      }
+      return inside;
+    }
+
+
+    //=================================================
+    // Dragging event handlers
+    // also need to to Touchstart and touchmove
+    //=================================================
+    let selection = null;
+    let xAnchor, yAnchor, xOrig, yOrig;
+    function onMouseDown(event) {
+      event.preventDefault();      
+      const x = event.offsetX, y = event.offsetY;
+      let n = shapes.length;
+      for (let i = n - 1; i >= 0; --i) { // backwards in depth order
+        let shape = shapes[i];
+        if (shape.contains(x, y)) {
+          shape.c = colorHighlight;
+          selection = shape;
+          xAnchor = x;
+          yAnchor = y;
+          xOrig = shape.x;  // this assumes that the shape has a property called "x"....
+          yOrig = shape.y;
+          break;
+        }
+      }
+      render();
+    }
+    function onMouseMove(event) {
+      event.preventDefault();
+      if (selection) {
+        const x = event.offsetX, y = event.offsetY;    
+        selection.x = xOrig + x - xAnchor; // this assumes that the shape has a property called "x"...
+        selection.y = yOrig + y - yAnchor;
+        render();
+      }
+    }
+    function onMouseUp(event) {
+      event.preventDefault();
+      if (selection) { selection.c = colorDefault; selection = null; render(); }
+    }
+    function onTouchStart(event) {
+      event.preventDefault();
+      const x = event.touches[0].pageX, y = event.touches[0].pageY;
+      let n = shapes.length;
+      for (let i = n - 1; i >= 0; --i) { // backwards in depth order
+        let shape = shapes[i];
+        if (shape.contains(x, y)) {
+          shape.c = colorHighlight;
+          selection = shape;
+          xAnchor = x;
+          yAnchor = y;
+          xOrig = shape.x;  // this assumes that the shape has a property called "x"....
+          yOrig = shape.y;
+          break;
+        }
+      }
+      render();
+    }
+    function onTouchMove(event) {
+      event.preventDefault();
+      if (selection) {
+        const x = event.touches[0].pageX, y = event.touches[0].pageY;
+        selection.x = xOrig + x - xAnchor; // this assumes that the shape has a property called "x"...
+        selection.y = yOrig + y - yAnchor;
+        render();
+      }
+    }
+    function onTouchEnd(event) {
+      event.preventDefault();
+      if (selection) { selection.c = colorDefault; selection = null; render(); }
+    }
+    
+    function render() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let n = shapes.length;
+      for (let i = 0; i < n; ++i) {
+        let shape = shapes[i];
+        shape.draw();
+      }
+    }
+
+    //===============================================
+    // MAIN CODE
+    //===============================================
+    let canvas, ctx;
+    let shapes = [];
+
+    shapes.push(new Rectangle(50, 100, 100, 50));
+    shapes.push(new Rectangle(50, 200, 80, 80));
+    shapes.push(new Ellipse(300, 300, 50, 80));
+    shapes.push(new Triangle(10, 10, 100, 0, 50, 50));
+
+    //-------- PREVENT DOUBLE-CLICK ZOOM ON MOBILE DEVICES --------      
+    document.body.addEventListener("dblclick", function (e) { e.preventDefault(); })
+
+    canvas = document.createElement("canvas");
+    canvas.width = 400;
+    canvas.height = 600;
+    canvas.style.background = "#CCC";
+    ctx = canvas.getContext("2d");
+    ctx.font = "10px Arial";
+    document.body.insertBefore(canvas, document.body.childNodes[0]);
+    canvas.addEventListener("touchstart", onTouchStart, false);
+    canvas.addEventListener("touchmove", onTouchMove, false);
+    canvas.addEventListener("touchend", onTouchEnd, false);
+    canvas.addEventListener("mousedown", onMouseDown, false);
+    canvas.addEventListener("mousemove", onMouseMove, false);
+    canvas.addEventListener("mouseup", onMouseUp, false);
+    render();
+
+  </script>
+
+  <div>
+    <p> Click and drag to move shapes? </p>
+  </div>
+
+</body>
+
+</html>
