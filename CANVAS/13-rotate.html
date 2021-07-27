@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+  <script type="module">
+
+    //=======================================
+    //  MATH UTILITY FUNCTIONS
+    //=======================================
+    const clamp = (num, min, max) => Math.min(Math.max(num, min), max)
+    function pointInPolygon(xn, yn, x, y) {
+      let i, j, n = xn.length, inside = false;
+      for (i = 0, j = n - 1; i < n; j = i++) {
+        if (((yn[i] > y) != (yn[j] > y))
+          && (x < (xn[j] - xn[i]) * (y - yn[i]) / (yn[j] - yn[i]) + xn[i]))
+          inside = !inside;
+      }
+      return inside;
+    }
+
+    const colorDefault = "#66F";
+    const colorClickee = "#99F";
+    const colorDraggee = "#9F9";
+    const colorRotatee = "#F99";
+    const colorSelection = "#FF9";
+    //=================================================
+    // GEOMETRIC CLASSES: Shape, Polygon
+    //=================================================
+    class Shape {
+      constructor(x, y) {
+        this.x = x; this.y = y; this.ang = 0;
+      }
+    }
+    class Polygon extends Shape {
+      constructor(...args) {
+        super(args[0], args[1]);
+        this.ang = 0; // rotation angle
+        let nargs = args.length;
+        this.xn = [];
+        this.yn = [];
+        for (let i = 0; i < nargs; i += 2) {
+          this.xn.push(args[i]);
+          this.yn.push(args[i + 1]);
+        }
+        //-------- Compute average of all positions and use as "anchor" or "pivot"
+        let n = this.xn.length;
+        let x0 = 0, y0 = 0;
+        for (let i = 0; i < n; ++i) {
+          x0 += this.xn[i];
+          y0 += this.yn[i];
+        }
+        x0 /= n;
+        y0 /= n;
+        this.x = x0; this.y = y0;
+        //-------- Store coordinates relative to center
+        for (let i = 0; i < n; ++i) {
+          this.xn[i] = this.xn[i] - this.x;
+          this.yn[i] = this.yn[i] - this.y;
+        }
+        this.c = colorDefault;
+      }
+      clone() {
+        let poly = new Polygon();
+        poly.c = this.c;
+        poly.ang = this.ang;
+        poly.x = this.x;
+        poly.y = this.y;
+        poly.xn = this.xn.slice(); // shallow copy
+        poly.yn = this.yn.slice(); // shallow copy
+        return poly;
+      }
+      commit() { // commit a transformation (i.e., rotation)
+        let c = Math.cos(this.ang);
+        let s = Math.sin(this.ang);
+        let n = this.xn.length;
+        for (let i = 0; i < n; ++i) {
+          let xnew = c * this.xn[i] - s * this.yn[i];
+          let ynew = s * this.xn[i] + c * this.yn[i];
+          this.xn[i] = xnew;
+          this.yn[i] = ynew;
+        }
+        this.ang = 0;
+        return this;
+      }
+      draw() {
+        let p = this.clone().commit();
+        ctx.beginPath();  // should run "commit" on the shape first...  and 
+        ctx.moveTo(p.x + p.xn[0], p.y + p.yn[0]);
+        let n = p.xn.length;
+        for (let i = 0; i < n; ++i) {
+          ctx.lineTo(p.x + p.xn[i], p.y + p.yn[i]);
+        }
+        ctx.closePath();
+        ctx.fillStyle = p.c; ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fill();
+
+      }
+      contains(x, y) {
+        let p = this.clone().commit();
+        let xn = [];
+        let yn = [];
+        let n = p.xn.length;
+        for (let i = 0; i < n; ++i) {
+          xn[i] = p.xn[i] + p.x;
+          yn[i] = p.yn[i] + p.y;
+        }
+        return pointInPolygon(xn, yn, x, y);
+      }
+    }
+
+
+    let rotatee = null, clickee = null, draggee = null, selection = null, mouseMoved = false;
+    let xAnchor, yAnchor, xOrig, yOrig, angAnchor, angOrig;
+    //=================================================
+    // MOUSE/TOUCHPAD EVENT HANDLERS
+    //=================================================
+    function onMouseDown(event) {
+      event.preventDefault();
+      const x = event.offsetX, y = event.offsetY;
+      let n = shapes.length;
+      let i;
+      for (i = n - 1; i >= 0; --i) { // backwards in depth order
+        let shape = shapes[i];
+        if (shape.contains(x, y)) {
+          if (shape == selection) { // user did mouse down on already selected shape
+            selection = null;
+            rotatee = shape;        // begin rotating that shape
+            rotatee.c = colorRotatee;
+            xOrig = rotatee.x;  // this assumes that the shape has a property called "x"....
+            yOrig = rotatee.y;
+            angAnchor = Math.atan2(y - yOrig, x - xOrig);
+            mouseMoved = false;
+            render ();
+            break;
+          }
+          else { // user did mouse down on not-previously-selected shape
+            if (selection) { selection.c = colorDefault; selection = null;} // unselect any previous selection
+            clickee = shape; // mark this shape as being clicked
+            clickee.c = colorClickee;
+            xAnchor = x;
+            yAnchor = y;
+            xOrig = shape.x;
+            yOrig = shape.y;
+            mouseMoved = false;
+            render ();
+            break;
+          }
+        }
+      }
+      //-------- If user clicked on a part of the canvas without a shape, cancel any selection
+      if (i<0) {
+        selection.c = colorDefault;
+        selection = null;
+        render();
+      }
+    }
+    function onMouseMove(event) {
+      event.preventDefault();
+      const x = event.offsetX, y = event.offsetY;
+      if (clickee) { // if user had mousedowned on a shape, and is now dragging
+        draggee = clickee; // then we start translating
+        clickee = null;
+      }
+      if (draggee) { // this continues from above (it is NOT an else if!)
+        const x = event.offsetX, y = event.offsetY;
+        draggee.c = colorDraggee;
+        draggee.x = xOrig + x - xAnchor;
+        draggee.y = yOrig + y - yAnchor;
+        mouseMoved = true;
+        render();
+      }
+      else if (rotatee) { // If user is rotating a shape...
+        const x = event.offsetX, y = event.offsetY;
+        rotatee.c = colorRotatee;
+        rotatee.ang = Math.atan2(y - yOrig, x - xOrig) - angAnchor;
+        mouseMoved = true;
+        render();
+        return;
+      }
+    }
+    function onMouseUp(event) { // Most of this code is about resetting
+      event.preventDefault();
+      if (clickee) {
+        if (selection == clickee) { // unselect
+          selection.c = colorDefault; selection = null; clickee = null; render();
+        }
+        else { // select
+          if (selection) selection.c = colorDefault;
+          selection = clickee; selection.c = colorSelection; clickee = null; render();
+        }
+      }
+      else if (draggee) {
+        draggee.c = colorDefault; draggee = null; render();
+      }
+      else if (rotatee) { 
+        rotatee.c = colorDefault; rotatee = null; render();
+      }
+    }
+
+
+    //=================================================
+    // TOUCHSCREEN EVENT HANDLERS
+    //=================================================
+    function onTouchStart(event) {
+      event.preventDefault();
+      let nTouches = event.touches.length;
+      //-------- 1 finger: initiate drag to translate
+      if (nTouches == 1) {
+        const x = event.touches[0].pageX, y = event.touches[0].pageY;
+        let n = shapes.length;
+        for (let i = n - 1; i >= 0; --i) { // backwards in depth order
+          let shape = shapes[i];
+          if (shape.contains(x, y)) {
+            shape.c = colorDraggee;
+            draggee = shape;
+            xAnchor = x;
+            yAnchor = y;
+            xOrig = shape.x;  // this assumes that the shape has a property called "x"....
+            yOrig = shape.y;
+            break;
+          }
+        }
+        render();
+      }
+      //-------- 2 fingers: initiate drag to rotate
+      else if (nTouches == 2) {
+        const x0 = event.touches[0].pageX;
+        const y0 = event.touches[0].pageY;
+        const x1 = event.touches[1].pageX;
+        const y1 = event.touches[1].pageY;
+        let n = shapes.length;
+        for (let i = n - 1; i >= 0; --i) { // backwards in depth order
+          let shape = shapes[i];
+          if (shape.contains(x0, y0) && shape.contains(x1, y1)) { // both fingers in same object
+            rotatee = shape;
+            rotatee.c = colorRotatee;
+            angOrig = rotatee.ang;         
+            angAnchor = Math.atan2(y1 - y0, x1 - x0);      
+            break;
+          }
+        }
+        render();
+      }
+    }
+    function onTouchMove(event) {
+      event.preventDefault();
+      let nTouches = event.touches.length;
+      if (nTouches==1 && draggee) { // drag to translate
+        const x = event.touches[0].pageX, y = event.touches[0].pageY;
+        draggee.x = xOrig + x - xAnchor; // this assumes that the shape has a property called "x"...
+        draggee.y = yOrig + y - yAnchor;
+        render();
+      }
+      else if (nTouches == 2 && rotatee) { // 2-finger drag to rotate
+        const x0 = event.touches[0].pageX;
+        const y0 = event.touches[0].pageY;
+        const x1 = event.touches[1].pageX;
+        const y1 = event.touches[1].pageY;
+        rotatee.ang = angOrig + Math.atan2(y1 - y0, x1 - x0) - angAnchor;        
+        render(); 
+      }
+    }
+    function onTouchEnd(event) {
+      event.preventDefault();
+      if (draggee) { draggee.c = colorDefault; draggee = null; render(); }
+      if (rotatee) { rotatee.c = colorDefault; rotatee = null; render(); }
+    }
+
+    function render() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let n = shapes.length;
+      for (let i = 0; i < n; ++i) shapes[i].draw();
+    }
+
+    //===============================================
+    // MAIN CODE
+    //===============================================
+    let canvas, ctx;
+    let shapes = [];
+
+    let poly1 = (new Polygon(100, 100, 200, 100, 200, 200, 100, 200)); // square
+    let poly2 = (new Polygon(100, 100, 300, 100, 300, 200, 100, 200)); // rectangle
+    poly2.ang = 60.0 * Math.PI / 180;
+    poly2.x += 100;
+    shapes.push(poly1);
+    shapes.push(poly2);
+    shapes.push(new Polygon(100, 300, 100, 400, 200, 300)); // triangle
+    shapes.push(new Polygon(250, 300, 200, 350, 220, 350, 220, 450, 280, 450, 280, 350, 300, 350)); // arrow
+
+    //-------- PREVENT DOUBLE-CLICK ZOOM ON MOBILE DEVICES --------      
+    document.body.addEventListener("dblclick", function (e) { e.preventDefault(); })
+    //-------- MOBILE-FRIENDLY DIMENSIONING --------
+    let w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+    canvas = document.createElement("canvas");
+    ctx = canvas.getContext("2d");
+    canvas.width = clamp(w - 16, 300, 500); // set canvas width according to window width
+    canvas.height = canvas.width;           // make canvas square
+    canvas.style.background = "#CCC";
+    ctx.font = "10px Arial";
+    document.body.insertBefore(canvas, document.body.childNodes[0]);
+    canvas.addEventListener("touchstart", onTouchStart, false);
+    canvas.addEventListener("touchmove", onTouchMove, false);
+    canvas.addEventListener("touchend", onTouchEnd, false);
+    canvas.addEventListener("mousedown", onMouseDown, false);
+    canvas.addEventListener("mousemove", onMouseMove, false);
+    canvas.addEventListener("mouseup", onMouseUp, false);
+    render();
+
+  </script>
+
+  <div>
+<h4>Mouse or touchpad</h4>
+Click and drag to move (shape will become green). <br/>
+Click to select (shape will become yellow). Then drag to rotate (shape will become pink).
+<h4>Laptop touchscreen, tablet, or mobile device</h4>
+Touch with one finger and drag to move (shape will become green). <br/>
+Touch with two fingers and spin to rotate (shape will become pink).
+  </div>
+
+
+
+</body>
+
+</html>
