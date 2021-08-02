@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@700&display=swap" rel="stylesheet">
+
+  <title>Painty Cube by Yen Lee Loh </title>
+  <meta charset="utf-8">
+  <meta name="viewport"
+    content="width=device-width, height=device-height, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <style>
+    .body {
+      background-color: black;
+    }
+
+    h1 {
+      font-size: 20vmin;
+      padding: 0px;
+      margin: 2vmin;
+    }
+
+    h2 {
+      font-size: 10vmin;
+      padding: 0px;
+      margin: 0vmin;
+    }
+
+    h3 {
+      font-size: 6vmin;
+      padding: 0px;
+      margin: 2vmin;
+    }
+
+    p {
+      font-size: 4vmin;
+      text-align: center;
+      width: 100%;
+    }
+
+    #splash {
+      width: 80%;
+      margin: auto;
+      text-align: center;
+      vertical-align: middle;
+      color: #FFF;
+      font-family: 'Titillium Web', sans-serif;
+      text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black, 3px 3px 4px #999;
+    }
+
+    #msg1 {
+      z-index: 100;
+      position: absolute;
+      top: 24px;
+      width: 100%;
+      text-align: center;
+      color: white;
+      display: block;
+      font-family: 'Titillium Web', sans-serif;
+      font-size: 6vmin;
+    }
+
+    #msg2 {
+      z-index: 100;
+      position: absolute;
+      top: 64px;
+      width: 100%;
+      text-align: center;
+      color: white;
+      display: block;
+      font-family: monospace;
+      font-size: 4vmin;
+    }
+
+    .button1 {
+      z-index: 100;
+      font-family: 'Titillium Web', sans-serif;
+      font-size: 4vmin;
+      width: 21%;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      border-radius: 8px;
+      /* border-style: outset; */
+      background: #CCC;
+      color: black;
+    }
+  </style>
+
+</head>
+
+<body class="body">
+
+  <script type="module">
+    //================================
+    // SOUND 
+    // https://curtisrobinson.medium.com/how-to-auto-play-audio-in-safari-with-javascript-21d50b0a2765
+    //================================
+    var audioContext = new (window.AudioContext || window.webkitAudioContext)()
+    function loadSound(filename) {
+      var sound = { volume: 1, audioBuffer: null }
+      var ajax = new XMLHttpRequest()
+      ajax.open("GET", filename, true)
+      ajax.responseType = "arraybuffer"
+      ajax.onload = function () {
+        audioContext.decodeAudioData(
+          ajax.response,
+          function (buffer) { sound.audioBuffer = buffer },
+          function (error) { debugger }
+        )
+      }
+      ajax.onerror = function () { debugger }
+      ajax.send()
+      return sound
+    }
+    function playSound(sound) {
+      if (!sound.audioBuffer) return false
+      var source = audioContext.createBufferSource()
+      if (!source) return false
+      source.buffer = sound.audioBuffer
+      if (!source.start) source.start = source.noteOn
+      if (!source.start) return false
+      var gainNode = audioContext.createGain()
+      gainNode.gain.value = sound.volume
+      source.connect(gainNode)
+      gainNode.connect(audioContext.destination)
+      source.start(0)
+      sound.gainNode = gainNode
+      return true
+    }
+    function stopSound(sound) {
+      if (sound.gainNode) sound.gainNode.gain.value = 0
+    }
+    function setSoundVolume(sound, volume) {
+      sound.volume = volume
+      if (sound.gainNode) sound.gainNode.gain.value = volume
+    }
+
+    //================================
+    // GRAPHICS 
+    //================================
+    //-------- Load THREE.js from CDN
+    //import * as THREE from 'https://cdn.skypack.dev/three@0.129.0';
+    //import { FlyControls } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/FlyControls.js';
+    //-------- Load THREE.js from current directory on a HTTP server (python3 -m http.server 8000)
+    // Note that you should reload using Shift-Command-R or Shift-Ctrl-R to ensure non-caching
+    import * as THREE from './three.module.js';
+    import { FlyControls } from './FlyControls.js';
+
+    const groundColors = [0x999999, 0x888888, 0x777777];
+    const clock = new THREE.Clock();
+    const mouse = new THREE.Vector2();
+    const raycaster = new THREE.Raycaster();
+    const selectables = [];  // mouse, raycaster, and selectables pertain to mouse selections
+    const tiles = []; // array of Objects representing hexagons
+    var isAnimating = false;
+    const gameSpeed = 3; //1,2,3,...;  // game time corresponding to one second of wall time
+    var camera, scene, renderer, controls, group; // could allocate right here to make sure we never "new" again
+
+    //================================
+    // PRELOAD AND PREPARE SOUNDS AND TEXTURES 
+    //================================
+    var soundNothing = loadSound("nothing.mp3");
+    var soundDing = loadSound("ding.mp3");
+    const tileGeometry = new THREE.BoxGeometry(1, 1, 1);
+    const phongMaterial = new THREE.MeshPhongMaterial();
+    const ambientLight = new THREE.AmbientLight(0x333333);
+    const dirLight = new THREE.DirectionalLight(0xCCCCCC, 1.0);
+    const spotLight = new THREE.SpotLight(0xFFFFFF, 0.25);
+    const backgroundColor = new THREE.Color(0x111111);
+    readyToStart();
+
+    //================================
+    // GAME VARIABLES
+    //================================
+    var imax, jmax;       // board size
+    var iCube = 0, jCube = 0; // integer coordinates of cube
+    var vx = 0, vy = 0; // velocity of cube (to be obsoleted)
+
+    var tFractional = 0;  // fractional time elapsed since last "grid event"
+
+    var cube = null; // graphics object
+
+    // not used yet
+    var board = [];       // array of integers representing state of each hex on the board
+
+
+
+
+    //================================
+    // UTILITIES
+    //================================
+    function wipeArray(arr) { arr.splice(0, arr.length); }
+    function setMessage(str) { msg1.innerHTML = str; }
+    function setMessage2(str) { msg2.innerHTML = str; }
+    function markPoint(x, y, z) { //  Usage: markPoint(xCenter, yCenter, 0.1);   For debugging only!!!
+      let mesh = new THREE.Mesh(
+        new THREE.SphereGeometry(.1, 8, 8),
+        new THREE.MeshPhongMaterial()
+      );
+      mesh.position.set(x, y, z);
+      scene.add(mesh);
+    }
+    function setupBoard(mapString) {
+      jmax = 10;
+      imax = 10;
+      board.length = imax * jmax;
+      //-------- Make a first pass to determine types of hexes
+      for (let j = 0; j < jmax; ++j) {
+        for (let i = 0; i < imax; ++i) {
+          //if (c == '1' || c == '.') board[i + imax * j] = 1; // flat
+        }
+      }
+    }
+    function fitCameraAroundRectangle(cameraFoV, cameraDownwardTilt, cameraAspect, xmin, xmax, ymin, ymax) {
+      let theta = cameraFoV / 2 * Math.PI / 180;
+      let alpha = cameraDownwardTilt * Math.PI / 180; // camera direction wrt horizontal
+      let xc = (xmin + xmax) / 2;
+      let yc = (ymin + ymax) / 2;
+      let w = xmax - xmin;
+      let h = ymax - ymin;
+      let Y = h / 2 * Math.sin(2 * alpha) / Math.sin(2 * theta);
+      let Z = (Y - h / 2) * Math.tan(alpha + theta);
+      let alphaTrue = Math.atan(Z / Y);
+      let d1 = Math.sqrt(Y ** 2 + Z ** 2);
+      let d2 = w * cameraAspect / 2 / Math.tan(theta);
+      let d;
+      if (d1 > d2) { d = d1; } // camera distance determined by vertical size
+      else { d = d2; alphaTrue = alpha; }  // determined by horizontal size
+      camera.fov = cameraFoV;
+      camera.aspect = 1 / cameraAspect;
+      camera.rotation.x = Math.PI / 2 - alpha;
+      camera.position.set(xc, yc - d * Math.cos(alphaTrue), d * Math.sin(alphaTrue));
+    }
+    function resetCamera() {
+      let xmin = 1e38, xmax = -1e38, ymin = 1e38, ymax = -1e38;
+      xmin = 0; xmax = imax;
+      ymin = 0; ymax = jmax;
+      fitCameraAroundRectangle(50, 35, window.innerHeight / window.innerWidth,
+        xmin - 2, xmax + 3, ymin - 3, ymax + 5);
+      camera.updateProjectionMatrix();
+    }
+    function render() {
+      renderer.render(scene, camera);
+    }
+
+    //================================
+    // PREPARE TO START
+    //================================
+    function readyToStart() {
+      camera = new THREE.PerspectiveCamera(30, 1, 1, 1000);
+      scene = new THREE.Scene();
+      scene.background = backgroundColor;
+
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFShadowMap;
+
+      controls = new FlyControls(camera, renderer.domElement);
+      controls.movementSpeed = 10;
+      controls.domElement = renderer.domElement;
+      controls.rollSpeed = Math.PI / 24;
+      controls.autoForward = false;
+      controls.dragToLook = true;
+
+      document.addEventListener('click', initGame);
+    }
+    //==========================================
+    // INITIALIZE EVERYTHING FOR THE FIRST TIME
+    //==========================================
+    function initGame() {
+      document.removeEventListener("click", initGame);
+      document.getElementById("msg1").style.display = 'inline';
+      document.getElementById("msg2").style.display = 'inline';
+      document.getElementById("controls").style.display = 'block';
+      playSound(soundNothing);
+      document.body.insertBefore(renderer.domElement, document.body.firstChild);
+      document.getElementById("splash").style.display = 'none';
+      window.addEventListener('resize', onResize);
+      window.addEventListener('keydown', onKeyDown);
+      window.addEventListener('mousedown', onMouseDown);
+      //document.querySelector('#goButton').addEventListener('click', launchBalls);
+      //document.querySelector('#resetButton').addEventListener('click', resetGame);
+      resetGame();
+    }
+    //========================================================
+    // RESET GAME WITH MINIMAL "new" AND "dispose" OPERATIONS
+    //========================================================
+    function resetGame() {
+      //-------- DISPOSE OF EVERYTHING INCLUDING OLD SCENE AND OBJECTS
+      wipeArray(board); wipeArray(selectables); wipeArray(tiles);
+      scene.traverse(function (obj) {
+        if (obj.type === 'Mesh') {
+          obj.geometry.dispose();
+          obj.material.dispose();
+        }
+      });
+      scene.remove.apply(scene, scene.children); // is this overkill now?
+      renderer.renderLists.dispose();
+      //-------- SETUP BOARD (mathematical representation)
+      setupBoard();
+      //-------- SETUP TILES (GRAPHICS)
+      tiles.length = imax * jmax;
+      for (let i = 0; i < imax; ++i) {
+        for (let j = 0; j < jmax; ++j) {
+          let material = phongMaterial.clone(); // alow different color, but use same shader          
+          material.color.setHex(groundColors[(i + j) % 3]);
+          const tile = new THREE.Mesh(tileGeometry, material);
+          tile.position.x = i;
+          tile.position.y = j;
+          tile.position.z = -.5;
+          tile.receiveShadow = true;
+          scene.add(tile);
+          tiles[i + imax * j] = tile; // record
+        }
+      }
+      //-------- RESET CAMERA
+      resetCamera();
+      //-------- LIGHTS
+      scene.add(ambientLight);
+      dirLight.position.set(0, 0, 0);
+      dirLight.target.position.set(1, 1, -1);
+      dirLight.castShadow = true;
+      dirLight.shadow.camera.near = .1;
+      dirLight.shadow.camera.far = 1000;
+      dirLight.shadow.mapSize.width = 1024;
+      dirLight.shadow.mapSize.height = 1024;
+      scene.add(dirLight); scene.add(dirLight.target);
+      spotLight.position.set(0, 0, 4);
+      spotLight.target.position.set(0, 0, 9); // basically deactivated
+      spotLight.angle = Math.PI / 180 * 15;
+      spotLight.castShadow = true;
+      spotLight.shadow.camera.near = .1;
+      spotLight.shadow.camera.far = 1000;
+      spotLight.shadow.mapSize.width = 1024;
+      spotLight.shadow.mapSize.height = 1024;
+      scene.add(spotLight); scene.add(spotLight.target);
+      //-------- MOVABLE CUBE
+      const geometry = new THREE.BoxGeometry(1, 1, 1);
+      const material = new THREE.MeshNormalMaterial();
+      cube = new THREE.Mesh(geometry, material);
+      cube.castShadow = true;
+      scene.add(cube);
+      cube.position.set(2,1, .5);
+      //cube.position.set(new THREE.Vector3(1, 1, .5));
+      //-------- START STUFF
+      setMessage("Started!");
+      render();
+      //isAnimating = true; requestAnimationFrame(animate);// comment out to disable flyin
+    }
+
+    function animate(timeCurrent) {
+      let dtWallClock = clock.getDelta(); // time in seconds since last call to clock.getDelta()
+      let dt = gameSpeed * dtWallClock;   // time in game units since last frame
+      //dt = Math.min(dt, 0.1); // cap dt at some sensible value, so that ball doesn't go too far
+      tFractional += dt;
+      //setMessage2("FPS: " + Math.round(1 / dt));
+
+      //-------- "Roll without slipping":
+      let qq = new THREE.Vector3(vx / 2, vy / 2, -.5); // vector to rotate
+      let rr = new THREE.Vector3();
+      rr.copy(cubePosOrig);
+      let aa = new THREE.Vector3(-vy, vx, 0); // axis of rotation        
+      if (tFractional < 1) {
+        //-------- Interim motion
+        let theta = Math.PI / 2 * tFractional;
+        //rr.sub (qq);
+        rr.x += qq.x;
+        rr.y += qq.y;
+        rr.z += qq.z;
+        qq.applyAxisAngle(aa, theta);
+        cube.position.x = rr.x - qq.x;
+        cube.position.y = rr.y - qq.y;
+        cube.position.z = rr.z - qq.z;
+        cube.rotation.copy(cubeRotOrig);
+        cube.rotateOnWorldAxis(aa, theta);
+      }
+      else {
+        //-------- Finalize cube motion      
+        //cube.position.x = Math.round(cube.position.x);
+        //cube.position.y = Math.round(cube.position.y);
+        cube.position.copy(cubePosOrig);
+        cube.position.x = cubePosOrig.x + vx;
+        cube.position.y = cubePosOrig.y + vy;
+
+        // Set cube orientation to final value        
+        cube.rotation.copy(cubeRotOrig);
+        cube.rotateOnWorldAxis(aa, Math.PI / 2);
+        // Kill animation        
+        vx = 0; vy = 0; isAnimating = false; //return;
+      }
+
+
+      //-------- Boilerplate
+      controls.update(dt);
+      render();
+      if (isAnimating) requestAnimationFrame(animate);
+    }
+
+    function onResize() {
+      resetCamera();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      render();
+    }
+
+
+    let cubeOriginal;
+    let cubePosOrig = new THREE.Vector3(99,99,99);
+    let cubeRotOrig = new THREE.Euler(0, 0, 0, 'XYZ');
+    function moveCube(dx, dy) {
+      if (!isAnimating) {
+        vx = dx;
+        vy = dy;
+        tFractional = 0;
+        cubePosOrig.copy(cube.position);
+        cubeRotOrig.copy(cube.rotation);
+        clock.getDelta(); isAnimating = true; requestAnimationFrame(animate); // start animation
+      }
+    }
+
+    function onKeyDown(event) {   // EWNS =    L J I K
+      // if      (event.keyCode == 64+12)  { cube.position.x += 1; render(); }    //...
+      if (event.keyCode == 64 + 12) { moveCube(+1, 0); }
+      else if (event.keyCode == 64 + 10) { moveCube(-1, 0); }
+      else if (event.keyCode == 64 + 9) { moveCube(0, +1); }
+      else if (event.keyCode == 64 + 11) { moveCube(0, -1); }
+      //if      (event.keyCode == 64+4)  { enqueue(1,0); } 
+
+    }
+
+
+    function onMouseDown(event) {
+      event.preventDefault();
+      mouse.x = (event.offsetX / window.innerWidth) * 2 - 1;  //clientX is bad
+      mouse.y = - (event.offsetY / window.innerHeight) * 2 + 1; //offsetX is exptal
+      raycaster.setFromCamera(mouse, camera);
+      const intersections = raycaster.intersectObjects(selectables, true);
+      if (intersections.length > 0) {
+        const object = intersections[0].object; // topmost object under click - assumed to be a hex
+        // let i, j;
+        // [i, j] = [object.position.x, object.position.y];
+        // i = Math.round(i);
+        // j = Math.round(j);      
+      }
+      render();
+    }
+
+  </script>
+
+  <div id="splash">
+    <h1>
+      <span style="color:red;">Cube game testing</span>
+    </h1>
+    <h3> A puzzle game by</h3>
+    <h2> Yen Lee Loh</h2>
+    <br />
+    <p> asldkfjadslfjasdlkfjsaf. Click anywhere to start!</p>
+  </div>
+  <div id="msg1" style="display: none;">Loading ...</div>
+  <div id="msg2" style="display: none;"></div> <!-- Message box 2]  -->
+  <div id="controls" style="
+  z-index: 100; display: none;
+   font-size: 24px; font-family: 'serif'; position: absolute; bottom: 8px; width: 100%; text-align: center;">
+    <button id="prevLevelButton" class="button1"> &lt; </button>
+    <button id="goButton" class="button1">&nbsp;&nbsp;Go&nbsp;&nbsp;</button>
+    <button id="resetButton" class="button1">Reset</button>
+    <button id="nextLevelButton" class="button1"> &gt; </button>
+  </div>
+
+</body>
+
+</html>
