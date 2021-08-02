@@ -16,9 +16,10 @@
     }
 
     h1 {
-      font-size: 20vmin;
+      font-size: 16vmin;
+      line-height: 16vmin;
       padding: 0px;
-      margin: 2vmin;
+      margin: 3vmin;
     }
 
     h2 {
@@ -30,7 +31,7 @@
     h3 {
       font-size: 6vmin;
       padding: 0px;
-      margin: 2vmin;
+      margin: 0vmin;
     }
 
     p {
@@ -52,7 +53,7 @@
     #msg1 {
       z-index: 100;
       position: absolute;
-      top: 24px;
+      top: 2vmin;
       width: 100%;
       text-align: center;
       color: white;
@@ -64,7 +65,7 @@
     #msg2 {
       z-index: 100;
       position: absolute;
-      top: 64px;
+      top: 10vmin;
       width: 100%;
       text-align: center;
       color: white;
@@ -155,7 +156,7 @@
     const selectables = [];  // mouse, raycaster, and selectables pertain to mouse selections
     const tiles = []; // array of Objects representing hexagons
     var isAnimating = false;
-    const gameSpeed = 3; //1,2,3,...;  // game time corresponding to one second of wall time
+    const gameSpeed = 12; //1,2,3,...;  // game time corresponding to one second of wall time
     var camera, scene, renderer, controls, group; // could allocate right here to make sure we never "new" again
 
     //================================
@@ -169,22 +170,24 @@
     const dirLight = new THREE.DirectionalLight(0xCCCCCC, 1.0);
     const spotLight = new THREE.SpotLight(0xFFFFFF, 0.25);
     const backgroundColor = new THREE.Color(0x111111);
+    //const faceColors = [0xFF0000, 0x00FFFF, 0x00FF00, 0xFF00FF, 0x0000FF, 0xFFFF00];
+    const faceColors = [0x993333, 0x339999, 0x339933, 0xCC33CC, 0x3333CC, 0xCCCC33];
+    const materials = new Array(faceColors.length);
+    for (let i = 0; i < faceColors.length; ++i) {
+      materials[i] = phongMaterial.clone();
+      materials[i].color.set(faceColors[i]);
+    }
+    let cube = null; // graphics object
     readyToStart();
 
     //================================
     // GAME VARIABLES
     //================================
-    var imax, jmax;       // board size
-    var iCube = 0, jCube = 0; // integer coordinates of cube
-    var vx = 0, vy = 0; // velocity of cube (to be obsoleted)
-
-    var tFractional = 0;  // fractional time elapsed since last "grid event"
-
-    var cube = null; // graphics object
-
-    // not used yet
-    var board = [];       // array of integers representing state of each hex on the board
-
+    let imax, jmax;       // board size
+    let iCube = 0, jCube = 0; // integer coordinates of cube
+    let vx = 0, vy = 0; // velocity of cube (to be obsoleted)
+    let tFractional = 0;  // fractional time elapsed since last "grid event"
+    let board = [];       // array of integers representing state of board (not used yet)
 
 
 
@@ -202,14 +205,30 @@
       mesh.position.set(x, y, z);
       scene.add(mesh);
     }
+    function customCube(materials) { // build cube with six separate Shapes for faces
+      const square = new THREE.Shape();
+      square.moveTo(-.5, -.5); square.lineTo(+.5, -.5);
+      square.lineTo(+.5, +.5); square.lineTo(-.5, +.5);
+      const geometry = new THREE.ShapeGeometry(square);
+      let face = new Array(6);
+      for (let i = 0; i < 6; ++i) face[i] = new THREE.Mesh(geometry, materials[i]);
+      face[0].position.set(-.5, 0, 0); face[0].rotation.y = -Math.PI / 2;
+      face[1].position.set(+.5, 0, 0); face[1].rotation.y = +Math.PI / 2;
+      face[2].position.set(0, +.5, 0); face[2].rotation.x = -Math.PI / 2;
+      face[3].position.set(0, -.5, 0); face[3].rotation.x = +Math.PI / 2;
+      face[4].position.set(0, 0, +.5);
+      face[5].position.set(0, 0, -.5); face[5].rotation.x = +Math.PI;
+      let cube = new THREE.Group();
+      for (let i = 0; i < 6; ++i) cube.add(face[i]);
+      return cube;
+    }
     function setupBoard(mapString) {
-      jmax = 10;
-      imax = 10;
+      jmax = 6;
+      imax = 6;
       board.length = imax * jmax;
-      //-------- Make a first pass to determine types of hexes
       for (let j = 0; j < jmax; ++j) {
         for (let i = 0; i < imax; ++i) {
-          //if (c == '1' || c == '.') board[i + imax * j] = 1; // flat
+          board[i + imax * j] = 0; // unpainted
         }
       }
     }
@@ -283,7 +302,7 @@
       window.addEventListener('keydown', onKeyDown);
       window.addEventListener('mousedown', onMouseDown);
       //document.querySelector('#goButton').addEventListener('click', launchBalls);
-      //document.querySelector('#resetButton').addEventListener('click', resetGame);
+      document.querySelector('#resetButton').addEventListener('click', resetGame);
       resetGame();
     }
     //========================================================
@@ -330,8 +349,8 @@
       dirLight.shadow.mapSize.height = 1024;
       scene.add(dirLight); scene.add(dirLight.target);
       spotLight.position.set(0, 0, 4);
-      spotLight.target.position.set(0, 0, 9); // basically deactivated
-      spotLight.angle = Math.PI / 180 * 15;
+      spotLight.target.position.set(1, 2, 0); // hmm
+      spotLight.angle = Math.PI / 180 * 30;
       spotLight.castShadow = true;
       spotLight.shadow.camera.near = .1;
       spotLight.shadow.camera.far = 1000;
@@ -339,58 +358,68 @@
       spotLight.shadow.mapSize.height = 1024;
       scene.add(spotLight); scene.add(spotLight.target);
       //-------- MOVABLE CUBE
-      const geometry = new THREE.BoxGeometry(1, 1, 1);
-      const material = new THREE.MeshNormalMaterial();
-      cube = new THREE.Mesh(geometry, material);
+      cube = customCube(materials); // BoxGeometry+MeshNormalMaterial on steroids
       cube.castShadow = true;
+      cube.position.set(2, 1, .5);
       scene.add(cube);
-      cube.position.set(2,1, .5);
-      //cube.position.set(new THREE.Vector3(1, 1, .5));
       //-------- START STUFF
       setMessage("Started!");
+      paintTileUnderCube();
       render();
       //isAnimating = true; requestAnimationFrame(animate);// comment out to disable flyin
     }
 
+
+
+    function paintTileUnderCube() {
+      //-------- Identify cube bottom color
+      let quat = cube.quaternion.clone(); quat.invert();
+      let down = new THREE.Vector3(0, 0, -1);
+      down.applyQuaternion(quat);
+      down.x = Math.round(down.x);
+      down.y = Math.round(down.y);
+      down.z = Math.round(down.z);
+      let x = Math.round(down.x);
+      let y = Math.round(down.y);
+      let z = Math.round(down.z);
+      let nFace = (3 * x ** 2 + 7 * y ** 2 + 11 * z ** 2 - x - y - z) / 2;
+      setMessage2(down.x + "  " + down.y + "  " + down.z + "    " + nFace + " "); // between 1 to 6
+      //-------- Paint tile under cube
+      let i = Math.round(cube.position.x);
+      let j = Math.round(cube.position.y);
+      tiles[i + imax * j].material = materials[nFace - 1];
+    }
+
     function animate(timeCurrent) {
+      //-------- Obtain timing info
       let dtWallClock = clock.getDelta(); // time in seconds since last call to clock.getDelta()
       let dt = gameSpeed * dtWallClock;   // time in game units since last frame
-      //dt = Math.min(dt, 0.1); // cap dt at some sensible value, so that ball doesn't go too far
-      tFractional += dt;
-      //setMessage2("FPS: " + Math.round(1 / dt));
-
-      //-------- "Roll without slipping":
-      let qq = new THREE.Vector3(vx / 2, vy / 2, -.5); // vector to rotate
-      let rr = new THREE.Vector3();
-      rr.copy(cubePosOrig);
+      tFractional += dt; if (tFractional > 1) tFractional = 1; // cap this
+      //setMessage2("FPS: " + Math.round(1 / dtWallClock));
+      //-------- Code for rolling without slipping
+      let qq = new THREE.Vector3(vx / 2, vy / 2, -.5); // vector from CoM to pivot
       let aa = new THREE.Vector3(-vy, vx, 0); // axis of rotation        
-      if (tFractional < 1) {
+      if (tFractional <= 1) {
         //-------- Interim motion
         let theta = Math.PI / 2 * tFractional;
-        //rr.sub (qq);
-        rr.x += qq.x;
-        rr.y += qq.y;
-        rr.z += qq.z;
+        cube.position.copy(cubePosOrig); // Set cube CoM position to interim value
+        cube.position.add(qq);
         qq.applyAxisAngle(aa, theta);
-        cube.position.x = rr.x - qq.x;
-        cube.position.y = rr.y - qq.y;
-        cube.position.z = rr.z - qq.z;
-        cube.rotation.copy(cubeRotOrig);
+        cube.position.sub(qq);
+        cube.rotation.copy(cubeRotOrig); // Set cube orientation to interim value
         cube.rotateOnWorldAxis(aa, theta);
       }
-      else {
-        //-------- Finalize cube motion      
-        //cube.position.x = Math.round(cube.position.x);
-        //cube.position.y = Math.round(cube.position.y);
+      if (tFractional == 1) {
+        //-------- Set cube position and rotation to final values (to avoid any roundoff accumulation?)
         cube.position.copy(cubePosOrig);
         cube.position.x = cubePosOrig.x + vx;
         cube.position.y = cubePosOrig.y + vy;
-
-        // Set cube orientation to final value        
         cube.rotation.copy(cubeRotOrig);
         cube.rotateOnWorldAxis(aa, Math.PI / 2);
-        // Kill animation        
-        vx = 0; vy = 0; isAnimating = false; //return;
+
+        paintTileUnderCube();
+        //-------- Stop animation
+        vx = 0; vy = 0; isAnimating = false;
       }
 
 
@@ -408,13 +437,19 @@
 
 
     let cubeOriginal;
-    let cubePosOrig = new THREE.Vector3(99,99,99);
+    let cubePosOrig = new THREE.Vector3(99, 99, 99);
     let cubeRotOrig = new THREE.Euler(0, 0, 0, 'XYZ');
     function moveCube(dx, dy) {
       if (!isAnimating) {
+        // need to make sure we don't go off edges of board
+        let i = Math.round(cube.position.x) + dx;
+        let j = Math.round(cube.position.y) + dy;
+        if (!(i >= 0 && i < imax && j >= 0 && j < jmax)) return;
+
+        playSound(soundDing);
+        tFractional = 0;
         vx = dx;
         vy = dy;
-        tFractional = 0;
         cubePosOrig.copy(cube.position);
         cubeRotOrig.copy(cube.rotation);
         clock.getDelta(); isAnimating = true; requestAnimationFrame(animate); // start animation
@@ -452,12 +487,12 @@
 
   <div id="splash">
     <h1>
-      <span style="color:red;">Cube game testing</span>
+      <span style="color:red;">Painty Cube </span>
     </h1>
     <h3> A puzzle game by</h3>
     <h2> Yen Lee Loh</h2>
     <br />
-    <p> asldkfjadslfjasdlkfjsaf. Click anywhere to start!</p>
+    <p> Click anywhere to start!</p>
   </div>
   <div id="msg1" style="display: none;">Loading ...</div>
   <div id="msg2" style="display: none;"></div> <!-- Message box 2]  -->
