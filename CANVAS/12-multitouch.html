@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
@@ -32,7 +35,7 @@
     }
     class Polygon extends Shape {
       constructor(...args) {
-        super(args[0],args[1]);
+        super(args[0], args[1]);
         let n = args.length;
         this.xn = [];
         this.yn = [];
@@ -110,32 +113,32 @@
       event.preventDefault();
       if (selection) { selection.c = colorDefault; selection = null; render(); }
     }
-	
-		let x0,y0,x1,y1;
+
+    let x0, y0, x1, y1;
     function onTouchStart(event) {
       event.preventDefault();
 
-			let l = event.touches.length; 
-			if (l == 10) {
-				console.log ("Touched with " + l + " fingers!");
-				return;
-			}
-			else if (l == 9) {
-				console.log ("Touched with " + l + " fingers!");
-				return;
-			}
-		
-	
-      if (event.touches.length==2) {
-		x0 = event.touches[0].pageX; y0 = event.touches[0].pageY;
-		x1 = event.touches[1].pageX; y1 = event.touches[1].pageY;
-		ctx.fillStyle = 'red';
-		ctx.fillRect (x0,y0,5,5);
-		ctx.fillRect (x1,y1,5,5);
-		return;
-	  }
-	  
-      if (event.touches.length==1) event.preventDefault();
+      let l = event.touches.length;
+      if (l == 10) {
+        console.log("Touched with " + l + " fingers!");
+        return;
+      }
+      else if (l == 9) {
+        console.log("Touched with " + l + " fingers!");
+        return;
+      }
+
+
+      if (event.touches.length == 2) {
+        x0 = event.touches[0].pageX; y0 = event.touches[0].pageY;
+        x1 = event.touches[1].pageX; y1 = event.touches[1].pageY;
+        ctx.fillStyle = 'red';
+        ctx.fillRect(x0, y0, 5, 5);
+        ctx.fillRect(x1, y1, 5, 5);
+        return;
+      }
+
+      if (event.touches.length == 1) event.preventDefault();
       const x = event.touches[0].pageX, y = event.touches[0].pageY;
       let n = shapes.length;
       for (let i = n - 1; i >= 0; --i) { // backwards in depth order
@@ -154,16 +157,16 @@
     }
     function onTouchMove(event) {
       event.preventDefault();
-	  if (event.touches.length==2) {
-		x0 = event.touches[0].pageX; y0 = event.touches[0].pageY;
-		x1 = event.touches[1].pageX; y1 = event.touches[1].pageY;
-		ctx.fillStyle = 'orange';
-		ctx.fillRect (x0,y0,5,5);
-		ctx.fillRect (x1,y1,5,5);
-		return;
-	  }
-	
-	
+      if (event.touches.length == 2) {
+        x0 = event.touches[0].pageX; y0 = event.touches[0].pageY;
+        x1 = event.touches[1].pageX; y1 = event.touches[1].pageY;
+        ctx.fillStyle = 'orange';
+        ctx.fillRect(x0, y0, 5, 5);
+        ctx.fillRect(x1, y1, 5, 5);
+        return;
+      }
+
+
       if (selection) {
         const x = event.touches[0].pageX, y = event.touches[0].pageY;
         selection.x = xOrig + x - xAnchor; // this assumes that the shape has a property called "x"...
@@ -189,8 +192,8 @@
     let shapes = [];
 
     shapes.push(new Polygon(200, 100, 100, 200, 20, 150, 20, 80, 150, 70));
-    shapes.push(new Polygon(50, 300, 150,300, 150,350,50,350));
-    
+    shapes.push(new Polygon(50, 300, 150, 300, 150, 350, 50, 350));
+
     //-------- PREVENT DOUBLE-CLICK ZOOM ON MOBILE DEVICES --------      
     document.body.addEventListener("dblclick", function (e) { e.preventDefault(); })
     //-------- MOBILE-FRIENDLY DIMENSIONING --------
@@ -219,4 +222,6 @@
 
 
 
-</body></html>
+</body>
+
+</html>
