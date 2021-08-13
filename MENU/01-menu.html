@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Our Little Girl's Breakfast Menu</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <style>
+    /* figcaption {
+      display: block;
+      font-size: 2em;
+    } */
+
+    figure {
+      float: left;
+      width: 32%;
+      text-align: center;
+      font-style: italic;
+      font-size: 1.5em;
+      text-indent: 0;
+      /* border: thin silver solid; */
+      margin: 0.1em;
+      padding: 0.1em;
+    }
+  </style>
+</head>
+
+<body class="body">
+
+  <script type="module">
+    /*=======================================
+    SOUND UTILITY FUNCTIONS
+    https://curtisrobinson.medium.com/how-to-auto-play-audio-in-safari-with-javascript-21d50b0a2765
+    =======================================*/
+    var audioContext = new (window.AudioContext || window.webkitAudioContext)()
+    function loadSound(filename) {
+      var sound = { volume: 1, audioBuffer: null }
+      var ajax = new XMLHttpRequest()
+      ajax.open("GET", filename, true)
+      ajax.responseType = "arraybuffer"
+      ajax.onload = function () {
+        audioContext.decodeAudioData(
+          ajax.response,
+          function (buffer) { sound.audioBuffer = buffer },
+          function (error) { debugger }
+        )
+      }
+      ajax.onerror = function () { debugger }
+      ajax.send()
+      return sound
+    }
+    function playSound(sound) {
+      if (!sound.audioBuffer) return false
+      var source = audioContext.createBufferSource()
+      if (!source) return false
+      source.buffer = sound.audioBuffer
+      if (!source.start) source.start = source.noteOn
+      if (!source.start) return false
+      var gainNode = audioContext.createGain()
+      gainNode.gain.value = sound.volume
+      source.connect(gainNode)
+      gainNode.connect(audioContext.destination)
+      source.start(0)
+      sound.gainNode = gainNode
+      return true
+    }
+    function stopSound(sound) {
+      if (sound.gainNode) sound.gainNode.gain.value = 0
+    }
+    function setSoundVolume(sound, volume) {
+      sound.volume = volume
+      if (sound.gainNode) sound.gainNode.gain.value = volume
+    }
+
+    //-------- Unlock all sounds
+    let emptySound = loadSound("nothing.mp3")
+    document.body.addEventListener('touchstart', function () { playSound(emptySound) }, false)
+    document.body.addEventListener('mousedown', function () { playSound(emptySound) }, false)
+    //-------- Load the actual sound
+    let snd1 = loadSound("Applesauce.mp3")
+    let snd2 = loadSound("Bananas.mp3")
+    let snd3 = loadSound("Eggs.mp3")
+    let snd4 = loadSound("Oranges.mp3")
+    let snd5 = loadSound("Strawberries.mp3")
+    let snd6 = loadSound("Yogurt.mp3")
+
+    // function onClick() { playSound(snd1) }
+
+    img1.addEventListener('click', function () { playSound(snd1) });
+    img2.addEventListener('click', function () { playSound(snd2) });
+    img3.addEventListener('click', function () { playSound(snd3) });
+    img4.addEventListener('click', function () { playSound(snd4) });
+    img5.addEventListener('click', function () { playSound(snd5) });
+    img6.addEventListener('click', function () { playSound(snd6) });
+
+  </script>
+
+
+  <figure>
+    <img id="img1" src="Applesauce.jpg" width="100%">
+    <figcaption>Applesauce</figcaption>
+  </figure>
+  <figure>
+    <img id="img2" src="Bananas.jpg" width="100%">
+    <figcaption>Bananas</figcaption>
+  </figure>
+  <figure>
+    <img id="img3" src="Eggs.jpg" width="100%">
+    <figcaption>Eggs</figcaption>
+  </figure>
+  <figure>
+    <img id="img4" src="Oranges.jpg" width="100%">
+    <figcaption>Oranges</figcaption>
+  </figure>
+  <figure>
+    <img id="img5" src="Strawberries.jpg" width="100%">
+    <figcaption>Strawberries</figcaption>
+  </figure>
+  <figure>
+    <img id="img6" src="Yogurt.jpg" width="100%">
+    <figcaption>Yogurt</figcaption>
+  </figure>
+
+
+  <!-- <img id="img2" src="Bananas.jpg" width="200"></img>
+  <img id="img3" src="Eggs.jpg" width="200"></img>
+  <img id="img4" src="Oranges.jpg" width="200"></img>
+  <img id="img5" src="Strawberries.jpg" width="200"></img>
+  <img id="img9" src="Yogurt.jpg" width="200"></img> -->
+
+</body>
+
+</html>

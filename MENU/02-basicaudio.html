@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>sdfasdf </title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+</head>
+
+<body class="body">
+
+  <script type="module">
+    /*=======================================
+    SOUND UTILITY FUNCTIONS
+    https://curtisrobinson.medium.com/how-to-auto-play-audio-in-safari-with-javascript-21d50b0a2765
+    =======================================*/
+    var audioContext = new (window.AudioContext || window.webkitAudioContext)()
+    function loadSound(filename) {
+      var sound = { volume: 1, audioBuffer: null }
+      var ajax = new XMLHttpRequest()
+      ajax.open("GET", filename, true)
+      ajax.responseType = "arraybuffer"
+      ajax.onload = function () {
+        audioContext.decodeAudioData(
+          ajax.response,
+          function (buffer) {sound.audioBuffer = buffer},
+          function (error) { debugger }
+        )
+      }
+      ajax.onerror = function () { debugger }
+      ajax.send()
+      return sound
+    }
+    function playSound(sound) {
+      if (!sound.audioBuffer) return false
+      var source = audioContext.createBufferSource()
+      if (!source) return false
+      source.buffer = sound.audioBuffer
+      if (!source.start) source.start = source.noteOn
+      if (!source.start) return false
+      var gainNode = audioContext.createGain()
+      gainNode.gain.value = sound.volume
+      source.connect(gainNode)
+      gainNode.connect(audioContext.destination)
+      source.start(0)
+      sound.gainNode = gainNode
+      return true
+    }
+    function stopSound(sound) {
+      if (sound.gainNode) sound.gainNode.gain.value = 0
+    }
+    function setSoundVolume(sound, volume) {
+      sound.volume = volume
+      if (sound.gainNode) sound.gainNode.gain.value = volume
+    }
+
+    //-------- Unlock all sounds
+    let emptySound = loadSound("nothing.mp3")
+    document.body.addEventListener('touchstart', function () { playSound(emptySound) }, false)
+    document.body.addEventListener('mousedown', function () { playSound(emptySound) }, false)
+    //-------- Load the actual sound
+    let snd1 = loadSound("ding.mp3")
+    let snd9 = loadSound("ding.mp3")
+    //var snd1 = loadSound("Applesauce.m4a")
+    
+    // function onClick() {
+    //   playSound(snd1)
+    // }
+
+
+
+
+    img1.addEventListener('click', function () {playSound(snd1) });
+    img9.addEventListener('click', function () {playSound(snd9) });
+    
+  </script>
+
+
+<audio controls>
+  <source src="Applesauce.m4a" type="audio/x-m4a">
+  <!-- <source src="ding.mp3" type="audio/mpeg"> -->
+   Your browser does not support the audio element.
+</audio>
+
+<img id="img1" src="Applesauce.jpg" width="200"></img>
+<img id="img9" src="Yogurt.jpg" width="200"></img>
+
+
+<button id="button1" style="font-size: 32px;"> Click to play sound at 2s intervals </button>
+<button id="button2" style="font-size: 32px;"> Click to stop playing </button>
+
+
+</body>
+
+</html>
