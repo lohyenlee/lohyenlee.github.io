@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Our Little Girl's Breakfast Menu</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=0.1, maximum-scale=4.0">
+  <style>
+    .body{
+      margin: 0 0 0 0; padding: 0 0 0 0;
+    }
+    figure {
+      float: left;
+      width: 100%;
+      text-align: center;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 2vmin;
+      /* border: thin silver solid; */
+      margin: 0em;
+      padding: 0em;
+    }
+
+    .gridcell {
+      width: 30vmin;
+      aspect-ratio: 1;
+      float: left;
+      background-color: yellow;
+      border: 0pt silver solid;
+      margin: 0em 0 0 0;
+      padding: 0em 0 0 0;
+    }
+  </style>
+</head>
+
+
+<body class="body">
+  <!-- <p id="msg" style="font-family: monospace;"></p> -->
+  <p id="msg" style="font-family: monospace; display: none;"></p>
+
+  <div style="width: 100%; height: 100%; background-color: teal;">
+
+    <div id="gridcontainer">
+<!--       
+    </div>  style="width: 100%; height: 100%;">  -->
+
+    <!-- </div> style="object-fit: contain;"> -->
+
+      <!-- <div class="gridcell" id="a"> Lorem ipsum
+      </div>
+
+      <div class="gridcell" id="b">
+        Lorem ipsum
+      </div> -->
+
+
+
+    </div>
+
+
+
+  </div>
+  </div>
+</body>
+
+<script>
+
+
+  // to do: should create grid cells progamatically
+  let nCells = 12;
+  let colors = ['#FCC', '#CFC', '#CwCF', '#FFC', '#CFF', '#FCF'];
+  for (let nCell = 0; nCell < nCells; ++nCell) {
+    var div = document.createElement('div');
+    div.innerText = "sdf"; div.className = "gridcell";
+    div.style.backgroundColor = colors[nCell%6];
+    gridcontainer.appendChild(div);
+  }
+  let msg = gridcontainer.children[1];
+
+  function optimalGridLayout(xAvail, yAvail, nCells = 6, arCell = 1.0) {
+    // arCell is the aspect ratio of each cell
+    let xSizePrev = 1;
+    msg.innerHTML = "";
+    msg.innerHTML += "Fit " + nCells + " cells in window of size " + xAvail + " x " + yAvail + "<br/>";
+    let xCells, yCells, xSize, ySize;
+    for (xCells = 1; xCells <= nCells; ++xCells) {
+      yCells = Math.ceil(nCells * 1.0 / xCells);
+      xSize = Math.floor(xAvail * 1.0 / xCells);
+      ySize = Math.floor(yAvail * 1.0 / yCells);
+      if (ySize > xSize * arCell) ySize = Math.floor(xSize * arCell);
+      else xSize = Math.floor(ySize / arCell);
+      if (xSizePrev > xSize) break;
+      xSizePrev = xSize;
+      msg.innerHTML += xCells + "  " + yCells + "     " + xSize + " " + ySize + "<br/>";
+    }
+    xCells -= 1;
+    yCells = Math.ceil(nCells * 1.0 / xCells);
+    xSize = Math.floor(xAvail * 1.0 / xCells);
+    ySize = Math.floor(yAvail * 1.0 / yCells);
+    if (ySize > xSize * arCell) ySize = Math.floor(xSize * arCell);
+    else xSize = Math.floor(ySize / arCell);
+    return { xCells, yCells, xSize, ySize };
+  }
+
+  function onResize(event) {
+    //alert (e.pageX)
+    //alert (window.innerWidth)
+    //document.write (window.innerWidth)
+    //console.log(window.innerWidth + "x" + window.innerHeight)
+    //======== CALCULATE MAXIMUM CELL DIMENSIONS AND OPTIMAL GRID LAYOUT (ROWS & COLS)
+    let xAvail = document.documentElement.clientWidth - 0;
+    let yAvail = document.documentElement.clientHeight - 0;
+    //let xAvail = gridcontainer.clientWidth - 40;
+    //let yAvail = gridcontainer.clientHeight - 40;
+    //console.log(" " + xAvail + " x " + yAvail);
+  
+    let nCells = 12;  // xCells = num of cols, yCells = num of rows
+    let arCell = 1.0; // aspect ratio of each cell
+    let { xCells, yCells, xSize, ySize } = optimalGridLayout(xAvail, yAvail, nCells, arCell);
+
+    var children = gridcontainer.children;
+    for (var i = 0; i < children.length; i++) {
+      var child = children[i];
+      child.style.width = xSize + "px";
+      child.style.height = ySize + "px";
+    }
+
+    children[0].innerText = " " + xAvail + " x " + yAvail + "\n";
+    children[0].innerText += "  " + xCells + " " + yCells + "\n";
+    children[0].innerText += "  " + xSize + " " + ySize;
+
+    // a.style.backgroundColor = "green";
+    // a.style.width = xSize + "px";
+    // b.style.width = xSize + "px";
+    // c.style.width = xSize + "px";
+    // d.style.width = xSize + "px";
+    // e.style.width = xSize + "px";
+    // f.style.width = xSize + "px";
+  }
+  //msg = document.getElementById("msg");
+  window.addEventListener("resize", onResize);
+  onResize(null); // call this manually
+
+</script>
+
+
+</html>

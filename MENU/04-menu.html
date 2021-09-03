@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Our Little Girl's Breakfast Menu</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=0.1, maximum-scale=4.0">
+  <style>
+    .body {
+      margin: 0 0 0 0;
+      padding: 0 0 0 0;
+    }
+
+    figure {
+      float: left;
+      width: 100%;
+      text-align: center;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 2vmin;
+      /* border: thin silver solid; */
+      margin: 0em;
+      padding: 0em;
+    }
+
+    .gridcell {
+      float: left;
+      margin: 0em 0 0 0;
+      padding: 0em 0 0 0;
+    }
+  </style>
+</head>
+
+
+<body class="body">
+  <div id="gridcontainer">
+  </div>
+</body>
+
+<script>
+  //================ CREATE IMAGES AND POPULATE GRID
+  let itemNames = ['Applesauce', 'Oranges', 'Bananas', 'Strawberries', 'Eggs', 'Yogurt'];
+  let nCells = itemNames.length;
+  let colors = ['#FCC', '#CFC', '#CCF', '#FFC', '#CFF', '#FCF'];
+  for (let nCell = 0; nCell < nCells; ++nCell) {
+    var cell = document.createElement('img');  // cell is an IMG
+    cell.className = "gridcell";
+    cell.src = itemNames[nCell] + '.jpg';
+    gridcontainer.appendChild(cell);
+
+    cell.addEventListener('click', function () { gridcontainer.children[nCell].src = 'Applesauce.jpg' });
+    //img1.addEventListener('click', function () { playSound(snd1) });
+    // Need to add event listener that will play appropriate sound
+  }
+
+  //================ AUTOGRID CODE
+  function optimalGridLayout(xAvail, yAvail, nCells = 6, arCell = 1.0) {
+    // arCell is the aspect ratio of each cell
+    let xSizePrev = 1;
+    let xCells, yCells, xSize, ySize;
+    for (xCells = 1; xCells <= nCells; ++xCells) {
+      yCells = Math.ceil(nCells * 1.0 / xCells);
+      xSize = Math.floor(xAvail * 1.0 / xCells);
+      ySize = Math.floor(yAvail * 1.0 / yCells);
+      if (ySize > xSize * arCell) ySize = Math.floor(xSize * arCell);
+      else xSize = Math.floor(ySize / arCell);
+      if (xSizePrev > xSize) break;
+      xSizePrev = xSize;
+    }
+    xCells -= 1;
+    yCells = Math.ceil(nCells * 1.0 / xCells);
+    xSize = Math.floor(xAvail * 1.0 / xCells);
+    ySize = Math.floor(yAvail * 1.0 / yCells);
+    if (ySize > xSize * arCell) ySize = Math.floor(xSize * arCell);
+    else xSize = Math.floor(ySize / arCell);
+    return { xCells, yCells, xSize, ySize };
+  }
+
+  //======== CALCULATE MAXIMUM CELL DIMENSIONS AND OPTIMAL GRID LAYOUT (ROWS & COLS)
+  function onResize(event) {
+    let xAvail = document.documentElement.clientWidth - 0;
+    let yAvail = document.documentElement.clientHeight - 0;
+    let arCell = 1.0; // aspect ratio of each cell
+    let { xCells, yCells, xSize, ySize } = optimalGridLayout(xAvail, yAvail, nCells, arCell);
+
+    var children = gridcontainer.children;
+    for (var i = 0; i < children.length; i++) {
+      var child = children[i];
+      child.style.width = xSize + "px";
+      child.style.height = ySize + "px";
+    }
+  }
+  window.addEventListener("resize", onResize);
+  onResize(null); // call this manually
+
+</script>
+
+
+</html>

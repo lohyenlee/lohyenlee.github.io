@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Our Little Girl's Breakfast Menu</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=0.1, maximum-scale=4.0">
+  <style>
+    * {box-sizing: border-box}
+
+    .body {
+      margin: 0 0 0 0;
+      padding: 0 0 0 0;
+    }
+
+    .cell {
+      float: left;
+      margin: 0 0 0 0;
+      padding: 0 0 0 0;
+      position: relative;
+      text-align: center;
+    }
+    .img {
+      float: left;
+      width: 96%;
+      height: 96%;
+      margin: 2%;
+      padding: 0;
+    }
+    .caption {
+      position: absolute;
+      width: 96%;
+      left: 2%;
+      bottom: 2%;
+      /* background: rgb(0,0,0); */
+      background: rgba(0,0,0,0.5);
+      color: #c4bdbd;
+      opacity: 1;
+      color: white;
+      font-size: 20px;
+      padding: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+
+<body class="body">
+  <div id="grid">
+  </div>
+</body>
+
+<script>
+  /*=======================================
+SOUND UTILITY FUNCTIONS
+https://curtisrobinson.medium.com/how-to-auto-play-audio-in-safari-with-javascript-21d50b0a2765
+=======================================*/
+  var audioContext = new (window.AudioContext || window.webkitAudioContext)()
+  function loadSound(filename) {
+    var sound = { volume: 1, audioBuffer: null }
+    var ajax = new XMLHttpRequest()
+    ajax.open("GET", filename, true)
+    ajax.responseType = "arraybuffer"
+    ajax.onload = function () {
+      audioContext.decodeAudioData(
+        ajax.response,
+        function (buffer) { sound.audioBuffer = buffer },
+        function (error) { debugger }
+      )
+    }
+    ajax.onerror = function () { debugger }
+    ajax.send()
+    return sound
+  }
+  function playSound(sound) {
+    if (!sound.audioBuffer) return false
+    var source = audioContext.createBufferSource()
+    if (!source) return false
+    source.buffer = sound.audioBuffer
+    if (!source.start) source.start = source.noteOn
+    if (!source.start) return false
+    var gainNode = audioContext.createGain()
+    gainNode.gain.value = sound.volume
+    source.connect(gainNode)
+    gainNode.connect(audioContext.destination)
+    source.start(0)
+    sound.gainNode = gainNode
+    return true
+  }
+  function stopSound(sound) {
+    if (sound.gainNode) sound.gainNode.gain.value = 0
+  }
+  function setSoundVolume(sound, volume) {
+    sound.volume = volume
+    if (sound.gainNode) sound.gainNode.gain.value = volume
+  }
+
+  //================ UNLOCK SOUDNS ON FIRST CLICK OR TOUCH
+  let emptySound = loadSound('https://lohyenlee.github.io/MENU/' + 'nothing.mp3')
+  document.body.addEventListener('touchstart', function () { playSound(emptySound) }, false)
+  document.body.addEventListener('mousedown', function () { playSound(emptySound) }, false)
+  //================ LOAD SOUNDS
+  let itemNames = ['Applesauce', 'Oranges', 'Bananas', 'Strawberries', 'Eggs', 'Yogurt'];
+  let nCells = itemNames.length;
+  let sounds = [];
+  for (let nCell = 0; nCell < nCells; ++nCell) {
+    sounds[nCell] = loadSound('https://lohyenlee.github.io/MENU/' + itemNames[nCell] + '.mp3');
+  }
+
+  //================ CREATE IMAGES AND POPULATE GRID
+  let colors = ['#FCC', '#CFC', '#CCF', '#FFC', '#CFF', '#FCF'];
+  for (let nCell = 0; nCell < nCells; ++nCell) {
+    //-------- Create cells (DIV elements) that contain images (IMG elements)
+    let cell = document.createElement('div');
+    let img = document.createElement('img'); 
+    let caption = document.createElement('div'); 
+    
+    cell.className = 'cell'; 
+    img.className = 'img';
+    img.src = itemNames[nCell] + '.jpg';
+    img.addEventListener('click', function () { playSound(sounds[nCell]) });
+    caption.className = 'caption';
+    caption.innerText = itemNames[nCell];
+
+    cell.appendChild (img);
+    cell.appendChild (caption);
+    grid.appendChild (cell);
+  }
+
+  //================ AUTOGRID CODE
+  function optimalGridLayout(xAvail, yAvail, nCells = 6, arCell = 1.0) {
+    let xSizePrev = 1; // arCell is aspect ratio
+    let xCells, yCells, xSize, ySize;
+    for (xCells = 1; xCells <= nCells; ++xCells) {
+      yCells = Math.ceil(nCells * 1.0 / xCells);
+      xSize = Math.floor(xAvail * 1.0 / xCells);
+      ySize = Math.floor(yAvail * 1.0 / yCells);
+      if (ySize > xSize * arCell) ySize = Math.floor(xSize * arCell);
+      else xSize = Math.floor(ySize / arCell);
+      if (xSizePrev > xSize) break;
+      xSizePrev = xSize;
+    }
+    xCells -= 1;
+    yCells = Math.ceil(nCells * 1.0 / xCells);
+    xSize = Math.floor(xAvail * 1.0 / xCells);
+    ySize = Math.floor(yAvail * 1.0 / yCells);
+    if (ySize > xSize * arCell) ySize = Math.floor(xSize * arCell);
+    else xSize = Math.floor(ySize / arCell);
+    return { xCells, yCells, xSize, ySize };
+  }
+
+  //======== CALCULATE MAXIMUM CELL DIMENSIONS AND OPTIMAL GRID LAYOUT (ROWS & COLS)
+  function onResize(event) {
+    let xAvail = document.documentElement.clientWidth - 20;
+    let yAvail = document.documentElement.clientHeight - 20;
+    let arCell = 1.0; // aspect ratio of each cell
+    let { xCells, yCells, xSize, ySize } = optimalGridLayout(xAvail, yAvail, nCells, arCell);
+
+    var children = grid.children;
+    for (var i = 0; i < children.length; i++) {
+      var child = children[i];
+      child.style.width = xSize + "px";
+      child.style.height = ySize + "px";
+    }
+  }
+  window.addEventListener("resize", onResize);
+  onResize(null); // call this manually
+
+</script>
+
+</html>
