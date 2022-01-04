@@ -6,9 +6,22 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, minimum-scale=0.1, maximum-scale=4.0">
   <style>
-    * {box-sizing: border-box}
+    * {
+      box-sizing: border-box
+    }
+
+    html {
+      overscroll-behavior-x: none;
+      overscroll-behavior-y: none;
+    }
+    body {
+     overscroll-behavior-x: none;
+     overscroll-behavior-y: none;
+    }
 
     .body {
+      overscroll-behavior-x: none;
+      overscroll-behavior-y: none;
       margin: 0 0 0 0;
       padding: 0 0 0 0;
     }
@@ -20,6 +33,7 @@
       position: relative;
       text-align: center;
     }
+
     .img {
       float: left;
       width: 96%;
@@ -27,13 +41,14 @@
       margin: 2%;
       padding: 0;
     }
+
     .caption {
       position: absolute;
       width: 96%;
       left: 2%;
       bottom: 2%;
       /* background: rgb(0,0,0); */
-      background: rgba(0,0,0,0.5);
+      background: rgba(0, 0, 0, 0.5);
       color: #c4bdbd;
       opacity: 1;
       color: white;
@@ -48,6 +63,7 @@
 <body class="body">
   <div id="grid">
   </div>
+  <button id="fullscreenButton" onclick="openFullscreen();">Open Fullscreen</button>
 </body>
 
 <script>
@@ -112,19 +128,19 @@ https://curtisrobinson.medium.com/how-to-auto-play-audio-in-safari-with-javascri
   for (let nCell = 0; nCell < nCells; ++nCell) {
     //-------- Create cells (DIV elements) that contain images (IMG elements)
     let cell = document.createElement('div');
-    let img = document.createElement('img'); 
-    let caption = document.createElement('div'); 
-    
-    cell.className = 'cell'; 
+    let img = document.createElement('img');
+    let caption = document.createElement('div');
+
+    cell.className = 'cell';
     img.className = 'img';
     img.src = itemNames[nCell] + '.jpg';
     img.addEventListener('click', function () { playSound(sounds[nCell]) });
     caption.className = 'caption';
     caption.innerText = itemNames[nCell];
 
-    cell.appendChild (img);
-    cell.appendChild (caption);
-    grid.appendChild (cell);
+    cell.appendChild(img);
+    cell.appendChild(caption);
+    grid.appendChild(cell);
   }
 
   //================ AUTOGRID CODE
@@ -149,6 +165,19 @@ https://curtisrobinson.medium.com/how-to-auto-play-audio-in-safari-with-javascri
     return { xCells, yCells, xSize, ySize };
   }
 
+  
+  function openFullscreen() {
+    let elem = document.documentElement;
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) { /* Safari */
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { /* IE11 */
+      elem.msRequestFullscreen();
+    }
+    fullscreenButton.style.display = 'none';
+  }
+
   //======== CALCULATE MAXIMUM CELL DIMENSIONS AND OPTIMAL GRID LAYOUT (ROWS & COLS)
   function onResize(event) {
     let xAvail = document.documentElement.clientWidth - 20;
@@ -165,6 +194,17 @@ https://curtisrobinson.medium.com/how-to-auto-play-audio-in-safari-with-javascri
   }
   window.addEventListener("resize", onResize);
   onResize(null); // call this manually
+  //openFullscreen(); // can only be initiated by user gesture
+
+
+  //======== TRY TO DISABLE DEFAULT EVENT LISTENERS
+  document.body.addEventListener("click", function (e) { e.preventDefault(); }, {passive:false} )
+  document.body.addEventListener("dblclick", function (e) { e.preventDefault(); }, {passive:false} )
+  //document.body.addEventListener("mousedown", function (e) { e.preventDefault(); }, {passive:false} )
+  document.body.addEventListener("mousemove", function (e) { e.preventDefault(); }, {passive:false} )
+  //document.body.addEventListener("touchstart", function (e) { e.preventDefault(); }, {passive:false} )
+  document.body.addEventListener("touchmove", function (e) { e.preventDefault(); }, {passive:false} )
+
 
 </script>
 
