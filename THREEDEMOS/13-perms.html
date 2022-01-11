@@ -107,7 +107,7 @@
     var soundTock = loadSound("tock.mp3");
     var soundFall = loadSound("fall.mp3");
     var soundWin = loadSound("win.mp3");
-    
+
     const phongMaterial = new THREE.MeshPhongMaterial();
     const ambientLight = new THREE.AmbientLight(0x333333);
     const dirLight = new THREE.DirectionalLight(0xCCCCCC);
@@ -136,14 +136,14 @@
     let pawns = [];
     let bases = [];
     let queue = [];  // this should really be a class
-
     let locations = []; // locations[n] is the index of the base at which pawn n is at
     let occupants = []; // occupants[b] is the index of the pawn located at base b
     let perms = [];  // PERMUTATION LISTS
-    let permColorList = ["0X3333FF", "0x33FF33", "0xFF3333"]; // colors of tubes
-    let pawnColorList = ["0xFFCCCC", "0xFFCC66", "0xCCCC99", "0x99FF99", "0x99FFFF", "0xFF99FF", "0xCCCCCC", "0x666666"];
-    function permColor(op) {return permColorList[op % permColorList.length];}
-    function pawnColor(n) {return pawnColorList[n % pawnColorList.length];}
+    let permLetters = ["B", "G", "R", "O", "Y", "P"];
+    let permColors = ["9999FF", "99FF99", "FF9999", "FFCC99", "FFFF99", "99FFFF"]; // colors of tubes
+    let pawnColors = ["221111", "332222", "443333", "554444", "665555", "776666", "887777", "998888"];
+    function permColor(op) { return permColors[op % permColors.length]; }
+    function pawnColor(n) { return pawnColors[n % pawnColors.length]; }
 
     const levelFile = `
 (12)          # C2
@@ -172,6 +172,8 @@
 ---
 (12),(23456)      # S6
 ---
+(12),(23),(34),(45),(56)  # S6 from transpositions
+---
 (123),(345),(567) # Seven 
 ---
 (123),(3456),(678)# Eight
@@ -179,7 +181,7 @@
     const levelStrings = levelFile.split(/[\-]+/);
     let level = 0;
     let levelName;
-    
+
     setupLevel();
 
     //================================
@@ -200,6 +202,11 @@
       if (chr >= '0' && chr <= '9') return parseInt(chr);
       else if (chr >= 'A' && chr <= 'Z') return (chr.charCodeAt(0) - 'A'.charCodeAt(0) + 10);
     }
+    function LightenDarkenColor(col, amt) {
+      col = parseInt(col, 16);
+      return (((col & 0x0000FF) + amt) | ((((col >> 8) & 0x00FF) + amt) << 8) | (((col >> 16) + amt) << 16)).toString(16);
+    }
+
     class CustomArc extends THREE.Curve {
       constructor(x1, y1, z1, x2, y2, z2) {
         super();
@@ -237,7 +244,7 @@
       let levelString = levelStrings[level].trim();
 
       //-------- EXTRACT LEVEL NAME
-      let blah = levelString.split ('#');
+      let blah = levelString.split('#');
       levelString = blah[0];
       levelName = blah[1];
 
@@ -295,7 +302,7 @@
       camera.rotation.x = Math.PI / 2 - alpha;
       camera.position.set(xc, yc - d * Math.cos(alphaTrue), d * Math.sin(alphaTrue));
     }
-    
+
     //================================
     // PREPARE TO START
     //================================
@@ -345,16 +352,16 @@
       let xmax = nmax - 1;   // hardwire
       let ymin = -1;
       let ymax = 1;             // hardwire
-      fitCameraAroundRectangle(35, 75, // 50 deg FoV, 70 deg tilt
+      fitCameraAroundRectangle(35, 72, // 50 deg FoV, 70 deg tilt
         window.innerHeight / window.innerWidth,
-        xmin - 2, xmax + 2, ymin - 2, ymax + 2);
+        xmin - 2, xmax + 2, ymin - 2, ymax + 1);
       camera.updateProjectionMatrix();
     }
-
-    //========================================================
-    // RESET GAME WITH MINIMAL "new" AND "dispose" OPERATIONS
-    //========================================================
     function resetGame() {
+      //========================================================
+      // RESET GAME WITH MINIMAL "new" AND "dispose" OPERATIONS
+      //========================================================
+
       //-------- DISPOSE OF EVERYTHING INCLUDING OLD SCENE AND OBJECTS
       wipeArray(selectables); wipeArray(bases);
       scene.traverse(function (obj) {
@@ -372,7 +379,7 @@
       for (let n = 0; n < nmax; ++n) {
         //setMessage(""+nodePositions.length);
         let material = phongMaterial.clone();
-        material.color.setHex (pawnColor(n));
+        material.color.setHex("0x" + pawnColor(n));
         const geometry = new THREE.CylinderGeometry(0.4, 0.4, 0.2, 32);
         const base = new THREE.Mesh(geometry, material);
         base.position.set(n, 0, -0.2);
@@ -384,14 +391,15 @@
       pawnHomes.length = nmax;
 
       for (let n = 0; n < nmax; ++n) {
-        //-------- Create body for pawn
-        let pawnHeight = 0.1 + n * 0.05;
+        //-------- Create body of pawn (cylinder)
+        let pawnHeight = 0.1 + 0.9 * n / nmax;
         const geometry1 = new THREE.CylinderGeometry(0.27, 0.3, pawnHeight, 32);
         geometry1.translate(0, +pawnHeight / 2, 0);  // think this is right now
         const material1 = phongMaterial.clone();
-        material1.color.setHex (pawnColor(n));
+        material1.color.setHex("0x" + pawnColor(n));
         const body = new THREE.Mesh(geometry1, material1);
-        //-------- Create head for pawn (numeral)
+        body.rotation.set(Math.PI / 2, 0, 0);
+        //-------- Create head of pawn (numeral)
         let txt = "" + (1 + n);
         let geometry2 = new THREE.TextGeometry(txt, {
           font: font,
@@ -407,14 +415,12 @@
         geometry2.center();
         const material2 = phongMaterial.clone(); // alow different color, but use same shader          
         const head = new THREE.Mesh(geometry2, material2);
-        head.rotation.set(-Math.PI / 2, 0, 0);
         head.translateZ(pawnHeight);// - 0.08);
         //-------- Create the whole pawn
         const pawn = new THREE.Group();
         pawn.attach(body);
         pawn.attach(head);
         pawn.position.set(n * 1.0, 0, 0);
-        pawn.rotation.set(Math.PI / 2, 0, 0);
         scene.add(pawn);
         pawns[n] = pawn;
         pawnHomes[n] = pawn.position.clone();
@@ -426,23 +432,87 @@
         //console.log("locations: " + locations);
       }
       for (let n = 0; n < locations.length; ++n) {
-        pawns[n].position.copy (pawnHomes[locations[n]]);
+        pawns[n].position.copy(pawnHomes[locations[n]]);
       }
-      //-------- Create permutation tubes
-      for (let op = 0; op < perms.length; ++op) {
+      //-------- Create permutation tubes and buttons
+      let ops = perms.length;
+      for (let op = 0; op < ops; ++op) {
         let perm = perms[op];
+        //-------- Create a set of permutation tubes
         for (let n = 0; n < nmax; ++n) {
           let r1 = bases[locations[n]].position.clone();   // dangerous?
           let r2 = bases[perm[locations[n]]].position.clone();   // dangerous?
           const path = new CustomArc(r1.x, r1.y, r1.z, r2.x, r2.y, r2.z);
-          const geometry = new THREE.TubeGeometry(path, 20, .1, 18, false);
+          const geometry = new THREE.TubeGeometry(path, 20, .05, 18, false);
           let material = phongMaterial.clone();
-          material.color.setHex(permColor(op));
+          material.color.setHex("0x" + permColor(op));
           const mesh = new THREE.Mesh(geometry, material);
           mesh.userData = op; //could also use name
           scene.add(mesh);
           selectables.push(mesh);
+
+          {
+            // tack a cone onto each tube
+            const geometry = new THREE.ConeGeometry(.15, .4, 32);
+            let material = phongMaterial.clone();
+            material.color.setHex("0x" + permColor(op));
+            const cone = new THREE.Mesh(geometry, material);
+            
+            const r3 = new THREE.Vector3(); // cone position
+            const r4 = new THREE.Vector3(); // ultimately will be cone direction
+            path.getPoint(0.5, r3);
+            path.getPoint(0.55, r4);
+            r4.sub(r3);
+            r4.normalize();
+            console.log(r4);
+            
+            cone.position.copy (r3);
+            cone.quaternion.setFromUnitVectors( new THREE.Vector3(0,1,0), r4);
+            cone.userData = op; //could also use name
+            scene.add(cone);
+            selectables.push(cone);
+
+          }
+
+
         }
+        //-------- Create body of button (box)
+        const buttonSize = .45;
+        const numeralHeight = .3;
+        const geometry = new THREE.BoxGeometry(2 * buttonSize, 2 * buttonSize, 1);
+        const material = phongMaterial.clone();
+        material.color.setHex("0x" + permColor(op));
+        const body = new THREE.Mesh(geometry, material);
+        body.position.set (0, 0, .5);
+        //-------- Create head of button (letter)
+        const txt = permLetters[op];
+        const geometry2 = new THREE.TextGeometry(txt, {
+          font: font,
+          size: buttonSize,
+          height: numeralHeight,
+          curveSegments: 12,
+          bevelEnabled: true,
+          bevelThickness: .02,
+          bevelSize: .02,
+          bevelOffset: 0,
+          bevelSegments: 5
+        });
+        geometry2.center();
+        const material2 = phongMaterial.clone(); // alow different color, but use same shader          
+        //console.log (LightenDarkenColor( permColor(op), -10 ));
+        material2.color.setHex("0x" + LightenDarkenColor( permColor(op), -40 ));
+        const head = new THREE.Mesh(geometry2, material2);
+        head.position.set(0, 0, 1 + numeralHeight/2);
+        //-------- Create head of button (letter)        
+        const button = new THREE.Group();
+        button.attach(body);
+        button.attach(head);
+        button.position.set((nmax - 1) / 2. + 1.1*(nmax + 1) / 2. * (op - (ops - 1) / 2.) / (ops - 0.999), -1.8, 0);
+        body.userData = op; // foolproofing
+        head.userData = op; // foolproofing
+        button.userData = op; //could also use name
+        scene.add(button);
+        selectables.push(button);
       }
 
       //-------- RESET CAMERA
@@ -470,7 +540,7 @@
       scene.add(spotLight); scene.add(spotLight.target);
       //-------- START STUFF
       setMessage("Level " + (1 + level) + ": &nbsp;" + levelName);
-      setMessage2("Click tubes or press B(lue),G(reen),or R(ed) to sort the numbers!"); // BGROYP
+      setMessage2("Click letters or press keys to sort the numbers!"); // BGROYP
       render();
       //-------- IF YOU WANT FLYCONTROLS, UNCOMMENT LINE BELOW 
       //isAnimating = true; requestAnimationFrame(animate);// start animation (for FlyControls to work)
@@ -490,6 +560,9 @@
     //========================================================
     let operInProgress = -1;
     function enqueue(oper) { // put operation oper onto queue
+      // Design choice: After all, DON'T allow user to enqueue multiple events!
+      if (operInProgress >= 0) return;
+
       if (0 <= oper && oper < perms.length) {
         playSound(soundTock);
         queue.push(oper);
@@ -503,8 +576,8 @@
         return popped;
       }
     }
-    function win () {
-      for (let n = 0; n < nmax; ++n) if (locations[n]!=n) return false;
+    function win() {
+      for (let n = 0; n < nmax; ++n) if (locations[n] != n) return false;
       return true;
     }
     function animate(timeCurrent) {
@@ -530,6 +603,7 @@
           if (win()) {
             playSound(soundWin);
             setMessage("Level Complete!");
+            setMessage2(""); // BGROYP
             isAnimating = false;
           }
         }
@@ -617,7 +691,8 @@
   <div id="msg2" style="display: none; z-index: 100; position: absolute;
         top: 10vmin; width: 100%; text-align: center; color: white;
         font-family: 'Titillium Web', sans-serif; font-size: 4vmin;"></div> <!-- Message box 2]  -->
-  <div id="controls" style="
+  <div id="controls"
+    style="
             z-index: 100; display: none;
              font-size: 4vmin; font-family: 'serif'; position: absolute; bottom: 8px; width: 100%; text-align: center;">
     <button id="prevLevelButton" class="button1"> Previous level </button>
