@@ -18,7 +18,7 @@
     .button1 {
       z-index: 100;
       font-family: 'Titillium Web', sans-serif;
-      font-size: 4vmin;
+      font-size: 3vmin;
       width: 21%;
       text-align: center;
       margin: 0;
@@ -27,6 +27,10 @@
       /* border-style: outset; */
       background: #CCC;
       color: black;
+    }
+
+    :disabled {
+      color: gray;
     }
   </style>
 
@@ -78,7 +82,12 @@
       sound.volume = volume
       if (sound.gainNode) sound.gainNode.gain.value = volume
     }
-
+    //================================
+    // HIDE ADDRESS BAR
+    //================================
+    window.addEventListener("load", function () {
+      setTimeout(function () { window.scrollTo(0, 1); }, 0);
+    });
     //================================
     // GRAPHICS 
     //================================
@@ -327,27 +336,27 @@
     }
 
 
-var elem = document.documentElement;
-/* View in fullscreen */
-function openFullscreen() {
-  if (elem.requestFullscreen) {
-    elem.requestFullscreen();
-  } else if (elem.webkitRequestFullscreen) { /* Safari */
-    elem.webkitRequestFullscreen();
-  } else if (elem.msRequestFullscreen) { /* IE11 */
-    elem.msRequestFullscreen();
-  }
-}
-/* Close fullscreen */
-function closeFullscreen() {
-  if (document.exitFullscreen) {
-    document.exitFullscreen();
-  } else if (document.webkitExitFullscreen) { /* Safari */
-    document.webkitExitFullscreen();
-  } else if (document.msExitFullscreen) { /* IE11 */
-    document.msExitFullscreen();
-  }
-}
+    var elem = document.documentElement;
+    /* View in fullscreen */
+    function openFullscreen() {
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullscreen) { /* Safari */
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) { /* IE11 */
+        elem.msRequestFullscreen();
+      }
+    }
+    /* Close fullscreen */
+    function closeFullscreen() {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) { /* Safari */
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) { /* IE11 */
+        document.msExitFullscreen();
+      }
+    }
 
 
 
@@ -485,17 +494,14 @@ function closeFullscreen() {
             let material = phongMaterial.clone();
             material.color.setHex("0x" + permColor(op));
             const cone = new THREE.Mesh(geometry, material);
-            
             const r3 = new THREE.Vector3(); // cone position
             const r4 = new THREE.Vector3(); // ultimately will be cone direction
             path.getPoint(0.5, r3);
             path.getPoint(0.55, r4);
             r4.sub(r3);
             r4.normalize();
-            console.log(r4);
-            
-            cone.position.copy (r3);
-            cone.quaternion.setFromUnitVectors( new THREE.Vector3(0,1,0), r4);
+            cone.position.copy(r3);
+            cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), r4);
             cone.userData = op; //could also use name
             scene.add(cone);
             selectables.push(cone);
@@ -511,7 +517,7 @@ function closeFullscreen() {
         const material = phongMaterial.clone();
         material.color.setHex("0x" + permColor(op));
         const body = new THREE.Mesh(geometry, material);
-        body.position.set (0, 0, .5);
+        body.position.set(0, 0, .5);
         //-------- Create head of button (letter)
         const txt = permLetters[op];
         const geometry2 = new THREE.TextGeometry(txt, {
@@ -528,14 +534,14 @@ function closeFullscreen() {
         geometry2.center();
         const material2 = phongMaterial.clone(); // alow different color, but use same shader          
         //console.log (LightenDarkenColor( permColor(op), -10 ));
-        material2.color.setHex("0x" + LightenDarkenColor( permColor(op), -40 ));
+        material2.color.setHex("0x" + LightenDarkenColor(permColor(op), -40));
         const head = new THREE.Mesh(geometry2, material2);
-        head.position.set(0, 0, 1 + numeralHeight/2);
+        head.position.set(0, 0, 1 + numeralHeight / 2);
         //-------- Create head of button (letter)        
         const button = new THREE.Group();
         button.attach(body);
         button.attach(head);
-        button.position.set((nmax - 1) / 2. + 1.1*(nmax + 1) / 2. * (op - (ops - 1) / 2.) / (ops - 0.999), -1.8, 0);
+        button.position.set((nmax - 1) / 2. + 1.1 * (nmax + 1) / 2. * (op - (ops - 1) / 2.) / (ops - 0.999), -1.8, 0);
         body.userData = op; // foolproofing
         head.userData = op; // foolproofing
         button.userData = op; //could also use name
@@ -567,6 +573,7 @@ function closeFullscreen() {
       spotLight.shadow.mapSize.height = 1024;
       scene.add(spotLight); scene.add(spotLight.target);
       //-------- START STUFF
+      setLevel();
       setMessage("Level " + (1 + level) + ": &nbsp;" + levelName);
       setMessage2("Click letters or press keys to sort the numbers!"); // BGROYP
       render();
@@ -686,15 +693,20 @@ function closeFullscreen() {
         enqueue(kPerm);
       }
     }
-
+    function setLevel() { // this function does some checking
+      document.querySelector('#prevLevelButton').disabled = (level==0);
+      document.querySelector('#nextLevelButton').disabled = (level==levelStrings.length - 1);
+    }
     function prevLevel() {
       if (level <= 0) { /*setMessage("Level " + level + " is the first level!"); */ return; }
       level -= 1;
+      setLevel();
       resetGame();
     }
     function nextLevel() {
       if (level >= levelStrings.length - 1) { /*setMessage("Level " + level + " is the last level!");*/ return; }
       level += 1;
+      setLevel();
       resetGame();
     }
 
