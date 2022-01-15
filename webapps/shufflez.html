@@ -92,12 +92,12 @@
     // GRAPHICS 
     //================================
     //-------- Load THREE.js from CDN
-    import * as THREE from 'https://cdn.skypack.dev/three@0.129.0';
-    import { FlyControls } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/FlyControls.js';
+    //import * as THREE from 'https://cdn.skypack.dev/three@0.129.0';
+    //import { FlyControls } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/FlyControls.js';
     //-------- Load THREE.js from current directory on a HTTP server (python3 -m http.server 8000)
     // Note that you should reload using Shift-Command-R or Shift-Ctrl-R to ensure non-caching
-    //import * as THREE from './three.module.js';
-    //import { FlyControls } from './FlyControls.js';
+    import * as THREE from './three.module.js';
+    import { FlyControls } from './FlyControls.js';
 
     const clock = new THREE.Clock();
     const mouse = new THREE.Vector2();
