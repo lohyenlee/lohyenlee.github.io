@@ -28,9 +28,40 @@
     height: inherit;
   }
 
+  .myColumn {
+    float: left;
+    width: 32%;
+  }
+
+  /* myButton is basically inherited from .w3-btn and .w3-green */
   .myButton {
+    border: none;
+    display: inline-block;
+    padding: 8px 16px;
+    vertical-align: middle;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    background-color: inherit;
+    text-align: center;
+    cursor: pointer;
+    white-space: nowrap;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
     display: block;
     margin: 8px 4px 8px 4px;
+
+    color: #fff !important;
+    background-color: #4CAF50 !important;
+  }
+
+  .myButton:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)
   }
 </style>
 
@@ -67,18 +98,19 @@
     <div class="w3-row w3-padding-64">
       <div class="w3-container">
         <h1 class="w3-text-green">Web apps by Yen Lee Loh</h1>
-        
+
         <div class="row">
-          <div class="column" style="float: left; width: 32%;">
-            <a href="pendulum.html" class="w3-btn w3-green myButton"> Pendulum </a>
+          <div class="myColumn">
+            <a href="pendulum.html" class="myButton"> Pendulum </a>
+            <!-- <a href="pendulum.html" class="myButton"> Pendulum </a> add more a's in column if you like -->
           </div>
-          <div class="column" style="float: left; width: 32%;">
-            <a href="lightsout.html" class="w3-btn w3-green myButton ">Lights Out</a>
+          <div class="myColumn">
+            <a href="lightsout.html" class="myButton ">Lights Out</a>
           </div>
-          <div class="column" style="float: left; width: 32%;">
-            <a href="shufflez.html" class="w3-btn w3-green myButton"> Shufflez </a>
+          <div class="myColumn">
+            <a href="shufflez.html" class="myButton"> Shufflez </a>
           </div>
-        </div>        
+        </div>
       </div>
 
 

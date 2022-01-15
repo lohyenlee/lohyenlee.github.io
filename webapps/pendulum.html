@@ -42,7 +42,7 @@
     var xPivot, yPivot, xBob, yBob;
     var theta = 30 * Math.PI / 180; // angular displacement
     var omega = 0;                // angular velocity
-    var l = 3.00;                 // pendulum length (SI)
+    var l = 1.00;                 // pendulum length (SI)
     var buttonIncrPressed = false;
     var buttonDecrPressed = false;
     var grabbed = false; // whether user is dragging pendulum bob
@@ -209,7 +209,9 @@
       ontouchstart="buttonDecrPressed=true" ontouchend="buttonDecrPressed=false">
       Shorter</button>
     <p>Measure the period of this pendulum using a stopwatch.
-      Drag the bob to change the length of the pendulum and the swing amplitude! </p>
+      Drag the bob to change the swing amplitude.
+      Use the buttons to change the length of the pendulum.
+     </p>
   </div>
 
 </body>
