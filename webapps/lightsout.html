@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@700&display=swap" rel="stylesheet">
+
+  <title>Lights Out </title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <style>
+    #msg1 {
+      z-index: 100;
+      position: absolute;
+      top: 24px;
+      width: 100%;
+      text-align: center;
+      color: white;
+      display: block;
+      font-family: 'Titillium Web', sans-serif;
+      font-size: 6vmin;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <div id="msg1">Turn all the lights out!</div>
+
+  <script type="module">
+    //================================
+    // GRAPHICS VARIABLES AND UTILITIES
+    //================================
+    //-------- Load THREE.js from CDN
+    //import * as THREE from 'https://cdn.skypack.dev/three@0.129.0';
+    //import { FlyControls } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/FlyControls.js';
+    //-------- Load THREE.js from current directory on a HTTP server (python3 -m http.server 8000)
+    import * as THREE from './three.module.js';
+    import { FlyControls } from './FlyControls.js';
+
+    //const clock = new THREE.Clock();
+    const mouse = new THREE.Vector2();
+    const raycaster = new THREE.Raycaster();
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+    const scene = new THREE.Scene();
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const controls = new FlyControls(camera, renderer.domElement);
+      
+    const cylinderGeometry = new THREE.CylinderGeometry(.45, .45, .3, 24).rotateX(Math.PI / 2); // align along z
+    var material0 = new THREE.MeshPhongMaterial();
+    var material1 = material0.clone();
+    var material2 = material1.clone();
+    material0.color.setHex(0x669999);
+    material1.color.setHex(0x666666);
+    material2.color.setHex(0x999999); material2.emissive.setHex(0x666633);
+    const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
+    const plate = new THREE.Mesh(boxGeometry, material0);
+    var switches = []; // array of (graphics) objects // could have separate array of lights
+    var msg;
+    
+    function setMessage(str) { msg1.innerHTML = str; }
+    function fitCameraAroundRectangle(cameraFoV, cameraDownwardTilt, cameraAspect, xmin, xmax, ymin, ymax) {
+      let theta = cameraFoV / 2 * Math.PI / 180;
+      let alpha = cameraDownwardTilt * Math.PI / 180; // camera direction wrt horizontal
+      let xc = (xmin + xmax) / 2;
+      let yc = (ymin + ymax) / 2;
+      let w = xmax - xmin;
+      let h = ymax - ymin;
+      let Y = h / 2 * Math.sin(2 * alpha) / Math.sin(2 * theta);
+      let Z = (Y - h / 2) * Math.tan(alpha + theta);
+      let alphaTrue = Math.atan(Z / Y);
+      let d1 = Math.sqrt(Y ** 2 + Z ** 2);
+      let d2 = w * cameraAspect / 2 / Math.tan(theta);
+      let d;
+      if (d1 > d2) { d = d1; } // camera distance determined by vertical size
+      else { d = d2; alphaTrue = alpha; }  // determined by horizontal size
+      camera.fov = cameraFoV;
+      camera.aspect = 1 / cameraAspect;
+      camera.rotation.x = Math.PI / 2 - alpha;
+      camera.position.set(xc, yc - d * Math.cos(alphaTrue), d * Math.sin(alphaTrue));
+    }
+    function resetCamera() {
+      fitCameraAroundRectangle(50, 45, window.innerHeight / window.innerWidth,
+        -2, xmax + 1, -2, ymax + 1);
+      camera.updateProjectionMatrix();
+    }
+
+    //================================
+    // GAME VARIABLES
+    //================================
+    var xmax, ymax, imax;
+    var gamemat = []; // matrix representing effect of each switch on each light
+    var xi = [], yi = [], si = [], li = []; // positions, input (switch) states, and output (light) states
+
+    //================================
+    // UTILITIES
+    //================================
+    function toggleSwitch(i) {
+      si[i] = 1 - si[i];
+      for (let i2 = 0; i2 < imax; ++i2) {
+        if (gamemat[i + imax * i2] == 1) {
+          toggleLight(i2);
+        }
+      }
+    }
+    function toggleLight(i) {
+      li[i] = 1 - li[i];
+    }
+    function connect(x, y, x2, y2) {
+      if (x2 < 0 || x2 >= xmax || y2 < 0 || y2 >= ymax) return;
+      gamemat[(x + xmax * y) + imax * (x2 + xmax * y2)] = 1;
+    }
+    //================================
+    // INITIALIZE EVERYTHING FOR THE FIRST TIME
+    //================================
+    function init() {
+      scene.background = new THREE.Color(0x111111);
+      plate.receiveShadow = true;
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFShadowMap;
+      controls.movementSpeed = 10;
+      controls.domElement = renderer.domElement;
+      controls.rollSpeed = Math.PI / 24;
+      controls.autoForward = false;
+      controls.dragToLook = true;
+      document.body.insertBefore(renderer.domElement, document.body.firstChild);
+      window.addEventListener('resize', onResize);
+      window.addEventListener('mousedown', onMouseDown);
+      window.addEventListener('mouseup', onMouseUp);
+      resetGame();
+      render();
+    }
+    //================================
+    // RESET THINGS, DOING AS LITTLE DELETE AND NEW AS POSSIBLE
+    //================================
+    function wipeArray(arr) { arr.splice(0, arr.length); }
+    function resetGame() {
+      //-------- DISPOSE OF EVERYTHING INCLUDING OLD SCENE AND OBJECTS
+      wipeArray(xi); wipeArray(yi); wipeArray(si); wipeArray(li);
+      wipeArray(gamemat);
+      wipeArray(switches);
+      scene.traverse(function (obj) {
+        if (obj.type === 'Mesh') {
+          obj.geometry.dispose();
+          obj.material.dispose();
+        }
+      });
+      scene.remove.apply(scene, scene.children); // is this overkill now?
+      renderer.renderLists.dispose();
+      //-------- SET UP CLEAN BOARD
+      xmax = 5;
+      ymax = 5;
+      imax = xmax * ymax;
+      xi = new Array(imax).fill(0);
+      yi = new Array(imax).fill(0);
+      si = new Array(imax).fill(0);
+      li = new Array(imax).fill(0);
+      gamemat = new Array(imax * imax).fill(0);
+      for (let x = 0; x < xmax; ++x) {
+        for (let y = 0; y < ymax; ++y) {
+          connect(x, y, x, y);
+          connect(x, y, x + 1, y);
+          connect(x, y, x - 1, y);
+          connect(x, y, x, y + 1);
+          connect(x, y, x, y - 1);
+        }
+      }
+      for (let x = 0; x < xmax; ++x) {
+        for (let y = 0; y < ymax; ++y) {
+          let i = x + xmax * y;
+          xi[i] = x; yi[i] = y;
+          si[i] = 0; li[i] = 0;
+        }
+      }
+      //-------- SCRAMBLE BOARD  
+      for (let i = 0; i < imax; ++i) {
+        if (Math.random() > 0.5) {
+          toggleSwitch(i);
+        }
+      }
+      //-------- SET UP GRAPHICS OBJECTS AGAIN
+      plate.position.set(xmax / 2 - .5, ymax / 2 - .5, -1 + .4);
+      plate.scale.x = xmax + .2;
+      plate.scale.y = ymax + .2;
+      plate.scale.z = .5;
+      scene.add(plate);
+      switches.length = imax;
+      for (let i = 0; i < imax; ++i) {
+        const mesh = new THREE.Mesh(cylinderGeometry, material1);
+        mesh.position.x = xi[i];
+        mesh.position.y = yi[i];
+        mesh.position.z = 0;
+        mesh.name = i.toString();
+        mesh.castShadow = true;
+        scene.add(mesh);
+        switches[i] = mesh;
+      }
+      resetCamera();
+      scene.add(new THREE.AmbientLight(0x333333));
+      const light = new THREE.DirectionalLight(0xCCCCCC, 1.0);
+      light.position.set(0, 0, 0);
+      light.target.position.set(1, 1, -1);
+      light.castShadow = true;
+      light.shadow.camera.near = .1;
+      light.shadow.camera.far = 1000;
+      light.shadow.mapSize.width = 1024;
+      light.shadow.mapSize.height = 1024;
+      scene.add(light); scene.add(light.target);
+    }
+    function render() {
+      for (let i = 0; i < imax; ++i) {
+        switches[i].material = li[i] ? material2 : material1;
+      }
+      renderer.render(scene, camera);
+    }
+    function onResize() {
+      resetCamera();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      render();
+    }
+
+
+
+    var iSelected;
+    var objSelected;
+    function onMouseDown(event) {
+      event.preventDefault();
+      mouse.x = (event.offsetX / window.innerWidth) * 2 - 1;
+      mouse.y = - (event.offsetY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const intersections = raycaster.intersectObjects(switches, true);
+      if (intersections.length > 0) {
+        const obj = intersections[0].object; // topmost object under click
+        objSelected = obj;
+        objSelected.position.z = -.1; // not sure why this doesn't do anything
+        //alert (objSelected.name);
+        let i = parseInt(objSelected.name);
+        toggleSwitch(i);
+      }
+      render();
+    }
+    function onMouseUp(event) {
+      event.preventDefault();
+      if (objSelected != undefined) objSelected.position.z = 0;
+      render();
+    }
+
+    //================================
+    // START THE GAME!
+    //================================
+    init();
+
+  </script>
+
+</body>
+
+</html>

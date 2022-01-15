@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@700&display=swap" rel="stylesheet">
+
+  <title>Shufflez </title>
+  <meta charset="utf-8">
+  <meta name="viewport"
+    content="width=device-width, height=device-height, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <style>
+    .body {
+      background-color: black;
+    }
+
+    .button1 {
+      z-index: 100;
+      font-family: 'Titillium Web', sans-serif;
+      font-size: 3vmin;
+      width: 21%;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      border-radius: 8px;
+      /* border-style: outset; */
+      background: #CCC;
+      color: black;
+    }
+
+    :disabled {
+      color: gray;
+    }
+  </style>
+
+</head>
+
+<body class="body">
+
+  <script type="module">
+    //================================
+    // SOUND 
+    // https://curtisrobinson.medium.com/how-to-auto-play-audio-in-safari-with-javascript-21d50b0a2765
+    //================================
+    var audioContext = new (window.AudioContext || window.webkitAudioContext)()
+    function loadSound(filename) {
+      var sound = { volume: 1, audioBuffer: null }
+      var ajax = new XMLHttpRequest()
+      ajax.open("GET", filename, true)
+      ajax.responseType = "arraybuffer"
+      ajax.onload = function () {
+        audioContext.decodeAudioData(
+          ajax.response,
+          function (buffer) { sound.audioBuffer = buffer },
+          function (error) { debugger }
+        )
+      }
+      ajax.onerror = function () { debugger }
+      ajax.send()
+      return sound
+    }
+    function playSound(sound) {
+      if (!sound.audioBuffer) return false
+      var source = audioContext.createBufferSource()
+      if (!source) return false
+      source.buffer = sound.audioBuffer
+      if (!source.start) source.start = source.noteOn
+      if (!source.start) return false
+      var gainNode = audioContext.createGain()
+      gainNode.gain.value = sound.volume
+      source.connect(gainNode)
+      gainNode.connect(audioContext.destination)
+      source.start(0)
+      sound.gainNode = gainNode
+      return true
+    }
+    function stopSound(sound) {
+      if (sound.gainNode) sound.gainNode.gain.value = 0
+    }
+    function setSoundVolume(sound, volume) {
+      sound.volume = volume
+      if (sound.gainNode) sound.gainNode.gain.value = volume
+    }
+    //================================
+    // HIDE ADDRESS BAR
+    //================================
+    window.addEventListener("load", function () {
+      setTimeout(function () { window.scrollTo(0, 1); }, 0);
+    });
+    //================================
+    // GRAPHICS 
+    //================================
+    //-------- Load THREE.js from CDN
+    import * as THREE from 'https://cdn.skypack.dev/three@0.129.0';
+    import { FlyControls } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/FlyControls.js';
+    //-------- Load THREE.js from current directory on a HTTP server (python3 -m http.server 8000)
+    // Note that you should reload using Shift-Command-R or Shift-Ctrl-R to ensure non-caching
+    //import * as THREE from './three.module.js';
+    //import { FlyControls } from './FlyControls.js';
+
+    const clock = new THREE.Clock();
+    const mouse = new THREE.Vector2();
+    const raycaster = new THREE.Raycaster();
+    const selectables = [];  // mouse, raycaster, and selectables pertain to mouse selections
+    var isAnimating = false;
+    const gameSpeed = 3.0;  // game time corresponding to one second of wall time
+    var camera, scene, renderer, controls, group; // could allocate right here to make sure we never "new" again
+
+    //================================
+    // PRELOAD AND PREPARE SOUNDS AND TEXTURES 
+    //================================
+    var soundNothing = loadSound("nothing.mp3");
+    var soundDing = loadSound("ding.mp3");
+    var soundDingling = loadSound("dingling.mp3");
+    var soundTock = loadSound("tock.mp3");
+    var soundFall = loadSound("fall.mp3");
+    var soundWin = loadSound("win.mp3");
+
+    const phongMaterial = new THREE.MeshPhongMaterial();
+    const ambientLight = new THREE.AmbientLight(0x333333);
+    const dirLight = new THREE.DirectionalLight(0xCCCCCC);
+    const spotLight = new THREE.SpotLight(0xFFFFFF);
+    const backgroundColor = new THREE.Color(0x111111);
+
+    const textSize = .35;
+    let font;
+    const loader = new THREE.FontLoader();
+    loader.load('./helvetiker_regular.typeface.json', function (response) {
+      font = response;
+      readyToStart();
+    });
+
+
+
+
+
+
+    //================================
+    // GAME VARIABLES
+    //================================
+    let t = 0;        // time variable for animation
+    let nmax;
+    let pawnHomes = []; // positions of unpermuted pawns
+    let pawns = [];
+    let bases = [];
+    let queue = [];  // this should really be a class
+    let locations = []; // locations[n] is the index of the base at which pawn n is at
+    let occupants = []; // occupants[b] is the index of the pawn located at base b
+    let perms = [];  // PERMUTATION LISTS
+    let permLetters = ["B", "G", "R", "O", "Y", "P"];
+    let permColors = ["9999FF", "99FF99", "FF9999", "FFCC99", "FFFF99", "99FFFF"]; // colors of tubes
+    let pawnColors = ["221111", "332222", "443333", "554444", "665555", "776666", "887777", "998888"];
+    function permColor(op) { return permColors[op % permColors.length]; }
+    function pawnColor(n) { return pawnColors[n % pawnColors.length]; }
+
+    const levelFile = `
+(12)          # C2
+---
+(12),(34)      # C2xC2
+---
+(12),(34),(56) # C2xC2xC2
+---
+(12)(345)     # C2xC3 ~== C6
+---
+(12),(23)         # D3
+---
+(1234),(24)       # D4
+---
+(12345),(12)(35)  # D5
+---
+(321),(234)       # A4 
+---
+(12),(234)        # S4
+---
+(123),(345)       # A5
+---
+(12),(2345)       # S5
+---
+(123456),(14)(63) # D6
+---
+(12),(23456)      # S6
+---
+(12),(23),(34),(45),(56)  # S6 from transpositions
+---
+(123),(345),(567) # Seven 
+---
+(123),(3456),(678)# Eight
+    `;
+    const levelStrings = levelFile.split(/[\-]+/);
+    let level = 0;
+    let levelName;
+
+    setupLevel();
+
+    //================================
+    // UTILITIES
+    //================================
+    function wipeArray(arr) { arr.splice(0, arr.length); }
+    function setMessage(str) { msg1.innerHTML = str; }
+    function setMessage2(str) { msg2.innerHTML = str; }
+    function irand(n) { return Math.floor(Math.random() * n); }
+    function irange(n) { return [...Array(n).keys()]; }
+    function permute(locations, perm) {
+      let locationsOld = [...locations];
+      for (let n = 0; n < locationsOld.length; ++n) {
+        locations[n] = perm[locationsOld[n]]; //asdfasffd
+      }
+    }
+    function convert09AZ(chr) {
+      if (chr >= '0' && chr <= '9') return parseInt(chr);
+      else if (chr >= 'A' && chr <= 'Z') return (chr.charCodeAt(0) - 'A'.charCodeAt(0) + 10);
+    }
+    function LightenDarkenColor(col, amt) {
+      col = parseInt(col, 16);
+      return (((col & 0x0000FF) + amt) | ((((col >> 8) & 0x00FF) + amt) << 8) | (((col >> 16) + amt) << 16)).toString(16);
+    }
+
+    class CustomArc extends THREE.Curve {
+      constructor(x1, y1, z1, x2, y2, z2) {
+        super();
+        this.x1 = x1;
+        this.y1 = y1;
+        this.z1 = z1;
+        this.x2 = x2;
+        this.y2 = y2;
+        this.z2 = z2;
+      }
+      getPoint(t, optionalTarget = new THREE.Vector3()) {
+        let x1 = this.x1;
+        let y1 = this.y1;
+        let z1 = this.z1;
+        let x2 = this.x2;
+        let y2 = this.y2;
+        let z2 = this.z2;
+        let xcen = .5 * (x1 + x2);
+        let ycen = .5 * (y1 + y2);
+        let rad = .5 * Math.hypot(x2 - x1, y2 - y1);
+        let ang1 = Math.atan2(y1 - ycen, x1 - xcen);
+        let ang2 = Math.atan2(y2 - ycen, x2 - xcen);
+        if (ang2 < ang1) ang2 += 2 * Math.PI;
+        let ang = (1 - t) * ang1 + t * ang2;
+        let x = xcen + rad * Math.cos(ang);
+        let y = ycen + rad * Math.sin(ang);
+        let z = z2;
+        return optionalTarget.set(x, y, z);
+      }
+    };
+    function render() {
+      renderer.render(scene, camera);
+    }
+    function setupLevel() {
+      let levelString = levelStrings[level].trim();
+
+      //-------- EXTRACT LEVEL NAME
+      let blah = levelString.split('#');
+      levelString = blah[0];
+      levelName = blah[1];
+
+      //-------- FIND LARGEST DIGIT IN LEVEL STRING
+      // IN ORDER TO DETERMINE NUMBER OF ELEMENTS IN PERMUTATION LIST
+      nmax = 0;
+      {
+        let s = levelString.replace(/[  /(  \,  /)   ]/g, '');
+        let digits = [];
+        for (let n = 0; n < s.length; ++n) {
+          digits[n] = convert09AZ(s.charAt(n));
+          nmax = Math.max(nmax, digits[n]);
+        }
+        //console.log("Number of elements: nmax = " + nmax);
+      }
+      //-------- PARSE LEVEL STRING INTO CYCLE-LISTS
+      perms = [];
+      let cycleLists = levelString.split(',');  // "(12)(34), (243)" --> [(12)(34), (243)]    
+      for (const cycleList of cycleLists) {
+        let perm = irange(nmax);
+        for (let match of cycleList.matchAll(/\([0-9A-Z]+\)/g)) {
+          let s = match[0];
+          s = s.slice(1, s.length - 1);
+          let digits = [];
+          for (let n = 0; n < s.length; ++n) {
+            digits[n] = convert09AZ(s.charAt(n)) - 1;
+          }
+          for (let n = 0; n < s.length; ++n) {
+            perm[digits[n]] = digits[(n + 1) % s.length];
+          }
+        }
+        perms.push(perm);
+        //console.log("Cyclelist: " + cycleList + "   Permlist: " + perm);
+      }
+      locations = irange(nmax);
+
+    }
+    function fitCameraAroundRectangle(cameraFoV, cameraDownwardTilt, cameraAspect, xmin, xmax, ymin, ymax) {
+      let theta = cameraFoV / 2 * Math.PI / 180;
+      let alpha = cameraDownwardTilt * Math.PI / 180; // camera direction wrt horizontal
+      let xc = (xmin + xmax) / 2;
+      let yc = (ymin + ymax) / 2;
+      let w = xmax - xmin;
+      let h = ymax - ymin;
+      let Y = h / 2 * Math.sin(2 * alpha) / Math.sin(2 * theta);
+      let Z = (Y - h / 2) * Math.tan(alpha + theta);
+      let alphaTrue = Math.atan(Z / Y);
+      let d1 = Math.sqrt(Y ** 2 + Z ** 2);
+      let d2 = w * cameraAspect / 2 / Math.tan(theta);
+      let d;
+      if (d1 > d2) { d = d1; } // camera distance determined by vertical size
+      else { d = d2; alphaTrue = alpha; }  // determined by horizontal size
+      camera.fov = cameraFoV;
+      camera.aspect = 1 / cameraAspect;
+      camera.rotation.x = Math.PI / 2 - alpha;
+      camera.position.set(xc, yc - d * Math.cos(alphaTrue), d * Math.sin(alphaTrue));
+    }
+
+    //================================
+    // PREPARE TO START
+    //================================
+    function readyToStart() {
+      camera = new THREE.PerspectiveCamera(30, 1, 1, 1000);
+      scene = new THREE.Scene();
+      scene.background = backgroundColor;
+
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFShadowMap;
+
+      controls = new FlyControls(camera, renderer.domElement);
+      controls.movementSpeed = 1;
+      controls.domElement = renderer.domElement;
+      controls.rollSpeed = Math.PI / 24;
+      controls.autoForward = false;
+      controls.dragToLook = true;
+      document.addEventListener('click', initGame);
+    }
+
+
+    var elem = document.documentElement;
+    /* View in fullscreen */
+    function openFullscreen() {
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullscreen) { /* Safari */
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) { /* IE11 */
+        elem.msRequestFullscreen();
+      }
+    }
+    /* Close fullscreen */
+    function closeFullscreen() {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) { /* Safari */
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) { /* IE11 */
+        document.msExitFullscreen();
+      }
+    }
+
+
+
+    //==========================================
+    // INITIALIZE EVERYTHING FOR THE FIRST TIME
+    //==========================================
+    function initGame() {
+      openFullscreen();
+
+      document.removeEventListener("click", initGame);
+      document.getElementById("msg1").style.display = 'inline';
+      document.getElementById("msg2").style.display = 'inline';
+      document.getElementById("controls").style.display = 'block';
+      playSound(soundNothing);
+      document.body.insertBefore(renderer.domElement, document.body.firstChild);
+      document.getElementById("splash").style.display = 'none';
+      window.addEventListener('resize', onResize);
+      window.addEventListener('keydown', onKeyDown);
+      window.addEventListener('mousedown', onMouseDown);
+      window.addEventListener('touchstart', onTouchStart, { passive: false });
+      document.querySelector('#resetButton').addEventListener('click', resetGame);
+      document.querySelector('#prevLevelButton').addEventListener('click', prevLevel);
+      document.querySelector('#nextLevelButton').addEventListener('click', nextLevel);
+      resetGame();
+    }
+
+
+    function resetCamera() {
+      let xmin = 0;
+      let xmax = nmax - 1;   // hardwire
+      let ymin = -1;
+      let ymax = 1;             // hardwire
+      fitCameraAroundRectangle(35, 72, // 50 deg FoV, 70 deg tilt
+        window.innerHeight / window.innerWidth,
+        xmin - 2, xmax + 2, ymin - 2, ymax + 1);
+      camera.updateProjectionMatrix();
+    }
+    function resetGame() {
+      //========================================================
+      // RESET GAME WITH MINIMAL "new" AND "dispose" OPERATIONS
+      //========================================================
+
+      //-------- DISPOSE OF EVERYTHING INCLUDING OLD SCENE AND OBJECTS
+      wipeArray(selectables); wipeArray(bases);
+      scene.traverse(function (obj) {
+        if (obj.type === 'Mesh') {
+          obj.geometry.dispose();
+          obj.material.dispose();
+        }
+      });
+      scene.remove.apply(scene, scene.children); // is this overkill now?
+      renderer.renderLists.dispose();
+      //-------- SETUP BOARD (mathematical representation)
+      setupLevel();
+      //-------- SETUP bases AND PAWNS (GRAPHICS)
+      bases.length = nmax;
+      for (let n = 0; n < nmax; ++n) {
+        //setMessage(""+nodePositions.length);
+        let material = phongMaterial.clone();
+        material.color.setHex("0x" + pawnColor(n));
+        const geometry = new THREE.CylinderGeometry(0.4, 0.4, 0.2, 32);
+        const base = new THREE.Mesh(geometry, material);
+        base.position.set(n, 0, -0.2);
+        base.rotation.set(Math.PI / 2, 0, 0);
+        scene.add(base);
+        bases[n] = base;
+      }
+      pawns.length = nmax;
+      pawnHomes.length = nmax;
+
+      for (let n = 0; n < nmax; ++n) {
+        //-------- Create body of pawn (cylinder)
+        let pawnHeight = 0.1 + 0.9 * n / nmax;
+        const geometry1 = new THREE.CylinderGeometry(0.27, 0.3, pawnHeight, 32);
+        geometry1.translate(0, +pawnHeight / 2, 0);  // think this is right now
+        const material1 = phongMaterial.clone();
+        material1.color.setHex("0x" + pawnColor(n));
+        const body = new THREE.Mesh(geometry1, material1);
+        body.rotation.set(Math.PI / 2, 0, 0);
+        //-------- Create head of pawn (numeral)
+        let txt = "" + (1 + n);
+        let geometry2 = new THREE.TextGeometry(txt, {
+          font: font,
+          size: textSize,
+          height: .08,
+          curveSegments: 12,
+          bevelEnabled: true,
+          bevelThickness: .01,
+          bevelSize: .01,
+          bevelOffset: 0,
+          bevelSegments: 3
+        });
+        geometry2.center();
+        const material2 = phongMaterial.clone(); // alow different color, but use same shader          
+        const head = new THREE.Mesh(geometry2, material2);
+        head.translateZ(pawnHeight);// - 0.08);
+        //-------- Create the whole pawn
+        const pawn = new THREE.Group();
+        pawn.attach(body);
+        pawn.attach(head);
+        pawn.position.set(n * 1.0, 0, 0);
+        scene.add(pawn);
+        pawns[n] = pawn;
+        pawnHomes[n] = pawn.position.clone();
+      }
+      //-------- Shuffle pawns
+      for (let iter = 0; iter < 99 || win(); ++iter) {
+        let op = irand(perms.length);   // choose a random generator
+        permute(locations, perms[op]);  // apply it
+        //console.log("locations: " + locations);
+      }
+      for (let n = 0; n < locations.length; ++n) {
+        pawns[n].position.copy(pawnHomes[locations[n]]);
+      }
+      //-------- Create permutation tubes and buttons
+      let ops = perms.length;
+      for (let op = 0; op < ops; ++op) {
+        let perm = perms[op];
+        //-------- Create a set of permutation tubes
+        for (let n = 0; n < nmax; ++n) {
+          let r1 = bases[locations[n]].position.clone();   // dangerous?
+          let r2 = bases[perm[locations[n]]].position.clone();   // dangerous?
+          const path = new CustomArc(r1.x, r1.y, r1.z, r2.x, r2.y, r2.z);
+          const geometry = new THREE.TubeGeometry(path, 20, .05, 18, false);
+          let material = phongMaterial.clone();
+          material.color.setHex("0x" + permColor(op));
+          const mesh = new THREE.Mesh(geometry, material);
+          mesh.userData = op; //could also use name
+          scene.add(mesh);
+          selectables.push(mesh);
+
+          {
+            // tack a cone onto each tube
+            const geometry = new THREE.ConeGeometry(.15, .4, 32);
+            let material = phongMaterial.clone();
+            material.color.setHex("0x" + permColor(op));
+            const cone = new THREE.Mesh(geometry, material);
+            const r3 = new THREE.Vector3(); // cone position
+            const r4 = new THREE.Vector3(); // ultimately will be cone direction
+            path.getPoint(0.5, r3);
+            path.getPoint(0.55, r4);
+            r4.sub(r3);
+            r4.normalize();
+            cone.position.copy(r3);
+            cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), r4);
+            cone.userData = op; //could also use name
+            scene.add(cone);
+            selectables.push(cone);
+
+          }
+
+
+        }
+        //-------- Create body of button (box)
+        const buttonSize = .45;
+        const numeralHeight = .3;
+        const geometry = new THREE.BoxGeometry(2 * buttonSize, 2 * buttonSize, 1);
+        const material = phongMaterial.clone();
+        material.color.setHex("0x" + permColor(op));
+        const body = new THREE.Mesh(geometry, material);
+        body.position.set(0, 0, .5);
+        //-------- Create head of button (letter)
+        const txt = permLetters[op];
+        const geometry2 = new THREE.TextGeometry(txt, {
+          font: font,
+          size: buttonSize,
+          height: numeralHeight,
+          curveSegments: 12,
+          bevelEnabled: true,
+          bevelThickness: .02,
+          bevelSize: .02,
+          bevelOffset: 0,
+          bevelSegments: 5
+        });
+        geometry2.center();
+        const material2 = phongMaterial.clone(); // alow different color, but use same shader          
+        //console.log (LightenDarkenColor( permColor(op), -10 ));
+        material2.color.setHex("0x" + LightenDarkenColor(permColor(op), -40));
+        const head = new THREE.Mesh(geometry2, material2);
+        head.position.set(0, 0, 1 + numeralHeight / 2);
+        //-------- Create head of button (letter)        
+        const button = new THREE.Group();
+        button.attach(body);
+        button.attach(head);
+        button.position.set((nmax - 1) / 2. + 1.1 * (nmax + 1) / 2. * (op - (ops - 1) / 2.) / (ops - 0.999), -1.8, 0);
+        body.userData = op; // foolproofing
+        head.userData = op; // foolproofing
+        button.userData = op; //could also use name
+        scene.add(button);
+        selectables.push(button);
+      }
+
+      //-------- RESET CAMERA
+      resetCamera();
+      //-------- LIGHTS
+      scene.add(ambientLight);
+      dirLight.intensity = .5;
+      dirLight.position.set(0, 0, 0);
+      dirLight.target.position.set(3, 1, -1);
+      dirLight.castShadow = true;
+      dirLight.shadow.camera.near = .1;
+      dirLight.shadow.camera.far = 1000;
+      dirLight.shadow.mapSize.width = 1024;
+      dirLight.shadow.mapSize.height = 1024;
+      scene.add(dirLight); scene.add(dirLight.target);
+      spotLight.intensity = .7;
+      spotLight.position.set(0, 0, 40);
+      spotLight.target.position.set(1, 2, 0); // hmm
+      spotLight.angle = Math.PI / 180 * 60;
+      spotLight.castShadow = true;
+      spotLight.shadow.camera.near = .1;
+      spotLight.shadow.camera.far = 1000;
+      spotLight.shadow.mapSize.width = 1024;
+      spotLight.shadow.mapSize.height = 1024;
+      scene.add(spotLight); scene.add(spotLight.target);
+      //-------- START STUFF
+      setLevel();
+      setMessage("Level " + (1 + level) + ": &nbsp;" + levelName);
+      setMessage2("Click letters or press keys to sort the numbers!"); // BGROYP
+      render();
+      //-------- IF YOU WANT FLYCONTROLS, UNCOMMENT LINE BELOW 
+      //isAnimating = true; requestAnimationFrame(animate);// start animation (for FlyControls to work)
+    }
+
+
+    function onResize() {
+      resetCamera();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      render();
+    }
+
+
+
+    //========================================================
+    // ONLY THE FOLLOWING FUNCTIONS ARE EXECUTED MANY TIMES
+    //========================================================
+    let operInProgress = -1;
+    function enqueue(oper) { // put operation oper onto queue
+      // Design choice: After all, DON'T allow user to enqueue multiple events!
+      if (operInProgress >= 0) return;
+
+      if (0 <= oper && oper < perms.length) {
+        playSound(soundTock);
+        queue.push(oper);
+        requestAnimationFrame(animate);
+      }
+    }
+    function dequeue() {
+      if (queue.length > 0) {
+        let popped = queue[0];
+        queue.splice(0, 1);   // delete first element
+        return popped;
+      }
+    }
+    function win() {
+      for (let n = 0; n < nmax; ++n) if (locations[n] != n) return false;
+      return true;
+    }
+    function animate(timeCurrent) {
+      isAnimating = true;
+      //-------- Obtain timing info
+      let dtWallClock = clock.getDelta(); // time in seconds since last call to clock.getDelta()
+      let dt = gameSpeed * dtWallClock;   // time in game units since last frame
+      t += dt; if (t > 1) t = 1;
+      //---------------- ACTIVE MOVE IN PROGRESS
+      if (operInProgress >= 0) {
+        let perm = perms[operInProgress];
+        for (let n = 0; n < nmax; ++n) {  // graphically illustrate the movement
+          let r1 = pawnHomes[locations[n]].clone();       // starting position
+          let r2 = pawnHomes[perm[locations[n]]].clone(); // ending position
+          const path = new CustomArc(r1.x, r1.y, r1.z, r2.x, r2.y, r2.z);
+          path.getPoint(t, pawns[n].position); // this sets the pawn position
+        }
+        if (t >= 1) {
+          permute(locations, perm); // commit the permutation to the mathematical arrays
+          operInProgress = -1;
+
+
+          if (win()) {
+            playSound(soundWin);
+            setMessage("Level Complete!");
+            setMessage2(""); // BGROYP
+            isAnimating = false;
+          }
+        }
+      }
+      //---------------- PULL MOVE FROM QUEUE
+      else if (queue.length > 0) { // sanity check also
+        operInProgress = dequeue();
+        t = 0;
+      }
+      else {
+        isAnimating = false;
+      }
+      //-------- Render and request next update
+      //controls.update(dtWallClock); // uncomment to let FlyControls move the camera
+      render();
+      if (isAnimating) requestAnimationFrame(animate);
+    }
+
+
+    function onKeyDown(event) { // B, G, R, O, Y, P
+      switch (event.code) {
+        case "KeyB": enqueue(0); break;
+        case "KeyG": enqueue(1); break;
+        case "KeyR": enqueue(2); break;
+        case "Period": nextLevel(); break;
+        case "Comma": prevLevel(); break;
+      }
+    }
+
+
+    function onMouseDown(event) {
+      event.preventDefault();
+      mouse.x = (event.offsetX / window.innerWidth) * 2 - 1;  //clientX is bad
+      mouse.y = - (event.offsetY / window.innerHeight) * 2 + 1; //offsetX is exptal
+      raycaster.setFromCamera(mouse, camera);
+      const intersections = raycaster.intersectObjects(selectables, true);
+      if (intersections.length > 0) {
+        let obj = intersections[0].object; // topmost object under click
+        let kPerm = parseInt(obj.userData);   // which permutation operation was selected
+        enqueue(kPerm);
+      }
+    }
+    function onTouchStart(event) {
+      //event.preventDefault();
+      mouse.x = (event.touches[0].pageX / window.innerWidth) * 2 - 1;  //clientX is bad
+      mouse.y = - (event.touches[0].pageY / window.innerHeight) * 2 + 1; //offsetX is exptal
+      raycaster.setFromCamera(mouse, camera);
+      const intersections = raycaster.intersectObjects(selectables, true);
+      if (intersections.length > 0) {
+        let obj = intersections[0].object; // topmost object under click
+        let kPerm = parseInt(obj.userData);   // which permutation operation was selected
+        enqueue(kPerm);
+      }
+    }
+    function setLevel() { // this function does some checking
+      document.querySelector('#prevLevelButton').disabled = (level==0);
+      document.querySelector('#nextLevelButton').disabled = (level==levelStrings.length - 1);
+    }
+    function prevLevel() {
+      if (level <= 0) { /*setMessage("Level " + level + " is the first level!"); */ return; }
+      level -= 1;
+      setLevel();
+      resetGame();
+    }
+    function nextLevel() {
+      if (level >= levelStrings.length - 1) { /*setMessage("Level " + level + " is the last level!");*/ return; }
+      level += 1;
+      setLevel();
+      resetGame();
+    }
+
+  </script>
+
+  <div id="splash" style="width: 80%;
+    margin: auto;
+    text-align: center;
+    vertical-align: middle;
+    color: #FFF;
+    font-family: 'Titillium Web', sans-serif;">
+    <h1
+      style="font-size: 20vmin; color:yellow; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black, 3px 3px 4px #999;">
+      Shufflez
+    </h1>
+    <p style="font-size: 6vmin;"> A puzzle game by Yen Lee Loh</p>
+    <p style="font-size: 6vmin;"> Click anywhere to start!</p>
+  </div>
+  <div id="msg1" style="display: none;  z-index: 100; position: absolute;
+            top: 2vmin; width: 100%; text-align: center; color: white;
+            font-family: 'Titillium Web', sans-serif; font-size: 6vmin;"></div>
+  <div id="msg2" style="display: none; z-index: 100; position: absolute;
+        top: 10vmin; width: 100%; text-align: center; color: white;
+        font-family: 'Titillium Web', sans-serif; font-size: 4vmin;"></div> <!-- Message box 2]  -->
+  <div id="controls"
+    style="
+            z-index: 100; display: none;
+             font-size: 4vmin; font-family: 'serif'; position: absolute; bottom: 8px; width: 100%; text-align: center;">
+    <button id="prevLevelButton" class="button1"> Previous level </button>
+    <button id="resetButton" class="button1">Reset</button>
+    <button id="nextLevelButton" class="button1"> Next level </button>
+  </div>
+
+</body>
+
+</html>
