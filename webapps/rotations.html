@@ -40,12 +40,12 @@
 
     .button {
       position: absolute;
-      left: 0;
-      bottom: 0vmin;
+      left: 1vmin;
+      bottom: 1vmin;
       z-index: 100;
       font-family: sans-serif;
-      font-size: 3vmin;
-      width: 25%;
+      font-size: 4vmin;
+      width: 30vmin;
       border-radius: 8px;
       /* border-style: outset; */
       background: #CCC;
@@ -65,14 +65,14 @@
       <div id="msg1" style="display: inline;  z-index: 100; position: absolute; 
       top: 0; left: 1vmin; width: 100%; color: white;
       text-align: center;
-      font-family: sans-serif; font-size: 5vmin;">Message 1 </div>
+      font-family: sans-serif; font-size: 4vmin;">Message 1 </div>
     </div>
     <div id="panel2" data-diagram="panel2">
       <div id="msg2" style="display: inline;  z-index: 100; position: absolute;
       top: 0; left: 1vmin; width: 100%;  color: white;
       text-align: center;
       white-space: pre;
-      font-family: sans-serif; font-size: 5vmin;">Message 2</div>
+      font-family: sans-serif; font-size: 4vmin;">Message 2</div>
     </div>
   </div>
   <button id="resetButton" class="button"> Reset </button>
@@ -141,6 +141,7 @@
     //======== FUNCTIONS
     //-------- TEXTURE LOADER
     const loader = new THREE.TextureLoader();
+    const gridTexture = loader.load('grid.jpg');
     const earthMap = loader.load('earthmap1k.jpg');
     const earthBump = loader.load('earthbump1k.jpg');
     const earthSpec = loader.load('earthspec1k.jpg');
@@ -210,7 +211,7 @@
 
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(45, 2, 0.1, 9); // fov, aspect, near, far
-        camera.position.set(0, 0, 3.5);
+        camera.position.set(0, 0, 4);
         camera.lookAt(0, 0, 0);
         scene.add(camera);
 
@@ -243,8 +244,9 @@
         selectables.push(globe);
 
         //================ Twisthandles
-        const d = 1.0;
-        const r = .05; // radius
+        const d = 1.2;
+        //const r = .05; // radius
+        const r = .08; // radius is fatter
 
         twistE = twistor(-0.7 * Math.PI, 0.9 * Math.PI, 0.25, r, .13, .2);
         twistE.position.set(+d, 0, 0);
@@ -386,22 +388,26 @@
         {
 
           const a = .02;  // thickness
-          const material = new THREE.MeshPhongMaterial({ color: '#336633' });
+          const matFloor = new THREE.MeshPhongMaterial({ color: '#336633' });
+          matFloor.map = gridTexture;
+          const matSky = new THREE.MeshPhongMaterial({ color: '#339999' });
           const matWalls = new THREE.MeshPhongMaterial({ color: '#999999' });
-
+          matWalls.map = gridTexture;
+          
 
 
           // floor and ceiling
           {
             const geom = new THREE.BoxGeometry(2 + 4 * a, a + a, 2);
-            const mesh = new THREE.Mesh(geom, material);
+            const mesh = new THREE.Mesh(geom, matFloor);
             mesh.position.set(0, -1 - a, 0);
             scene.add(mesh);
             mesh.receiveShadow = true;
+            
           }
           {
             const geom = new THREE.BoxGeometry(2 + 4 * a, a + a, 2);
-            const mesh = new THREE.Mesh(geom, material);
+            const mesh = new THREE.Mesh(geom, matSky);
             mesh.position.set(0, 1 + a, 0);
             scene.add(mesh);
           }
@@ -474,11 +480,11 @@
           qz = globe.quaternion.z;
           qw = globe.quaternion.w;
 
-          setMsg2("<code>("
+          setMsg2("<code>Quaternion = "
             + fmt(qx) + " "
             + fmt(qy) + " "
             + fmt(qz) + " "
-            + fmt(qw) + ")</code>");
+            + fmt(qw) + "</code>");
 
           if (qw >= 0) theDot.material.color.set(0x0033FF);
           else theDot.material.color.set(0xFF0000);
@@ -587,7 +593,7 @@
       onMouseDownOrTouchStart(xEvent, yEvent);
     }
     function onMouseMoveOrTouchMove(xEvent, yEvent) {
-      if (!objSelected) return;
+      if (objSelected!=globe) return;
       const xChange = xLast - xEvent;
       const yChange = yLast - yEvent;
       const axis = new THREE.Vector3(-yChange, -xChange, 0.0);
