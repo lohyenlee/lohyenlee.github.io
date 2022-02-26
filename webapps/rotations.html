@@ -83,6 +83,7 @@
   </div>
   <div style="position: absolute; bottom: 24px; width: 100%; text-align: center;">
     <button id="resetButton" class="button"> Reset </button>
+    <button id="fullscreenButton" class="button">Fullscreen</button>
   </div>
 
 
@@ -581,6 +582,20 @@
 
 
 
+
+
+    function openFullscreen() {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullscreen) { /* Safari */
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) { /* IE11 */
+        elem.msRequestFullscreen();
+      }
+      //fullscreenButton.style.display = 'none';
+    }
+    fullscreenButton.addEventListener('click', openFullscreen);
 
 
 
