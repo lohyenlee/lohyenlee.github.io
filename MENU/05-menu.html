@@ -194,16 +194,7 @@ https://curtisrobinson.medium.com/how-to-auto-play-audio-in-safari-with-javascri
   }
   window.addEventListener("resize", onResize);
   onResize(null); // call this manually
-  //openFullscreen(); // can only be initiated by user gesture
-
-
-  //======== TRY TO DISABLE DEFAULT EVENT LISTENERS
-  document.body.addEventListener("click", function (e) { e.preventDefault(); }, {passive:false} )
-  document.body.addEventListener("dblclick", function (e) { e.preventDefault(); }, {passive:false} )
-  //document.body.addEventListener("mousedown", function (e) { e.preventDefault(); }, {passive:false} )
-  document.body.addEventListener("mousemove", function (e) { e.preventDefault(); }, {passive:false} )
-  //document.body.addEventListener("touchstart", function (e) { e.preventDefault(); }, {passive:false} )
-  document.body.addEventListener("touchmove", function (e) { e.preventDefault(); }, {passive:false} )
+  openFullscreen(); // can only be initiated by user gesture
 
 
 </script>

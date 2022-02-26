@@ -24,33 +24,38 @@
       z-index: -1;
     }
 
-    *[data-diagram] {
-      display: inline-block;
-      width: 48%;
-      /* width: 98%; */
-      /* min-width: 320px; */
-      aspect-ratio: 1;
-      /*height: 300px;*/
-      padding: 0;
-      position: relative;
-    }
 
-    .mydiv {
-      text-align: center;
-    }
 
     .button {
-      position: absolute;
-      left: 1vmin;
-      bottom: 1vmin;
+      background-color: #CCC;
+      width: 32vmin;
       z-index: 100;
       font-family: sans-serif;
       font-size: 4vmin;
-      width: 30vmin;
-      border-radius: 8px;
-      /* border-style: outset; */
-      background: #CCC;
-      color: black;
+      border-radius: 10px;
+
+      box-shadow: 0 9px #999;
+    }
+
+    .button:active {
+      background-color: #FFC;
+      box-shadow: 0 5px #666;
+      transform: translateY(4px);
+    }
+
+    .grid {
+      position: absolute;
+      /*height: 98%;*/
+      /* border: 1px solid blue;       */
+      text-align: center;
+    }
+
+    .cell {
+      display: inline-block;
+      position: relative;
+      text-align: center;
+      /* border: 1px solid gray; */
+      /* border messes up alignmen t */
     }
   </style>
 
@@ -58,17 +63,17 @@
 
 <body class="body">
 
-
   <!-- ---------------------- HTML SECTION ---------------------- -->
   <canvas id="c"></canvas>
-  <div class="mydiv">
-    <div id="panel1" data-diagram="panel1">
+
+  <div id="grid" class="grid">
+    <div id="panel1" class="cell" data-diagram="panel1">
       <div id="msg1" style="display: inline;  z-index: 100; position: absolute; 
       top: 0; left: 1vmin; width: 100%; color: white;
       text-align: center;
       font-family: sans-serif; font-size: 4vmin;">Message 1 </div>
     </div>
-    <div id="panel2" data-diagram="panel2">
+    <div id="panel2" class="cell" data-diagram="panel2">
       <div id="msg2" style="display: inline;  z-index: 100; position: absolute;
       top: 0; left: 1vmin; width: 100%;  color: white;
       text-align: center;
@@ -76,8 +81,9 @@
       font-family: sans-serif; font-size: 4vmin;">Message 2</div>
     </div>
   </div>
-  <button id="resetButton" class="button"> Reset </button>
-
+  <div style="position: absolute; bottom: 24px; width: 100%; text-align: center;">
+    <button id="resetButton" class="button"> Reset </button>
+  </div>
 
 
 
@@ -394,7 +400,7 @@
           const matSky = new THREE.MeshPhongMaterial({ color: '#339999' });
           const matWalls = new THREE.MeshPhongMaterial({ color: '#999999' });
           matWalls.map = gridTexture;
-          
+
 
 
           // floor and ceiling
@@ -404,7 +410,7 @@
             mesh.position.set(0, -1 - a, 0);
             scene.add(mesh);
             mesh.receiveShadow = true;
-            
+
           }
           {
             const geom = new THREE.BoxGeometry(2 + 4 * a, a + a, 2);
@@ -426,37 +432,8 @@
             scene.add(mesh);
             mesh.receiveShadow = true;
           }
-          // back wall
-          // {
-          //   const geom = new THREE.BoxGeometry(2, 2, a + a);
-          //   const mesh = new THREE.Mesh(geom, matWalls);
-          //   mesh.position.set(0, 0, -1 - a);
-          //   scene.add(mesh);
-          // }
-          // tbd: texture this thing with a grid?
+
         }
-
-        //-------- Checkerboard floor        
-        // {
-        //   const n = 5;
-        //   const geometry = new THREE.BoxGeometry(.2, .2, 0.2);
-        //   const mat1 = new THREE.MeshPhongMaterial({ color: 0x99CCAA });
-        //   const mat2 = new THREE.MeshPhongMaterial({ color: 0x9999CC });
-        //   for (let i = -n; i <= n; ++i) {
-        //     for (let j = -n; j <= n; ++j) {
-        //       const mesh = new THREE.Mesh(geometry, ((i + j) % 2 ? mat1 : mat2));
-        //       mesh.position.set(i * .2, -1 - .1, j * .2);
-        //       scene.add(mesh);
-        //       mesh.receiveShadow = true;
-        //     }
-        //   }
-        // }
-
-
-
-
-
-
         // globe.quaternion.set (.1,-.99,0,0);
 
 
@@ -481,7 +458,7 @@
           qz = globe.quaternion.z;
           qw = globe.quaternion.w;
 
-          setMsg2("<code>Quaternion = "
+          setMsg2("<code>"
             + fmt(qx) + " "
             + fmt(qy) + " "
             + fmt(qz) + " "
@@ -502,7 +479,8 @@
     }
 
 
-    document.querySelectorAll('[data-diagram]').forEach((elem) => {
+    // document.querySelectorAll('[data-diagram]').forEach((elem) => {
+    document.querySelectorAll('.cell').forEach((elem) => {
       const sceneName = elem.dataset.diagram;
       const sceneInitFunction = sceneInitFunctionsByName[sceneName];
       const sceneRenderFunction = sceneInitFunction(elem);
@@ -510,6 +488,11 @@
       sceneElements.push({ elem, fn }); // not sure why we need this intermediate step
       console.log("Set up panel " + sceneName);
     });
+
+
+
+
+
 
 
 
@@ -553,7 +536,57 @@
     }
 
 
-    //======== CUSTOM CONTROLS AND EVENT LISTENERS FOR THE INTERACTIVE PANEL
+
+
+    //======================================================================= 
+    // RESIZE EVENT HANDLER
+    //=======================================================================   
+    //================ AUTOGRID CODE
+    function optimalCellWidth(gridWidth, gridHeight, nCells = 6, cellAspect = 1.0) {
+      let cellWidth = 0;
+      for (let rows = 1; rows <= nCells; ++rows) {
+        let cols = Math.ceil(nCells / rows);
+        let cellWidth2 = Math.min(
+          Math.floor(gridWidth / cols),
+          Math.floor(gridHeight / rows / cellAspect));
+        // console.log(rows + "x" + cols + " --> " + cellWidth2);
+        if (cellWidth2 < cellWidth) break;
+        cellWidth = cellWidth2;
+      }
+      return cellWidth;
+    }
+    //======== RESIZE EVENT HANDLER
+    function onResize(event) {
+      grid.style.width = (window.innerWidth - 16) + "px";
+      grid.style.height = (window.innerHeight - 24) + "px";
+
+      //-------- Calculate optimalCellWidth
+      const nCells = 2;
+      const gridWidth = grid.clientWidth - 4;
+      const gridHeight = grid.clientHeight - 4;
+      const cellAspect = 1.0;
+      const cellWidth = optimalCellWidth(gridWidth, gridHeight, nCells, cellAspect);
+      const cellHeight = cellWidth * cellAspect;
+      console.log(gridWidth + " x " + gridHeight + "  cell width = " + cellWidth);
+      //-------- Resize every grid cell
+      const children = grid.children;
+      for (let i = 0; i < children.length; i++) {
+        const child = children[i];
+        child.style.width = (cellWidth - 1) + "px";  // compensate for borders?
+        child.style.height = (cellHeight - 1) + "px";
+      }
+    }
+    window.addEventListener("resize", onResize);
+    onResize(null); // call this manually
+
+
+
+
+
+
+    //======================================================================= 
+    //CUSTOM CONTROLS AND EVENT LISTENERS FOR THE INTERACTIVE PANEL
+    //======================================================================= 
     function onMouseDownOrTouchStart(xEvent, yEvent) {
       mouse.x = (xEvent / panel1.clientWidth) * 2 - 1;  //clientX is bad
       mouse.y = - (yEvent / panel1.clientHeight) * 2 + 1; //offsetX is exptal
@@ -573,11 +606,10 @@
         //-------- USER CLICKED ONE OF THE TWIST HANDLES
         // set color of one CHILD mesh material.  All meshes in a group
         // are made of the same material, so they will all change together
-        obj.material.emissive.setHex('0x999988');
+        obj.material.emissive.setHex(0x999988);
         while (obj.parent.type == 'Group') obj = obj.parent;
         // no need to do rotation now--- main loop will handle that!
       }
-
     }
     function onMouseDown(event) {
       event.preventDefault();
@@ -594,7 +626,7 @@
       onMouseDownOrTouchStart(xEvent, yEvent);
     }
     function onMouseMoveOrTouchMove(xEvent, yEvent) {
-      if (objSelected!=globe) return;
+      if (objSelected != globe) return;
       const xChange = xLast - xEvent;
       const yChange = yLast - yEvent;
       const axis = new THREE.Vector3(-yChange, -xChange, 0.0);
@@ -623,18 +655,16 @@
     }
     function onMouseUp(event) {
       if (objSelected) {
-        objSelected.material.emissive.setHex('0x000000');
+        objSelected.material.emissive.setHex(0x000000);
         objSelected = null;
       }
     }
     function onTouchEnd(event) {
       if (objSelected) {
-        objSelected.material.emissive.setHex('0x000000');
+        objSelected.material.emissive.setHex(0x000000);
         objSelected = null;
       }
     }
-
-
     panel1.addEventListener('mousedown', onMouseDown);
     panel1.addEventListener('mousemove', onMouseMove);
     panel1.addEventListener('mouseup', onMouseUp);

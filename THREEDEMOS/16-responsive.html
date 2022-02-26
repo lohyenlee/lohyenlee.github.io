@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@700&display=swap" rel="stylesheet">
+
+  <title>Responsive Grid Layout </title>
+  <meta charset="utf-8">
+  <meta name="viewport"
+    content="width=device-width, height=device-height, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <style>
+    /* ---------------------- CSS SECTION ---------------------- */
+    .grid {
+      position: absolute;
+      width: 98%;
+      /*height: 98%;*/
+
+      border: 1px solid blue;
+      background-color: gray;
+
+      text-align: center;
+
+    }
+
+    .cell {
+      display: inline-block;
+
+      margin: 0 0 0 0;
+      padding: 0 0 0 0;
+      
+      text-align: center;
+      
+      border: 1px solid black;
+      background-color: #9F9;
+    }
+
+    .button {
+      position: absolute;
+      left: 0;
+      bottom: 0vmin;
+      z-index: 100;
+      font-family: sans-serif;
+      font-size: 3vmin;
+      width: 75%;
+      border-radius: 8px;
+      /* border-style: outset; */
+      background: #CCC;
+      color: black;
+    }
+  </style>
+
+</head>
+
+<body class="body">
+
+
+  <!-- ---------------------- HTML SECTION ---------------------- -->
+  <div id="grid" class="grid"></div>
+  <button id="fullscreenButton" class="button">Open Fullscreen</button>
+
+
+  <!-- <button id="resetButton" class="button"> Reset </button> -->
+
+
+  <script type="importmap">{
+	"imports": {
+		"three": "https://threejs.org/build/three.module.js"
+	  }
+  }
+  </script><!-- Remove this when import maps will be widely supported -->
+  <script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
+
+
+
+
+
+
+
+  <!-- ---------------------- JAVASCRIPT SECTION ---------------------- -->
+  <script type="module">
+
+    const nCells = 25;
+
+    //================ CREATE IMAGES AND POPULATE GRID
+    const colors = ['#FCC', '#CFC', '#CCF', '#FFC', '#CFF', '#FCF'];
+    for (let nCell = 0; nCell < nCells; ++nCell) {
+      //-------- Create cells (DIV elements) that contain images (IMG elements)
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.innerHTML = nCell+1;
+      cell.style.width = 100 + "px";
+      cell.style.height = 100 + "px";
+      grid.appendChild(cell);
+    }
+
+
+    function openFullscreen() {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullscreen) { /* Safari */
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) { /* IE11 */
+        elem.msRequestFullscreen();
+      }
+      fullscreenButton.style.display = 'none';
+    }
+
+
+    //================ AUTOGRID CODE .... parentWidth, parentHEight...
+    function optimalCellWidth(gridWidth, gridHeight, nCells = 6, cellAspect = 1.0) {
+      let cellWidth = 0;
+      for (let rows = 1; rows <= nCells; ++rows) {
+        let cols = Math.ceil(nCells / rows);
+        let cellWidth2 = Math.min(
+          Math.floor(gridWidth / cols),
+          Math.floor(gridHeight / rows / cellAspect));
+        // console.log(rows + "x" + cols + " --> " + cellWidth2);
+        if (cellWidth2 < cellWidth) break;
+        cellWidth = cellWidth2;
+      }
+      return cellWidth;
+    }
+
+
+    //======== RESIZE EVENT HANDLER
+    function onResize(event) {
+      grid.style.height = (window.innerHeight - 64) + "px";
+      
+      //-------- Calculate optimalCellWidth
+      const gridWidth = grid.clientWidth - 20;
+      const gridHeight = grid.clientHeight - 20;
+      const cellAspect = 1/1.618; // aspect ratio of each cell
+      const cellWidth = optimalCellWidth(gridWidth, gridHeight, nCells, cellAspect);
+      const cellHeight = cellWidth * cellAspect;
+
+      //console.log(gridWidth + " x " + gridHeight + "  cell width = " + cellWidth);
+      //-------- Resize every grid cell
+      const children = grid.children;
+      for (let i = 0; i < children.length; i++) {
+        const child = children[i];
+        child.style.width = (cellWidth-1) + "px";  // compensate for borders?
+        child.style.height = (cellHeight-1) + "px";
+      }
+    }
+    window.addEventListener("resize", onResize);
+    onResize(null); // call this manually
+
+    window.addEventListener("orientationchange", function () {
+      console.log(window.orientation);
+    }, false);
+
+
+    fullscreenButton.addEventListener('click', openFullscreen);
+
+  </script>
+
+
+</body>
+
+</html>
