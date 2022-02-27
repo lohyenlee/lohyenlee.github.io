@@ -8,7 +8,8 @@
 
   <title>Rotations and Quaternions </title>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, height=device-height, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <meta name="viewport"
+    content="width=device-width, height=device-height, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <style>
     /* ---------------------- CSS SECTION ---------------------- */
@@ -166,7 +167,6 @@
     function twistor(ang1 = 0.0, ang2 = 5.0,
       rTorus = 1.0, rTube = 0.1, rArrow = 0.02, lArrow = 0.1) {
       const material = new THREE.MeshPhongMaterial({ color: 0x999999 });
-
       const group = new THREE.Group();
       //-------- TOROIDAL ARC
       const arc = new Arc(rTorus, ang1, ang2);
@@ -189,16 +189,26 @@
         group.add(mesh);
       }
       //-------- CONICAL ARROWHEAD
-      const geometry = new THREE.ConeGeometry(rArrow, lArrow, 24);
-      const cone = new THREE.Mesh(geometry, material);
-      r4.sub(r3);
-      r4.normalize();
-      cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), r4);
-      r4.multiplyScalar(lArrow / 2);
-      r3.add(r4);  // hmm
-      cone.position.copy(r3);
-      group.add(cone);
-
+      {
+        const geom = new THREE.ConeGeometry(rArrow, lArrow, 24);
+        const cone = new THREE.Mesh(geom, material);
+        r4.sub(r3);
+        r4.normalize();
+        cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), r4);
+        r4.multiplyScalar(lArrow / 2);
+        r3.add(r4);  // hmm
+        cone.position.copy(r3);
+        group.add(cone);
+      }
+      //-------- TRANSPARENT HITBOX FOR CLICK/TOUCH DETECTION
+      {
+        const mat = new THREE.MeshPhongMaterial({ transparent: true, opacity: 0 });
+        const geom = new THREE.BoxGeometry(2 * rTorus, 2 * rTorus, 2.1 * rTube);
+        const hitbox = new THREE.Mesh(geom, mat);
+        group.add(hitbox);
+      }
+      //-------- STORE REFERENCE TO MATERIAL IN GROUP ITSELF
+      group.userData.material = material;   
       return group;
     }
 
@@ -232,13 +242,7 @@
         const ambientLight = new THREE.AmbientLight(0x666666);
         camera.add(ambientLight);
 
-
         //================ Globe
-        //const geometry = new THREE.SphereGeometry(0.8, 12, 12);
-        // const material = new THREE.MeshPhongMaterial({
-        //   color: 0x3333CC,
-        //   flatShading: true,
-        // });
         const geometry = new THREE.SphereGeometry(0.8, 48, 48);
         const material = new THREE.MeshPhongMaterial();
         material.map = earthMap;
@@ -248,12 +252,12 @@
         material.specular = new THREE.Color(0x222222);
 
         globe = new THREE.Mesh(geometry, material);
+        globe.userData.material = material;
         scene.add(globe);
         selectables.push(globe);
 
         //================ Twisthandles
         const d = 1.2;
-        //const r = .05; // radius
         const r = .08; // radius is fatter
 
         twistE = twistor(-0.7 * Math.PI, 0.9 * Math.PI, 0.25, r, .13, .2);
@@ -479,8 +483,6 @@
       globe.quaternion.set(0, 0, 0, 1);
     }
 
-
-    // document.querySelectorAll('[data-diagram]').forEach((elem) => {
     document.querySelectorAll('.cell').forEach((elem) => {
       const sceneName = elem.dataset.diagram;
       const sceneInitFunction = sceneInitFunctionsByName[sceneName];
@@ -499,6 +501,9 @@
 
 
 
+    //======================================================================= 
+    // RENDER FUNCTION
+    //=======================================================================   
     function resizeRendererToDisplaySize(renderer) {
       const canvas = renderer.domElement;
       const width = canvas.clientWidth;
@@ -542,7 +547,6 @@
     //======================================================================= 
     // RESIZE EVENT HANDLER
     //=======================================================================   
-    //================ AUTOGRID CODE
     function optimalCellWidth(gridWidth, gridHeight, nCells = 6, cellAspect = 1.0) {
       let cellWidth = 0;
       for (let rows = 1; rows <= nCells; ++rows) {
@@ -556,7 +560,6 @@
       }
       return cellWidth;
     }
-    //======== RESIZE EVENT HANDLER
     function onResize(event) {
       grid.style.width = (window.innerWidth - 16) + "px";
       grid.style.height = (window.innerHeight - 24) + "px";
@@ -584,6 +587,9 @@
 
 
 
+    //======================================================================= 
+    // FULLSCREEN FEATURE
+    //======================================================================= 
     function openFullscreen() {
       const elem = document.documentElement;
       if (elem.requestFullscreen) {
@@ -600,7 +606,7 @@
 
 
     //======================================================================= 
-    //CUSTOM CONTROLS AND EVENT LISTENERS FOR THE INTERACTIVE PANEL
+    // CUSTOM CONTROLS AND EVENT LISTENERS FOR THE INTERACTIVE PANEL
     //======================================================================= 
     function onMouseDownOrTouchStart(xEvent, yEvent) {
       mouse.x = (xEvent / panel1.clientWidth) * 2 - 1;  //clientX is bad
@@ -609,20 +615,17 @@
       const intersections = raycaster.intersectObjects(selectables, true);
       if (intersections.length > 0) {
         let obj = intersections[0].object; // topmost object under click
-        objSelected = obj;
-
+        // if user clicked part of group, designate entire group as selection
+        while (obj.parent.type == 'Group') obj = obj.parent;
+        objSelected = obj;        
         //-------- USER CLICKED THE GLOBE
         if (obj == globe) {
-          console.log('Clicked globe');
           xLast = xEvent; // save these
           yLast = yEvent;
           return;
         }
         //-------- USER CLICKED ONE OF THE TWIST HANDLES
-        // set color of one CHILD mesh material.  All meshes in a group
-        // are made of the same material, so they will all change together
-        obj.material.emissive.setHex(0x999988);
-        while (obj.parent.type == 'Group') obj = obj.parent;
+        obj.userData.material.emissive.setHex(0x999988);    
         // no need to do rotation now--- main loop will handle that!
       }
     }
@@ -668,18 +671,14 @@
       const yEvent = event.touches[0].pageY - top;
       onMouseMoveOrTouchMove(xEvent, yEvent);
     }
-    function onMouseUp(event) {
+    function onMouseUpOrTouchEnd(event) {
       if (objSelected) {
-        objSelected.material.emissive.setHex(0x000000);
+        objSelected.userData.material.emissive.setHex(0x000000);
         objSelected = null;
       }
     }
-    function onTouchEnd(event) {
-      if (objSelected) {
-        objSelected.material.emissive.setHex(0x000000);
-        objSelected = null;
-      }
-    }
+    function onMouseUp(event) {onMouseUpOrTouchEnd (event);}
+    function onTouchEnd(event) {onMouseUpOrTouchEnd (event);}
     panel1.addEventListener('mousedown', onMouseDown);
     panel1.addEventListener('mousemove', onMouseMove);
     panel1.addEventListener('mouseup', onMouseUp);
@@ -689,9 +688,7 @@
 
     resetButton.addEventListener('click', resetGame);
 
-
     requestAnimationFrame(render);
-
 
   </script>
 
