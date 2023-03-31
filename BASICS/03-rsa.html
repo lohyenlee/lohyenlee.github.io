@@ -6,15 +6,17 @@
   <title>HTML5 Demo</title>
   <style>
     body {
-      width: 400px;
+      width: 360px;
       margin: 0; padding: 10px 25px 10px 25px; background-color: #f7f7ee;
+      font-size: 16px; 
+      font-family: Helvetica;
     }
     div {
       margin: 1en 0en 1en 0en; // top, right, bottom, left
       /*display: table-cell; vertical-align: middle;*/
     }
     label {
-      display: inline-block; width: 10em;
+      display: inline-block; width: 9em;
     }
     .short {
       display: inline-block; width: 2.2em;
@@ -29,6 +31,8 @@
       background-color: #eeeeee;
     }
     button {
+      font-size: 16px; 
+      font-family: Helvetica;
     }
   </style>
 </head>
@@ -47,13 +51,13 @@
     <label> First prime  </label>
     <label class="short" for="inputp"> p = </label>
     <input id="inputp" placeholder="a prime"></input>
-    <button id="buttonp">Random</button> 
+    <button id="buttonp">&#x2682;</button> 
   </div>
   <div>
     <label> Second prime  </label>
     <label class="short" for="inputq"> q = </label>
     <input id="inputq" placeholder="another prime"></input>
-    <button id="buttonq">Random</button> 
+    <button id="buttonq">&#x2682;</button> 
   </div>
   <div>
     <label> Public modulus </label>
@@ -70,19 +74,19 @@
     (<mi>p</mi><mo>-</mo>1)
     (<mi>q</mi><mo>-</mo>1)
     </math> -->
-    <span> t = (p-1) * (q-1) </span>
+<!--     <span> t = (p-1) * (q-1) </span> -->
   </div>
   <div>
     <label> Encryption key </label>
     <label class="short" for="inpute">e = </label>
     <input id="inpute" placeholder="coprime with t"></input>
-    <button id="buttone">Random</button> 
+    <button id="buttone">&#x2682;</button> 
   </div>
   <div>
     <label> Decryption key </label>
     <label class="short" for="inputd">d = </label>
     <input id="inputd" readonly></input>
-    <math><mi>d</mi> <mo>=</mo> <msup><mi> e </mi><mn>-1</mn></msup> <mo>mod</mo> <mi>t</mi> </math> 
+<!--     <math><mi>d</mi> <mo>=</mo> <msup><mi> e </mi><mn>-1</mn></msup> <mo>mod</mo> <mi>t</mi> </math>  -->
   </div>
   <div>&nbsp;</div>
   <div>
@@ -141,27 +145,27 @@
   <hr>
   <h2> Eavesdrop </h2>
   <p>
-  If you see Alice trying to pass a slip of paper to Bob, 
+  When Alice tries to pass a slip of paper to Bob, 
   grab the paper, and enter the ciphertext in the box below.
   After that, pass the slip on to Bob.
   </p>
   <div>
-    <label> Intercepted ciphertext </label>
+    <label> Ciphertext </label>
     <label class="short" for="inputc3">c = </label>
     <input id="inputc3" placeholder="Enter integer"></input>
   </div>
   <div>
-    <label> Intended recipient's pubkey </label>
+    <label> Bob's pubkey </label>
     <label class="short" for="inpute3">e = </label>
     <input id="inpute3" placeholder="recipient's e"></input>
   </div>
   <div>
-    <label> Intended recipient's pubmod </label>
+    <label>  </label>
     <label class="short" for="inputn3">n = </label>
     <input id="inputn3" placeholder="recipient's n"></input>
   </div>
   <div>
-    <button id="button3">Solve the discrete logarithm problem by brute force</button> 
+    <button id="button3">Find discrete log by brute force</button> 
   </div>
   <div>
     <textarea id="log3" rows="6" cols="54" readonly>
@@ -174,19 +178,19 @@
   </p>
   <!--=============================================================================-->
   <hr>
-  <h2> Crack someone else's public key </h2>
+  <h2> Crack someone's public key </h2>
   <div>
     <label> Victim's public key </label>
     <label class="short" for="inpute4">e = </label>
     <input id="inpute4" placeholder="e"></input>
   </div>
   <div>
-    <label> Victim's public modulus </label>
+    <label>  </label>
     <label class="short" for="inputn4">n = </label>
     <input id="inputn4" placeholder="n"></input>
   </div>
   <div>
-    <button id="button4">Solve the integer factorization problem by brute force</button> 
+    <button id="button4">Factor integer by brute force</button> 
   </div>
   <div>
     <textarea id="log4" rows="6" cols="54" readonly>
@@ -353,7 +357,7 @@
       let e = parseInt(inpute3.value);  // intended recipient's public e and n
       let n = parseInt(inputn3.value);
       let m;
-      let mInterval = 1000;
+      let mInterval = 5000;
       log3.innerHTML = "Trying m = ";
       for (m=0; m<n; ++m) {
         if (m%mInterval==0) {
@@ -369,7 +373,7 @@
       let e = parseInt(inpute4.value);  // victim's public key
       let n = parseInt(inputn4.value);
       let p;
-      let pInterval = 50;
+      let pInterval = 100;
       let pMax = Math.ceil(Math.sqrt(n));
       log4.innerHTML = "Want to factor n = " + n + ".  Trying factors p = ";
       for (p=2; p<=pMax; ++p) {
