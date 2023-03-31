@@ -7,7 +7,7 @@
   <style>
     body {
       width: 360px;
-      margin: 0; padding: 10px 25px 10px 25px; background-color: #f7f7ee;
+      margin: 0; padding: 10px 1px 10px 20px; background-color: #f7f7ee;
       font-size: 16px; 
       font-family: Helvetica;
     }
@@ -16,13 +16,13 @@
       /*display: table-cell; vertical-align: middle;*/
     }
     label {
-      display: inline-block; width: 9em;
+      display: inline-block; width: 5.5em; margin: 0; padding: 0;
     }
     .short {
       display: inline-block; width: 2.2em;
     }
     input {
-      display: inline-block; width: 4em;
+      display: inline-block; width: 4em; font-size: 18px; margin: 0;
     }
     input:read-only {
       background-color: #eeeeee;
@@ -47,51 +47,50 @@
   When you have succeeded in making a public key, 
   write it on a piece of paper and hold it up for everyone to see.
   </p>
-  <div>
-    <label> First prime  </label>
-    <label class="short" for="inputp"> p = </label>
-    <input id="inputp" placeholder="a prime"></input>
-    <button id="buttonp">&#x2682;</button> 
-  </div>
-  <div>
-    <label> Second prime  </label>
-    <label class="short" for="inputq"> q = </label>
-    <input id="inputq" placeholder="another prime"></input>
-    <button id="buttonq">&#x2682;</button> 
-  </div>
-  <div>
-    <label> Public modulus </label>
-    <label class="short" for="inputn">n = </label>
-    <input id="inputn" readonly></input>
-    <math><mi>n</mi> <mo>=</mo> <mi>p</mi> <mi>q</mi></math> 
-<!--     <span> n = p * q </span> -->
-  </div>
-  <div>
-    <label> Private modulus </label>
-    <label class="short" for="inputt">t = </label>
-    <input id="inputt" readonly></input>
-    <!--<math><mi>t</mi> <mo>=</mo> 
+  <label> 1st prime  </label>
+  <label class="short" for="inputp"> p = </label>
+  <input id="inputp" placeholder="a prime"></input>
+  <button id="buttonp">&#x2682;</button> 
+  <br>
+  <label> 2nd prime  </label>
+  <label class="short" for="inputq"> q = </label>
+  <input id="inputq" placeholder="another prime"></input>
+  <button id="buttonq">&#x2682;</button> 
+  <br>
+  <br>
+  <label> Public modulus </label>
+  <label class="short" for="inputn">n = </label>
+  <input id="inputn" readonly></input>
+  <button id="buttonn">
+    <math><mi>n</mi> <mo>=</mo> <mi>p</mi> <mi>q</mi></math>
+  </button> 
+  <br>
+  <br>
+  <label> Private modulus </label>
+  <label class="short" for="inputt">t = </label>
+  <input id="inputt" readonly></input>
+  <button id="buttont">
+    <math><mi>t</mi> <mo>=</mo> 
     (<mi>p</mi><mo>-</mo>1)
     (<mi>q</mi><mo>-</mo>1)
-    </math> -->
-<!--     <span> t = (p-1) * (q-1) </span> -->
-  </div>
-  <div>
-    <label> Encryption key </label>
-    <label class="short" for="inpute">e = </label>
-    <input id="inpute" placeholder="coprime with t"></input>
-    <button id="buttone">&#x2682;</button> 
-  </div>
-  <div>
-    <label> Decryption key </label>
-    <label class="short" for="inputd">d = </label>
-    <input id="inputd" readonly></input>
-<!--     <math><mi>d</mi> <mo>=</mo> <msup><mi> e </mi><mn>-1</mn></msup> <mo>mod</mo> <mi>t</mi> </math>  -->
-  </div>
-  <div>&nbsp;</div>
-  <div>
-    <textarea id="log1" rows="3" cols="54" readonly></textarea>
-  </div>
+    </math>
+  </button> 
+  <br>
+  <br>
+  <label> Encryption key </label>
+  <label class="short" for="inpute">e = </label>
+  <input id="inpute" placeholder="coprime with t"></input>
+  <button id="buttone">&#x2682;</button> 
+  <br>
+  <label> Decryption key </label>
+  <label class="short" for="inputd">d = </label>
+  <input id="inputd" re`adonly></input>
+  <button id="buttond">
+    <math><mi>d</mi> <mo>=</mo> <msup><mi> e </mi><mn>-1</mn></msup> <mo>mod</mo> <mi>t</mi> </math>
+  </button> 
+  <br>
+  <br>
+  <textarea id="log1" rows="3" cols="48" readonly></textarea>
   <!--=============================================================================-->
   <hr>
   <h2> Send a message </h2>
@@ -101,27 +100,22 @@
   Copy the ciphertext onto a slip of paper and pass it to the recipient.
   Be warned that bad actors may try to intercept the ciphertext!
   </p>
-  <div>
-    <label> Message </label>
-    <label class="short" for="inputm1">m = </label>
-    <input id="inputm1" placeholder="integer less than n"></input>
-  </div>
-  <div>
-    <label> Recipient's pubkey </label>
-    <label class="short" for="inpute1">e = </label>
-    <input id="inpute1" placeholder="recipient's e"></input>
-  </div>
-  <div>
-    <label>   </label>
-    <label class="short" for="inputn1">n = </label>
-    <input id="inputn1" placeholder="recipient's n"></input>
-  </div>
-  <div>
-    <label> Ciphertext </label>
-    <label class="short" for="inputc1">c = </label>
-    <input id="inputc1" placeholder="" readonly></input>
-    <math><mi>c</mi> <mo>=</mo> <msup><mi> m </mi><mi>e</mi></msup> <mo>mod</mo> <mi>n</mi> </math> 
-  </div>
+  <label> Message </label>
+  <label class="short" for="inputm1">m = </label>
+  <input id="inputm1" placeholder="integer less than n"></input>
+  <br>
+  <label> Recipient's  </label>
+  <label class="short" for="inputn1">n = </label>
+  <input id="inputn1" placeholder="recipient's n"></input>
+  <br>
+  <label> public key  </label>
+  <label class="short" for="inpute1">e = </label>
+  <input id="inpute1" placeholder="recipient's e"></input>
+  <br>
+  <label> Ciphertext </label>
+  <label class="short" for="inputc1">c = </label>
+  <input id="inputc1" placeholder="" readonly></input>
+  <math><mi>c</mi> <mo>=</mo> <msup><mi> m </mi><mi>e</mi></msup> <mo>mod</mo> <mi>n</mi> </math> 
   <!--=============================================================================-->
   <hr>
   <h2> Receive a message </h2>
@@ -269,46 +263,68 @@
     pmin = 100;
     pmax = 1000;
     p=q=n=t=e=d=0;
+    p = parseInt(inputp.value); 
+    q = parseInt(inputq.value); 
+    n = parseInt(inputn.value); 
+    t = parseInt(inputt.value); 
+    e = parseInt(inpute.value); 
+    d = parseInt(inputd.value); 
     function isNumeric(n) {
       return !isNaN(parseFloat(n)) && isFinite(n);
     }
+    
     function pClicked() {
-      let p;
       do {p=randInt(pmin,pmax);} while (!isPrime(p)); 
       inputp.value = p;
-      pChanged();
+      inputt.value = inputn.value = inputt.value = inpute.value = inputd.value = "";
+      log1.innerHTML = "Generated a prime number p";
     }
     function qClicked() {
-      let q;
       do {q=randInt(pmin,pmax);} while (!isPrime(q) || q==inputp.value); 
       inputq.value = q;
-      pChanged();
+      inputt.value = inputn.value = inputt.value = inpute.value = inputd.value = "";
+      log1.innerHTML = "Generated a prime number q";
+    }
+    function nClicked() {
+      n = p*q; 
+      inputn.value = n;
+      inputt.value = inpute.value = inputd.value = "";
+      log1.innerHTML = "Multiplied two prime numbers together:\tn=p*q";
+    }
+    function tClicked() {
+      t = (p-1)*(q-1); 
+      inputt.value = t;
+      inpute.value = inputd.value = "";
+      log1.innerHTML = "Multiplied two prime numbers together:\nt=(p-1)*(q-1)";
     }
     function eClicked() {
-      pChanged();
-      let e;
       do {e=randInt(2,t+1);} while (gcd(e,t)>1);
       inpute.value = e;
-      eChanged();
+      inputd.value = "";
+      log1.innerHTML = "Generated a number e that is coprime with t";
+    }
+    function dClicked() {
+      d = pow (e, -1, t);
+      inputd.value = d;
+      log1.innerHTML = "Calculated the modular inverse of e: \nd=e^(-1) mod t";
     }
     buttonp.addEventListener("click", pClicked);
     buttonq.addEventListener("click", qClicked);
+    buttonn.addEventListener("click", nClicked);
+    buttont.addEventListener("click", tClicked);
     buttone.addEventListener("click", eClicked);
+    buttond.addEventListener("click", dClicked);
+    
+    
     
     function pChanged() {
       let success = true;
       p = parseInt(inputp.value); if (!isNumeric(p) || !isPrime(p)) {success=false; log1.innerHTML="ERROR: p is not prime!";}
       q = parseInt(inputq.value); if (!isNumeric(q) || !isPrime(q)) {success=false; log1.innerHTML="ERROR: q is not prime!";}
+      inputn.value = "";
+      inputt.value = "";
       if (success) {
-        n = p * q;
-        t = (p-1) * (q-1);      
         log1.innerHTML = "";
-        inputn.value = n;
-        inputt.value = t;
-      }
-      else {
-        inputn.value = "";
-        inputt.value = "";
       }
       inpute.value = "";
       eChanged();
