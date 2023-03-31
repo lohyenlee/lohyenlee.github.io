@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>HTML5 Demo</title>
+</head>
+
+<body>
+
+
+  <!--======== HTML CODE ========-->
+  <h1> RSA </h1>
+  <h2> Alice </h2>
+  Wait for Bob
+
+  <h2> Bob </h2>
+  Find prime
+  <p>
+    <label style="display: inline-block; width: 20em;" for="labelp"> First prime p = </label>
+    <input id="labelp" placeholder="Enter a prime number between 11 and 101"></input>
+    <span id="pIsPrime"> is prime or not </span>
+  </p>
+  
+  
+  
+  
+  <br/><br/><br/><br/><br/>
+  
+  <!--======== ASDFASDFASFADF ========-->
+  <h1> Caesar cipher </h1>
+  <h2> Alice </h2>
+
+  <p>
+  Enter the message you want to send, together with a key.  
+  [Ultimately, the message can be a series of letters, or a series of integers between 1 and 26.
+  This applet should display the data in both formats.
+  ]
+  
+  Write down the value of k on a slip of paper.
+  Write down the value of c on another slip of paper.
+  Pass this slip to Bob.
+  </p>
+  <p>
+    <label style="display: inline-block; width: 20em;" for="labelm"> Message m = </label>
+    <input id="labelm" placeholder="Enter an int between 0 and 25"></input>
+  </p>
+  <p>
+    <label style="display: inline-block; width: 20em;" for="labelk"> Key k = </label>
+    <input id="labelk" placeholder="Enter an int between -13 and +13"></input>
+  </p>
+  <p>
+    <label style="display: inline-block; width: 20em;" for="labelc"> Ciphertext c = </label>
+    <span id="labelc">asdkfadlf</span>
+  </p>
+
+
+  
+  <p>
+    <label style="display: inline-block; width: 10em;" for="output1"> The square root of x is: </label>
+    <span id="output1">asdfasdf</span>
+  </p>
+
+  
+  
+  <h2> Bob </h2>
+  <p>
+  Receive two slips of paper from Alice, which gives the key k and the ciphertext c.
+  Enter the numbers into the boxes below to decrypt and obtain the plaintext message m.
+  (TBD: add inputs for k  and c , and label for m)
+  </p>
+
+  
+  <h2> Eve </h2>
+  <p>
+    When Alice tries to pass a slip of paper to Bob, grab it, and copy down the information (k or c).  
+    Then pass the slip of paper to Bob, pretending that you are Alice.
+    Use the boxes below to decrypt.
+  (TBD: add inputs for k  and c , and label for m)
+  
+  If you didn't have k, can you crack the cipher to obtain m nevertheless?
+  </p>
+
+  
+  <p id="values"></p>
+
+  <!--======== JAVASCRIPT CODE ========-->
+  <script>
+  
+    console.log("" + isPrime(237));
+
+    labelm.addEventListener("change", onChange);
+    labelk.addEventListener("change", onChange);
+    
+    labelp.addEventListener("change", onChange);
+    
+    function onChange() {
+      //var objInput = document.getElementById ("objInput");
+      let m = parseInt(labelm.value);
+      let k = parseInt(labelk.value);
+      labelc.innerHTML = ((m+k)%26);
+      output1.innerHTML = Math.sqrt(123).toFixed(3);
+      
+      
+      let p = parseInt(labelp.value);
+      pIsPrime.innerHTML = isPrime(p);
+      
+    }
+
+    
+    
+    function isPrime(x) {
+      if (x == 2 || x == 3) return true;
+      if (x <= 1 || x % 2 == 0 || x % 3 == 0) return false;  
+      for (let i = 5; i * i <= x ; i+=6) if (x % i == 0 || x % (i + 2) == 0) return false;
+      return true;
+}
+
+  </script>
+</body>
+
+</html>
