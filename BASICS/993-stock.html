@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.00, maximum-scale=1.50, minimum-scale=1.00">
   <title>HTML5 Demo</title>
-  <style>
+  <style> 
     body {
-      width: 360px;
-      margin: 0; padding: 10px 1px 10px 20px; background-color: #f7f7ee;
+      width: 360px;// top, right, bottom, left
+      margin: 0; padding: 10px 1px 10px 20px; 
+      //background-color: #f7f7ee;
+      background-image: linear-gradient(to right,#bbf,#ccf,#69f);
       font-size: 16px; 
       font-family: Helvetica;
     }
     div {
-      margin: 1en 0en 1en 0en; // top, right, bottom, left
+      margin: 1en 0en 1en 0en;
       /*display: table-cell; vertical-align: middle;*/
     }
     label {
@@ -22,7 +24,7 @@
       display: inline-block; width: 2.2em;
     }
     input {
-      display: inline-block; width: 4em; font-size: 18px; margin: 0;
+      display: inline-block; width: 4em; font-size: 16px; margin: 0;
     }
     input:read-only {
       background-color: #eeeeee;
@@ -49,12 +51,12 @@
   </p>
   <label> 1st prime  </label>
   <label class="short" for="inputp"> p = </label>
-  <input id="inputp" placeholder="a prime"></input>
-  <button id="buttonp">&#x2682;</button> 
+  <input id="inputp" placeholder="integer"></input>
+  <button id="buttonp" style="font-size: 24;">asdf&#x2682;</button> 
   <br>
   <label> 2nd prime  </label>
   <label class="short" for="inputq"> q = </label>
-  <input id="inputq" placeholder="another prime"></input>
+  <input id="inputq" placeholder="integer"></input>
   <button id="buttonq">&#x2682;</button> 
   <br>
   <br>
@@ -79,8 +81,9 @@
   <br>
   <label> Encryption key </label>
   <label class="short" for="inpute">e = </label>
-  <input id="inpute" placeholder="coprime with t"></input>
+  <input id="inpute" placeholder="integer"></input>
   <button id="buttone">&#x2682;</button> 
+  <br>
   <br>
   <label> Decryption key </label>
   <label class="short" for="inputd">d = </label>
@@ -96,7 +99,7 @@
   <h2> Send a message </h2>
   <p>
   Your message m must be an integer between 1 and n.
-  Enter the recipient's public key (e,n) in the boxes below.
+  Enter the recipient's public key (n,e) in the boxes below.
   Copy the ciphertext onto a slip of paper and pass it to the recipient.
   Be warned that bad actors may try to intercept the ciphertext!
   </p>
@@ -106,11 +109,11 @@
   <br>
   <label> Recipient's  </label>
   <label class="short" for="inputn1">n = </label>
-  <input id="inputn1" placeholder="recipient's n"></input>
+  <input id="inputn1" placeholder="integer"></input>
   <br>
   <label> public key  </label>
   <label class="short" for="inpute1">e = </label>
-  <input id="inpute1" placeholder="recipient's e"></input>
+  <input id="inpute1" placeholder="integer"></input>
   <br>
   <label> Ciphertext </label>
   <label class="short" for="inputc1">c = </label>
@@ -124,72 +127,59 @@
   you may enter the ciphertext in the box below
   to decrypt it using your own private key.
   </p>
-  <div>
-    <label> Ciphertext </label>
-    <label class="short" for="inputc2">c = </label>
-    <input id="inputc2" placeholder="Enter integer"></input>
-  </div>
-  <div>
-    <label> Decrypted message </label>
-    <label class="short" for="inputm2">m = </label>
-    <input id="inputm2" placeholder="" readonly></input>
-    <math><mi>m</mi> <mo>=</mo> <msup><mi> c </mi><mi>d</mi></msup> <mo>mod</mo> <mi>n</mi> </math> 
-  </div>
+  <label> Ciphertext </label>
+  <label class="short" for="inputc2">c = </label>
+  <input id="inputc2" placeholder="integer"></input>
+  <br>
+  <label> Message </label>
+  <label class="short" for="inputm2">m = </label>
+  <input id="inputm2" placeholder="" readonly></input>
+  <math><mi>m</mi> <mo>=</mo> <msup><mi> c </mi><mi>d</mi></msup> <mo>mod</mo> <mi>n</mi> </math> 
   <!--=============================================================================-->
   <hr>
   <h2> Eavesdrop </h2>
   <p>
   When Alice tries to pass a slip of paper to Bob, 
   grab the paper, and enter the ciphertext in the box below.
-  After that, pass the slip on to Bob.
+  Then pass the slip on to Bob as if nothing happened.
   </p>
-  <div>
     <label> Ciphertext </label>
     <label class="short" for="inputc3">c = </label>
-    <input id="inputc3" placeholder="Enter integer"></input>
-  </div>
-  <div>
-    <label> Bob's pubkey </label>
-    <label class="short" for="inpute3">e = </label>
-    <input id="inpute3" placeholder="recipient's e"></input>
-  </div>
-  <div>
-    <label>  </label>
+    <input id="inputc3" placeholder="integer"></input>
+  <br>
+  <label> Bob's</label>
     <label class="short" for="inputn3">n = </label>
-    <input id="inputn3" placeholder="recipient's n"></input>
-  </div>
-  <div>
+    <input id="inputn3" placeholder="integer"></input>
+  <br>
+    <label> public key </label>
+    <label class="short" for="inpute3">e = </label>
+    <input id="inpute3" placeholder="integer"></input>
+  <br>
     <button id="button3">Find discrete log by brute force</button> 
-  </div>
-  <div>
-    <textarea id="log3" rows="6" cols="54" readonly>
+  <br>
+    <textarea id="log3" rows="6" cols="48" readonly>
     </textarea>
-  </div>
   <p>
-  If you want to be really malicious, 
-  make up your own message, encrypt it using Bob's public key, write the ciphertex on the slip of paper,
+  To be really malicious, 
+  make up your own message, encrypt it using Bob's public key, write the ciphertext on the slip of paper,
   and pass it to Bob, pretending that you are Alice.
   </p>
   <!--=============================================================================-->
   <hr>
   <h2> Crack someone's public key </h2>
-  <div>
-    <label> Victim's public key </label>
-    <label class="short" for="inpute4">e = </label>
-    <input id="inpute4" placeholder="e"></input>
-  </div>
-  <div>
-    <label>  </label>
-    <label class="short" for="inputn4">n = </label>
-    <input id="inputn4" placeholder="n"></input>
-  </div>
-  <div>
-    <button id="button4">Factor integer by brute force</button> 
-  </div>
-  <div>
-    <textarea id="log4" rows="6" cols="54" readonly>
+  <label> Victim's </label>
+  <label class="short" for="inputn4">n = </label>
+  <input id="inputn4" placeholder="n"></input>
+  <br>
+  <label> public key </label>
+  <label class="short" for="inpute4">e = </label>
+  <input id="inpute4" placeholder="e"></input>
+  <br>
+  <button id="button4">Factor integer by brute force</button> 
+  <br>
+    <textarea id="log4" rows="6" cols="48" readonly>
     </textarea>
-  </div>
+  
   
   <!--=============================================================================-->
   <!--                                   JAVASCRIPT CODE                           -->
@@ -301,7 +291,8 @@
       do {e=randInt(2,t+1);} while (gcd(e,t)>1);
       inpute.value = e;
       inputd.value = "";
-      log1.innerHTML = "Generated a number e that is coprime with t";
+      log1.innerHTML = "Generated a number e that is coprime with t.\nYour public key is (n,e)=("
+      +n+","+e+").\nDistribute this!";
     }
     function dClicked() {
       d = pow (e, -1, t);
@@ -318,32 +309,41 @@
     
     
     function pChanged() {
-      let success = true;
-      p = parseInt(inputp.value); if (!isNumeric(p) || !isPrime(p)) {success=false; log1.innerHTML="ERROR: p is not prime!";}
-      q = parseInt(inputq.value); if (!isNumeric(q) || !isPrime(q)) {success=false; log1.innerHTML="ERROR: q is not prime!";}
-      inputn.value = "";
-      inputt.value = "";
-      if (success) {
+      p = parseInt(inputp.value);
+      if (isPrime(p)) {
         log1.innerHTML = "";
+        inputp.style.color = "#000";
       }
-      inpute.value = "";
-      eChanged();
+      else {
+        log1.innerHTML="ERROR: p is not prime!";
+        inputp.style.color = "#F00";
+      }
+      inputt.value = inputn.value = inputt.value = inpute.value = inputd.value = "";
+    }
+    function qChanged() {
+      q = parseInt(inputq.value);
+      if (isPrime(q) && q!=p) {
+        log1.innerHTML = "";
+        inputq.style.color = "#000";
+      }
+      else {
+        log1.innerHTML="ERROR: q is not prime!";
+        inputq.style.color = "#F00";
+      }
+      inputt.value = inputn.value = inputt.value = inpute.value = inputd.value = "";
     }
     function eChanged() {
       let success = true;
       e = parseInt(inpute.value); if (gcd(e,t)>1) {success=false; log1.innerHTML="ERROR: e is not coprime with t!";}
-      d = pow (e, -1, t);
       if (success) {
         log1.innerHTML = "Your public key is (e,n) = (" + e + ", " + n + ")";
-        inputd.value = d;
-        }
+      }
       else {
         inputd.value = "";
-        return;
       }
     }
     inputp.addEventListener("input", pChanged);
-    inputq.addEventListener("input", pChanged);
+    inputq.addEventListener("input", qChanged);
     inpute.addEventListener("input", eChanged);
     
     

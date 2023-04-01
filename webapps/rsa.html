@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.00, maximum-scale=1.50, minimum-scale=1.00">
+  <title>HTML5 Demo</title>
+  <style> 
+    body {
+      width: 360px;// top, right, bottom, left
+      margin: 0; padding: 10px 1px 10px 20px; 
+      //background-color: #f7f7ee;
+      background-image: linear-gradient(to right,#bbf,#ccf,#69f);
+      font-size: 16px; 
+      font-family: Helvetica;
+    }
+    div {
+      margin: 1en 0en 1en 0en;
+      /*display: table-cell; vertical-align: middle;*/
+    }
+    label {
+      display: inline-block; width: 5.5em; margin: 0; padding: 0;
+    }
+    .short {
+      display: inline-block; width: 2.2em;
+    }
+    input {
+      display: inline-block; width: 4em; font-size: 16px; margin: 0;
+    }
+    input:read-only {
+      background-color: #eeeeee;
+    }
+    textarea:read-only {
+      background-color: #eeeeee;
+    }
+    button {
+      font-size: 16px; 
+      font-family: Helvetica;
+    }
+  </style>
+</head>
+<body>
+
+  <!--======== HTML CODE ========-->
+  <h1> RSA Demonstration </h1>
+  <h2> Generate keypair </h2>
+  <p>
+  Choose your own values for p, q, and e.  
+  Alternatively, click the buttons to use random values.
+  When you have succeeded in making a public key, 
+  write it on a piece of paper and hold it up for everyone to see.
+  </p>
+  <label> 1st prime  </label>
+  <label class="short" for="inputp"> p = </label>
+  <input id="inputp" placeholder="integer"></input>
+  <button id="buttonp" style="font-size: 24;">asdf&#x2682;</button> 
+  <br>
+  <label> 2nd prime  </label>
+  <label class="short" for="inputq"> q = </label>
+  <input id="inputq" placeholder="integer"></input>
+  <button id="buttonq">&#x2682;</button> 
+  <br>
+  <br>
+  <label> Public modulus </label>
+  <label class="short" for="inputn">n = </label>
+  <input id="inputn" readonly></input>
+  <button id="buttonn">
+    <math><mi>n</mi> <mo>=</mo> <mi>p</mi> <mi>q</mi></math>
+  </button> 
+  <br>
+  <br>
+  <label> Private modulus </label>
+  <label class="short" for="inputt">t = </label>
+  <input id="inputt" readonly></input>
+  <button id="buttont">
+    <math><mi>t</mi> <mo>=</mo> 
+    (<mi>p</mi><mo>-</mo>1)
+    (<mi>q</mi><mo>-</mo>1)
+    </math>
+  </button> 
+  <br>
+  <br>
+  <label> Encryption key </label>
+  <label class="short" for="inpute">e = </label>
+  <input id="inpute" placeholder="integer"></input>
+  <button id="buttone">&#x2682;</button> 
+  <br>
+  <br>
+  <label> Decryption key </label>
+  <label class="short" for="inputd">d = </label>
+  <input id="inputd" re`adonly></input>
+  <button id="buttond">
+    <math><mi>d</mi> <mo>=</mo> <msup><mi> e </mi><mn>-1</mn></msup> <mo>mod</mo> <mi>t</mi> </math>
+  </button> 
+  <br>
+  <br>
+  <textarea id="log1" rows="3" cols="48" readonly></textarea>
+  <!--=============================================================================-->
+  <hr>
+  <h2> Send a message </h2>
+  <p>
+  Your message m must be an integer between 1 and n.
+  Enter the recipient's public key (n,e) in the boxes below.
+  Copy the ciphertext onto a slip of paper and pass it to the recipient.
+  Be warned that bad actors may try to intercept the ciphertext!
+  </p>
+  <label> Message </label>
+  <label class="short" for="inputm1">m = </label>
+  <input id="inputm1" placeholder="integer less than n"></input>
+  <br>
+  <label> Recipient's  </label>
+  <label class="short" for="inputn1">n = </label>
+  <input id="inputn1" placeholder="integer"></input>
+  <br>
+  <label> public key  </label>
+  <label class="short" for="inpute1">e = </label>
+  <input id="inpute1" placeholder="integer"></input>
+  <br>
+  <label> Ciphertext </label>
+  <label class="short" for="inputc1">c = </label>
+  <input id="inputc1" placeholder="" readonly></input>
+  <math><mi>c</mi> <mo>=</mo> <msup><mi> m </mi><mi>e</mi></msup> <mo>mod</mo> <mi>n</mi> </math> 
+  <!--=============================================================================-->
+  <hr>
+  <h2> Receive a message </h2>
+  <p>
+  If somebody gives a slip of paper to you,
+  you may enter the ciphertext in the box below
+  to decrypt it using your own private key.
+  </p>
+  <label> Ciphertext </label>
+  <label class="short" for="inputc2">c = </label>
+  <input id="inputc2" placeholder="integer"></input>
+  <br>
+  <label> Message </label>
+  <label class="short" for="inputm2">m = </label>
+  <input id="inputm2" placeholder="" readonly></input>
+  <math><mi>m</mi> <mo>=</mo> <msup><mi> c </mi><mi>d</mi></msup> <mo>mod</mo> <mi>n</mi> </math> 
+  <!--=============================================================================-->
+  <hr>
+  <h2> Eavesdrop </h2>
+  <p>
+  When Alice tries to pass a slip of paper to Bob, 
+  grab the paper, and enter the ciphertext in the box below.
+  Then pass the slip on to Bob as if nothing happened.
+  </p>
+    <label> Ciphertext </label>
+    <label class="short" for="inputc3">c = </label>
+    <input id="inputc3" placeholder="integer"></input>
+  <br>
+  <label> Bob's</label>
+    <label class="short" for="inputn3">n = </label>
+    <input id="inputn3" placeholder="integer"></input>
+  <br>
+    <label> public key </label>
+    <label class="short" for="inpute3">e = </label>
+    <input id="inpute3" placeholder="integer"></input>
+  <br>
+    <button id="button3">Find discrete log by brute force</button> 
+  <br>
+    <textarea id="log3" rows="6" cols="48" readonly>
+    </textarea>
+  <p>
+  To be really malicious, 
+  make up your own message, encrypt it using Bob's public key, write the ciphertext on the slip of paper,
+  and pass it to Bob, pretending that you are Alice.
+  </p>
+  <!--=============================================================================-->
+  <hr>
+  <h2> Crack someone's public key </h2>
+  <label> Victim's </label>
+  <label class="short" for="inputn4">n = </label>
+  <input id="inputn4" placeholder="n"></input>
+  <br>
+  <label> public key </label>
+  <label class="short" for="inpute4">e = </label>
+  <input id="inpute4" placeholder="e"></input>
+  <br>
+  <button id="button4">Factor integer by brute force</button> 
+  <br>
+    <textarea id="log4" rows="6" cols="48" readonly>
+    </textarea>
+  
+  
+  <!--=============================================================================-->
+  <!--                                   JAVASCRIPT CODE                           -->
+  <!--=============================================================================-->
+  <script>
+  
+    //======================================
+    // Random integer
+    //======================================
+    function randInt(nmin,nmax) {
+      return nmin + Math.floor(Math.random() * (nmax-nmin));
+    }
+    //======================================
+    // Primality testing
+    //======================================
+    function isPrime(x) {
+      if (x==2 || x==3) return true;
+      if (x<=1 || x%2==0 || x%3== 0) return false;  
+      for (let i=5; i*i<=x; i+=6) if (x%i==0 || x%(i+2)==0) return false;
+      return true;
+    }
+    //======================================
+    // Greatest common divisor
+    //======================================
+    function gcd(x, y) {
+      while(y) {let t=y; y=x%y; x=t;}
+      return x;
+    }
+    //======================================
+    // Modular exponentiation
+    //======================================
+    function pow (base, exponent, modulus) {
+      if (exponent == -1) return modinv (base, modulus);
+      if (modulus === 1) return 0;
+      var result = 1;
+      base = base % modulus;
+      while (exponent > 0) {
+          if (exponent % 2 === 1)  //odd number
+              result = (result * base) % modulus;
+          exponent = exponent >> 1; //divide by 2
+          base = (base * base) % modulus;
+      }
+      return result;
+    }
+    //======================================
+    // Modular inverse
+    //======================================
+    function modinv(a, m) {
+      [a, m] = [Number(a), Number(m)]
+      // find the gcd
+      const s = []
+      let b = m
+      while(b) {
+        [a, b] = [b, a % b]
+        s.push({a, b})
+      }
+      if (a !== 1) { return NaN }
+      let x = 1
+      let y = 0
+      for(let i = s.length - 2; i >= 0; --i) {
+        [x, y] = [y,  x - y * Math.floor(s[i].a / s[i].b)]
+      }
+      return (y % m + m) % m
+    }    
+
+    //======================================
+    //
+    // Main program logic
+    //
+    //======================================
+    pmin = 100;
+    pmax = 1000;
+    p=q=n=t=e=d=0;
+    p = parseInt(inputp.value); 
+    q = parseInt(inputq.value); 
+    n = parseInt(inputn.value); 
+    t = parseInt(inputt.value); 
+    e = parseInt(inpute.value); 
+    d = parseInt(inputd.value); 
+    function isNumeric(n) {
+      return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+    
+    function pClicked() {
+      do {p=randInt(pmin,pmax);} while (!isPrime(p)); 
+      inputp.value = p;
+      inputt.value = inputn.value = inputt.value = inpute.value = inputd.value = "";
+      log1.innerHTML = "Generated a prime number p";
+    }
+    function qClicked() {
+      do {q=randInt(pmin,pmax);} while (!isPrime(q) || q==inputp.value); 
+      inputq.value = q;
+      inputt.value = inputn.value = inputt.value = inpute.value = inputd.value = "";
+      log1.innerHTML = "Generated a prime number q";
+    }
+    function nClicked() {
+      n = p*q; 
+      inputn.value = n;
+      inputt.value = inpute.value = inputd.value = "";
+      log1.innerHTML = "Multiplied two prime numbers together:\tn=p*q";
+    }
+    function tClicked() {
+      t = (p-1)*(q-1); 
+      inputt.value = t;
+      inpute.value = inputd.value = "";
+      log1.innerHTML = "Multiplied two prime numbers together:\nt=(p-1)*(q-1)";
+    }
+    function eClicked() {
+      do {e=randInt(2,t+1);} while (gcd(e,t)>1);
+      inpute.value = e;
+      inputd.value = "";
+      log1.innerHTML = "Generated a number e that is coprime with t.\nYour public key is (n,e)=("
+      +n+","+e+").\nDistribute this!";
+    }
+    function dClicked() {
+      d = pow (e, -1, t);
+      inputd.value = d;
+      log1.innerHTML = "Calculated the modular inverse of e: \nd=e^(-1) mod t";
+    }
+    buttonp.addEventListener("click", pClicked);
+    buttonq.addEventListener("click", qClicked);
+    buttonn.addEventListener("click", nClicked);
+    buttont.addEventListener("click", tClicked);
+    buttone.addEventListener("click", eClicked);
+    buttond.addEventListener("click", dClicked);
+    
+    
+    
+    function pChanged() {
+      p = parseInt(inputp.value);
+      if (isPrime(p)) {
+        log1.innerHTML = "";
+        inputp.style.color = "#000";
+      }
+      else {
+        log1.innerHTML="ERROR: p is not prime!";
+        inputp.style.color = "#F00";
+      }
+      inputt.value = inputn.value = inputt.value = inpute.value = inputd.value = "";
+    }
+    function qChanged() {
+      q = parseInt(inputq.value);
+      if (isPrime(q) && q!=p) {
+        log1.innerHTML = "";
+        inputq.style.color = "#000";
+      }
+      else {
+        log1.innerHTML="ERROR: q is not prime!";
+        inputq.style.color = "#F00";
+      }
+      inputt.value = inputn.value = inputt.value = inpute.value = inputd.value = "";
+    }
+    function eChanged() {
+      let success = true;
+      e = parseInt(inpute.value); if (gcd(e,t)>1) {success=false; log1.innerHTML="ERROR: e is not coprime with t!";}
+      if (success) {
+        log1.innerHTML = "Your public key is (e,n) = (" + e + ", " + n + ")";
+      }
+      else {
+        inputd.value = "";
+      }
+    }
+    inputp.addEventListener("input", pChanged);
+    inputq.addEventListener("input", qChanged);
+    inpute.addEventListener("input", eChanged);
+    
+    
+    
+    
+    function mChanged() {
+      let m = parseInt(inputm1.value);
+      let e = parseInt(inpute1.value);  // recipient's public e and n
+      let n = parseInt(inputn1.value);
+      inputc1.value = pow (m, e, n);
+    }
+    inputm1.addEventListener("input", mChanged);
+    inpute1.addEventListener("input", mChanged);
+    inputn1.addEventListener("input", mChanged);
+    
+    function cChanged() {
+      let c = parseInt(inputc2.value);
+      let d = parseInt(inputd.value); // refresh these
+      let n = parseInt(inputn.value);
+      inputm2.value = pow (c, d, n); // use our own d and n
+      //console.log("some stuff is" + d);
+    }
+    inputc2.addEventListener("input", cChanged);
+
+    function button3clicked() {
+      let c = parseInt(inputc3.value);
+      let e = parseInt(inpute3.value);  // intended recipient's public e and n
+      let n = parseInt(inputn3.value);
+      let m;
+      let mInterval = 5000;
+      log3.innerHTML = "Trying m = ";
+      for (m=0; m<n; ++m) {
+        if (m%mInterval==0) {
+          log3.innerHTML += m + " ... ";
+        }
+        if (pow(m, e, n)==c) break;
+      }
+      log3.innerHTML += "\n\nSuccess: c = m^e mod n where  m = " + m + "\n";
+    }
+    button3.addEventListener("click", button3clicked);
+    
+    function button4clicked() {
+      let e = parseInt(inpute4.value);  // victim's public key
+      let n = parseInt(inputn4.value);
+      let p;
+      let pInterval = 100;
+      let pMax = Math.ceil(Math.sqrt(n));
+      log4.innerHTML = "Want to factor n = " + n + ".  Trying factors p = ";
+      for (p=2; p<=pMax; ++p) {
+        if (p%pInterval==0) {
+          log4.innerHTML += p + " ... ";
+        }
+        if (n%p==0) break;
+      }
+      q = n/p;
+      log4.innerHTML += "\n\nSuccess: n = p*q where  p = " + p + " and q = " + q + "\n";
+    }
+    button4.addEventListener("click", button4clicked);
+    
+    
+  </script>
+</body>
+
+</html>
