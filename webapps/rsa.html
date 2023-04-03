@@ -6,41 +6,26 @@
   <title>HTML5 Demo</title>
   <style> 
     body {
-      width: 360px;// top, right, bottom, left
-      margin: 0; padding: 10px 1px 10px 20px; 
-      //background-color: #f7f7ee;
+      min-width: 360px; margin: 0; padding: 0;
       background-image: linear-gradient(to right,#bbf,#ccf,#69f);
       font-size: 16px; 
       font-family: Helvetica;
     }
     div {
-      margin: 1en 0en 1en 0en;
-      /*display: table-cell; vertical-align: middle;*/
+      margin: 0; padding: 10px 10px 10px 20px; /* T R B L */ 
     }
-    label {
-      display: inline-block; width: 5.5em; margin: 0; padding: 0;
-    }
-    .short {
-      display: inline-block; width: 2.2em;
-    }
-    input {
-      display: inline-block; width: 4em; font-size: 16px; margin: 0;
-    }
-    input:read-only {
-      background-color: #eeeeee;
-    }
-    textarea:read-only {
-      background-color: #eeeeee;
-    }
-    button {
-      font-size: 16px; 
-      font-family: Helvetica;
-    }
+    label  { display: inline-block; width: 5.0em; margin: 0; padding: 0; }
+    .short { display: inline-block; width: 1.7em; }
+    input  { display: inline-block; width: 5.5em; font-family: Courier; font-size: 16px; font-weight: bold; margin: 0; }
+    input:read-only    { background-color: #eeeeee;}
+    textarea:read-only { background-color: #eeeeee;}
+    button             { font-size: 16px; font-family: Helvetica;}
   </style>
 </head>
 <body>
 
   <!--======== HTML CODE ========-->
+  <div style="background-image: linear-gradient(to right,#bbf,#ccf,#69f);">
   <h1> RSA Demonstration </h1>
   <h2> Generate keypair </h2>
   <p>
@@ -51,18 +36,18 @@
   </p>
   <label> 1st prime  </label>
   <label class="short" for="inputp"> p = </label>
-  <input id="inputp" placeholder="integer"></input>
-  <button id="buttonp" style="font-size: 24;">asdf&#x2682;</button> 
+  <input maxlength="9" id="inputp" placeholder="integer"></input>
+  <button id="buttonp"> random </button> 
   <br>
   <label> 2nd prime  </label>
   <label class="short" for="inputq"> q = </label>
-  <input id="inputq" placeholder="integer"></input>
-  <button id="buttonq">&#x2682;</button> 
+  <input maxlength="9" id="inputq" placeholder="integer"></input>
+  <button id="buttonq"> random </button> 
   <br>
   <br>
   <label> Public modulus </label>
   <label class="short" for="inputn">n = </label>
-  <input id="inputn" readonly></input>
+  <input maxlength="9" id="inputn" readonly></input>
   <button id="buttonn">
     <math><mi>n</mi> <mo>=</mo> <mi>p</mi> <mi>q</mi></math>
   </button> 
@@ -70,7 +55,7 @@
   <br>
   <label> Private modulus </label>
   <label class="short" for="inputt">t = </label>
-  <input id="inputt" readonly></input>
+  <input maxlength="9" id="inputt" readonly></input>
   <button id="buttont">
     <math><mi>t</mi> <mo>=</mo> 
     (<mi>p</mi><mo>-</mo>1)
@@ -81,21 +66,22 @@
   <br>
   <label> Encryption key </label>
   <label class="short" for="inpute">e = </label>
-  <input id="inpute" placeholder="integer"></input>
-  <button id="buttone">&#x2682;</button> 
+  <input maxlength="9" id="inpute" placeholder="integer"></input>
+  <button id="buttone"> random </button> 
   <br>
   <br>
   <label> Decryption key </label>
   <label class="short" for="inputd">d = </label>
-  <input id="inputd" re`adonly></input>
+  <input maxlength="9" id="inputd" re`adonly></input>
   <button id="buttond">
     <math><mi>d</mi> <mo>=</mo> <msup><mi> e </mi><mn>-1</mn></msup> <mo>mod</mo> <mi>t</mi> </math>
   </button> 
   <br>
   <br>
   <textarea id="log1" rows="3" cols="48" readonly></textarea>
+  </div>
   <!--=============================================================================-->
-  <hr>
+  <div style="background-image: linear-gradient(to right,#efe,#9f9);">
   <h2> Send a message </h2>
   <p>
   Your message m must be an integer between 1 and n.
@@ -105,22 +91,25 @@
   </p>
   <label> Message </label>
   <label class="short" for="inputm1">m = </label>
-  <input id="inputm1" placeholder="integer less than n"></input>
+  <input maxlength="9" id="inputm1" placeholder="integer"></input>
   <br>
   <label> Recipient's  </label>
   <label class="short" for="inputn1">n = </label>
-  <input id="inputn1" placeholder="integer"></input>
+  <input maxlength="9" id="inputn1" placeholder="integer"></input>
   <br>
   <label> public key  </label>
   <label class="short" for="inpute1">e = </label>
-  <input id="inpute1" placeholder="integer"></input>
+  <input maxlength="9" id="inpute1" placeholder="integer"></input>
   <br>
   <label> Ciphertext </label>
   <label class="short" for="inputc1">c = </label>
-  <input id="inputc1" placeholder="" readonly></input>
-  <math><mi>c</mi> <mo>=</mo> <msup><mi> m </mi><mi>e</mi></msup> <mo>mod</mo> <mi>n</mi> </math> 
+  <input maxlength="9" id="inputc1" placeholder="" readonly></input>
+  <button id="buttonc1">
+    <math><mi>c</mi> <mo>=</mo> <msup><mi> m </mi><mi>e</mi></msup> <mo>mod</mo> <mi>n</mi> </math> 
+  </button> 
+  </div>
   <!--=============================================================================-->
-  <hr>
+  <div style="background-image: linear-gradient(to bottom right,#fffff5,#eeee66);">
   <h2> Receive a message </h2>
   <p>
   If somebody gives a slip of paper to you,
@@ -129,57 +118,66 @@
   </p>
   <label> Ciphertext </label>
   <label class="short" for="inputc2">c = </label>
-  <input id="inputc2" placeholder="integer"></input>
+  <input maxlength="9" id="inputc2" placeholder="integer"></input>
   <br>
   <label> Message </label>
   <label class="short" for="inputm2">m = </label>
-  <input id="inputm2" placeholder="" readonly></input>
-  <math><mi>m</mi> <mo>=</mo> <msup><mi> c </mi><mi>d</mi></msup> <mo>mod</mo> <mi>n</mi> </math> 
+  <input maxlength="9" id="inputm2" placeholder="" readonly></input>
+  <button id="buttonm2">
+    <math><mi>m</mi> <mo>=</mo> <msup><mi> c </mi><mi>d</mi></msup> <mo>mod</mo> <mi>n</mi> </math> 
+  </button> 
+  </div>
   <!--=============================================================================-->
-  <hr>
+  <div style="background-image: linear-gradient(to bottom right,#ffeecc,#ffdd66);">
   <h2> Eavesdrop </h2>
   <p>
   When Alice tries to pass a slip of paper to Bob, 
   grab the paper, and enter the ciphertext in the box below.
   Then pass the slip on to Bob as if nothing happened.
   </p>
-    <label> Ciphertext </label>
-    <label class="short" for="inputc3">c = </label>
-    <input id="inputc3" placeholder="integer"></input>
+  <label> Ciphertext </label>
+  <label class="short" for="inputc3">c = </label>
+  <input maxlength="9" id="inputc3" placeholder="integer"></input>
   <br>
   <label> Bob's</label>
-    <label class="short" for="inputn3">n = </label>
-    <input id="inputn3" placeholder="integer"></input>
+  <label class="short" for="inputn3">n = </label>
+  <input maxlength="9" id="inputn3" placeholder="integer"></input>
   <br>
-    <label> public key </label>
-    <label class="short" for="inpute3">e = </label>
-    <input id="inpute3" placeholder="integer"></input>
+  <label> public key </label>
+  <label class="short" for="inpute3">e = </label>
+  <input maxlength="9" id="inpute3" placeholder="integer"></input>
   <br>
-    <button id="button3">Find discrete log by brute force</button> 
+  <button id="button3">Find modular root by brute force</button> 
   <br>
-    <textarea id="log3" rows="6" cols="48" readonly>
-    </textarea>
+  <textarea id="log3" rows="2" cols="48" readonly>
+  </textarea>
   <p>
   To be really malicious, 
   make up your own message, encrypt it using Bob's public key, write the ciphertext on the slip of paper,
   and pass it to Bob, pretending that you are Alice.
   </p>
+  </div>
   <!--=============================================================================-->
-  <hr>
+  <div style="background-image: linear-gradient(to bottom right,#ffcccc,#ff7766);">
   <h2> Crack someone's public key </h2>
+  <p>
+  Enter Bob's public key (n,e) in the boxes below.  
+  If you can factor n to obtain p and q, you can then deduce d, 
+  which will allow you to decrypt messages as fast as Bob himself.
+  </p>
   <label> Victim's </label>
   <label class="short" for="inputn4">n = </label>
-  <input id="inputn4" placeholder="n"></input>
+  <input maxlength="9" id="inputn4" placeholder="n"></input>
   <br>
   <label> public key </label>
   <label class="short" for="inpute4">e = </label>
-  <input id="inpute4" placeholder="e"></input>
+  <input maxlength="9" id="inpute4" placeholder="e"></input>
   <br>
   <button id="button4">Factor integer by brute force</button> 
   <br>
-    <textarea id="log4" rows="6" cols="48" readonly>
-    </textarea>
-  
+  <textarea id="log4" rows="6" cols="48" readonly>
+  </textarea>
+  </div>
   
   <!--=============================================================================-->
   <!--                                   JAVASCRIPT CODE                           -->
@@ -252,7 +250,6 @@
     //======================================
     pmin = 100;
     pmax = 1000;
-    p=q=n=t=e=d=0;
     p = parseInt(inputp.value); 
     q = parseInt(inputq.value); 
     n = parseInt(inputn.value); 
@@ -263,14 +260,19 @@
       return !isNaN(parseFloat(n)) && isFinite(n);
     }
     
+    //======================================
+    // Key generation
+    //======================================
     function pClicked() {
       do {p=randInt(pmin,pmax);} while (!isPrime(p)); 
+      inputp.style.color = "#000";
       inputp.value = p;
       inputt.value = inputn.value = inputt.value = inpute.value = inputd.value = "";
       log1.innerHTML = "Generated a prime number p";
     }
     function qClicked() {
       do {q=randInt(pmin,pmax);} while (!isPrime(q) || q==inputp.value); 
+      inputq.style.color = "#000";
       inputq.value = q;
       inputt.value = inputn.value = inputt.value = inpute.value = inputd.value = "";
       log1.innerHTML = "Generated a prime number q";
@@ -289,6 +291,7 @@
     }
     function eClicked() {
       do {e=randInt(2,t+1);} while (gcd(e,t)>1);
+      inpute.style.color = "#000";
       inpute.value = e;
       inputd.value = "";
       log1.innerHTML = "Generated a number e that is coprime with t.\nYour public key is (n,e)=("
@@ -305,8 +308,6 @@
     buttont.addEventListener("click", tClicked);
     buttone.addEventListener("click", eClicked);
     buttond.addEventListener("click", dClicked);
-    
-    
     
     function pChanged() {
       p = parseInt(inputp.value);
@@ -333,76 +334,90 @@
       inputt.value = inputn.value = inputt.value = inpute.value = inputd.value = "";
     }
     function eChanged() {
-      let success = true;
-      e = parseInt(inpute.value); if (gcd(e,t)>1) {success=false; log1.innerHTML="ERROR: e is not coprime with t!";}
-      if (success) {
-        log1.innerHTML = "Your public key is (e,n) = (" + e + ", " + n + ")";
+      e = parseInt(inpute.value); 
+      if (e>=t) {
+        log1.innerHTML="ERROR: e must be less than t!";
+        inpute.style.color = "#F00";
+      }
+      else if (gcd(e,t)!=1) {
+        log1.innerHTML="ERROR: e is not coprime with t!";
+        inpute.style.color = "#F00";
       }
       else {
-        inputd.value = "";
+        log1.innerHTML = "Your public key is (e,n) = (" + e + ", " + n + ")";
+        inpute.style.color = "#000";
       }
+      
+      inputd.value = "";
     }
     inputp.addEventListener("input", pChanged);
     inputq.addEventListener("input", qChanged);
     inpute.addEventListener("input", eChanged);
     
-    
-    
-    
-    function mChanged() {
+    //======================================
+    // Sending
+    //======================================
+    function m1Changed() {inputc1.value = "";}
+    inputm1.addEventListener("input", m1Changed);
+    inputn1.addEventListener("input", m1Changed);
+    inpute1.addEventListener("input", m1Changed);
+    function c1Clicked() {
       let m = parseInt(inputm1.value);
       let e = parseInt(inpute1.value);  // recipient's public e and n
       let n = parseInt(inputn1.value);
       inputc1.value = pow (m, e, n);
     }
-    inputm1.addEventListener("input", mChanged);
-    inpute1.addEventListener("input", mChanged);
-    inputn1.addEventListener("input", mChanged);
-    
-    function cChanged() {
+    buttonc1.addEventListener("click", c1Clicked);
+    //======================================
+    // Receiving
+    //======================================
+    function c2Changed() {inputm2.value = "";}
+    inputc2.addEventListener("input", c2Changed);
+    function m2Clicked() {
       let c = parseInt(inputc2.value);
       let d = parseInt(inputd.value); // refresh these
       let n = parseInt(inputn.value);
       inputm2.value = pow (c, d, n); // use our own d and n
-      //console.log("some stuff is" + d);
     }
-    inputc2.addEventListener("input", cChanged);
-
+    buttonm2.addEventListener("click", m2Clicked);
+    //======================================
+    // Cracking (modular root)
+    //======================================
     function button3clicked() {
       let c = parseInt(inputc3.value);
       let e = parseInt(inpute3.value);  // intended recipient's public e and n
       let n = parseInt(inputn3.value);
       let m;
-      let mInterval = 5000;
-      log3.innerHTML = "Trying m = ";
-      for (m=0; m<n; ++m) {
-        if (m%mInterval==0) {
-          log3.innerHTML += m + " ... ";
-        }
-        if (pow(m, e, n)==c) break;
-      }
-      log3.innerHTML += "\n\nSuccess: c = m^e mod n where  m = " + m + "\n";
+      for (m=0; m<n; ++m) if (pow(m, e, n)==c) break;
+      log3.innerHTML = "Trying m=1,2,3,...\n";
+      log3.innerHTML += "Success: c = m^e mod n where m = " + m;
     }
     button3.addEventListener("click", button3clicked);
-    
+    //======================================
+    // Cracking (integer factorization)
+    //======================================
     function button4clicked() {
       let e = parseInt(inpute4.value);  // victim's public key
       let n = parseInt(inputn4.value);
       let p;
-      let pInterval = 100;
       let pMax = Math.ceil(Math.sqrt(n));
-      log4.innerHTML = "Want to factor n = " + n + ".  Trying factors p = ";
-      for (p=2; p<=pMax; ++p) {
-        if (p%pInterval==0) {
-          log4.innerHTML += p + " ... ";
-        }
-        if (n%p==0) break;
+      log4.innerHTML = "Dividing n=" + n + " by 2,3,4,5,...\n";
+      for (p=2; p<=pMax; ++p) if (n%p==0) break;
+      let q = Math.round(n/p);
+      if (p*q==n) {
+        let t = (p-1)*(q-1);
+        let d = pow (e, -1, t);
+        log4.innerHTML += "Success: n=p*q where\n";
+        log4.innerHTML += "p = " + p + "\n";
+        log4.innerHTML += "q = " + q + "\n";
+        log4.innerHTML += "t = (p-1)*(q-1) = " + t + "\n";
+        log4.innerHTML += "d = e^(-1)mod m = " + d;
       }
-      q = n/p;
-      log4.innerHTML += "\n\nSuccess: n = p*q where  p = " + p + " and q = " + q + "\n";
+      else {
+        log4.innerHTML += "Failed to factor n!\n";
+      }
     }
     button4.addEventListener("click", button4clicked);
-    
     
   </script>
 </body>
