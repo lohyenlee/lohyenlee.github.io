@@ -29,6 +29,15 @@
       -moz-appearance: none;
       appearance: none;
     }
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    /* Firefox */
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
   </style>
 </head>
 <body>
@@ -48,18 +57,18 @@
   </p>
   <label> 1st prime  </label>
   <label class="short" for="inputp"> p = </label>
-  <input maxlength="9" id="inputp" placeholder="integer"></input>
+  <input type="number" maxlength="9" id="inputp" placeholder="integer"></input>
   <button id="buttonp"> random </button> 
   <br>
   <label> 2nd prime  </label>
   <label class="short" for="inputq"> q = </label>
-  <input maxlength="9" id="inputq" placeholder="integer"></input>
+  <input type="number" maxlength="9" id="inputq" placeholder="integer"></input>
   <button id="buttonq"> random </button> 
   <br>
   <br>
   <label> Public modulus </label>
   <label class="short" for="inputn">n = </label>
-  <input maxlength="9" id="inputn" readonly></input>
+  <input type="number" maxlength="9" id="inputn" readonly></input>
   <button id="buttonn">
     <math><mi>n</mi> <mo>=</mo> <mi>p</mi> <mi>q</mi></math>
   </button> 
@@ -67,7 +76,7 @@
   <br>
   <label> Private modulus </label>
   <label class="short" for="inputt">t = </label>
-  <input maxlength="9" id="inputt" readonly></input>
+  <input type="number" maxlength="9" id="inputt" readonly></input>
   <button id="buttont">
     <math  xmlns = "http://www.w3.org/1998/Math/MathML">
     <mi>t</mi> <mo>=</mo> 
@@ -83,13 +92,13 @@
   <br>
   <label> Encryption key </label>
   <label class="short" for="inpute">e = </label>
-  <input maxlength="9" id="inpute" placeholder="integer"></input>
+  <input type="number" maxlength="9" id="inpute" placeholder="integer"></input>
   <button id="buttone"> random </button> 
   <br>
   <br>
   <label> Decryption key </label>
   <label class="short" for="inputd">d = </label>
-  <input maxlength="9" id="inputd" re`adonly></input>
+  <input type="number" maxlength="9" id="inputd" re`adonly></input>
   <button id="buttond">
     <math><mi>d</mi> <mo>=</mo> <msup><mi>e</mi><mn>-1</mn></msup> <mo>mod</mo> <mi>t</mi> </math>
   </button> 
@@ -108,19 +117,19 @@
   </p>
   <label> Recipient's  </label>
   <label class="short" for="inputn1">n = </label>
-  <input maxlength="9" id="inputn1" placeholder="integer"></input>
+  <input type="number" maxlength="9" id="inputn1" placeholder="integer"></input>
   <br>
   <label> public key  </label>
   <label class="short" for="inpute1">e = </label>
-  <input maxlength="9" id="inpute1" placeholder="integer"></input>
+  <input type="number" maxlength="9" id="inpute1" placeholder="integer"></input>
   <br>
   <label> Message </label>
   <label class="short" for="inputm1">m = </label>
-  <input maxlength="9" id="inputm1" placeholder="integer"></input>
+  <input type="number" maxlength="9" id="inputm1" placeholder="integer"></input>
   <br>
   <label> Ciphertext </label>
   <label class="short" for="inputc1">c = </label>
-  <input maxlength="9" id="inputc1" placeholder="" readonly></input>
+  <input type="number" maxlength="9" id="inputc1" placeholder="" readonly></input>
   <button id="buttonc1">
     <math><mi>c</mi> <mo>=</mo> <msup><mi> m </mi><mi>e</mi></msup> <mo>mod</mo> <mi>n</mi> </math> 
   </button> 
@@ -135,11 +144,11 @@
   </p>
   <label> Ciphertext </label>
   <label class="short" for="inputc2">c = </label>
-  <input maxlength="9" id="inputc2" placeholder="integer"></input>
+  <input type="number" maxlength="9" id="inputc2" placeholder="integer"></input>
   <br>
   <label> Message </label>
   <label class="short" for="inputm2">m = </label>
-  <input maxlength="9" id="inputm2" placeholder="" readonly></input>
+  <input type="number" maxlength="9" id="inputm2" placeholder="" readonly></input>
   <button id="buttonm2">
     <math><mi>m</mi> <mo>=</mo> <msup><mi> c </mi><mi>d</mi></msup> <mo>mod</mo> <mi>n</mi> </math> 
   </button> 
@@ -154,15 +163,15 @@
   </p>
   <label> Bob's</label>
   <label class="short" for="inputn3">n = </label>
-  <input maxlength="9" id="inputn3" placeholder="integer"></input>
+  <input type="number" maxlength="9" id="inputn3" placeholder="integer"></input>
   <br>
   <label> public key </label>
   <label class="short" for="inpute3">e = </label>
-  <input maxlength="9" id="inpute3" placeholder="integer"></input>
+  <input type="number" maxlength="9" id="inpute3" placeholder="integer"></input>
   <br>
   <label> Ciphertext </label>
   <label class="short" for="inputc3">c = </label>
-  <input maxlength="9" id="inputc3" placeholder="integer"></input>
+  <input type="number" maxlength="9" id="inputc3" placeholder="integer"></input>
   <br>
   <button id="button3">Find modular root by brute force</button> 
   <br>
@@ -184,11 +193,11 @@
   </p>
   <label> Victim's </label>
   <label class="short" for="inputn4">n = </label>
-  <input maxlength="9" id="inputn4" placeholder="n"></input>
+  <input type="number" maxlength="9" id="inputn4" placeholder="n"></input>
   <br>
   <label> public key </label>
   <label class="short" for="inpute4">e = </label>
-  <input maxlength="9" id="inpute4" placeholder="e"></input>
+  <input type="number" maxlength="9" id="inpute4" placeholder="e"></input>
   <br>
   <button id="button4">Factor integer by brute force</button> 
   <br>
