@@ -19,7 +19,15 @@
     input  { display: inline-block; width: 5.0em; font-family: Courier; font-size: 16px; font-weight: bold; margin: 0; }
     input:read-only    { background-color: #eeeeee;}
     textarea:read-only { background-color: #eeeeee;}
-    button             { font-size: 16px; font-family: Helvetica; width: 8.9em; border-style: 0.2em solid; border-radius: 0m;}
+    button             { 
+      font-size: 16px; font-family: Helvetica; width: 8.9em; border-style: 0.2em solid; border-radius: 0em;
+        -webkit-border-radius: 0em;
+        -moz-border-radius: 0em;
+        border-radius: 0em;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
   </style>
 </head>
 <body>
@@ -82,7 +90,7 @@
   <label class="short" for="inputd">d = </label>
   <input maxlength="9" id="inputd" re`adonly></input>
   <button id="buttond">
-    <math><mi>d</mi> <mo>=</mo> <msup><mi> e </mi><mn>-1</mn></msup> <mo>mod</mo> <mi>t</mi> </math>
+    <math><mi>d</mi> <mo>=</mo> <msup><mi>e</mi><mn>-1</mn></msup> <mo>mod</mo> <mi>t</mi> </math>
   </button> 
   <br>
   <br>
