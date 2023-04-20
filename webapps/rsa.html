@@ -25,8 +25,11 @@
 <body>
 
   <!--======== HTML CODE ========-->
-  <div style="background-image: linear-gradient(to right,#bbf,#ccf,#69f);">
+  <div style="background-color: green; color: white;">
   <h1> RSA Demonstration </h1>
+  <p> Yen Lee Loh, 2023-4-2 </p>
+  </div>
+  <div style="background-image: linear-gradient(to right,#bbf,#ccf,#69f);">
   <h2> Generate keypair </h2>
   <p>
   Choose your own values for p, q, and e.  
@@ -57,9 +60,12 @@
   <label class="short" for="inputt">t = </label>
   <input maxlength="9" id="inputt" readonly></input>
   <button id="buttont">
-    <math><mi>t</mi> <mo>=</mo> 
+    <math>
+    <mrow>
+    <mi>t</mi> <mo>=</mo> 
     (<mi>p</mi><mo>-</mo>1)
     (<mi>q</mi><mo>-</mo>1)
+    </mrow>
     </math>
   </button> 
   <br>
@@ -89,10 +95,6 @@
   Copy the ciphertext onto a slip of paper and pass it to the recipient.
   Be warned that bad actors may try to intercept the ciphertext!
   </p>
-  <label> Message </label>
-  <label class="short" for="inputm1">m = </label>
-  <input maxlength="9" id="inputm1" placeholder="integer"></input>
-  <br>
   <label> Recipient's  </label>
   <label class="short" for="inputn1">n = </label>
   <input maxlength="9" id="inputn1" placeholder="integer"></input>
@@ -100,6 +102,10 @@
   <label> public key  </label>
   <label class="short" for="inpute1">e = </label>
   <input maxlength="9" id="inpute1" placeholder="integer"></input>
+  <br>
+  <label> Message </label>
+  <label class="short" for="inputm1">m = </label>
+  <input maxlength="9" id="inputm1" placeholder="integer"></input>
   <br>
   <label> Ciphertext </label>
   <label class="short" for="inputc1">c = </label>
@@ -135,10 +141,6 @@
   grab the paper, and enter the ciphertext in the box below.
   Then pass the slip on to Bob as if nothing happened.
   </p>
-  <label> Ciphertext </label>
-  <label class="short" for="inputc3">c = </label>
-  <input maxlength="9" id="inputc3" placeholder="integer"></input>
-  <br>
   <label> Bob's</label>
   <label class="short" for="inputn3">n = </label>
   <input maxlength="9" id="inputn3" placeholder="integer"></input>
@@ -146,6 +148,10 @@
   <label> public key </label>
   <label class="short" for="inpute3">e = </label>
   <input maxlength="9" id="inpute3" placeholder="integer"></input>
+  <br>
+  <label> Ciphertext </label>
+  <label class="short" for="inputc3">c = </label>
+  <input maxlength="9" id="inputc3" placeholder="integer"></input>
   <br>
   <button id="button3">Find modular root by brute force</button> 
   <br>
