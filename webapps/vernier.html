@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+`<!DOCTYPE html>
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -86,9 +86,7 @@
       }
     }
     function onTouchStart(event) {
-      //if (event.touches.length==2) {alert ("Double touch!"); return }
-      // allow user to pinch zoom
-      if (event.touches.length==1) event.preventDefault()
+      //if (event.touches.length==1) event.preventDefault()
       const X=event.touches[0].pageX
       const Y=event.touches[0].pageY
       const x=(X-xo)/xs
@@ -101,7 +99,7 @@
       }
     }
     function onTouchMove(event) {
-      event.preventDefault()
+      //event.preventDefault()
       const X=event.touches[0].pageX
       if (dragging) {
         offset = offsetOrig + (X - xAnchor)/xs*slowdownFactor
@@ -109,7 +107,7 @@
       }
     }
     function onTouchEnd(event) {
-      event.preventDefault()
+      //event.preventDefault()
       if (dragging) {
         dragging = false
         render()
