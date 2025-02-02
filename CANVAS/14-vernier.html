@@ -257,8 +257,8 @@
     //===============================================
     // MAIN CODE
     //===============================================
-    //-------- PREVENT DOUBLE-CLICK ZOOM ON MOBILE DEVICES --------      
-    document.body.addEventListener("dblclick", function (e) { e.preventDefault(); })
+    //-------- DON'T PREVENT DOUBLE-CLICK ZOOM ON MOBILE DEVICES!! --------
+    //document.body.addEventListener("dblclick", function (e) { e.preventDefault(); })
     //-------- MOBILE-FRIENDLY DIMENSIONING --------
     let w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
     let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
