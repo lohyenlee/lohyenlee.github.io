@@ -86,12 +86,12 @@
       }
     }
     function onTouchStart(event) {
-      //if (event.touches.length==1) event.preventDefault()
       const X=event.touches[0].pageX
       const Y=event.touches[0].pageY
       const x=(X-xo)/xs
       const y=(Y-yo)/ys
       if (vernRect[0]<x && vernRect[1]>y && x<vernRect[2] && y>vernRect[3]) { // warning!!!
+        event.preventDefault()   // USER IS DRAGGING ERNIER!  DON'T PASS THIS TO DEFAULT HANDLER!
         dragging = true
         xAnchor = X // originally clicked point in window coordinates
         offsetOrig = offset     // original position of slider
@@ -99,16 +99,16 @@
       }
     }
     function onTouchMove(event) {
-      //event.preventDefault()
       const X=event.touches[0].pageX
       if (dragging) {
+        event.preventDefault()   // USER IS DRAGGING ERNIER!  DON'T PASS THIS TO DEFAULT HANDLER!
         offset = offsetOrig + (X - xAnchor)/xs*slowdownFactor
         render()                // move slider by an amount...
       }
     }
     function onTouchEnd(event) {
-      //event.preventDefault()
       if (dragging) {
+        event.preventDefault()   // USER IS DRAGGING ERNIER!  DON'T PASS THIS TO DEFAULT HANDLER!
         dragging = false
         render()
       }
