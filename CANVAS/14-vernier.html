@@ -86,7 +86,8 @@
       }
     }
     function onTouchStart(event) {
-      if (event.touches.length==2) {alert ("Double touch!"); return }
+      //if (event.touches.length==2) {alert ("Double touch!"); return }
+      // allow user to pinch zoom
       if (event.touches.length==1) event.preventDefault()
       const X=event.touches[0].pageX
       const Y=event.touches[0].pageY
