@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body>
+
+  <!--===============================================
+    HTML
+  ===============================================-->
+  <div>
+  <!--<label for="preset">Treasure Map: </label>-->
+  <select id="preset" onclick="reinit()">
+      <option value="0">Treasure map 1</option>
+      <option value="1">Treasure map 2</option>
+      <option value="2">Treasure map 3</option>
+      <option value="3">Treasure map 4</option>
+  </select>
+  <span> &nbsp;&nbsp;&nbsp; </span>
+
+  <input type="checkbox" id="gradients" name="gradients" onclick="render()">
+  <label for="gradients"> Show gradients </label>
+
+  <input type="checkbox" id="heatmap" name="heatmap" onclick="render()">
+  <label for="heatmap"> Reveal heatmap </label>
+
+  </div>
+
+  <h1> Treasure Hunt </h1>
+  <div>
+    <p> Click anywhere in the black square above to measure the temperature.
+     How many clicks does it take you to find the hottest spot?
+     Keep going   till you find the place where it's 100 degrees! <p>
+    <p><i> Yen Lee Loh, 2025-2-2 </i><p>
+  </div>
+
+  <script>
+    //=======================================
+    // Global variables
+    //=======================================
+    const gradientsCheckbox = document.getElementById("gradients")
+    const heatmapCheckbox = document.getElementById("heatmap")
+    const presetSelector = document.getElementById("preset")
+    const aspectRatio=1/1.6
+    const step = 5  // heat map mesh spacing in pixels
+    var x0,x1,y0,y1
+    var xs,ys,xo,yo
+    var canvas,ctx
+    var zmin,zmax
+    var points
+    //=======================================
+    //  Math utilities
+    //=======================================
+    const clamp = (num, min=0, max=1) => Math.min(Math.max(num, min), max)
+    const range = (n) => [...Array(n).keys()]
+    const smul = (s,v) => v.map(x => s*x)         // scalar multiplication on vector
+    const vadd = (u,v) => u.map((x,i) => x+v[i])  // vector-vector addition
+    //=================================================
+    // Graphics utilities
+    //=================================================
+    function drawLine(x0,y0,x1,y1) {
+      ctx.beginPath()
+      ctx.moveTo(xo+xs*x0, yo+ys*y0)
+      ctx.lineTo(xo+xs*x1, yo+ys*y1)
+      ctx.stroke()
+    }
+    function drawArrow(x0,y0,x1,y1) {
+      const h = 8; // length of head in pixels
+      const X0=xo+xs*x0,Y0=yo+ys*y0,X1=xo+xs*x1,Y1=yo+ys*y1
+      const dx=X1-X0,dy=Y1-Y0
+      const angle=Math.atan2(dy,dx),a1=angle-Math.PI/6,a2=angle+Math.PI/6
+      ctx.beginPath()
+      ctx.moveTo(X0,Y0); ctx.lineTo(X1,Y1); ctx.lineTo(X1-h*Math.cos(a1), Y1-h*Math.sin(a1))
+      ctx.moveTo(X1,Y1);                    ctx.lineTo(X1-h*Math.cos(a2), Y1-h*Math.sin(a2))
+      ctx.stroke()
+    }
+    function fillRect(x0, y0, x1, y1)   { ctx.fillRect(xo+xs*x0, yo+ys*y0, xs*(x1-x0), ys*(y1-y0))   }
+    function strokeRect(x0, y0, x1, y1) { ctx.strokeRect(xo+xs*x0, yo+ys*y0, xs*(x1-x0), ys*(y1-y0)) }
+    function drawText(s, x, y)          { ctx.fillText(s, xo+xs*x, yo+ys*y)                          }
+    //=================================================
+    // Colormaps
+    //=================================================
+    function colorFromZ(z)       {return `hsl(${Math.round(255*(1-z))},100%,${40+40*z}%)`}
+    function colorFromZDarker(z) {return `hsl(${Math.round(255*(1-z))},100%,${40*z}%)`}
+    //=======================================================================
+    //  Operations on value-gradient pairs (for automatic differentiation)
+    //=======================================================================
+    // Unary functions applied to a value-gradient pair
+    function neg(A) {[a,da]=A; return [-a, smul(-1,da)] }
+    function sqr(A) {[a,da]=A; return [a*a, smul(2*a,da)] }
+    function exp(A) {[a,da]=A; return [Math.exp(a), smul(Math.exp(a),da)] }
+    function log(A) {[a,da]=A; return [Math.log(a), smul(1/a,da)] }
+    function sin(A) {[a,da]=A; return [Math.sin(a), smul(Math.cos(a),da)] }
+    function cos(A) {[a,da]=A; return [Math.cos(a), smul(-Math.sin(a),da)] }
+    // Addition, multiplication, and power by a constant, applied to a value-gradient pair
+    function cadd(A,c) {[a,da]=A; return [a+c, da] }
+    function cmul(A,c) {[a,da]=A; return [a*c, smul(c,da)] }
+    function cpow(A,c) {[a,da]=A; return [Math.pow(a,c), smul(c*Math.pow(a,c-1),da)] }
+    // Binary operations on two value-gradient pairs
+    function add(A,B) {[a,da]=A; [b,db]=B; return [a+b, vadd(da,db)] }
+    function mul(A,B) {[a,da]=A; [b,db]=B; return [a*b, vadd(smul(b,da),smul(a,db))] }
+    // Custom stuff
+    function gaussian(X,Y,xc,yc,xw,yw,a=1) {
+      return cmul(exp(neg(add( sqr(cmul(cadd(X,-xc),.7071/xw)),  sqr(cmul(cadd(Y,-yc),.7071/yw)) ))) , a)
+    }
+    function FEasy(X,Y) {
+      // ( cos(.25X) cos(Y) )^2
+      return cpow( mul(cos(cmul(X,.25)), cos(Y)) , 2)
+    }
+    function FRosenbrock(X,Y) {
+      // Exponentiated Rosenbrock function: exp(-0.3*((x-1)**2 + 5*(y-x**2)**2 ))
+      return exp(
+        cmul(
+          add(  sqr(cadd(X,-1)) , cmul(  sqr(  add(Y, neg(sqr(X)))     )  ,5  )   ),
+          -0.3)
+        )
+    }
+    function F3(X,Y) {
+      // exp(-(   (Y-cos X)^2 + (0.3X - cos Y)^2   ))
+      return exp(neg(
+          add(
+            sqr(  add(Y,  neg(cos(X)))     ),
+            sqr(  add(cmul(X,.3),  neg(cos(Y)))     )
+          )
+      ))
+    }
+    function F4(X,Y) {
+      return (
+        add(
+        add(
+        add(
+        gaussian(X,Y, -2,1, .3,.5, 0.9)
+        , gaussian(X,Y, 2,1, .3,.6, 0.8))
+        , gaussian(X,Y, 0,-1, 2,.2, 0.6))
+        , gaussian(X,Y, 0,-.3, .8,.8, 0.7)
+      ))
+    }
+    funcs = [FEasy, FRosenbrock, F3, F4]
+    // Convert x and y coordinates into value-gradient pairs; pass these into appropriate F function
+    function F(x,y) {  return funcs [presetSelector.value] ( [x,[1,0]], [y,[0,1]]) }
+    function f(x,y) { return F(x,y) [0] } // Extract value from value-gradient pair
+    function findMinMax(f,x0,y0,x1,y1,npoints=100) {
+      let zmin=+1e38,zmax=-1e38
+      for (let y=y0; y<y1; y+=(y1-y0)/npoints) {
+        for (let x=x0; x<x1; x+=(x1-x0)/npoints) {
+          const z=f(x,y); if (zmin>z) zmin=z; if (zmax<z) zmax=z
+        }
+      }
+      return [zmin,zmax]
+    }
+
+    function render() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      xs=(canvas.width-0)/(x1-x0);  xo=-x0*xs
+      ys=(0-canvas.height)/(y1-y0); yo=-y1*ys
+      if (heatmapCheckbox.checked) {
+        Xmax=canvas.width; Ymax=canvas.height
+        for (let Y=0; Y<Ymax; Y+=step) {
+          for (let X=0; X<Xmax; X+=step) {
+            const x=(X-xo)/xs, y=(Y-yo)/ys, zz=f(x,y), z=(zz-zmin)/(zmax-zmin) // normalize
+            ctx.fillStyle = colorFromZ(z)
+            ctx.fillRect(X, Y, step, step)
+          }
+        }
+      }
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      for (const [x,y] of points) {
+        const X=xo+xs*x,Y=yo+ys*y
+        const [zz,g] = F(x,y), z = (zz-zmin)/(zmax-zmin)  // normalize
+        //======== Draw box
+        s = (100*z).toFixed(0)  // format
+        const dims = ctx.measureText(s)
+        const w = dims.width * .55 + 2;
+        const h = (dims.fontBoundingBoxAscent+dims.fontBoundingBoxDescent) * .55;
+        ctx.fillStyle = colorFromZ(z)
+        ctx.fillRect(X-w, Y-h, w+w, h+h)
+        //======== Draw text indicating function value
+        ctx.fillStyle = colorFromZDarker(z)
+        drawText (s, x, y)
+        //======== Draw arrow indicating gradient
+        if (gradientsCheckbox.checked) {
+          const gg = Math.hypot(g[0], g[1])
+          const k = clamp(0.25*gg, 0.15, 0.8)/gg   // this should be "1/gg" by default
+          ctx.strokeStyle = '#F6F'; ctx.lineWidth=2
+          drawArrow (x, y, x+k*g[0], y+k*g[1])
+        }
+      }
+    }
+
+    //=================================================
+    // Event handlers
+    //=================================================
+    function onMouseDown(event) {
+      event.preventDefault()
+      const X=event.offsetX,Y=event.offsetY
+      const x=(X-xo)/xs,y=(Y-yo)/ys
+      points.push([x,y])
+      render()
+    }
+    function onTouchStart(event) {
+      event.preventDefault()
+      const X=event.touches[0].pageX,Y=event.touches[0].pageY
+      const x=(X-xo)/xs,y=(Y-yo)/ys
+      points.push([x,y])
+      render()
+    }
+
+    function reinit() {
+      points=[]
+      x0=-4; x1=4   // x coordinates of left and right edges of plot
+      let yw=(x1-x0)*aspectRatio  // auto
+      y0=-yw/2; y1=yw/2
+      minmax=findMinMax(f,x0,y0,x1,y1); zmin=minmax[0]; zmax=minmax[1]
+      render()
+    }
+
+    //===============================================
+    // MAIN CODE
+    //===============================================
+    //-------- DON'T PREVENT DOUBLE-CLICK ZOOM ON MOBILE DEVICES!! --------
+    //document.body.addEventListener("dblclick", function (e) { e.preventDefault(); })
+    //-------- MOBILE-FRIENDLY DIMENSIONING --------
+    let w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+    canvas = document.createElement("canvas")
+    ctx = canvas.getContext("2d")
+    canvas.width = clamp(w - 24, 300, 2000) // set canvas width according to window width
+    canvas.height = canvas.width*aspectRatio
+    canvas.style.background = '#000' //EEE"
+    ctx.font = 'bold 14px Arial'
+    ctx.imageSmoothingEnabled = true // not sure if this works
+    document.body.insertBefore(canvas, document.body.childNodes[0])
+    canvas.addEventListener("mousedown", onMouseDown, false)
+    canvas.addEventListener("touchstart", onTouchStart, false)
+
+    presetSelector.value = 3
+    heatmap.checked = 'checked'
+    reinit()
+    render()
+  </script>
+
+</body>
+</html>

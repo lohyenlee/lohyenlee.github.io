@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body>
+
+  <!--===============================================
+    HTML
+  ===============================================-->
+  <h1> Autograd </h1>
+  <div>
+     <p><i> Yen Lee Loh, 2025-2-4 </i><p>
+  </div>
+  <div id="messageBox" style="font-family: monospace; border: 1px solid;">
+  </div>
+
+  <script>
+    //=======================================
+    //  Math utilities
+    //=======================================
+    const clamp = (num, min=0, max=1) => Math.min(Math.max(num, min), max)
+    const range = (n) => [...Array(n).keys()]
+    // Scalar multiplication of a vector; addition of two vectors
+    const smul = (s,v) => v.map(x => s*x)
+    const vadd = (u,v) => u.map((x,i) => x+v[i]);
+    // Unary functions applied to a value-gradient pair
+    function sqr(A) {[a,da]=A; return [a*a, smul(2*a,da)] }
+    function exp(A) {[a,da]=A; return [Math.exp(a), smul(Math.exp(a),da)] }
+    function log(A) {[a,da]=A; return [Math.log(a), smul(1/a,da)] }
+    function sin(A) {[a,da]=A; return [Math.sin(a), smul(Math.cos(a),da)] }
+    // Addition, multiplication, and power by a constant, applied to a value-gradient pair
+    function cadd(A,c) {[a,da]=A; return [a+c, da] }
+    function cmul(A,c) {[a,da]=A; return [a*c, smul(c,da)] }
+    function cpow(A,c) {[a,da]=A; return [Math.pow(a,c), smul(c*Math.pow(a,c-1),da)] }
+    // Binary operations on two value-gradient pairs
+    function add(A,B) {[a,da]=A; [b,db]=B; return [a+b, vadd(da,db)] }
+    function mul(A,B) {[a,da]=A; [b,db]=B; return [a*b, vadd(smul(b,da),smul(a,db))] }
+
+    var msg = document.getElementById("messageBox")
+    function print(stuff) {msg.innerHTML += stuff.toString() + '<br>'}
+    //===============================================
+    // MAIN CODE
+    //===============================================
+    const A = [3, [1, 0]]
+    const B = [4, [0,1]]
+    const C = sqr(A)
+    const D = sqr(B)
+    const F = add(C,D)
+    const G = sqr(F)
+    print (A)
+    print (B)
+    print (C)
+    print (D)
+    print (F)
+    print (G)
+
+  </script>
+
+</body>
+</html>
