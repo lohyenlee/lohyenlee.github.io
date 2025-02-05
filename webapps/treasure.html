@@ -199,7 +199,7 @@
       render()
     }
     function onTouchStart(event) {
-      event.preventDefault()
+      if (event.touches.length==1) event.preventDefault()
       const X=event.touches[0].pageX,Y=event.touches[0].pageY
       const x=(X-xo)/xs,y=(Y-yo)/ys
       points.push([x,y])
@@ -235,7 +235,7 @@
     canvas.addEventListener("touchstart", onTouchStart, false)
 
     presetSelector.value = 3
-    heatmap.checked = 'checked'
+    //heatmap.checked = 'checked'
     reinit()
     render()
   </script>
