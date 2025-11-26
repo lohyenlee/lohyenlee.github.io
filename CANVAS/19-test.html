@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {background-color: #111; padding: 14px; margin: 0;}
+    #instructions {
+      float: left;
+      padding: 0px; margin: 0px; position: absolute; bottom: 4em; width: 100%; z-index: 100; 
+      background-color: #333; font-family: monospace; color: white;
+    }
+    .asdf {float: left; padding: 0; margin: 0px 20px 2px 2px; }
+  </style>
+</head>
+<body>
+  <script type="module">
+
+    //=======================================
+    //  MATH UTILITY FUNCTIONS
+    //=======================================
+    const clamp=(x,a,b) => Math.min(Math.max(x,a),b)
+
+    //===============================================
+    // MAIN CODE
+    //===============================================
+    document.body.addEventListener("dblclick", function(e) { e.preventDefault() })
+    const winWid = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
+    const winHei = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
+    const canvas = document.createElement("canvas")
+    canvas.width  = clamp(winWid-32, 300, 800) // set canvas width according to window width
+    canvas.height = clamp(winHei-32, 300, 800)
+    canvas.style.background = "#CCC"
+    const ctx = canvas.getContext("2d")
+    
+ 
+    document.body.insertBefore(canvas, document.body.childNodes[0])
+    canvas.addEventListener("touchstart", touchstart, false)
+    canvas.addEventListener("touchmove", touchmove, false)
+    canvas.addEventListener("touchend", touchend, false)
+    canvas.addEventListener("mousedown", mousedown, false)
+    canvas.addEventListener("mousemove", mousemove, false)
+    canvas.addEventListener("mouseup", mouseup, false)
+    document.body.addEventListener("keydown", keydown, false)
+
+  </script>
+  <!-- <div id="instructions">
+    <div class="asdf"> &#8592;&#8593;&#8595;&#8594;  Move cursor </div>
+    <div class="asdf"> Shift=Wire </div>
+    <div class="asdf"> 1=Cold source </div>
+    </div> -->
+</body>
+</html>
+

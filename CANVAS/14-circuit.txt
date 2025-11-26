@@ -1,0 +1,115 @@
+========================================
+LOGIC CIRCUIT CELLULAR AUTOMATON
+========================================
+
+Consider a 2D grid with cells labeled by coordinates x=0,...,X-1 and y=0,...,Y-1.
+Each cell has a state V(x,y).
+At every timestep, update all sites according to a 5-point rule of the form
+    V(x,y,t+1) := function( V(x,y,t), V(x+1,y,t), V(x-1,y,t), V(x,y+1,t), V(x,y-1,t) ) .
+To implement synchronous updating, store the new states in an array cnew, 
+and copy the results back into the original array.
+
+==================================================
+1. BINARY MODEL
+==================================================
+Consider a binary model with only two states (0 and 1), representing "hot" and "cold".  For simplicity, suppose X=7 and Y=1.  
+Consider a 3-point majority rule:
+    V(x,y) := heaviside(V(x,y) + V(x-1,y) + V(x+1,y) - 1.5)
+
+    0010000 --> 0000000   (one-site islands disappear)
+    0011000 --> 0011000   (two-site islands are stable)
+    0011010 --> 0011100   (coalescence can happen)
+
+Lowering the threshold allows heat to spread, but the spreading is omnidirectional and irreversible:  
+    V(x,y) := heaviside(V(x,y) + V(x-1,y) + V(x+1,y) - 0.5)
+
+    0010000 --> 0111000   (a hot spot spreads in both directions)
+    1101111 --> 1111111   (cold islands are swallowed up)
+
+==================================================
+2. FOUR-STATE MODEL
+==================================================
+Consider a four-state model.  In addition to "steady hot" and "steady cold" states, 
+there are also "active hot" and "active cold" states.
+A "spreading" state will decay to the "steady holding" level.
+Any state that is next to a spreading state will be "infected" or "catch fire":
+
+    STATE     DESCRIPTION      RULE
+    H         Hot spreading    H --> h
+    h         Hot holding      hhh --> h, Chh --> c, ...
+    c         Cold holding     ccc --> c, Hcc --> h, ...
+    C         Cold spreading   C --> c
+
+This model permits hotness and coldness to spread in the same way.  
+However, spreading is omnidirectional, and results in pulsing, due to "reinfection":
+
+    ccHcccc --> cHhHccc --> HhHhHcc
+
+==================================================
+3. SIX-STATE MODEL
+==================================================
+The above deficiencies are rectified by using three levels of hotness and coldness each.  
+This is similar to forest fire simulations, in which 3=burning, 2=burned, and
+1=regrown.
+The states 1 and 5 are susceptible to either "hot burn" or "cold burn" from their neighbors
+(catching fire or catching a cold):
+
+    STATE     DESCRIPTION      RULE
+    7         Hot spreading    7 --> 6 
+    6         Hot decaying     6 --> 5
+    5         Hot holding      5 --> 5, 53 --> 32, 57 --> 76
+    1         Cold spreading   3 --> 2
+    2         Cold decaying    2 --> 1
+    3         Cold holding     1 --> 1, 13 --> 32, 17 --> 76
+
+This allows hot and cold pulses to propagate forwards or backwards, 
+depending on where they are launched:
+
+    73333 --> 67333 --> 56733 --> 55673 --> 55567 --> 55556 --> 55555 (heat spreading right)
+    15555 --> 21555 --> 32155 --> 33215 --> 33321 --> 33332 --> 33333 (cold spreading right)
+
+It is good that we can build wires that carry signals in either direction.
+However, in a digital circuit, we need to have buffering, 
+such that the input of a gate can affect the output, but the output cannot affect the input.
+I don't think this model supports buffering.
+
+==================================================
+4. EIGHT-STATE MODEL
+==================================================
+Starting from the previous model, add two states representing a multi-input OR gate. 
+The gate takes input from the north, west, and south.
+The gate output is updated at every time step:
+    if (n>4 || w>4 || s>4) c = 8 
+    else                   c = 0
+
+    STATE     DESCRIPTION      RULE
+    8         On               8 if any input is hot (5,6,7)
+    0         Off              0 otherwise
+
+In addition, if a wire has a gate at its west, it takes the output of that gate as "spreading hot" or "spreading cold". 
+In the example below, the OR gate switches on, causing its output to be held as 3
+(which results in pulsing):
+
+     5         5         5         5         5
+    50111 --> 58111 --> 58311 --> 58321 --> 58313
+     5         5         5         5         5
+
+If we don't like the pulsing, we can modify the rules so that the output is "spreading" ONLY
+if the output is cold and the gate is now hot, or vice versa.  Then a pulse is only generated when the gate switches.
+
+==================================================
+5. RESTORING SYMMETRY
+==================================================
+To restore fourfold symmetry, for each gate, designate one or more neighbors as an OUTPUT cell. 
+An output cell can only accept input from the neighboring gate.
+A gate cannot accept input from this cell.  
+Add two more states to the model.
+
+==================================================
+6. CROSSOVERS
+==================================================
+There is no elegant solution.
+The least bad solution is probably to store an additional 3 bits of state representing the extra layer.
+
+
+
