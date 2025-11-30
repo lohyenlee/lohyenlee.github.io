@@ -1,0 +1,182 @@
+---
+T O A D      &nbsp;&nbsp;&nbsp;           B U R N
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+u                                     u 
+u ### ### ###   #    #   # #          u 
+u  #  # # # # ###    ### # # ### ###  u
+u  #  # # ### # #    # # # # #   # #  u
+u  #  ### # # ###    ### ### #   # #  u
+u ++++++++++++++++++++++++++++++++++  u
+u  ### ### ### ### ### ### ### ###    u
+u  # # # # # # # # # # # # # # # #    u
+u  # ### ### ### ### ### ### ### ##F  u
+u G#                                  u
+u                                     u
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+---
+[EXPT] Isaac's level
+u
+u   F
+u 5G+3
+u   33
+u
+---
+[EXPT] D Latch Compact
+uu  
+uu  
+uu###########G#
+uu            #   
+uu            #####    
+uu  1+##      #   #    1+##
+uu##G# #      # G#G####G# #   
+uu   # ###L## # #       # ###L
+uu##G+##    ##+###G####G+## 
+uu  7#        #   #    7#   
+uu            #####       
+uu
+uu
+---
+[EXPT] D Latch
+uu  
+uu  
+uu############G#
+uu             #   
+uu  #####      #####    #####
+uu  1   #      #   #    1   #
+uu##G## #      # G#G####G## #   
+uu    # ###L## # #        # ###L
+uu##G#+##    ##+###G####G#+## 
+uu  7 #        #   #    7 #   
+uu  ###        #####    ###
+uu
+uu
+---
+[EXPT] D Latch Old
+uu  
+uu  
+uu###############G##
+uu                 #   
+uu    #####        #####    #####
+uu    1   #        #   #    1   #
+uu####G## #######L#+#G#G####G## #########L
+uu      # #        #          # #
+uu####G#+## #######+#G#G####G#+## ########
+uu    7 #   #      #   #    7 #   #
+uu    #######      #####    #######
+uu
+uu
+---
+1. Light the Fuse
+uuuuuuuuuuuuuu
+uu  
+uu  ..... ...
+uu  .   . . .
+uu... ... . .
+uu    .   . .
+uu    ..... F
+uu
+uuuuuuuuuuuuuu
+---
+2. Less is More
+uuuuuuuuuuuuuu
+uu
+uu7...G...F
+uu
+uuuuuuuuuuuuuu
+---
+3. Ouch!  It's Hot!
+uuuuuuuuuuuuuu
+uu
+uu7...
+uu   G...F
+uu7...
+uu
+uuuuuuuuuuuuuu
+---
+4. What a Mess
+uuuuuuuuuuuuuuuuuu
+uu      uuuuu3333u
+uu7...    uuuu33uu
+uu   G...    uuuuu
+uu7...  .     uuuu
+uu      G....  uuu
+uu7...  .   .   uu
+uu   G...   G.F uu
+uu1...     ..   uu
+uu         .    uu
+uu7.........    uu
+uu              uu
+uuuuuuuuuuuuuuuuuu
+---
+5. Tick! Tock! Goes the Clock
+uuuuuuuuuuuuuuuuuuuuu
+uu               uuuu
+uu ...G....      uuuu
+uu .      .       uuu
+uu ........        uu
+uu        .        uu
+uu        G.....F  uu
+uu        .        uu
+uu7........       uuu
+uu              uuuuu
+uuuuuuuuuuuuuuuuuuuuu
+---
+6. Time it Right
+uuuuuuuuuuuuuuuuuuuuu
+uu                 uu
+uu                 uu
+uu        .G..     uu
+uu        .  .     uu
+uu ....   ....     uu
+uu .  .      .     uu
+uu..G.G.     G...F uu
+uu     .     .     uu
+uu     G......     uu
+uu                 uu
+uuuuuuuuuuuuuuuuuuuuu
+---
+7. Loop the Loop
+uuuuuuuuuuuuuu
+uu          uu
+uu......    uu
+uu     .    uu
+uu   ..+..F uu
+uu   . .    uu
+uu   ...    uu
+uu          uu
+uuuuuuuuuuuuuu
+---
+SANDBOX: Roll Your Own!
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+---
+RS Flip-Flop (Experimental)
+uu
+uu  ..1.
+uu  .  .
+uu..G.G....
+uu    . 
+uu..... 
+uu

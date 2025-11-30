@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body style='background-color: black;'>
+  <textarea id="myTextarea" rows="80" cols='160' style="font-size: 14px; background-color: black; color: gray;"></textarea>
+  <script type="module">
+
+    //===============================================
+    // RESOURCES
+    //===============================================
+    const map=`
+
+    7 3  1 5
+1555+5+55+5+55
+    3 3  5 5
+7333+3+33+3+33
+    3 3  5 5
+    3 7  5 1
+`  
+    //===============================================
+    // GLOBAL VARIABLES
+    //===============================================
+    let X,Y
+    let ground,groundNew // X*Y arrays
+    let subway,subwayNew // X*Y arrays
+
+    //===============================================
+    // evolve(): EVOLVE CELLULAR AUTOMATON
+    // Reads global variables: X,Y,ground,subway
+    // Writes contents of:     ground,subway
+    //===============================================
+    function evolve() {
+      for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
+        //======== Consider ground-level state
+        let C=ground[x+X*y]
+        //======== Get states of East and West neighbors
+        const E=ground[(x+1)+X*y]
+        const W=ground[(x-1)+X*y]
+        //======== If current location has an interchange, then ground level has NO N and S neighbors
+        let N,S;
+        if (subway[x+X*y]) {N=0; S=0}
+        else {
+          //======== If North neighbor is an interchange, use the subway value; otherwise use ground value
+          N=subway[x+X*(y-1)]; if(N==0) N=ground[x+X*(y-1)]
+          S=subway[x+X*(y+1)]; if(S==0) S=ground[x+X*(y+1)]
+        }
+        //======== Update ground-level state 
+        if (W==4)      {C=1}  // copy state from gate at west
+        else if (W==8) {C=7}  // copy state from gate at west
+        else {
+          switch(C) {
+            case 7: C=6; break // hot burning -> hot burned
+            case 6: C=5; break // hot burned -> hot dormant
+            case 1: C=2; break // cold burning -> cold burned
+            case 2: C=3; break // cold burning -> cold dormant
+            case 3: case 5: // cold dormant or hot dormant
+              if ((E&7)==1 || (W&7)==1 || (N&7)==1 || (S&7)==1) C=1
+              if ((E&7)==7 || (W&7)==7 || (N&7)==7 || (S&7)==7) C=7
+              break
+            case 4: case 8: // current ground is a NOR GATE
+              if (  (W&7)>4 || (N&7)>4 || (S&7)>4 ) C=4
+              else                                  C=8
+          }
+        }
+        groundNew[x+X*y] = C
+        //======== Update subway-level state (based on N and S only)
+        C=subway[x+X*y]
+        switch(C) {
+          case 0: break      // not an interchange
+          case 7: C=6; break // hot burning -> hot burned
+          case 6: C=5; break // hot burned -> hot dormant
+          case 1: C=2; break // cold burning -> cold burned
+          case 2: C=3; break // cold burning -> cold dormant
+          case 3: case 5: // cold dormant or hot dormant
+            N=ground[x+X*(y-1)]
+            S=ground[x+X*(y+1)]
+            if ((N&7)==1 || (S&7)==1) C=1
+            if ((N&7)==7 || (S&7)==7) C=7
+            break
+        }
+        subwayNew[x+X*y] = C
+      } 
+      for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) ground[x+X*y]=groundNew[x+X*y] // synchronous update
+      for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) subway[x+X*y]=subwayNew[x+X*y] // synchronous update
+    }
+
+
+    //===============================================
+    // loadMap()
+    // Writes global X,Y,ground,groundNew,subway,subwayNew
+    // printMap()
+    // Reads global X,Y,ground
+    //===============================================
+    function loadMap(mapStr) {
+      //-------- DETERMINE MAP SIZE AND ALLOCATE ARRAYS
+      const rows = mapStr.split('\n').filter(item=>item)
+      X = Math.max(...rows.map(str => str.length) )
+      Y = rows.length
+      ground   =new Int8Array(X*Y)
+      groundNew=new Int8Array(X*Y)
+      subway   =new Int8Array(X*Y)
+      subwayNew=new Int8Array(X*Y)
+      //-------- POPULATE ARRAYS
+      for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
+        ground[x+X*y]=0   // START WITH BARE GROUND    
+        subway[x+X*y]=0   // START WITH NO INTERCHANGES 
+      }
+      for (let y=0; y<rows.length; ++y) {
+        for (let x=0; x<rows[y].length && x<X; ++x) {
+          switch (rows[y][x]) {
+            case ' ': ground[x+X*y]=0; break
+            case '.': ground[x+X*y]=3; break
+            case '1': case '2': case '3': case '5': case '6': case '7': ground[x+X*y]=rows[y][x]-'0'; break
+            case 'G': ground[x+X*y]=4; break // NOR gate
+            case '+': ground[x+X*y]=3; subway[x+X*y]=3; break // interchange
+          }
+        }
+      }
+    }
+
+    const msg = document.getElementById("myTextarea");
+    function print(s) {msg.value += s}
+    function printMap() {
+      for (let y=0; y<Y; ++y) {
+        let s=''; for (let x=0; x<X; ++x) s += ground[x+X*y] ? ground[x+X*y]:' '
+        msg.value += s + '\n'
+      }
+    }
+    //===============================================
+    // MAIN CODE
+    //===============================================
+    loadMap(map)
+    for (let iter=0; iter<100; ++iter) {
+      printMap()
+      print('\n')
+      evolve()
+    }
+
+ </script>
+</body>
+</html>
+

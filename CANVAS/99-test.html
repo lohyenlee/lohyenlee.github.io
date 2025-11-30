@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+  <div class="container">
+    <canvas id="canvas" style="position:absolute; top:0; left:150px;">Your browser does not support the HTML5 canvas tag.</canvas>
+  </div>
+  <script type="module">
+
+
+    //=========================================
+    // RESOURCES: loadSound() and loadImage()
+    //=========================================
+    const audioContext=new(window.AudioContext||window.webkitAudioContext)()
+    function loadSound(filename) {
+      let sound={volume:1,audioBuffer:null}
+      let ajax=new XMLHttpRequest()
+      ajax.open("GET", filename, true)
+      ajax.responseType="arraybuffer"
+      ajax.onload = function () {
+        audioContext.decodeAudioData(
+          ajax.response,
+          function(buf) {sound.audioBuffer=buf},
+          function(err) {debugger}
+        )
+      }
+      ajax.onerror = function() {debugger}
+      ajax.send()
+      return sound
+    }
+    function playSound(sound) {
+      if (!sound.audioBuffer) return false
+      const source = audioContext.createBufferSource()
+      if (!source) return false
+      source.buffer = sound.audioBuffer
+      if (!source.start) source.start = source.noteOn
+      if (!source.start) return false
+      const gainNode = audioContext.createGain()
+      gainNode.gain.value = sound.volume
+      source.connect(gainNode)
+      gainNode.connect(audioContext.destination)
+      source.start(0)
+      sound.gainNode = gainNode
+      return true
+    }
+    function stopSound(sound) {if(sound.gainNode) sound.gainNode.gain.value=0}
+    function setSoundVolume(sound,vol) {sound.volume=vol; if(sound.gainNode) sound.gainNode.gain.value=vol}
+    async function loadImage(url) { return new Promise(r => { let i=new Image(); i.onload=(()=>r(i)); i.src=url; }); }
+    //================================
+    // PRELOAD AND PREPARE SOUNDS AND TEXTURES 
+    //================================
+    const soundTock = loadSound("tock.mp3")
+    const soundBuzz = loadSound("buzz.ogg")
+    const soundWin = loadSound("win.mp3")
+    const soundWin0 = loadSound("smb_bowserfalls.wav")
+    let imgMario = await loadImage('mario64.png')
+    let imgBowser = await loadImage('bowser64.png')
+    let imgGrass = await loadImage('grass.webp')
+    let imgWater = await loadImage('water.webp')
+    let imgLava = await loadImage('lava.webp')
+    let imgCrying1 = await loadImage('crying1.webp')
+    let imgCrying2 = await loadImage('crying2.webp')
+    let imgHappy1 = await loadImage('happy1.webp')
+    let imgHappy2 = await loadImage('happy2.webp')
+    let imgStarOn = await loadImage('staron.webp')
+    let imgStarOff = await loadImage('staroff.webp')
+    function loadString(url) {
+      return fetch(url).then( r => r.text() )
+    }
+    // let maps = await loadString('toadBurnMaps.txt') // clear browser cache if this file is edited
+    // TBD: figure out how to use await
+
+    let maps = `
+    ---
+    Level One
+    awefawe f
+    asdfasdfsf
+    -----
+    Level Two
+    ---
+    Level Three
+    asd
+    --
+    STIOLL LEVEL THREE
+    ---
+    `
+    const mapStrings = maps.split(/-*---\n/).slice(1)
+    console.log(mapStrings[0])
+    console.log(mapStrings[1])
+    console.log(mapStrings[2])
+    console.log(mapStrings[3])
+    console.log(mapStrings[4])
+    
+  </script>
+</body>
+</html>
