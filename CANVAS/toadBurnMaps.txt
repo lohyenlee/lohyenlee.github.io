@@ -1,4 +1,3 @@
-NEWLEVEL_NEWLEVEL_NEWLEVEL
 T O A D   &nbsp;&nbsp;&nbsp;    B U R N<br>By Yen Lee Loh &amp; Isaac Hutchison (2025)
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
@@ -15,7 +14,7 @@ u  # ### ### ### ### ### ### ### ##F  u
 u G#                                  u
 u                                     u
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-NEWLEVEL_NEWLEVEL_NEWLEVEL
+################# NEWLEVEL #############
 1. Light the Fuse
 uuuuuuuuuuuuuu
 uu  
@@ -26,14 +25,14 @@ uu    .   . .
 uu    ..... F
 uu
 uuuuuuuuuuuuuu
-NEWLEVEL_NEWLEVEL_NEWLEVEL
+################# NEWLEVEL #############
 2. Less is More
 uuuuuuuuuuuuuu
 uu
 uu7...G...F
 uu
 uuuuuuuuuuuuuu
-NEWLEVEL_NEWLEVEL_NEWLEVEL
+################# NEWLEVEL #############
 3. Ouch!  It's Hot!
 uuuuuuuuuuuuuu
 uu
@@ -42,7 +41,7 @@ uu   G...F
 uu7...
 uu
 uuuuuuuuuuuuuu
-NEWLEVEL_NEWLEVEL_NEWLEVEL
+################# NEWLEVEL #############
 4. What a Mess
 uuuuuuuuuuuuuuuuuu
 uu      uuuuu3333u
@@ -57,7 +56,7 @@ uu         .    uu
 uu7.........    uu
 uu              uu
 uuuuuuuuuuuuuuuuuu
-NEWLEVEL_NEWLEVEL_NEWLEVEL
+################# NEWLEVEL #############
 5. Tick! Tock! Goes the Clock
 uuuuuuuuuuuuuuuuuuuuu
 uu               uuuu
@@ -70,7 +69,7 @@ uu        .        uu
 uu7........       uuu
 uu              uuuuu
 uuuuuuuuuuuuuuuuuuuuu
-NEWLEVEL_NEWLEVEL_NEWLEVEL
+################# NEWLEVEL #############
 6. Time it Right
 uuuuuuuuuuuuuuuuuuuuu
 uu                 uu
@@ -84,7 +83,7 @@ uu     .     .     uu
 uu     G......     uu
 uu                 uu
 uuuuuuuuuuuuuuuuuuuuu
-NEWLEVEL_NEWLEVEL_NEWLEVEL
+################# NEWLEVEL #############
 7. Loop the Loop
 uuuuuuuuuuuuuu
 uu          uu
@@ -95,7 +94,7 @@ uu   . .    uu
 uu   ...    uu
 uu          uu
 uuuuuuuuuuuuuu
-NEWLEVEL_NEWLEVEL_NEWLEVEL
+################# NEWLEVEL #############
 8. Loosen the Lava Latches!
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
@@ -113,7 +112,7 @@ uu  7#        #   #    7#        #   #    7#
 uu            #####              #####
 uu
 uu
-NEWLEVEL_NEWLEVEL_NEWLEVEL
+################# NEWLEVEL #############
 9. Shift your way to Success
 uu                  
 uu########G###########G###########G###########G###########
@@ -129,7 +128,7 @@ uu                                                                   #
 uu  F################################################################# 
 uu
 uu
-NEWLEVEL_NEWLEVEL_NEWLEVEL
+################# NEWLEVEL #############
 SANDBOX: Roll Your Own!
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
@@ -154,7 +153,7 @@ uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-NEWLEVEL_NEWLEVEL_NEWLEVEL
+################# NEWLEVEL #############
 [EXPT] SR Flip-Flop
 uuuuuuu
 uuuuuuu
@@ -162,7 +161,7 @@ uuuuuuu
   G.G.
   1  L 
   ....
-NEWLEVEL_NEWLEVEL_NEWLEVEL
+################# NEWLEVEL #############
 [EXPT] D Latch  
 uu  
 uu  
@@ -177,14 +176,14 @@ uu  7#        #   #    7#
 uu            #####       
 uu
 uu
-NEWLEVEL_NEWLEVEL_NEWLEVEL
+################# NEWLEVEL #############
 [EXPT] Isaac's level
 u
 u   F
 u 5G+3
 u   33
 u
-NEWLEVEL_NEWLEVEL_NEWLEVEL
+################# NEWLEVEL #############
 [EXPT] Monostable Multivibrator (Pulse Generator)
 uu
 uu

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+o<!DOCTYPE html>
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -74,25 +74,80 @@
     // TBD: figure out how to use await
 
     let maps = `
-    ---
-    Level One
-    awefawe f
-    asdfasdfsf
-    -----
-    Level Two
-    ---
-    Level Three
-    asd
-    --
-    STIOLL LEVEL THREE
-    ---
+    NEWLEVEL_NEWLEVEL_NEWLEVEL
+T O A D   &nbsp;&nbsp;&nbsp;    B U R N<br>By Yen Lee Loh &amp; Isaac Hutchison (2025)
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+u                                     u
+u ### ### ###   #    #   # #          u
+u  #  # # # # ###    ### # # ### ###  u
+u  #  # # ### # #    # # # # #   # #  u
+u  #  ### # # ###    ### ### #   # #  u
+u ++++++++++++++++++++++++++++++++++  u
+u  ### ### ### ### ### ### ### ###    u
+u  # # # # # # # # # # # # # # # #    u
+u  # ### ### ### ### ### ### ### ##F  u
+u G#                                  u
+u                                     u
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+NEWLEVEL_NEWLEVEL_NEWLEVEL
+1. Light the Fuse
+uuuuuuuuuuuuuu
+uu  
+uu  ..... ...
+uu  .   . . .
+uu... ... . .
+uu    .   . .
+uu    ..... F
+uu
+uuuuuuuuuuuuuu
+NEWLEVEL_NEWLEVEL_NEWLEVEL
+2. Less is More
+uuuuuuuuuuuuuu
+uu
+uu7...G...F
+uu
+uuuuuuuuuuuuuu
+NEWLEVEL_NEWLEVEL_NEWLEVEL
+3. Ouch!  It's Hot!
+uuuuuuuuuuuuuu
+uu
+uu7...
+uu   G...F
+uu7...
+uu
+uuuuuuuuuuuuuu
+NEWLEVEL_NEWLEVEL_NEWLEVEL
+4. What a Mess
+uuuuuuuuuuuuuuuuuu
+uu      uuuuu3333u
+uu7...    uuuu33uu
+uu   G...    uuuuu
+uu7...  .     uuuu
     `
-    const mapStrings = maps.split(/-*---\n/).slice(1)
-    console.log(mapStrings[0])
-    console.log(mapStrings[1])
-    console.log(mapStrings[2])
-    console.log(mapStrings[3])
-    console.log(mapStrings[4])
+    const mapStrings = maps.split(/NEWLEVEL_NEWLEVEL_NEWLEVEL\n/).slice(1)
+    // console.log(mapStrings[0])
+    // console.log(mapStrings[1])
+    // console.log(mapStrings[2])
+    // console.log(mapStrings[3])
+    // console.log(mapStrings[4])
+    
+    let blah =      `
+################# NEWLEVEL #############
+lksmlk
+;klkjskldfjaf
+################# NEWLEVEL #############
+asdf
+lkjskdlfj
+################# NEWLEVEL #############
+asdf
+     `.split(/#* NEWLEVEL #*/)
+
+    for (let i=0; i<blah.length; ++i) {
+      console.log(i)
+      console.log( blah[i].split('\n').filter(i=>i) )
+    }
     
   </script>
 </body>
