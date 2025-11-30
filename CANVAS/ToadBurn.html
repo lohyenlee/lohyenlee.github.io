@@ -121,7 +121,7 @@
     let maps = await loadString('toadBurnMaps.txt') // clear browser cache if this file is edited
     // let maps = loadString('toadBurnMaps.txt') // clear browser cache if this file is edited
     // TBD: figure out how to use await
-    const mapStrings = maps.split(/NEWLEVEL_NEWLEVEL_NEWLEVEL>/).slice(1)
+    const mapStrings = maps.split(/NEWLEVEL_NEWLEVEL_NEWLEVEL/).slice(1)
     console.log(mapStrings)
     console.log(mapStrings[0])
     
