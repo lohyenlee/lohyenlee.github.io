@@ -328,10 +328,10 @@
       switch (e.key) {
         case '[': setLevel(level-1); break
         case ']': setLevel(level+1); break
-        case 'ArrowRight':case 'l': tryMove(xcur+1,ycur); break // move cursor
-        case 'ArrowLeft': case 'j': tryMove(xcur-1,ycur); break
-        case 'ArrowUp':   case 'i': tryMove(xcur,ycur-1); break
-        case 'ArrowDown': case ',': tryMove(xcur,ycur+1); break
+        case 'ArrowRight':case'l': tryMove(xcur+1,ycur); break // move cursor
+        case 'ArrowLeft': case'j': tryMove(xcur-1,ycur); break
+        case 'ArrowUp':   case'i': tryMove(xcur,ycur-1); break
+        case 'ArrowDown': case',': tryMove(xcur,ycur+1); break
         case ' ': 
           if      (ground[xcur+X*ycur]==0) ground[xcur+X*ycur]=1 // cold active
           else if (ground[xcur+X*ycur]<4)  ground[xcur+X*ycur]=7 // hot active
@@ -343,7 +343,7 @@
         case 'u':case'1': placeLava(); break    // add hot burning
         case 'o':case'2': placeWater(); break    // add cold burning
         case 'm':case'3': placeToad(); break    // add NOR gate (Toad)
-        case 'x':case 'k': if(subway[xcur+X*ycur]) subway[xcur+X*ycur]=0; else subway[xcur+X*ycur]=3; break // toggle interchange
+        case 'x':case'k': if(subway[xcur+X*ycur]) subway[xcur+X*ycur]=0; else subway[xcur+X*ycur]=3; break // toggle interchange
         case 'C': for(let y=0;y<Y;++y)for(let x=0;x<X;++x)access[x+X*y]=ALLOWED; break    // CHEAT TO GET ACCESS TO EVERYTHING
         case 'R': resetGame(); break    // reset level
         default: processed=false
@@ -392,9 +392,9 @@
           switch (rows[y][x]) {
             case '.': case '█': case '#': ground[x+X*y]=3; break
             case '1': case '2': case '3': case '5': case '6': case '7': ground[x+X*y]=rows[y][x]-'0'; break
-            case 'G': ground[x+X*y]=4; break // NOR gate
+            case 'N': ground[x+X*y]=4; break // NOR gate
             case '+': ground[x+X*y]=3; subway[x+X*y]=3; break // interchange
-            case ' ': case 'u': default: ground[x+X*y]=0; break
+            case ' ':case'u':default: ground[x+X*y]=0; break
           }
         }
       }
@@ -406,8 +406,8 @@
         for (let x=0; x<rows[y].length && x<X; ++x) {
           switch (rows[y][x]) {
             case 'L': access[x+X*y]=LAMP; ground[x+X*y]=3; break // Lamp
-            case 'F': access[x+X*y]=GOAL; ground[x+X*y]=3; break // Bowser starts unburned
-            case 'u': access[x+X*y]=ALLOWED; break
+            case 'B': access[x+X*y]=GOAL; ground[x+X*y]=3; break // Bowser starts unburned
+            case 'u':case'M':access[x+X*y]=ALLOWED; break
             default:  access[x+X*y]=FORBIDDEN; break
           }
         }
@@ -416,9 +416,11 @@
       if (level>0) // CHANGE THIS TO A FLAG
         for (let iter=0; iter<1000; ++iter) evolve()
       bowserX=0;bowserY=0
+      //-------- GAMEPLAY: IDENTIFY START POSITION
+      for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) if (rows[y][x]=='M') {xcur=x; ycur=y}   
     }
     function resetGame() {
-      tcur=0; xcur=1; ycur=1; won=false; loadMap(maps[level])
+      tcur=0; xcur=0; ycur=0; won=false; loadMap(maps[level])
       let availWidth =clamp(winWid-3*50, 300, 1600) // set canvas width according to window width; warning: btnSize=48
       let availHeight=clamp(winHei-0, 300, 800)
       cellsize=Math.min(Math.floor(availWidth/X),Math.floor((availHeight)/Y)) // for graphics

@@ -3,7 +3,7 @@ T O A D   &nbsp;&nbsp;&nbsp;    B U R N<br>By Yen Lee Loh &amp; Isaac Hutchison 
 </name>
 
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuMuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
 u                                     u
 u ### ### ###   #    #   # #          u
@@ -13,51 +13,79 @@ u  #  ### # # ###    ### ### #   # #  u
 u ++++++++++++++++++++++++++++++++++  u
 u  ### ### ### ### ### ### ### ###    u
 u  # # # # # # # # # # # # # # # #    u
-u  # ### ### ### ### ### ### ### ##F  u
-u G#                                  u
+u  # ### ### ### ### ### ### ### ##B  u
+u N#                                  u
 u                                     u
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
 </gamemap>
 
 <gamemap> <timestep>100</timestep> <<<name>>> 1. Light the Fuse </name>
 uuuuuuuuuuuuuu
-uu  
-uu  ..... ...
-uu  .   . . .
-uu... ... . .
-uu    .   . .
-uu    ..... F
+uM  
+uu  ##### ###
+uu  #   # # #
+uu### ### # #
+uu    #   # #
+uu    ##### B
 uu
 uuuuuuuuuuuuuu
 </gamemap>
 
 <gamemap> <timestep>100</timestep> <<<name>>> 2. Do unto others as they do NOT unto you </name>
 uuuuuuuuuuuuuu
-uu
-uu7...G...F
+uM
+uu7###N###B
 uu
 uuuuuuuuuuuuuu
 </gamemap>
 
 <gamemap> <timestep>100</timestep> <<<name>>> 3. Ouch! Hot! </name>
 uuuuuuuuuuuuuu
-uu
-uu7...
-uu   G...F
-uu7...
+uM
+uu7###
+uu   N###B
+uu7###
 uu
 uuuuuuuuuuuuuu
 </gamemap>
 
-<gamemap> <<<name>>> 4. Toads Galore </name>
+<gamemap> <timestep>100</timestep> <<<name>>> 4. On AND On to Victory </name>
+uuuuuuuuuuuuuu
+uM
+uu#####N#
+uu      N###B
+uu#####N#
+uu
+uuuuuuuuuuuuuu
+</gamemap>
+
+<gamemap> <timestep>10</timestep> <<<name>>> 5. Pick One XOR the Other </name>
+uuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuu
+uu        
+uu      
+uuuuuuuu       ###
+uu     ######### N##
+uMuuuuuu       N## N#N#B
+uu     ######### N##
+uuuuuuuu       ###
+uu        
+uuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuu
+</gamemap>
+
+
+
+
+<gamemap> <<<name>>> 6. Toads Galore </name>
 uuuuuuuuuuuuuuuuuu
 uu      uuuuu3333u
-uu7...    uuuu33uu
-uu   G...    uuuuu
+uM7...    uuuu33uu
+uu   N...    uuuuu
 uu7...  .     uuuu
-uu      G....  uuu
+uu      N....  uuu
 uu7...  .   .   uu
-uu   G...   G.F uu
+uu   N...   N.B uu
 uu1...     ..   uu
 uu         .    uu
 uu7.........    uu
@@ -65,87 +93,91 @@ uu              uu
 uuuuuuuuuuuuuuuuuu
 </gamemap>
 
-<gamemap> <timestep>100</timestep> <<<name>>> 5. Loop the Loop </name>
+<gamemap> <timestep>100</timestep> <<<name>>> 7. Loop the Loop </name>
 uuuuuuuuuuuuuu
-uu          uu
+uM          uu
 uu......    uu
 uu     .    uu
-uu   ..+..F uu
+uu   ..+..B uu
 uu   . .    uu
 uu   ...    uu
 uu          uu
 uuuuuuuuuuuuuu
 </gamemap>
 
-<gamemap> <timestep>100</timestep> <<<name>>> 6. Loosen the Lava Latches </name>
+<gamemap> <timestep>100</timestep> <<<name>>> 8. Loosen the Lava Latches </name>
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuMuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
 uu           #                  # 
 uu           #                  # 
 uu           #                  # 
 uu           #                  # 
-uu           G#####             G#####    
+uu           N#####             N#####    
 uu  1+##      #   #    1+##      #   #    1+##
-uu##G# #      # G#G####G# #      # G#G####G# #   
+uu##N# #      # N#N####N# #      # N#N####N# #   
 uu   # #      # #       # #      # #       # #   
-uu##G+####L###+###G####G+####L###+###G####G+####L#F
+uu##N+####L###+###N####N+####L###+###N####N+####L#B
 uu  7#        #   #    7#        #   #    7#   
 uu            #####              #####
 uu
 uu
 </gamemap>
 
-<gamemap> <timestep>100</timestep> <<<name>>> 7. Shift to Success </name>
+<gamemap> <timestep>100</timestep> <<<name>>> 9. Shift to Success </name>
 uu                  
 uu
 uu  
-uu########G###########G###########G###########G###########
+uu########N###########N###########N###########N###########
 uu       #           #           #           #           #
-uu       G#####      G#####      G#####      G#####      G#####
+uu       N#####      N#####      N#####      N#####      N#####
 uu  1+##  #   # 1+##  #   # 1+##  #   # 1+##  #   # 1+##  #   # 1+##
-uu##G# #  # G#G#G# #  # G#G#G# #  # G#G#G# #  # G#G#G# #  # G#G#G# #
+uu##N# #  # N#N#N# #  # N#N#N# #  # N#N#N# #  # N#N#N# #  # N#N#N# #
 uu   # #  # #    # #  # #    # #  # #    # #  # #    # #  # #    # #
-uu##G+#L##+###G#G+#L##+###G#G+#L##+###G#G+#L##+###G#G+#L##+###G#G+#L##
+uu##N+#L##+###N#N+#L##+###N#N+#L##+###N#N+#L##+###N#N+#L##+###N#N+#L##
 uu  7#    #   # 7#    #   # 7#    #   # 7#    #   # 7#    #   # 7#   #
 uu        #####       #####       #####       #####       #####      #
-uu                                                                   #
-uu  F################################################################# 
+uM                                                                   #
+uu  B################################################################# 
 uu
 uu
 </gamemap>
 
-<gamemap> <timestep>10</timestep> <<<name>>> 8. Tick Tock </name>
+<gamemap> <timestep>10</timestep> <<<name>>> 10. Tick Tock </name>
 uuuuuuuuuuuuuuuuuuuuu
-uu               uuuu
-uu ...G....      uuuu
-uu .      .       uuu
-uu ........        uu
-uu        .        uu
-uu        G.....F  uu
-uu        .        uu
-uu7........       uuu
-uu              uuuuu
+ 
+ ### ### ### ### ###
+ # # # # # # # # # #
+ # ### ### ### ### #
+ #                 #
+ # ### ### ### ### #
+ # # # # # # # # # #
+ N## ### ### ### ###
+   #
+   N############B    
+  N#             
+M## 
+u               
 uuuuuuuuuuuuuuuuuuuuu
 </gamemap>
 
-<gamemap> <timestep>1</timestep> <<<name>>> 9. Time it Right </name>
+<gamemap> <timestep>1</timestep> <<<name>>> 11. Time it Right </name>
 uuuu
 uuuu
  #
  ##
   #
   #  
-  # G##               
+  # N##               
   ### #               
-    ##G################G#
+    ##N################N#
                         #
-    ##G                 G#####F 
+    ##N                 N#####B 
   ### #                 #
-  # G##################G#
+  # N##################N#
   #  
   #            
- G## ### ### ### 
+ N## ### ### ### 
  L # # # # # # # 
  # ### ### ### # 
  #             # 
@@ -183,7 +215,7 @@ uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
 uuuuuuu
 uuuuuuu
   . .
-  G.G.
+  N.N.
   1  L 
   .... 
 </gamemap>
@@ -191,13 +223,13 @@ uuuuuuu
 <gamemap> <timestep>100</timestep> <<<name>>> [EXPT] D Latch </name>
 uu  
 uu  
-uu###########G#
+uu###########N#
 uu            #   
 uu            #####    
 uu  1+##      #   #    1+##
-uu##G# #      # G#G####G# #   
+uu##N# #      # N#N####N# #   
 uu   # ###L## # #       # ###L
-uu##G+##    ##+###G####G+## 
+uu##N+##    ##+###N####N+## 
 uu  7#        #   #    7#   
 uu            #####       
 uu
@@ -206,8 +238,8 @@ uu
 
 <gamemap> <timestep>100</timestep> <<<name>>> Isaac </name>
 u
-u   F
-u 5G+3
+u   B
+u 5N+3
 u   33
 u
 </gamemap>
