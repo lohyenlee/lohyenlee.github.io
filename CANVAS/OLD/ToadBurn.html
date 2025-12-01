@@ -117,7 +117,11 @@
     let imgStarOff = await loadImage('staroff.webp')
     function loadString(url) {return fetch(url).then( r => r.text() ) }
     let maps = await loadString('toadBurnMaps.txt') // clear browser cache if this file is edited
-    maps = [...maps.matchAll(  /<gamemap>.*?<\/gamemap>/gs )]
+    // TBD: figure out how to use await
+    //const mapStrings = maps.split(/#* NEWLEVEL #*[\s\S]/)  //).slice(1)
+    const mapStrings = maps.split(/<newlevel>[\s\S]/)  //).slice(1)
+    // console.log(mapStrings)
+    // console.log(mapStrings[0])
     
     //=======================================
     // APPLET OPTIONS
@@ -359,24 +363,12 @@
     // printMap()
     // Reads global X,Y,ground
     //===============================================
-    function loadMap(map) {
-      let timestep = /<timestep>(.*?)<\/timestep>/gs . exec(map);
-      if (timestep) timeStepInMilliseconds=Number(timestep[1])
-      // console.log('\n timestep = ' + timestep)
-
-      let name = /<<<name>>>(.*?)<\/name>/gs . exec(map)
-      if (name) name=name[1]
-      mapName = name
-      // console.log('\n name = ' + name)
-
-      let rows = /<gamemap>(.*?)<\/gamemap>/gs . exec(map) [1]
-      rows = rows.replace(  /[\s]*<timestep>.*<\/timestep>[\s]*/gs , '')
-      rows = rows.replace(  /[\s]*<<<name>>>.*<\/name>[\s]*/gs , '')
-      rows = rows.split(/[\r\n]/).filter(i=>i) 
-      // console.log(rows)
-
+    function loadMap(str) {
       //-------- DETERMINE MAP SIZE AND ALLOCATE ARRAYS
-      X = Math.max(...rows.map(s=>s.length))        // length of longest line
+      // console.log(str)
+      let rows = str.split(/[\r\n]/).filter(s=>s)
+      mapName = rows[0]; rows=rows.slice(1)       // not sure about syntax
+      X = Math.max(...rows.map(s=>s.length))     // length of longest line
       Y = rows.length
       ground   =new Int8Array(X*Y)
       groundNew=new Int8Array(X*Y)
@@ -413,12 +405,12 @@
         }
       }
       //-------- GAMEPLAY: PRE-CONVERGE TO STEADY STATE PREVENT PREMATURE WIN
-      if (level>0) // CHANGE THIS TO A FLAG
+      if (level>0) 
         for (let iter=0; iter<1000; ++iter) evolve()
       bowserX=0;bowserY=0
     }
     function resetGame() {
-      tcur=0; xcur=1; ycur=1; won=false; loadMap(maps[level])
+      tcur=0; xcur=1; ycur=1; won=false; loadMap(mapStrings[level])
       let availWidth =clamp(winWid-3*50, 300, 1600) // set canvas width according to window width; warning: btnSize=48
       let availHeight=clamp(winHei-0, 300, 800)
       cellsize=Math.min(Math.floor(availWidth/X),Math.floor((availHeight)/Y)) // for graphics
@@ -427,11 +419,11 @@
       mapNameplate.innerHTML = mapName
     }
     function setLevel(newLevel) {
-      if (newLevel<0||newLevel>=maps.length) return // can't load illegal level
+      if (newLevel<0||newLevel>=mapStrings.length) return // can't load illegal level
       level=newLevel
       // disable any buttons that need to be disabled
       btnPrev.disabled = (level==0)
-      btnNext.disabled = (level==maps.length-1)
+      btnNext.disabled = (level==mapStrings.length-1)
       resetGame()
     }
     function prevLevel() {setLevel(level-1)}
@@ -443,6 +435,10 @@
     document.body.addEventListener('dblclick', function(e) { e.preventDefault() })
     const winWid=window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth
     const winHei=window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight
+    // const canvas=document.createElement("canvas")
+    // canvas.style.left = "200px;"
+    //const canvas = myCanvas
+    
     const ctx=canvas.getContext('2d')
     setLevel(0); resetGame()
  

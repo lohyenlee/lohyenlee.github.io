@@ -1,6 +1,4 @@
-<gamemap> <timestep>100</timestep> <<<name>>>
 T O A D   &nbsp;&nbsp;&nbsp;    B U R N<br>By Yen Lee Loh &amp; Isaac Hutchison (2025)
-</name>
 
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
@@ -17,9 +15,9 @@ u  # ### ### ### ### ### ### ### ##F  u
 u G#                                  u
 u                                     u
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-</gamemap>
 
-<gamemap> <timestep>100</timestep> <<<name>>> 1. Light the Fuse </name>
+<newlevel>
+1. Light the Fuse
 uuuuuuuuuuuuuu
 uu  
 uu  ..... ...
@@ -29,17 +27,18 @@ uu    .   . .
 uu    ..... F
 uu
 uuuuuuuuuuuuuu
-</gamemap>
 
-<gamemap> <timestep>100</timestep> <<<name>>> 2. Do unto others as they do NOT unto you </name>
+
+<newlevel>
+2. Less is More
 uuuuuuuuuuuuuu
 uu
 uu7...G...F
 uu
 uuuuuuuuuuuuuu
-</gamemap>
 
-<gamemap> <timestep>100</timestep> <<<name>>> 3. Ouch! Hot! </name>
+<newlevel>
+3. Ouch!  It's Hot!
 uuuuuuuuuuuuuu
 uu
 uu7...
@@ -47,9 +46,9 @@ uu   G...F
 uu7...
 uu
 uuuuuuuuuuuuuu
-</gamemap>
 
-<gamemap> <<<name>>> 4. Toads Galore </name>
+<newlevel>
+4. What a Mess
 uuuuuuuuuuuuuuuuuu
 uu      uuuuu3333u
 uu7...    uuuu33uu
@@ -63,9 +62,9 @@ uu         .    uu
 uu7.........    uu
 uu              uu
 uuuuuuuuuuuuuuuuuu
-</gamemap>
 
-<gamemap> <timestep>100</timestep> <<<name>>> 5. Loop the Loop </name>
+<newlevel>
+5. Loop the Loop
 uuuuuuuuuuuuuu
 uu          uu
 uu......    uu
@@ -75,9 +74,9 @@ uu   . .    uu
 uu   ...    uu
 uu          uu
 uuuuuuuuuuuuuu
-</gamemap>
 
-<gamemap> <timestep>100</timestep> <<<name>>> 6. Loosen the Lava Latches </name>
+<newlevel>
+6. Loosen the Lava Latches!
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
@@ -94,12 +93,10 @@ uu  7#        #   #    7#        #   #    7#
 uu            #####              #####
 uu
 uu
-</gamemap>
 
-<gamemap> <timestep>100</timestep> <<<name>>> 7. Shift to Success </name>
+<newlevel>
+7. Shift your way to Success
 uu                  
-uu
-uu  
 uu########G###########G###########G###########G###########
 uu       #           #           #           #           #
 uu       G#####      G#####      G#####      G#####      G#####
@@ -113,9 +110,10 @@ uu                                                                   #
 uu  F################################################################# 
 uu
 uu
-</gamemap>
 
-<gamemap> <timestep>10</timestep> <<<name>>> 8. Tick Tock </name>
+
+<newlevel>
+8. Tick! Tock! Goes the Clock
 uuuuuuuuuuuuuuuuuuuuu
 uu               uuuu
 uu ...G....      uuuu
@@ -127,9 +125,10 @@ uu        .        uu
 uu7........       uuu
 uu              uuuuu
 uuuuuuuuuuuuuuuuuuuuu
-</gamemap>
 
-<gamemap> <timestep>1</timestep> <<<name>>> 9. Time it Right </name>
+
+<newlevel>
+6. Time it Right
 uuuu
 uuuu
  #
@@ -151,44 +150,46 @@ uuuu
  #             # 
  ###############
                   
-</gamemap>
+ 
 
-<gamemap> <timestep>100</timestep> <<<name>>> SANDBOX: Roll Your Own! </name>
-uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-</gamemap>
 
-<gamemap> <timestep>100</timestep> <<<name>>> [EXPT] SR Flip-Flop </name>
+<newlevel>
+SANDBOX: Roll Your Own!
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+
+<newlevel>
+[EXPT] SR Flip-Flop
 uuuuuuu
 uuuuuuu
   . .
   G.G.
   1  L 
-  .... 
-</gamemap>
+  ....
 
-<gamemap> <timestep>100</timestep> <<<name>>> [EXPT] D Latch </name>
+<newlevel>
+[EXPT] D Latch  
 uu  
 uu  
 uu###########G#
@@ -202,12 +203,20 @@ uu  7#        #   #    7#
 uu            #####       
 uu
 uu
-</gamemap>
 
-<gamemap> <timestep>100</timestep> <<<name>>> Isaac </name>
+<newlevel>
+[EXPT] Isaac's level
 u
 u   F
 u 5G+3
 u   33
 u
-</gamemap>
+
+<newlevel>
+[EXPT] Monostable Multivibrator (Pulse Generator)
+uu
+uu
+uu..G..G...............L  
+uu   . .
+uu   G..
+uu

@@ -1,81 +1,44 @@
-o<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
-  <div class="container">
-    <canvas id="canvas" style="position:absolute; top:0; left:150px;">Your browser does not support the HTML5 canvas tag.</canvas>
-  </div>
-  <script type="module">
+<textarea id="msg" rows="40" cols="100"></textarea>
+<script type="module">
+function dump(s) {msg.value += s + '\n'}
 
 
-    //=========================================
-    // RESOURCES: loadSound() and loadImage()
-    //=========================================
-    const audioContext=new(window.AudioContext||window.webkitAudioContext)()
-    function loadSound(filename) {
-      let sound={volume:1,audioBuffer:null}
-      let ajax=new XMLHttpRequest()
-      ajax.open("GET", filename, true)
-      ajax.responseType="arraybuffer"
-      ajax.onload = function () {
-        audioContext.decodeAudioData(
-          ajax.response,
-          function(buf) {sound.audioBuffer=buf},
-          function(err) {debugger}
-        )
-      }
-      ajax.onerror = function() {debugger}
-      ajax.send()
-      return sound
-    }
-    function playSound(sound) {
-      if (!sound.audioBuffer) return false
-      const source = audioContext.createBufferSource()
-      if (!source) return false
-      source.buffer = sound.audioBuffer
-      if (!source.start) source.start = source.noteOn
-      if (!source.start) return false
-      const gainNode = audioContext.createGain()
-      gainNode.gain.value = sound.volume
-      source.connect(gainNode)
-      gainNode.connect(audioContext.destination)
-      source.start(0)
-      sound.gainNode = gainNode
-      return true
-    }
-    function stopSound(sound) {if(sound.gainNode) sound.gainNode.gain.value=0}
-    function setSoundVolume(sound,vol) {sound.volume=vol; if(sound.gainNode) sound.gainNode.gain.value=vol}
-    async function loadImage(url) { return new Promise(r => { let i=new Image(); i.onload=(()=>r(i)); i.src=url; }); }
-    //================================
-    // PRELOAD AND PREPARE SOUNDS AND TEXTURES 
-    //================================
-    const soundTock = loadSound("tock.mp3")
-    const soundBuzz = loadSound("buzz.ogg")
-    const soundWin = loadSound("win.mp3")
-    const soundWin0 = loadSound("smb_bowserfalls.wav")
-    let imgMario = await loadImage('mario64.png')
-    let imgBowser = await loadImage('bowser64.png')
-    let imgGrass = await loadImage('grass.webp')
-    let imgWater = await loadImage('water.webp')
-    let imgLava = await loadImage('lava.webp')
-    let imgCrying1 = await loadImage('crying1.webp')
-    let imgCrying2 = await loadImage('crying2.webp')
-    let imgHappy1 = await loadImage('happy1.webp')
-    let imgHappy2 = await loadImage('happy2.webp')
-    let imgStarOn = await loadImage('staron.webp')
-    let imgStarOff = await loadImage('staroff.webp')
-    function loadString(url) {
-      return fetch(url).then( r => r.text() )
-    }
-    // let maps = await loadString('toadBurnMaps.txt') // clear browser cache if this file is edited
-    // TBD: figure out how to use await
 
-    let maps = `
-    NEWLEVEL_NEWLEVEL_NEWLEVEL
+let maps = `
+
+
+
+<gamemap timestep="100" name="LEVEL 1: EAT MY LAVA!">
+THIS IS ROW 1 OF THE LEVEL SPEC
+THIS IS ROW 2 OF THE LEVEL SPEC
+THIS IS ROW 3 OF THE LEVEL SPEC
+THIS IS ROW 4 OF THE LEVEL SPEC
+</gamemap>
+
+@@@@@@@@@@@@@@@@@@@@@
+
+<gamemap name="THIS IS LEVEL TWO" timestep="10">
+THIS IS ROW 1 OF THE LEVEL SPEC
+THIS IS ROW 2 OF THE LEVEL SPEC
+THIS IS ROW 3 OF THE LEVEL SPEC
+THIS IS ROW 4 OF THE LEVEL SPEC
+</gamemap>`
+
+maps=`
+<gamemap> <timestep>100</timestep> <<<name>>>
 T O A D   &nbsp;&nbsp;&nbsp;    B U R N<br>By Yen Lee Loh &amp; Isaac Hutchison (2025)
+</name>
+
+
+
+
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
@@ -91,64 +54,75 @@ u  # ### ### ### ### ### ### ### ##F  u
 u G#                                  u
 u                                     u
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
-NEWLEVEL_NEWLEVEL_NEWLEVEL
-1. Light the Fuse
-uuuuuuuuuuuuuu
-uu  
-uu  ..... ...
-uu  .   . . .
-uu... ... . .
-uu    .   . .
-uu    ..... F
-uu
-uuuuuuuuuuuuuu
-NEWLEVEL_NEWLEVEL_NEWLEVEL
-2. Less is More
-uuuuuuuuuuuuuu
-uu
-uu7...G...F
-uu
-uuuuuuuuuuuuuu
-NEWLEVEL_NEWLEVEL_NEWLEVEL
-3. Ouch!  It's Hot!
-uuuuuuuuuuuuuu
-uu
-uu7...
-uu   G...F
-uu7...
-uu
-uuuuuuuuuuuuuu
-NEWLEVEL_NEWLEVEL_NEWLEVEL
-4. What a Mess
-uuuuuuuuuuuuuuuuuu
-uu      uuuuu3333u
-uu7...    uuuu33uu
-uu   G...    uuuuu
-uu7...  .     uuuu
-    `
-    const mapStrings = maps.split(/NEWLEVEL_NEWLEVEL_NEWLEVEL\n/).slice(1)
-    // console.log(mapStrings[0])
-    // console.log(mapStrings[1])
-    // console.log(mapStrings[2])
-    // console.log(mapStrings[3])
-    // console.log(mapStrings[4])
-    
-    let blah =      `
-################# NEWLEVEL #############
-lksmlk
-;klkjskldfjaf
-################# NEWLEVEL #############
-asdf
-lkjskdlfj
-################# NEWLEVEL #############
-asdf
-     `.split(/#* NEWLEVEL #*/)
+</gamemap>
+`
 
-    for (let i=0; i<blah.length; ++i) {
-      console.log(i)
-      console.log( blah[i].split('\n').filter(i=>i) )
-    }
-    
-  </script>
+
+maps = [...maps.matchAll(  /<gamemap>.*<\/gamemap>/gs )]
+
+for (let i=0; i<maps.length; ++i) {
+  const map = maps[i]
+
+  // dump('\n maps[' + i + '] = ' + '\n' + map)
+
+  const timestep = /<timestep>(.*)<\/timestep>/gs . exec(map) [1]
+  dump('\n timestep = ' + timestep)
+
+  let name = /<<<name>>>(.*)<\/name>/gs . exec(map)
+  if (name) name=name[1]
+  dump('\n name = ' + name)
+
+  let content = 
+    /<gamemap>(.*)<\/gamemap>/gs . exec(map) [1]
+    .replace(  /[\s]*<timestep>.*<\/timestep>[\s]*/gs , '')
+    .replace(  /[\s]*<<<name>>>.*<\/name>[\s]*/gs , '')
+  dump('\n content = ')
+  dump (content)
+
+  const rows = content.split('\n').filter(i=>i) 
+  
+  for (const row of rows) {
+    dump ('ROW: ' + row + ']')
+  }
+}
+
+
+
+
+
+// for (const elem of maps.matchAll(  /<level.*?>.*?<\/level>/gs ))   {
+//   dump(elem)
+// }
+
+
+// maps = [...maps.matchAll(  /<gamemap.*?>.*?<\/gamemap>/gs )]
+
+// for (let i=0; i<maps.length; ++i) {
+//   const map = maps[i]
+
+//   dump('\n maps[' + i + '] = ' + '\n' + map)
+
+//   const name = /(?:gamemap).*name="(.*?)"/gs . exec(map) [1]
+//   dump('\n name = ' + name)
+
+//   const timestep = /(?:gamemap).*timestep="(.*?)"/gs . exec(map) [1]
+//   dump('\n timestep = ' + timestep)
+
+//   const content = /<gamemap.*?>(.*)<\/gamemap>/gs . exec(map) [1]
+//   dump('\n content = ')
+//   dump (content)
+
+//   const rows = content.split('\n').filter(i=>i) 
+  
+//   for (const row of rows) {
+//     dump ('ROW: ' + row)
+//   }
+// }
+
+
+
+
+
+</script>
 </body>
 </html>
