@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <script type="module">  // I THINK THIS DOES NEED TO BE A module IN ORDER FOR await TO WORK!
+  
+    function loadImage(url) { return new Promise(resolve => { 
+        let image=new Image(); 
+        image.onload=(()=>resolve(image)); 
+        image.src=url; 
+    }); }
+    function loadSound(url) { return new Promise(resolve => { 
+        let audio=new Audio(url); 
+        audio.addEventListener("canplaythrough", ()=>resolve(audio))  // (event)
+    }); }
+
+    //======== PREPARE CANVAS
+    canvas.width=300
+    canvas.height=300
+    const ctx = canvas.getContext('2d')
+ 
+    //======== LOAD A SINGLE SOUND
+    let promiseSound1 = loadSound("ding.mp3")
+    const sound1 = await promiseSound1  // this is a top-level await (module-level await)
+    sound1.play()
+
+    //======== LOAD A SINGLE IMAGE
+    let promiseImage1 = loadImage("bowser64.png")
+    const image1 = await promiseImage1
+    ctx.drawImage(image1) 
+  
+  </script>
+</head>
+<body style="background-color: black;">
+  <canvas id="canvas" style="background-color: white;"></canvas>
+</body>
+</html>

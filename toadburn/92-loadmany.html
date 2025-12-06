@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <script type="module">
+    //=======================================================
+    // Define loadImage() and loadAudio() to return Promises
+    //=======================================================
+    function loadImage(url) { 
+      console.log('Requesting', url)
+      return new Promise((resolve,reject) => { 
+        let image = new Image()
+        image.onload  = ()=>{console.log("Loaded"         ,url);resolve(image)}
+        image.onerror = ()=>{console.log("Failed to load ",url);reject()      }
+        image.src     = url
+      })
+    }
+    function loadAudio(url) {
+      console.log('Requesting', url)
+      return new Promise((resolve,reject) => { 
+        let audio = new Audio(url); 
+        audio.oncanplaythrough = ()=>{console.log("Loaded"         ,url);resolve(audio)}
+        audio.onerror          = ()=>{console.log("Failed to load ",url);reject()}
+        // audio.addEventListener("canplaythrough", ()=>{console.log("Loaded", url); resolve(audio)})
+      })
+    }
+    //=======================================================
+    // Initiate the loading of resources
+    //=======================================================
+    let imageFilenames
+    = `mario64.png bowser64.png grass.webp water.webp lava.webp
+       crying1.webp crying2.webp happy1.webp happy2.webp staron.webp staroff.webp`.split(/\s+/m)
+    let audioFilenames 
+    = `tock.mp3 ding.mp3 dingling.mp3 buzz.ogg win.mp3 smb_bowserfalls.wav`.split(/\s+/m)
+    // console.log("START LOADING IMAGES: ",imageFilenames)
+    // console.log("START LOADING IMAGES: ", ...imageFilenames)
+    let imagePromises = imageFilenames.map(filename=>loadImage(filename))
+    // console.log("START LOADING SOUNDS: ", ...audioFilenames)
+    let audioPromises = audioFilenames.map(filename=>loadAudio(filename))
+
+    //=======================================================
+    // Do some stuff in the meantime
+    //=======================================================
+    let startTime = performance.now()
+    canvas.width=300; canvas.height=300
+    const ctx = canvas.getContext('2d')
+
+    //=======================================================
+    // Wait till all resources are ready
+    //=======================================================
+    // const images = await Promise.all(imagePromises)
+    // const audios = await Promise.all(audioPromises)
+    const resources = await Promise.all([...imagePromises,...audioPromises])
+    const images = resources.slice(0,imagePromises.length)
+    const audios = resources.slice(imagePromises.length,resources.length)
+    
+    let endTime = performance.now();
+    console.log ('Time required for loading: ', (endTime-startTime)/1000, 's')
+    
+    //=======================================================
+    // Use the images and audio resources
+    //=======================================================
+    console.log('Playing audios...')
+    for (let i=0; i<audios.length; ++i) {
+        audios[i].play()
+    }
+    console.log('Displaying images...')
+    for (let i=0; i<images.length; ++i) {
+        const x = i%8
+        const y = (i - x)/8
+        ctx.drawImage(images[i], x*32, y*32, 32,32) 
+    }
+  </script>
+</head>
+<body style="background-color: black;">
+  <canvas id="canvas" style="background-color: white;"></canvas>
+</body>
+</html>

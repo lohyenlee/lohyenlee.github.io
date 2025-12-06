@@ -1,6 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
-<meta http-equiv="Refresh" content="0; url='webapps/index.html'" />
+<title>Yen Lee Loh on GitHub</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="stylesheet" href="w3.css">
+<link rel="stylesheet" href="w3-theme-black.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body,h1,h2,h3,h4,h5,h6 { font-family:'Lucida Sans',serif; }
+h2 {font-size:large; font-weight:bold;}
+.w3-sidebar {
+  z-index: 3; width: 250px; top: 43px; bottom: 0; height: inherit;
+}
+.container {
+  width: 100%; display: flex; flex-wrap: wrap;
+}
+.container a {
+  display: inline-block;
+  padding: .5ex 1ex; margin: 1px 1px; border: 1px outset black; border-radius: 0.5em;
+  vertical-align: middle; text-align: center; text-decoration: none; white-space: pre;
+  color: #fff; background-color: #393;
+  cursor: pointer;
+}
+.container a:hover {
+  background-color: #6C6;
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)
+}
+footer {
+  position: absolute; bottom: 0px; width: 100%; 
+}
+</style>
+
 <body>
+
+  <!-- Navbar -->
+  <div class="w3-top">
+    <div class="w3-bar w3-theme w3-top w3-left-align w3-large">
+      <a class="w3-bar-item w3-button w3-right w3-hide-large w3-hover-white w3-large w3-theme-l1"
+        href="javascript:void(0)" onclick="w3_open()"><i class="fa fa-bars"></i></a>
+      <a href="https://github.com/lohyenlee/lohyenlee.github.io" class="w3-bar-item w3-button w3-theme-l1">
+        GitHub Repository</a>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <nav class="w3-sidebar w3-bar-block w3-collapse w3-large w3-theme-l5 w3-animate-left" id="mySidebar">
+    <a href="javascript:void(0)" onclick="w3_close()"
+      class="w3-right w3-xlarge w3-padding-large w3-hover-black w3-hide-large" title="Close Menu">
+      <i class="fa fa-remove"></i>
+    </a>
+    <h4 class="w3-bar-item"><b>Menu</b></h4>
+    <a class="w3-bar-item w3-button w3-hover-black" href="EXAMPLES">Examples</a>
+    <a class="w3-bar-item w3-button w3-hover-black" href="ARCHIVE">Archive</a>
+  </nav>
+
+  <!-- Overlay effect when opening sidebar on small screens -->
+  <div class="w3-overlay w3-hide-large" onclick="w3_close()" style="cursor:pointer" title="close side menu"
+    id="myOverlay"></div>
+
+  <!-- Main content: shift it to the right by 250 pixels when the sidebar is visible -->
+  <div class="w3-main" style="margin-left: 250px">
+    <div class="w3-row w3-padding-64">
+    
+      <div class="w3-container">
+        <h1>lohyenlee.github.io</h1>
+        
+        <h2>Best Web Apps </h2>
+        <div class="container">
+          <a href="toadburn/ToadBurn.html">      T O A D    B U R N    </a>
+          <a href="webapps/pendulum.html"> Pendulum </a>
+          <a href="webapps/rsa.html"> RSA </a>
+          <a href="webapps/vernier.html"> Vernier </a>
+          <a href="webapps/treasure.html"> Treasure Hunt </a>
+          <a href="webapps/lightsout.html">Lights Out</a>
+          <a href="webapps/shufflez.html"> Shufflez </a>
+          <a href="webapps/rotations.html"> Rotations </a>
+          <a href="MENU/05-menu.html">Kid's Menu</a>
+        </div>
+
+        <h2>Basics</h2>
+        <div class="container">
+          <a href="BASICS/"> BASICS/ </a>
+          <a href="BASICS/01-hello.html">Hello</a>
+          <a href="BASICS/02-input.html">Input</a>
+          <a href="BASICS/09-sound.html">Sound</a>
+        </div>
+
+        <h2>Canvas</h2>
+        <div class="container">
+          <a href="CANVAS/"> CANVAS/ </a>
+          <a href="CANVAS/01-canvas.html">Canvas demo</a>
+          <a href="CANVAS/02-drag.html">Dragging</a>
+          <a href="CANVAS/08-lightsout.html">Lights Out game</a>
+          <a href="CANVAS/09-pendulum.html">Pendulum simulation</a>
+          <a href="CANVAS/10-roots.html">Roots of polynomial</a>
+          <a href="CANVAS/11-bouncer.html">Bouncing ball</a>
+          <a href="CANVAS/12-multitouch.html">Multiple touches</a>
+          <a href="CANVAS/13-rotate.html">Rotate shapes</a>
+        </div>
+        
+        <h2>Three.js</h2>
+        <div class="container">
+          <a href="THREEDEMOS/"> THREEDEMOS/ </a>
+          <a href="THREEDEMOS/01-hello.html"> Hello </a>
+          <a href="THREEDEMOS/02-objects.html"> Objects </a>
+          <a href="THREEDEMOS/03-textures.html"> Textures </a>
+          <a href="THREEDEMOS/05-drag.html"> Dragging </a>
+          <a href="THREEDEMOS/07-rolling.html"> Rolling </a>
+          <a href="THREEDEMOS/09-hexball.html"> Hexball </a>
+          <a href="THREEDEMOS/10-lightsout.html"> 3D Lights Out </a>
+          <a href="THREEDEMOS/12-cubes.html"> Painty Cube </a>
+        </div>
+      </div>
+
+      <footer>
+        <div class="w3-container w3-theme-l1">
+          <p>Updated <span id="lastModified"></span>.</p>
+        </div>
+      </footer>
+
+      <!-- END MAIN -->
+    </div>
+
+    <script>
+      // Populate the lastModified paragraph in the footer
+      document.getElementById("lastModified").innerHTML = document.lastModified;
+      var mySidebar = document.getElementById("mySidebar"); // get Sidebar
+      var overlayBg = document.getElementById("myOverlay"); // get div with Overlay
+      function w3_open() { // Toggle show/hide Sidebar and add Overlay effect
+        if (mySidebar.style.display === 'block') {
+          mySidebar.style.display = 'none';
+          overlayBg.style.display = "none";
+        } else {
+          mySidebar.style.display = 'block';
+          overlayBg.style.display = "block";
+        }
+      }
+      function w3_close() { // Close Sidebar
+        mySidebar.style.display = "none";
+        overlayBg.style.display = "none";
+      }
+    </script>
+
 </body>
 </html>
+<!-- <meta http-equiv="Refresh" content="0; url='webapps/index.html'" /> -->

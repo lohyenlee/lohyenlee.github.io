@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+<textarea id="msg" rows="40" cols="100"></textarea>
+<script type="module">
+function dump(s) {msg.value += s + '\n'}
+
+// function delay(time) {
+//   return new Promise(resolve => setTimeout(resolve, time));
+// }
+// async function demonstrateDelay() {
+//   console.log("Before delay...");
+//   await delay(5000); // Wait for 1 second
+//   console.log("After 1 second delay.");
+// }
+// console.log('asdf')
+// demonstrateDelay();
+// console.log('fdsa')
+
+
+// async function loadImage(url) { return new Promise(r => { let i=new Image(); i.onload=(()=>r(i)); i.src=url; }); }
+    
+
+async function loadImage(url) {
+   return new Promise(r => { 
+    // let i=new Image(); 
+    // i.onload=(()=>r(i)); 
+    // i.src=url; 
+    setTimeout(() => { r()  }, 1000); // 1000 milliseconds = 1 second
+
+  }
+  
+  ); 
+}
+
+
+class Animation {
+  constructor(imgList) {
+//   this.height = height;
+//   this.width = width;
+  }
+}
+
+console.log('asdf')
+let imgCrying1 = loadImage('crying1.webp')
+console.log('asdf')
+let imgCrying2 = loadImage('crying2.webp')
+console.log('asdf')
+
+let toadCrying = new Animation([imgCrying1,imgCrying2])
+
+
+
+let maps=`
+<gamemap> <timestep>100</timestep> <<<name>>>
+T O A D   &nbsp;&nbsp;&nbsp;    B U R N<br>By Yen Lee Loh &amp; Isaac Hutchison (2025)
+</name>
+
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+u                                     u
+u ### ### ###   #    #   # #          u
+u  #  # # # # ###    ### # # ### ###  u
+u  #  # # ### # #    # # # # #   # #  u
+u  #  ### # # ###    ### ### #   # #  u
+u ++++++++++++++++++++++++++++++++++  u
+u  ### ### ### ### ### ### ### ###    u
+u  # # # # # # # # # # # # # # # #    u
+u  # ### ### ### ### ### ### ### ##F  u
+u G#                                  u
+u                                     u
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+</gamemap>
+`
+
+
+maps = [...maps.matchAll(  /<gamemap>.*<\/gamemap>/gs )]
+
+for (let i=0; i<maps.length; ++i) {
+  const map = maps[i]
+
+  // dump('\n maps[' + i + '] = ' + '\n' + map)
+
+  const timestep = /<timestep>(.*)<\/timestep>/gs . exec(map) [1]
+  dump('\n timestep = ' + timestep)
+
+  let name = /<<<name>>>(.*)<\/name>/gs . exec(map)
+  if (name) name=name[1]
+  dump('\n name = ' + name)
+
+  let content = 
+    /<gamemap>(.*)<\/gamemap>/gs . exec(map) [1]
+    .replace(  /[\s]*<timestep>.*<\/timestep>[\s]*/gs , '')
+    .replace(  /[\s]*<<<name>>>.*<\/name>[\s]*/gs , '')
+  dump('\n content = ')
+  dump (content)
+
+  const rows = content.split('\n').filter(i=>i) 
+  
+  for (const row of rows) {
+    dump ('ROW: ' + row + ']')
+  }
+}
+
+
+
+
+
+// for (const elem of maps.matchAll(  /<level.*?>.*?<\/level>/gs ))   {
+//   dump(elem)
+// }
+
+
+// maps = [...maps.matchAll(  /<gamemap.*?>.*?<\/gamemap>/gs )]
+
+// for (let i=0; i<maps.length; ++i) {
+//   const map = maps[i]
+
+//   dump('\n maps[' + i + '] = ' + '\n' + map)
+
+//   const name = /(?:gamemap).*name="(.*?)"/gs . exec(map) [1]
+//   dump('\n name = ' + name)
+
+//   const timestep = /(?:gamemap).*timestep="(.*?)"/gs . exec(map) [1]
+//   dump('\n timestep = ' + timestep)
+
+//   const content = /<gamemap.*?>(.*)<\/gamemap>/gs . exec(map) [1]
+//   dump('\n content = ')
+//   dump (content)
+
+//   const rows = content.split('\n').filter(i=>i) 
+  
+//   for (const row of rows) {
+//     dump ('ROW: ' + row)
+//   }
+// }
+
+
+
+
+
+</script>
+</body>
+</html>

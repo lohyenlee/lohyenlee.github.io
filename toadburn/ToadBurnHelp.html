@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@700&display=swap" rel="stylesheet">
+  <style>    
+    body {
+        font-family:'Titillium Web',sans-serif;
+        background-color:#333; color:#CCC;
+    }
+    h1 {color:white;}
+    h2 {
+        background-image:url('happy1.webp');background-size:contain;background-repeat: no-repeat;background-position:0px;
+        padding:0 0 0 48px; color:#fff;
+    }
+    .table {width: 15em; margin-left: 3em;}
+    .cell1 {width: 10em; display:inline-block; float:left;}
+    .cell2 {width: 5em; display:inline-block; clear:both; font-family:monospace;} 
+     /* min-width: 10em; margin-left: 2em;} */
+     /* min-width: 20em; margin-left: 2em;} */
+
+  </style>
+</head>
+<body>
+
+
+<h1>Toad Burn</h1>
+<p>By Yen Lee Loh and Isaac Hutchison (November 2025) </p>
+
+<!-- ############################ -->
+<h2>Summary</h2>
+
+<p>Toad Burn is an educational browser-based puzzle game that aims to introduce digital logic and sequential logic in a fun way. </p>
+
+<!-- ############################ -->
+<h2>Gameplay</h2>
+<p>Toad Burn consists of a series of levels.  
+Each level takes the form of a finite grid of squares (cells).
+The player (Mario) can perform various actions including walking, toggling switches, and placing lava, water, or toads.
+("Water squares" may eventually be replaced by "trench squares".)
+The objective of each level is to defeat the enemy (Bowser) by flooding his square with lava.
+Mario is not able to attack Bowser directly.  Instead, he must use logic and ingenuity to channel lava into Bowser's square.
+Mario must also avoid flooding Princess Peach with lava!  If Peach gets burned, the level is lost and must be restarted.
+</p>
+
+<p>Toad Logic plays a central role in the game.
+A cell may be occupied by a toad.
+If the cells to the north, south, and west are lava-free, the toad is in the "Happy" state, and spews lava toward the east.
+If any of the three cells to the north, south, and west have lava, 
+this causes the toad to be in the "Crying" state, and emits water instead.
+</p>
+
+<p>Depending on how many input cells (N, S, or W) are active, 
+    a toad corresponds to a NOT, NOR, or 3-way NOR gate in digital electronics.
+</p>
+
+<p>Ordinarily, lava (and water) can spread in all directions.  
+If a cell has 3 or 4 neighbors, it functions as a splitter or merge point.
+However, if <em>grade separation</em> is enabled on a cell, 
+lava (or water) flows along two separate channels in the East-West and North-South directions.
+This allows the player (or level designer) to route wires across each other without signal interference.
+This is necessary for creating complex circuits.
+</p>
+
+
+<p>Stars are the equivalent of lamps or LEDs in electronics.
+They merely indicate ON/OFF state at key points in the circuit, with no impact on circuit behavior or gameplay.
+</p>
+
+
+
+<!-- ############################ -->
+<h2>Controls</h2>
+<p> Default keybindings are as follows.</p>
+<div class="table">
+    <div class="cell1">Go north </div>
+    <div class="cell2">&#8593; or I </div>
+    <div class="cell1">Go south </div>
+    <div class="cell2">&#8595; or &lt;</div>
+    <div class="cell1">Go west </div>
+    <div class="cell2">&#8592; or J </div>
+    <div class="cell1">Go east </div>
+    <div class="cell2">&#8594; or L </div>
+    <div class="cell1">Place lava </div>
+    <div class="cell2">1 or U </div>
+    <div class="cell1">Place water </div>
+    <div class="cell2">1 or U </div>
+    <div class="cell1">Place toad </div>
+    <div class="cell2">3 or M </div>
+    <div class="cell1">Place grass </div>
+    <div class="cell2">&grave; or $gt; </div>
+    <div class="cell1">Reset level </div>
+    <div class="cell2">Shift-R </div>
+    <div class="cell1">Go to previous level </div>
+    <div class="cell2">[ </div>
+    <div class="cell1">Go to next level </div>
+    <div class="cell2">] </div>
+    <div class="cell1">Enter cheat mode </div>
+    <div class="cell2">Shift-C </div>
+</div>
+
+
+<h2>Implementation</h2>
+<p>
+The circuit dynamics is modeled as a finite-state cellular automaton.
+The state of each cell depends only on the states of five cells (Center, East, West, North, and South) at the previous timestep.
+The state of a cell has several possible values:
+<div class="table">
+    <div class="cell1">Empty </div><div class="cell2">0</div>
+    <div class="cell1">Cold, contagious </div><div class="cell2">1</div>
+    <div class="cell1">Cold, recovering </div><div class="cell2">2</div>
+    <div class="cell1">Cold, dormant    </div><div class="cell2">3</div>
+    <div class="cell1">Hot, contagious  </div><div class="cell2">7</div>
+    <div class="cell1">Hot, recovering  </div><div class="cell2">6</div>
+    <div class="cell1">Hot, dormant     </div><div class="cell2">5</div>
+    <div class="cell1">Toad, crying     </div><div class="cell2">4?</div>
+    <div class="cell1">Toad, happy      </div><div class="cell2">8?</div>
+</div>
+</p>
+Imagine that there are two kinds of viruses, hot and cold.  
+If a cell is contagious, on the next timestep it will enter recovery.
+If a cell is recovering, it cannot be re-infected, and on the next timestep the virus will become dormant 
+(although the cell is still a carrier of that type of virus).
+If a cell is dormant, it can be infected by EITHER type of virus if an adjacent cell is contagious.
+These rules allow unidirectional pulse propagation in either direction along a row of cells.
+See ToadBurnDetails.txt for more info.
+
+
+........
+.....
+
+A toad is a NOR gate.
+
+
+A set of digital logic gates can be represented by a binary cellular automaton with custom rules for each gate
+</p>
+
+</body>
+</html>

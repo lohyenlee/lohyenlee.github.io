@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <script type="module">
+    //=======================================================
+    // Define loadImage() and loadAudio() to return Promises
+    //=======================================================
+    function loadImage(url) { 
+      console.log('Requesting', url)
+      return new Promise((resolve,reject) => { 
+        let image = new Image()
+        image.onload  = ()=>{console.log("Loaded"         ,url);resolve(image)}
+        image.onerror = ()=>{console.log("Failed to load ",url);reject()      }
+        image.src     = url
+      })
+    }
+    function loadAudio(url) {
+      console.log('Requesting', url)
+      return new Promise((resolve,reject) => { 
+        let audio = new Audio(url); 
+        audio.oncanplaythrough = ()=>{console.log("Loaded"         ,url);resolve(audio)}
+        audio.onerror          = ()=>{console.log("Failed to load ",url);reject()}
+      })
+    }
+    //=======================================================
+    // Initiate the loading of resources
+    //=======================================================
+    let imgMario  = loadImage('mario64.png')
+    let imgBowser = loadImage('bowser64.png')
+    let imgGrass  = loadImage('grass.webp')
+    let imgWater  = loadImage('water.webp')
+    let imgLava   = loadImage('lava.webp')
+    let imgCrying1= loadImage('crying1.webp')
+    let imgCrying2= loadImage('crying2.webp')
+    let imgHappy1 = loadImage('happy1.webp')
+    let imgHappy2 = loadImage('happy2.webp')
+    let imgStarOn = loadImage('staron.webp')
+    let imgStarOff= loadImage('staroff.webp')  
+    let soundTock = loadAudio("tock.mp3")
+    let soundBuzz = loadAudio("buzz.ogg")
+    let soundWin  = loadAudio("win.mp3")
+    let soundWin0 = loadAudio("smb_bowserfalls.wav")
+    //=======================================================
+    // Do some stuff in the meantime
+    //=======================================================
+    const ctx = canvas.getContext('2d')
+    //=======================================================
+    // Wait for all resources to be fully loaded
+    //=======================================================
+    imgMario  = await imgMario
+    imgBowser = await imgBowser
+    soundWin  = await soundWin
+    //=======================================================
+    // Use the images and audio resources
+    //=======================================================
+    ctx.drawImage(imgMario, 0, 0)
+    ctx.drawImage(imgBowser, 64, 0)
+    soundWin.play()
+  </script>
+</head>
+<body style="background-color: black;">
+  <canvas id="canvas" width="300" height="300" style="background-color: white;"></canvas>
+</body>
+</html>

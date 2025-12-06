@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body  style="position:absolute; background-color: black;">
+  <canvas id="canvas" width="600" height="300" style="position:absolute; background-color: #333;"></canvas>
+
+<script type="module">
+// function dump(s) {msg.value += s + '\n'}
+
+
+async function loadImage(url) { return new Promise(r => { let i=new Image(); i.onload=(()=>r(i)); i.src=url; }); }
+    
+class Animation {
+  constructor(imgList) {
+    this.frames = imgList
+  }
+  draw(x, y, iFrame) {
+    ctx.drawImage(this.frames[iFrame], x, y)
+    // ctx.drawImage(this.frames[t%this.frames.length], x, y)
+  }
+}
+let t=0
+function render() {
+  t += 1;
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  ctx.fillStyle='#000';   ctx.fillRect(0,0, canvas.width, canvas.height)
+  toadCrying.draw(t, 0, Math.floor(t/30)%2)
+}
+function animate(timeCurrent) {
+  requestAnimationFrame(animate)
+  render()
+}
+
+let imgCrying1 = await loadImage('crying1.webp')
+let imgCrying2 = await loadImage('crying2.webp')
+let toadCrying = new Animation([imgCrying1,imgCrying2])
+let ctx = canvas.getContext('2d')
+requestAnimationFrame(animate)
+  
+</script>
+</body>
+</html>
