@@ -564,28 +564,7 @@
     const ctx=canvas.getContext('2d')
     setScaling()
     document.body.insertBefore(canvas, document.body.childNodes[0])
-
     window.addEventListener('resize', setScaling)
-    
-    btnReset.addEventListener('click', resetGame)
-    btnPrev.addEventListener('click', prevLevel)
-    btnNext.addEventListener('click', nextLevel)
-    btnLeft.addEventListener('click', goLeft)
-    btnRight.addEventListener('click', goRight)
-    btnUp.addEventListener('click', goUp)
-    btnDown.addEventListener('click', goDown)
-    btnLeft.addEventListener('touchstart', goLeft)
-    btnRight.addEventListener('touchstart', goRight)
-    btnUp.addEventListener('touchstart', goUp)
-    btnDown.addEventListener('touchstart', goDown)
-    btnLava.addEventListener('click', placeLava)
-    btnDirt.addEventListener('click', placeDirt)
-    btnCross.addEventListener('click', placeSubway)
-    btnGrass.addEventListener('click', placeGrass)
-    btnToad.addEventListener('click', placeToad)
-    btnSlow.addEventListener('click', goSlow)
-    btnFast.addEventListener('click', goFast)
-    // It's ok to do this because buttons are invisible so user can't click
 
     //===============================================
     // Wait for ESSENTIAL resources to load
@@ -594,11 +573,11 @@
     // let [imgMario,imgBowser,imgGrass,imgDirt,imgLava,imgCrying1,imgCrying2,imgHappy1,imgHappy2,
     //     imgStarOn,imgStarOff,
     //     audioTock,audioBuzz,audioWin,audioWin0] = resources
-    let audioTock = loadAudio('tock.ogg')
-    let audioBuzz = loadAudio('buzz.ogg')
-    let audioWin0 = loadAudio('win1.ogg')
-    let audioWin1 = loadAudio('win2.ogg')
-    let audioLose = loadAudio('lose.ogg')
+    let audioTock = loadAudio('tock.mp3')
+    let audioBuzz = loadAudio('buzz.mp3')
+    let audioWin0 = loadAudio('win1.mp3')
+    let audioWin1 = loadAudio('win2.mp3')
+    let audioLose = loadAudio('lose.mp3')
 
     let imgMario = await loadImage('mario.png')
     let animPeach = new Animation([await loadImage('peach1.webp'),await loadImage('peach2.webp')])
@@ -625,6 +604,25 @@
     splashScreen.style.visibility = "hidden"
     controls.style.visibility = "visible"
     document.body.addEventListener('keydown', keydown, false)
+    btnReset.addEventListener('click', resetGame)
+    btnPrev.addEventListener('click', prevLevel)
+    btnNext.addEventListener('click', nextLevel)
+    btnLeft.addEventListener('click', goLeft)
+    btnRight.addEventListener('click', goRight)
+    btnUp.addEventListener('click', goUp)
+    btnDown.addEventListener('click', goDown)
+    // btnLeft.addEventListener('touchstart', goLeft)
+    // btnRight.addEventListener('touchstart', goRight)
+    // btnUp.addEventListener('touchstart', goUp)
+    // btnDown.addEventListener('touchstart', goDown)
+    btnLava.addEventListener('click', placeLava)
+    btnDirt.addEventListener('click', placeDirt)
+    btnCross.addEventListener('click', placeSubway)
+    btnGrass.addEventListener('click', placeGrass)
+    btnToad.addEventListener('click', placeToad)
+    btnSlow.addEventListener('click', goSlow)
+    btnFast.addEventListener('click', goFast)
+
     
     requestAnimationFrame(animate)
   </script>
