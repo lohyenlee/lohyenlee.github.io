@@ -39,18 +39,20 @@
 <h2>Gameplay</h2>
 <p>Toad Burn consists of a series of levels.  
 Each level takes the form of a finite grid of squares (cells).
-The player (Mario) can perform various actions including walking, toggling switches, and placing lava, water, or toads.
-("Water squares" may eventually be replaced by "trench squares".)
+The player (Mario) can walk East, West, North, or South.  
+Walking into a P Switch toggles it between OFF and ON states.
 The objective of each level is to defeat the enemy (Bowser) by flooding his square with lava.
-Mario is not able to attack Bowser directly.  Instead, he must use logic and ingenuity to channel lava into Bowser's square.
-Mario must also avoid flooding Princess Peach with lava!  If Peach gets burned, the level is lost and must be restarted.
+Mario is not able to attack Bowser directly.  
+Instead, he must use logic and ingenuity to channel lava into Bowser's square.
+Mario must also avoid flooding Princess Peach with lava!  
+If Peach gets burned, the level is lost and must be restarted.
 </p>
 
 <p>Toad Logic plays a central role in the game.
 A cell may be occupied by a toad.
-If the cells to the north, south, and west are lava-free, the toad is in the "Happy" state, and spews lava toward the east.
+If the cells to the north, south, and west are lava-free, the toad is happy (ON) and spews lava toward the east.
 If any of the three cells to the north, south, and west have lava, 
-this causes the toad to be in the "Crying" state, and emits water instead.
+the toad is crying (OFF) and emits no lava.
 </p>
 
 <p>Depending on how many input cells (N, S, or W) are active, 

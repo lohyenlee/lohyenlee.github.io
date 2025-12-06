@@ -556,6 +556,18 @@
     async function prevLevel() {await setLevel(level-1)}
     async function nextLevel() {await setLevel(level+1)}
 
+    function openHelp() {
+      winWid=window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth
+      winHei=window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight
+      const wid=winWid - 32
+      const hei=winHei - 32
+      const windowFeatures = `popup=true,width=${wid},height=${hei}`
+      console.log(windowFeatures)
+      let newWin = window.open('toadburnhelp.html', 'blankWindow', windowFeatures)
+      if (newWin) {
+        // newWin.document.write('<h1>Hello from the new window!</h1>')
+      }
+    }
     //===============================================
     // MAIN MODULE CODE
     //===============================================
@@ -623,6 +635,7 @@
     btnSlow.addEventListener('click', goSlow)
     btnFast.addEventListener('click', goFast)
 
+    btnHelp.addEventListener('click', openHelp)
     
     requestAnimationFrame(animate)
   </script>
