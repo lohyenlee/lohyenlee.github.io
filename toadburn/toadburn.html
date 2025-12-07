@@ -69,7 +69,7 @@
     .btn1 { width:var(--btnsize); height:var(--btnsize); background-size:cover; 
             text-shadow: 2px 2px 3px black;
           } /* square button */
-    .btn2 { width:calc(2*var(--btnsize)); height:var(--btnsize);margin:1px; padding:0; }
+    .btn2 { width:calc(2*var(--btnsize)); height:var(--btnsize);margin:1px; padding:0; font-size: 2vmin;}
     .separator { height:16px; clear:left; }
   </style>
 </head>
@@ -100,13 +100,14 @@
     </div>
     <div style="float:left; margin:0ex 5ex 0ex 5ex;">
       <button id="btnHelp"  class="btn1" style="background-image:url(question.webp);"> </button> <!--  launch new page -->
-      <button id="btnPrev"  class="btn1"> [ </button>
-      <button id="btnReset" class="btn1"> R    </button>
-      <button id="btnNext"  class="btn1"> ] </button>
+      <button id="btnPrev"  class="btn2"> Prev([)  </button>
+      <button id="btnReset" class="btn2"> Reset(R) </button>
+      <button id="btnNext"  class="btn2"> Next(])  </button>
       <br>
       <!-- <div class="separator"></div> -->
       <button id="btnSlow"  class="btn2">Slow</button>
-      <button id="btnFast"  class="btn2">Fast</button> <!-- Tbd: switch -->
+      <button id="btnFast"  class="btn2">Fast</button>
+      <button id="btnCheat" class="btn2">Cheat</button>
     </div>
     <div style="float:left; width:calc(5*var(--btnsize));" id="actionButtons">
       <!-- <div class="separator"></div> -->
@@ -396,11 +397,20 @@
     function placeGrass() {ground[xCursor+X*yCursor]=0; audioTock.play()}
     function placeToad()  {ground[xCursor+X*yCursor]=4; audioTock.play()}
     function placeSubway() { // actually TOGGLE SUBWAY ON/OFF
-      if(subway[xCursor+X*yCursor]) subway[xCursor+X*yCursor]=0; 
-      else subway[xCursor+X*yCursor]=3;
+      if(subway[xCursor+X*yCursor]) subway[xCursor+X*yCursor]=0;
+      else subway[xCursor+X*yCursor]=3
     }
     function goSlow()  {timeStepInMilliseconds=100}
     function goFast()  {timeStepInMilliseconds=1}
+    function enterCheatMode() {
+      for(let y=0;y<Y;++y)for(let x=0;x<X;++x)
+        if (extras[x+X*y]==UNWALKABLE) extras[x+X*y]=WALKABLE
+      btnLava.disabled = false
+      btnDirt.disabled = false
+      btnToad.disabled = false
+      btnCross.disabled = false
+      btnGrass.disabled = false
+    }
     
     async function keydown(e) {
       if (e.ctrlKey||e.altKey) return // don't trap browser shortcuts involving Ctrl or Alt
@@ -423,7 +433,7 @@
         case 'k': placeSubway(); break // toggle crossing
         case 'l': placeToad(); break    // add NOR gate (Toad)
         case ';': placeGrass(); break // erase current ground  //case 'Backspace': case 'Delete':                 
-        case 'C': for(let y=0;y<Y;++y)for(let x=0;x<X;++x)extras[x+X*y]=WALKABLE; break
+        case 'C': enterCheatMode(); break
         case 'R': await resetGame(); break    // reset level
         default: processed=false
       }
@@ -478,10 +488,7 @@
       btnCross.disabled = !sandbox
       btnGrass.disabled = !sandbox
      
-     
       let rows = /<levelmap>\s+(.*?)<\/levelmap>/gs . exec(levelMap) [1]
-      // rows = rows.replace(  /[\s]*<timestep>.*<\/timestep>[\s]*/gs , '')
-      // rows = rows.replace(  /[\s]*<<<name>>>.*<\/name>[\s]*/gs , '')
       rows = rows.split(/[\r\n]/).filter(i=>i) 
       
       //-------- DETERMINE MAP SIZE AND ALLOCATE ARRAYS
@@ -530,6 +537,15 @@
       //-------- GAMEPLAY: IDENTIFY START POSITION
       for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) if (rows[y][x]=='M') {xCursor=x; yCursor=y}   
       bowserX=0;bowserY=0
+
+
+      // for (let y=0; y<Y; ++y) {
+      //   let s=''
+      //   for (let x=0; x<X; ++x) {
+      //     s+=ground[x+X*y]
+      //   }
+      //   console.log(s)
+      // }
     }
     function setScaling() {
       winWid=window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth
@@ -634,6 +650,7 @@
     btnToad.addEventListener('click', placeToad)
     btnSlow.addEventListener('click', goSlow)
     btnFast.addEventListener('click', goFast)
+    btnCheat.addEventListener('click', enterCheatMode)
 
     btnHelp.addEventListener('click', openHelp)
     

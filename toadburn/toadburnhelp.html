@@ -424,6 +424,33 @@ A gate cannot accept input from this cell.
 Add two more states to the model.
 
 Alternatively, one could use 2 additional bits to represent the orientation of the gate.
+
+
+
+
+T flip flop?
+
+TXY -> TXY
+000    001   
+101    111   
+011    010 ????????
+110    100
+
+TAXY -> TAXY
+0000    0001
+1001 -> 1101 -> ????
+
+
+?????
+Y = (T==X) & !Y
+X = (T==Y) & X??
+
+T X Y   T==X T&Y Ynew  T==Y T&!X
+0 0 0   1    0   1     1    0
+
+
+
+
 </pre>
 </body>
 </html>

@@ -4,7 +4,7 @@ T O A D   &nbsp;&nbsp;&nbsp;    B U R N<br>By Yen Lee Loh &amp; Isaac Hutchison 
 </name>
 
 .......................................
-........M..............................
+...M...................................
 .......................................
 .                                     .
 . ### ### ###   #    #   # #          .
@@ -22,7 +22,19 @@ T O A D   &nbsp;&nbsp;&nbsp;    B U R N<br>By Yen Lee Loh &amp; Isaac Hutchison 
 .......................................
 </levelmap>
 
-<levelmap> <timestep>100</timestep> <<<name>>> Don't Burn the Peach </name>
+<levelmap> <timestep>100</timestep> <<<name>>> 1. Light the Fuse </name>
+..............
+.M  
+..  ##### ###
+..  #   # # #
+..s## ### # #
+..    #   # #
+..    ##### B
+..
+..............
+</levelmap>
+
+<levelmap> <timestep>100</timestep> <<<name>>> 2. Don't Burn Peach </name>
 .. ..........
 .. ..........
 .. ..........
@@ -37,20 +49,25 @@ T O A D   &nbsp;&nbsp;&nbsp;    B U R N<br>By Yen Lee Loh &amp; Isaac Hutchison 
 .............
 </levelmap>
 
-
-<levelmap> <timestep>100</timestep> <<<name>>> 1. Light the Fuse </name>
-..............
-.M  
-..  ##### ###
-..  #   # # #
-..s## ### # #
-..    #   # #
-..    ##### B
-..
+<levelmap> <timestep> 100 </timestep> <<<name>>> 3. A Life-And-Death Decision </name>
+.. ..###..###.
+.. ..#.#..#.#.
+..s##+#+#.#.#.
+.. ..#.#+##.#.
+.. .##..#...#.
+.. .#...#.###.
+M.s#+##.#.#...
+.. .#.##+#+##.
+.. .#...#.#.#.
+.. .#..P#.B.#.
+..s##.......#.
+.. ...P######.
+..           
 ..............
 </levelmap>
 
-<levelmap> <timestep>100</timestep> <<<name>>> 2. Do unto others as they do NOT unto you </name>
+
+<levelmap> <timestep>100</timestep> <<<name>>> 4. Do unto others as they do NOT unto you </name>
 ..............
 .M
 ..S###N###B
@@ -58,7 +75,7 @@ T O A D   &nbsp;&nbsp;&nbsp;    B U R N<br>By Yen Lee Loh &amp; Isaac Hutchison 
 ..............
 </levelmap>
 
-<levelmap> <timestep>100</timestep> <<<name>>> 3. Ouch! Hot! </name>
+<levelmap> <timestep>100</timestep> <<<name>>> 5. Ouch! Hot! </name>
 .............
 .M
 ..S###
@@ -69,7 +86,7 @@ T O A D   &nbsp;&nbsp;&nbsp;    B U R N<br>By Yen Lee Loh &amp; Isaac Hutchison 
 .............
 </levelmap>
 
-<levelmap> <timestep>100</timestep> <<<name>>> 4. On AND On to Victory </name>
+<levelmap> <timestep>100</timestep> <<<name>>> 6. On AND On to Victory </name>
 .............
 .M
 ..s##N#
@@ -80,7 +97,7 @@ T O A D   &nbsp;&nbsp;&nbsp;    B U R N<br>By Yen Lee Loh &amp; Isaac Hutchison 
 .............
 </levelmap>
 
-<levelmap> <timestep>10</timestep> <<<name>>> 5. One XOR the Other </name>
+<levelmap> <timestep>10</timestep> <<<name>>> 7. One XOR the Other </name>
 ..................
 ..................
 ...s...
@@ -96,7 +113,7 @@ T O A D   &nbsp;&nbsp;&nbsp;    B U R N<br>By Yen Lee Loh &amp; Isaac Hutchison 
 ..................
 </levelmap>
 
-<levelmap> <<<name>>> 6. Toads Galore </name>
+<levelmap> <<<name>>> 8. Toads Galore </name>
 ..................
 ..      .....3333.
 .MS###    ....33..
@@ -113,7 +130,7 @@ T O A D   &nbsp;&nbsp;&nbsp;    B U R N<br>By Yen Lee Loh &amp; Isaac Hutchison 
 ..................
 </levelmap>
 
-<levelmap> <timestep>100</timestep> <<<name>>> 7. Loop the Loop </name>
+<levelmap> <timestep>100</timestep> <<<name>>> 9. Loop the Loop </name>
 ..............
 .M          ..
 ..s#####    ..
@@ -126,7 +143,7 @@ T O A D   &nbsp;&nbsp;&nbsp;    B U R N<br>By Yen Lee Loh &amp; Isaac Hutchison 
 ..............
 </levelmap>
 
-<levelmap> <timestep> 0 </timestep> <<<name>>> 8. Loosen the Lava Latches </name>
+<levelmap> <timestep> 0 </timestep> <<<name>>> 10. Loosen the Lava Latches </name>
 ..............................................
 ..............................................
 .........................................
@@ -146,7 +163,7 @@ T O A D   &nbsp;&nbsp;&nbsp;    B U R N<br>By Yen Lee Loh &amp; Isaac Hutchison 
 .....
 </levelmap>
 
-<levelmap> <timestep> 1 </timestep> <<<name>>> 9. Shift to Success </name>
+<levelmap> <timestep> 1 </timestep> <<<name>>> 11. Shift to Success </name>
 ..                  
 ..
 ..  
@@ -165,7 +182,7 @@ T O A D   &nbsp;&nbsp;&nbsp;    B U R N<br>By Yen Lee Loh &amp; Isaac Hutchison 
 ..
 </levelmap>
 
-<levelmap> <timestep>10</timestep> <<<name>>> 10. Tick Tock </name>
+<levelmap> <timestep>10</timestep> <<<name>>> 12. Tick Tock </name>
 .....................
  
  ### ### ### ### ###
@@ -183,7 +200,7 @@ MS#
 .....................
 </levelmap>
 
-<levelmap> <timestep> 10 </timestep> <<<name>>> 11. Time it Right </name>
+<levelmap> <timestep> 10 </timestep> <<<name>>> 13. Time it Right </name>
 ....
 ....
  S
@@ -270,7 +287,7 @@ MS#
 <levelmap> <timestep>100</timestep> <<<name>>> Isaac </name>
 .
 .   B
-. 5N+3
+.S5N+3 
 .   33
 .
 </levelmap>
@@ -296,3 +313,90 @@ MS#
 ..N####   
 .....
 </levelmap>
+
+
+<levelmap> <timestep> 1 </timestep> <<<name>>> asdfasdf>
+..                  
+..############################################
+..#....................M.....................#
+..#..........s..........s....................#
+. #N777777777N1111111111N777777777777N########
+..     #           #           #           #
+..     #           #           #           #
+..     N77777      N#####      N#####      N#####
+..      #   7 7+##  #   # 7+##  #   # 1+##  #   # 1+##
+..      # N7N#N# #  # N7N#N# #  # N#N#N# #  # N#N#N# #
+..      # #    # #  # #    # #  # #    # #  # #    # #
+..  ####+###N#N+#L##+###N#N+#L##+###N#N+#L##+###N#N+#L##
+..  #   #   7 1#    #   7 1#    #   # 7#    #   # 7#   #
+..  #   #####       #####       #####       #####      #
+..  #                                                  #
+..  ####################################################
+..
+..
+</levelmap>
+
+<levelmap> <timestep> 1 </timestep> <<<name>>>  asdfsfV  </name>
+..................
+.........     Ms..
+.....    ##########
+.        #        #
+..       ###      ###
+.        # N##    # N##
+..       N## N77  N## N1111111111111111111111
+..       # N## 7  7 N##                     1
+..       ###   7  777    111111111111111111111
+ .       #     7  7      1 
+......   #     7777      1
+         #               1
+         11111111111111111
+..................
+
+..................
+</levelmap>
+
+
+<levelmap> <timestep> 1 </timestep> <<<name>>>  EQV  </name>
+..................
+..................
+......
+..     
+..       ###
+.     .s## N## .....
+..    M. N## N#...... 
+..    .s## N## .....
+..       ###
+..        
+...s...
+..................
+..................
+</levelmap>
+
+
+<levelmap> <timestep>1</timestep> <<<name>>> Not so Easy </name>
+.......................
+.......................
+..
+..     ####   1111
+..     #  #   1  1
+..     N7N##N#N7N1            
+..     # #  # # #
+..     s s  S s s
+.......M............../
+............
+............
+</levelmap>
+
+
+<levelmap> <timestep>100</timestep> <<<name>>> Easy-Peasy </name>
+....................
+....................
+..  S   S   S   S
+..  #   #   #   # 
+..S#N#N#N#N#N#N#N#B           
+..           
+.M           
+..
+</levelmap>
+
+
