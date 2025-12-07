@@ -609,7 +609,7 @@
     let imgSourceOff = await loadImage('sourceoff.webp')
     let imgSourceOn = await loadImage('sourceon.webp')
 
-    let levelMaps = await loadString('toadBurnMaps.txt') // clear browser cache if this file is edited
+    let levelMaps = await loadString('toadburnmaps.txt') // clear browser cache if this file is edited
     // TBD: do properly using Promise
     levelMaps = [...levelMaps.matchAll(  /<levelmap>.*?<\/levelmap>/gs )].map(i=>i[0])
     await setLevel(0)

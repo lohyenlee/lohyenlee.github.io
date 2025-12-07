@@ -227,13 +227,26 @@ MS#
 ..................................
 </levelmap>
 
-<levelmap> <timestep>100</timestep> <<<name>>> [EXPT] SR Flip-Flop </name>
+<levelmap> <timestep>0</timestep> <<<name>>> SR Flip-Flop </name>
+........
+....###.
+....#.#L
+..s#N#.#
+..M..N##
+..s###..
+........
+........
+</levelmap>
+
+<levelmap> <timestep>0</timestep> <<<name>>> SR Flip-Flop </name>
 .......
-..S.S..
-  # #
-  N#N#
-  1  L 
-  #### 
+..sMs..
+..#.#..
+..N#N#.
+..1..L.
+..####.
+.......
+.......
 </levelmap>
 
 <levelmap> <timestep>100</timestep> <<<name>>> [EXPT] D Latch </name>
