@@ -24,96 +24,75 @@ T O A D   &nbsp;&nbsp;&nbsp;    B U R N<br>By Yen Lee Loh &amp; Isaac Hutchison 
 
 <levelmap> <timestep>100</timestep> <<<name>>> 1. Light the Fuse </name>
 ..............
-.M  
-..  ##### ###
-..  #   # # #
-..s## ### # #
-..    #   # #
-..    ##### B
+...n##### ###
+..      # # #
+M. ###### # #
+.. #      # #
+.. # B##### #
+.. #        #
+.. ##########
+..............
+</levelmap>
+
+<levelmap> <timestep>100</timestep> <<<name>>> 2. Don't Fry the Princess </name>
+.. ..####..
+..n###..#..
+.. ....P#..
+.M ....#...
+.. ....##B.
+..n###...#.
+.. ..#####.
+.. ........
+</levelmap>
+
+
+<levelmap> <timestep>100</timestep> <<<name>>> 3. Do unto others as they do NOT unto you </name>
+..............
+.M
+..n###N###B
 ..
 ..............
 </levelmap>
 
-<levelmap> <timestep>100</timestep> <<<name>>> 2. Don't Burn Peach </name>
-.. ..........
-.. ..........
-.. ..........
-..s####P.....
-.. ....#.....
-.M ....#.....
-.. ....##B...
-..s###...#...
-.. ..#####...
-            .
-.............
-.............
-</levelmap>
-
-<levelmap> <timestep> 100 </timestep> <<<name>>> 3. A Life-And-Death Decision </name>
-.. ..###..###.
-.. ..#.#..#.#.
-..s##+#+#.#.#.
-.. ..#.#+##.#.
-.. .##..#...#.
-.. .#...#.###.
-M.s#+##.#.#...
-.. .#.##+#+##.
-.. .#...#.#.#.
-.. .#..P#.B.#.
-..s##.......#.
-.. ...P######.
-..           
-..............
-</levelmap>
-
-
-<levelmap> <timestep>100</timestep> <<<name>>> 4. Do unto others as they do NOT unto you </name>
-..............
-.M
-..S###N###B
-..
-..............
-</levelmap>
-
-<levelmap> <timestep>100</timestep> <<<name>>> 5. Ouch! Hot! </name>
+<levelmap> <timestep>100</timestep> <<<name>>> 4. Ouch! Hot! </name>
 .............
 .M
-..S###
+..N###
 ..   N###B
-..S###
+..N###
 ..
 .............
 .............
 </levelmap>
 
-<levelmap> <timestep>100</timestep> <<<name>>> 6. On AND On to Victory </name>
+<levelmap> <timestep>100</timestep> <<<name>>> 5. On AND On to Victory </name>
 .............
 .M
-..s##N#
+..n##N#
 ..    N###B
-..s##N#
+..n##N#
 ..
 .............
 .............
 </levelmap>
 
-<levelmap> <timestep>10</timestep> <<<name>>> 7. One XOR the Other </name>
+<levelmap> <timestep>10</timestep> <<<name>>> 6. One XOR the Other </name>
 ..................
-..................
-...s...
-.. N## 
-..   #   ###
-.M###N#N## N## .....
-..s      N## N#N#B.. 
-..###N#N## N## .....
-..   #   ###
-.. N##    
-...s...
-..................
-..................
+...................
+...
+...n### 
+.M.   #   ###
+... ##N#N## N## .....
+...n#     N## N#N#B.. 
+... ##N#N## N## .....
+...   #   ###
+...n###    
+...
+...................
+...................
 </levelmap>
 
-<levelmap> <<<name>>> 8. Toads Galore </name>
+<levelmap> <<<name>>> 7. Toads Galore </name>
 ..................
 ..      .....3333.
 .MS###    ....33..
@@ -128,6 +107,23 @@ M.s#+##.#.#...
 ..              ..
 ..................
 ..................
+</levelmap>
+
+<levelmap> <timestep> 100 </timestep> <<<name>>> 8. A Life-And-Death Decision </name>
+.. ..###..###.
+.. ..#.#..#.#.
+..s##+#+#.#.#.
+.. ..#.#+##.#.
+.. .##..#...#.
+.. .#...#.###.
+M.s#+##.#.#...
+.. .#.##+#+##.
+.. .#...#.#.#.
+.. .#.###.B.#.
+..s##.#. ...#.
+.. ...#N#N#P#.
+..           
+..............
 </levelmap>
 
 <levelmap> <timestep>100</timestep> <<<name>>> 9. Loop the Loop </name>
@@ -195,7 +191,7 @@ M.s#+##.#.#...
    #
    N############B    
   N#             
-MS# 
+Ms# 
 .               
 .....................
 </levelmap>

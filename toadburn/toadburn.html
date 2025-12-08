@@ -5,12 +5,11 @@
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" href="mario.png" as="image">
   <link rel="preload" href="peach1.webp" as="image">
   <link rel="preload" href="peach2.webp" as="image">
   <link rel="preload" href="happy1.webp" as="image">
   <link rel="preload" href="happy2.webp" as="image">
-  <link rel="preload" href="bowser64.png" as="image">
+  <link rel="preload" href="bowser.webp" as="image">
   <link rel="preload" href="grass.webp" as="image">
   <link rel="preload" href="dirt.webp" as="image">
   <link rel="preload" href="lava.webp" as="image">
@@ -56,7 +55,7 @@
       font-weight: normal; /* Define the weight (e.g., normal, bold) */
       font-style: normal;  /* Define the style (e.g., normal, italic) */
     }
-    :root {--btnsize:6vmin;}
+    :root {--btnsize:8vmin;}
     html,body { overflow: hidden;  /* don't use scrollbars ! */
       background-color:#333; padding:0; margin:0; width:100%; height:100%; font-family:'gameFont',sans-serif;}
     #title {position:absolute;top:2px;width:100%;padding:0;margin:0;text-align:center; font-size:3vmin; color:white;}
@@ -69,7 +68,7 @@
     .btn1 { width:var(--btnsize); height:var(--btnsize); background-size:cover; 
             text-shadow: 2px 2px 3px black;
           } /* square button */
-    .btn2 { width:calc(2*var(--btnsize)); height:var(--btnsize);margin:1px; padding:0; font-size: 2vmin;}
+    .btn2 { width:calc(10vmin); height:var(--btnsize);margin:1px; padding:0; font-size: 2vmin;}
     .separator { height:16px; clear:left; }
   </style>
 </head>
@@ -87,11 +86,11 @@
   <audio><source src="lose.ogg"></audio> -->
   <canvas id="canvas" style="position:absolute; top:0; left:0px;">Your browser does not support the HTML5 canvas tag.</canvas>
   <div id="title"></div>
-  <div id="controls" style="position:absolute; bottom:0; left:0; visibility:hidden;">
+  <div id="controls" style="position:absolute; bottom:0; left:0; width:100%; visibility:hidden;">
   <!-- <div id="controls" style="position:absolute; bottom:0; left:0; width:100%;"> -->
     <div style="float:left; width:calc(3*var(--btnsize));" id="movementKeypad">
       <!-- <div class="separator"></div> -->
-      <button               class="btn1" style="visibility: hidden;">  </button>
+      <button id="btnHelp"  class="btn1" style="background-image:url(question.webp);"></button>
       <button id="btnUp"    class="btn1" style="background-image:url(arrowU.svg);"> E </button>
       <button               class="btn1" style="visibility: hidden;">  </button>
       <button id="btnLeft"  class="btn1" style="background-image:url(arrowL.svg);"> S </button>
@@ -99,18 +98,15 @@
       <button id="btnRight" class="btn1" style="background-image:url(arrowR.svg);"> F </button>
     </div>
     <div style="float:left; margin:0ex 5ex 0ex 5ex;">
-      <button id="btnHelp"  class="btn1" style="background-image:url(question.webp);"> </button> <!--  launch new page -->
-      <button id="btnPrev"  class="btn2"> Prev([)  </button>
-      <button id="btnReset" class="btn2"> Reset(R) </button>
-      <button id="btnNext"  class="btn2"> Next(])  </button>
+      <button id="btnPrev"  class="btn2" title="Key: [">       Prev </button>
+      <button id="btnReset" class="btn2" title="Key: Shift-R"> Reset </button>
+      <button id="btnNext"  class="btn2" title="Key: [">       Next  </button>
       <br>
-      <!-- <div class="separator"></div> -->
       <button id="btnSlow"  class="btn2">Slow</button>
       <button id="btnFast"  class="btn2">Fast</button>
-      <button id="btnCheat" class="btn2">Cheat</button>
+      <button id="btnCheat" class="btn2" title="Key: Shift-C"> Cheat</button>
     </div>
-    <div style="float:left; width:calc(5*var(--btnsize));" id="actionButtons">
-      <!-- <div class="separator"></div> -->
+    <div style="position:absolute; bottom: 0; right:0; width:calc(5*var(--btnsize));" id="actionButtons">
       <button id="btnLava"  class="btn1" style="background-image:url(lava.webp);" disabled="disabled"> H </button>
       <button id="btnDirt"  class="btn1" style="background-image:url(dirt.webp);" disabled="disabled"> J </button>
       <button id="btnCross" class="btn1" style="background-image:url(crossing.webp);" disabled="disabled"> K </button>
@@ -155,18 +151,22 @@
     //===============================================
     // GLOBAL VARIABLES: GAMEPLAY AND EYECANDY
     //===============================================
-    const WALKABLE=0,UNWALKABLE=1,LAMP=2,SOURCE=3,PEACH=4,BOWSER=5
+    const WALKABLE=0,UNWALKABLE=1,LAMP=2,SOURCE=3,PEACH=4,PEACH_DYING=8,BOWSER=16,BOWSER_DYING=32
     const PLAYING=0,WIN=1,LOSE=-1
     let timeStepInMilliseconds=100
     let level=0,levelName,tcur   // current level,  current simulation time (in game ticks)
     let extras          // 2D array: gameplay-related info
     let cellsize        // cell size in pixels
     let xCursor,yCursor // cursor position (actually player)
-    let bowserX=0,bowserY=0
-    let winlose=PLAYING
+    let marioOrientation=3;
+    let xShaking=0,yShaking=0
+    let winlose=PLAYING 
     let timeOfLastFrame=0
 
 
+    function isHot(i)  {return i==5||i==6||i==7}
+    function isCold(i) {return i==1||i==2||i==3}
+    
     //===============================================
     // evolve(): EVOLVE CELLULAR AUTOMATON
     // Reads global variables: X,Y,ground,subway
@@ -186,8 +186,8 @@
           //======== Consider ground-level state
           let C=ground[x+X*y]
           //======== Get states of East and West neighbors
-          const E=ground[(x+1)+X*y]
-          const W=ground[(x-1)+X*y]
+          let E=ground[(x+1)+X*y]
+          let W=ground[(x-1)+X*y]
           //======== If current location has a subway, then ground level has NO N and S neighbors
           let N,S;
           if (subway[x+X*y]) {N=0; S=0}
@@ -196,6 +196,12 @@
             N=subway[x+X*(y-1)]; if(N==0) N=ground[x+X*(y-1)]
             S=subway[x+X*(y+1)]; if(S==0) S=ground[x+X*(y+1)]
           }
+
+          if (extras[(x+1)+X*y]==PEACH) E=0 // SPECIAL RULE: PEACH BLOCKS LAVA
+          if (extras[(x-1)+X*y]==PEACH) W=0 // SPECIAL RULE: PEACH BLOCKS LAVA
+          if (extras[x+X*(y-1)]==PEACH) N=0 // SPECIAL RULE: PEACH BLOCKS LAVA
+          if (extras[x+X*(y+1)]==PEACH) S=0 // SPECIAL RULE: PEACH BLOCKS LAVA
+          
           //======== Update ground-level state 
           if (W==4)      {C=1}  // copy state from gate at west
           else if (W==8) {C=7}  // copy state from gate at west
@@ -210,8 +216,9 @@
                 if ((E&7)==7 || (W&7)==7 || (N&7)==7 || (S&7)==7) C=7
                 break
               case 4: case 8: // current ground is a NOR GATE
-                if (  (W&7)>4 || (N&7)>4 || (S&7)>4 ) C=4
-                else                                  C=8
+                if      (  (W&7)>4 || (N&7)>4 || (S&7)>4 )             C=4
+                else if (  isCold(W&7) || isCold(N&7) || isCold(S&7) ) C=8
+                else C=C 
             }
           }
           groundNew[x+X*y] = C
@@ -292,44 +299,57 @@
           ctx.fillRect(x*h,y*h+h-4, h,4)
         }
       }
-      //======== DRAW SPECIAL OBJECTS (LAMPS, SOURCES, PEACHES, BOWSER)    
+      //======== DRAW SPECIAL OBJECTS (LAMPS, SOURCES, PEACHES, BOWSER)
+      let size,xcen,ycen
       for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
-        if (extras[x+X*y]==LAMP) { // draw "lamp"
-          if (ground[x+X*y]>4) {
-            if ((Math.floor(tcur/10)%2)) ctx.drawImage(imgStarOn, x*h-24, y*h-24, h+48, h+48)
-            else                         ctx.drawImage(imgStarOn, x*h-20, y*h-20, h+40, h+40)
-            // should remake this into an Animation
-          }
-          else ctx.drawImage(imgStarOff, x*h-20, y*h-20, h+40, h+40)
-        }
-        else if (extras[x+X*y]==SOURCE) {
-          if (ground[x+X*y]<4)      ctx.drawImage(imgSourceOff, x*h, y*h, h, h)
-          else if (ground[x+X*y]>4) ctx.drawImage(imgSourceOn, x*h, y*h, h, h)
-        }
-        else if (extras[x+X*y]==PEACH) {
-          let size=h*1.5,xcen=(x+.5)*h,ycen=(y+.5)*h
-          if (winlose!=LOSE) {
-            animPeach.draw(xcen-size/2, ycen-size/2, size,size, (Math.floor(tcur/140)%2))
-          } else {
+        switch (extras[x+X*y]) {
+          case LAMP:
+            if (ground[x+X*y]>4) {
+              if ((Math.floor(tcur/10)%2)) ctx.drawImage(imgStarOn, x*h-24, y*h-24, h+48, h+48)
+              else                         ctx.drawImage(imgStarOn, x*h-20, y*h-20, h+40, h+40)
+              // should remake this into an Animation
+            }
+            else ctx.drawImage(imgStarOff, x*h-20, y*h-20, h+40, h+40)
+            break
+          case SOURCE:
+            if (ground[x+X*y]<4)      ctx.drawImage(imgSourceOff, x*h, y*h, h, h)
+            else if (ground[x+X*y]>4) ctx.drawImage(imgSourceOn, x*h, y*h, h, h)
+            break
+          case PEACH:
+            size=h*1.1,xcen=(x+.5)*h,ycen=(y+.5)*h
+            animPeach.draw(xcen-size/2, ycen-size/2, size,size, (Math.floor(tcur/140)%2))          
+            break
+          case PEACH_DYING:
+            size=h*1.1,xcen=(x+.5)*h + xShaking,ycen=(y+.5)*h + yShaking // reuse  these variables
             ctx.save(); // Save current canvas state
             ctx.translate(xcen,ycen); // Translate to the center of the image
             ctx.rotate(tcur*.1); // Rotate  by radians
             animPeach.draw(-size/2, -size/2, size, size, 0)
             ctx.restore(); // Restore the canvas to its original state
-          }
+            if (tcur<100) {xShaking+=Math.cos(tcur*.6)*2; yShaking=Math.sin(tcur*.3)*10 }
+            else {xShaking=0; yShaking += (tcur-20)*.03}
+            break
+          case BOWSER:
+            size=h*1.5,xcen=(x+.5)*h,ycen=(y+.5)*h
+            ctx.drawImage(imgBowser, xcen-size/2, ycen-size/2, size,size)
+            break
+          case BOWSER_DYING:
+            size=h*1.5,xcen=(x+.5)*h+xShaking,ycen=(y+.5)*h+yShaking
+            ctx.drawImage(imgBowser, xcen-size/2, ycen-size/2, size,size)
+            if (tcur<100) {xShaking+=Math.cos(tcur*.6)*2; yShaking=Math.sin(tcur*.3)*10 }
+            else {xShaking=0; yShaking+=(tcur-20)*.03}          
+            break
         }
-      }
-      //======== DRAW BOWSER
-      if (winlose==WIN) {
-        if (tcur<100) {bowserX+=Math.cos(tcur*.6)*2; bowserY=Math.sin(tcur*.3)*10 }
-        else {bowserX=0; bowserY += (tcur-20)*.03}
-      }
-      for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) if (extras[x+X*y]==BOWSER) {
-        ctx.drawImage(imgBowser, x*h+bowserX-.5*h, y*h+bowserY-.5*h, h *2, h *2)
       }
       //======== DRAW MARIO
       tcur += 1
-      ctx.drawImage(imgMario, xCursor*h, yCursor*h, h*3/4, h) // note Mario's aspect ratio
+      let asp = imgMarioE.height/imgMarioE.width;
+      switch (marioOrientation) {
+        case 0: ctx.drawImage(imgMarioE, xCursor*h, yCursor*h, h/asp, h); break
+        case 1: ctx.drawImage(imgMarioW, xCursor*h, yCursor*h, h/asp, h); break
+        case 2: ctx.drawImage(imgMarioN, xCursor*h, yCursor*h, h/asp, h); break
+        case 3: ctx.drawImage(imgMarioS, xCursor*h, yCursor*h, h/asp, h); break
+      }
       //======== DRAW FRAME AROUND GAME AREA
       ctx.strokeStyle='#FFF'; ctx.strokeRect(0,0, X*h, Y*h)
     }
@@ -339,14 +359,20 @@
       if (winlose==PLAYING) {   
         
         for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
-          if (extras[x+X*y]==BOWSER && ground[x+X*y]>4) {winlose=WIN; break} // Bowser is burned (there's only one)
-          // could check for killing multiple Bowsers
+          if (extras[x+X*y]==BOWSER && ground[x+X*y]>4) {
+            extras[x+X*y]=BOWSER_DYING 
+            winlose=WIN; 
+            // Bowser is burned (there's only one); or could check for killing multiple Bowsers
+            break
+          }
         }
         for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
-          if (extras[x+X*y]==PEACH && ground[x+X*y]>4) {winlose=LOSE; break} // At least one Peach is burned
+          if (extras[x+X*y]==PEACH && ground[x+X*y]>4) {
+            extras[x+X*y]=PEACH_DYING  // yeah man you really screwed this up
+            winlose=LOSE
+            break
+          }
         }
-
-
         if (winlose==WIN) win()
         if (winlose==LOSE) lose()
       }      
@@ -363,15 +389,22 @@
     //=================================================
     // EVENT HANDLERS
     //=================================================
-    async function tryMove(xnew,ynew) {
+    async function tryWalk(xnew,ynew) {
       audioTock = await audioTock
       audioBuzz = await audioBuzz
       if (xnew<0||xnew>=X||ynew<0||ynew>=Y) {audioBuzz.play(); return 0}
-      if (extras[xnew+X*ynew]==SOURCE) {
+      if (extras[xnew+X*ynew]==SOURCE) { // Mario bumps a P Switch, toggling it
         audioTock.play()
-        if (ground[xnew+X*ynew]<4) ground[xnew+X*ynew]=7
+        if      (ground[xnew+X*ynew]<4) ground[xnew+X*ynew]=7
         else if (ground[xnew+X*ynew]>4) ground[xnew+X*ynew]=1
-        return 0}
+        return 0
+      }
+      if (ground[xnew+X*ynew]==4) { // Mario bumps a toad, toggling it?
+        audioTock.play(); ground[xnew+X*ynew]=8; return 0
+      }
+      if (ground[xnew+X*ynew]==8) { // Mario bumps a toad, toggling it?
+        audioTock.play(); ground[xnew+X*ynew]=4; return 0
+      }
       if (extras[xnew+X*ynew]!=WALKABLE) {audioBuzz.play(); return 0}
       xCursor=xnew; yCursor=ynew; audioTock.play(); return 1
     }
@@ -388,15 +421,15 @@
       audioLose.play()
       //alert("ARGH YOU BURNED THE PEACH!")
     }
-    function goLeft()  {tryMove(xCursor-1,yCursor)}
-    function goRight() {tryMove(xCursor+1,yCursor)}
-    function goUp()    {tryMove(xCursor,yCursor-1)}
-    function goDown()  {tryMove(xCursor,yCursor+1)}
+    function walkW()      {marioOrientation=1; tryWalk(xCursor-1,yCursor)}
+    function walkE()      {marioOrientation=0; tryWalk(xCursor+1,yCursor)}
+    function walkN()      {marioOrientation=2; tryWalk(xCursor,yCursor-1)}
+    function walkS()      {marioOrientation=3; tryWalk(xCursor,yCursor+1)}
     function placeLava()  {ground[xCursor+X*yCursor]=7; audioTock.play()}
-    function placeDirt() {ground[xCursor+X*yCursor]=1; audioTock.play()}
+    function placeDirt()  {ground[xCursor+X*yCursor]=1; audioTock.play()}
     function placeGrass() {ground[xCursor+X*yCursor]=0; audioTock.play()}
     function placeToad()  {ground[xCursor+X*yCursor]=4; audioTock.play()}
-    function placeSubway() { // actually TOGGLE SUBWAY ON/OFF
+    function placeSubway(){ // actually TOGGLE SUBWAY ON/OFF
       if(subway[xCursor+X*yCursor]) subway[xCursor+X*yCursor]=0;
       else subway[xCursor+X*yCursor]=3
     }
@@ -418,10 +451,10 @@
       switch (e.key) {
         case '[': setLevel(level-1); break
         case ']': setLevel(level+1); break
-        case 'e': tryMove(xCursor,yCursor-1); break
-        case 's': tryMove(xCursor-1,yCursor); break
-        case 'd': tryMove(xCursor,yCursor+1); break
-        case 'f': tryMove(xCursor+1,yCursor); break // move cursor// case 'ArrowRight':
+        case 'e': walkN(); break
+        case 's': walkW(); break
+        case 'd': walkS(); break
+        case 'f': walkE(); break // move cursor// case 'ArrowRight':
         case ' ': 
           if      (ground[xCursor+X*yCursor]==0) ground[xCursor+X*yCursor]=1 // cold active
           else if (ground[xCursor+X*yCursor]<4)  ground[xCursor+X*yCursor]=7 // hot active
@@ -509,7 +542,8 @@
             case ' ':case'.': ground[x+X*y]=0; break   // grass, void, or bare ground
             case '#': ground[x+X*y]=3; break           // dirt
             case '1': case '2': case '3': case '5': case '6': case '7': ground[x+X*y]=rows[y][x]-'0'; break
-            case 'N': ground[x+X*y]=4; break // NOR gate
+            case 'n': ground[x+X*y]=4; break // NOR gate, initially off?
+            case 'N': ground[x+X*y]=8; break // NOR gate, initially on?
             case '+': ground[x+X*y]=3; subway[x+X*y]=3; break // crossing
             default: ground[x+X*y]=0
           }
@@ -536,7 +570,7 @@
       if (preconverge) for (let iter=0; iter<1000; ++iter) evolve()
       //-------- GAMEPLAY: IDENTIFY START POSITION
       for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) if (rows[y][x]=='M') {xCursor=x; yCursor=y}   
-      bowserX=0;bowserY=0
+      xShaking=0;yShaking=0
 
 
       // for (let y=0; y<Y; ++y) {
@@ -607,9 +641,14 @@
     let audioWin1 = loadAudio('win2.mp3')
     let audioLose = loadAudio('lose.mp3')
 
-    let imgMario = await loadImage('mario.png')
+    let imgMarioE = await loadImage('marioE.webp')
+    let imgMarioW = await loadImage('marioW.webp')
+    let imgMarioN = await loadImage('marioN.webp')
+    let imgMarioS = await loadImage('marioS.webp')
+
+    // let imgMario = await loadImage('mario.png')
     let animPeach = new Animation([await loadImage('peach1.webp'),await loadImage('peach2.webp')])
-    let imgBowser = await loadImage('bowser64.png')
+    let imgBowser = await loadImage('bowser.webp')
     let imgGrass = await loadImage('grass.webp')
     let imgDirt = await loadImage('dirt.webp') // dirt
     let imgLava = await loadImage('lava.webp')
@@ -635,14 +674,14 @@
     btnReset.addEventListener('click', resetGame)
     btnPrev.addEventListener('click', prevLevel)
     btnNext.addEventListener('click', nextLevel)
-    btnLeft.addEventListener('click', goLeft)
-    btnRight.addEventListener('click', goRight)
-    btnUp.addEventListener('click', goUp)
-    btnDown.addEventListener('click', goDown)
-    // btnLeft.addEventListener('touchstart', goLeft)
-    // btnRight.addEventListener('touchstart', goRight)
-    // btnUp.addEventListener('touchstart', goUp)
-    // btnDown.addEventListener('touchstart', goDown)
+    btnLeft.addEventListener('click', walkW)
+    btnRight.addEventListener('click', walkE)
+    btnUp.addEventListener('click', walkN)
+    btnDown.addEventListener('click', walkS)
+    // btnLeft.addEventListener('touchstart', walkW)
+    // btnRight.addEventListener('touchstart', walkE)
+    // btnUp.addEventListener('touchstart', walkN)
+    // btnDown.addEventListener('touchstart', walkS)
     btnLava.addEventListener('click', placeLava)
     btnDirt.addEventListener('click', placeDirt)
     btnCross.addEventListener('click', placeSubway)
