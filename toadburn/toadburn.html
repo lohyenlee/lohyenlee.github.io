@@ -36,11 +36,10 @@
     html,body { 
       overflow: hidden;  /* prevent scrollbars */
       background-color:#333; padding:0; margin:0; width:100%; height:100%; font-family:'gameFont',sans-serif;
-      text-align: center;
     }
     #splashScreen {
       position: absolute;width: 100%; height:100%; text-align: center; color:white;
-      border:1px solid black; font-size:30px;
+      border:1px solid black;
       background: linear-gradient(130deg, #262626, #ff7e00, #fff200);
       background-size: 200% 200%;
       animation: Animation 4s ease infinite;
@@ -51,6 +50,18 @@
       100%{background-position:10% 0%}
     }
     #canvas {position:absolute; z-index:1;}
+    #helpDiv {z-index:4;position:absolute; top:8px;left:8px; background-color:green;
+      border:double 4px black;
+      visibility:hidden; overflow:scroll;
+      padding: 16px;
+    }
+    #helpDiv body {font-family:'gameFont',sans-serif; background-color:#333; color:#CCC;  }
+    #helpDiv h1 {color:white;}
+    #helpDiv h2 {
+        background-image:url('happy1.webp');background-size:contain;background-repeat: no-repeat;background-position:0px;
+        padding:0 0 0 48px; color:#fff;
+    }
+
     #title {position:absolute; z-index:2; top:0; left:0; width:100%;padding:0;text-align:center; font-size:3vmin; color:white; white-space:pre;}
     #controls {position:absolute; z-index:3; bottom:0; left:0; width:100%; visibility:hidden;}
     button {cursor:pointer;
@@ -64,6 +75,7 @@
           } /* square button */
     .btn2 { width:calc(10vmin); height:var(--btnsize);margin:1px; padding:0; font-size: 2vmin;}
     .separator { height:16px; clear:left; }
+    
   </style>
 </head>
 <body>
@@ -73,11 +85,14 @@
   <audio><source src="win2.ogg"></audio>
   <audio><source src="lose.ogg"></audio> -->
   <div id="splashScreen">
-    <div style="text-align: center; vertical-align:center; height:25%; margin-top:12vmin; font-size:12vmin;
+    <div style="text-align: center; vertical-align:center; height:25%; margin-top:12vmin; font-size:5rem;
     white-space: pre;"> T O A D   B U R N </div>
-    <div style="text-align: center; height: 25%; font-size:6vmin;"> By Yen Lee Loh and Isaac Hutchison </div>
-    <div style="text-align: center; height: 25%; font-size:4vmin;"> Loading... </div>
+    <div style="text-align: center; height: 25%; font-size:3rem;"> By Yen Lee Loh and Isaac Hutchison </div>
+    <div style="text-align: center; height: 25%; font-size:2rem;"> Loading... </div>
   </div>
+
+  <div id="helpDiv"></div>
+  
 
   <div id="title"></div> 
   <canvas id="canvas">Your browser does not support the HTML5 canvas tag.</canvas>
@@ -85,7 +100,8 @@
   <!-- <div id="controls" style="position:absolute; bottom:0; left:0; width:100%;"> -->
     <div style="float:left; width:calc(3*var(--btnsize));" id="movementKeypad">
       <!-- <div class="separator"></div> -->
-      <button id="btnHelp"  class="btn1" style="background-image:url(question.webp);"></button>
+      <button               class="btn1" style="visibility: hidden;">  </button>
+      <!-- <button id="btnHelp"  class="btn1" style="background-image:url(question.webp);"></button> -->
       <button id="btnUp"    class="btn1" style="background-image:url(arrowU.svg);"> E </button>
       <button               class="btn1" style="visibility: hidden;">  </button>
       <button id="btnLeft"  class="btn1" style="background-image:url(arrowL.svg);"> S </button>
@@ -146,7 +162,7 @@
     //===============================================
     // GLOBAL VARIABLES: GAMEPLAY AND EYECANDY
     //===============================================
-    const WALKABLE=0,UNWALKABLE=1,LAMP=2,SOURCE=3,PEACH=4,PEACH_DYING=8,BOWSER=16,BOWSER_DYING=32
+    const WALKABLE=0,UNWALKABLE=1,LAMP=2,SOURCE=3,PEACH=4,PEACH_DYING=8,BOWSER=16,BOWSER_DYING=32,QUESTION=127
     const PLAYING=0,WIN=1,LOSE=-1
     let timeStepInMilliseconds=100
     let level=0,levelName,tcur   // current level,  current simulation time (in game ticks)
@@ -157,6 +173,7 @@
     let xShaking=0,yShaking=0
     let winlose=PLAYING 
     let timeOfLastFrame=0
+    let helpLevel=""
 
 
     function isHot(i)  {return i==5||i==6||i==7}
@@ -191,15 +208,6 @@
             N=subway[x+X*(y-1)]; if(N==0) N=ground[x+X*(y-1)]
             S=subway[x+X*(y+1)]; if(S==0) S=ground[x+X*(y+1)]
           }
-
-          // if (extras[(x+1)+X*y]==PEACH) E=0 // SPECIAL RULE: PEACH BLOCKS LAVA
-          // if (extras[(x-1)+X*y]==PEACH) W=0 // SPECIAL RULE: PEACH BLOCKS LAVA
-          // if (extras[x+X*(y-1)]==PEACH) N=0 // SPECIAL RULE: PEACH BLOCKS LAVA
-          // if (extras[x+X*(y+1)]==PEACH) S=0 // SPECIAL RULE: PEACH BLOCKS LAVA
-          // if (extras[(x+1)+X*y]==BOWSER) E=0 // SPECIAL RULE: PEACH BLOCKS LAVA
-          // if (extras[(x-1)+X*y]==BOWSER) W=0 // SPECIAL RULE: PEACH BLOCKS LAVA
-          // if (extras[x+X*(y-1)]==BOWSER) N=0 // SPECIAL RULE: PEACH BLOCKS LAVA
-          // if (extras[x+X*(y+1)]==BOWSER) S=0 // SPECIAL RULE: PEACH BLOCKS LAVA
           
           //======== Update ground-level state 
           if (W==4)      {C=1}  // copy state from gate at west
@@ -218,10 +226,9 @@
                 if      (  (W&7)>4 || (N&7)>4 || (S&7)>4 )             C=4
                 else if (  isCold(W&7) || isCold(N&7) || isCold(S&7) ) C=8
                 else C=C 
-              case 0: // current ground is Peahc or Borwser
+              case 0: // PEACH and BOWSER act as absorbers of HOT only
                 if (extras[x+X*y]==PEACH||extras[x+X*y]==BOWSER) {
-                  if ((E&7)==1 || (W&7)==1 || (N&7)==1 || (S&7)==1) C=1
-                  if ((E&7)==7 || (W&7)==7 || (N&7)==7 || (S&7)==7) C=7
+                  if ((E&7)==7 || (W&7)==7 || (N&7)==7 || (S&7)==7) C=5
                 }
             }
           }
@@ -307,6 +314,9 @@
       let size,xcen,ycen
       for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
         switch (extras[x+X*y]) {
+          case QUESTION:
+            ctx.drawImage(imgQuestion, x*h,y*h,h,h)
+            break
           case LAMP:
             if (ground[x+X*y]>4) {
               if ((Math.floor(tcur/10)%2)) ctx.drawImage(imgStarOn, x*h-24, y*h-24, h+48, h+48)
@@ -321,9 +331,11 @@
             break
           case PEACH:
             size=h*1.1,xcen=(x+.5)*h,ycen=(y+.5)*h
+            ctx.drawImage(imgDirt,x*h,y*h,h,h)     
             animPeach.draw(xcen-size/2, ycen-size/2, size,size, (Math.floor(tcur/140)%2))          
             break
           case PEACH_DYING:
+            animLava.draw(x*h,y*h,h,h, (Math.floor((tcur+2*x+y)/16)%2))            
             size=h*1.1,xcen=(x+.5)*h + xShaking,ycen=(y+.5)*h + yShaking // reuse  these variables
             ctx.save(); // Save current canvas state
             ctx.translate(xcen,ycen); // Translate to the center of the image
@@ -335,9 +347,11 @@
             break
           case BOWSER:
             size=h*1.5,xcen=(x+.5)*h,ycen=(y+.5)*h
+            ctx.drawImage(imgDirt,x*h,y*h,h,h)     
             ctx.drawImage(imgBowser, xcen-size/2, ycen-size/2, size,size)
             break
           case BOWSER_DYING:
+            animLava.draw(x*h,y*h,h,h, (Math.floor((tcur+2*x+y)/16)%2))            
             size=h*1.5,xcen=(x+.5)*h+xShaking,ycen=(y+.5)*h+yShaking
             ctx.drawImage(imgBowser, xcen-size/2, ycen-size/2, size,size)
             if (tcur<100) {xShaking+=Math.cos(tcur*.6)*2; yShaking=Math.sin(tcur*.3)*10 }
@@ -399,6 +413,13 @@
       audioTock = await audioTock
       audioBuzz = await audioBuzz
       if (xnew<0||xnew>=X||ynew<0||ynew>=Y) {audioBuzz.play(); return 0}
+      if (extras[xnew+X*ynew]==QUESTION) { // Mario bumps a Question block
+        audioTock.play()
+        await openHelp()
+        helpDiv.focus() // hmm
+        // console.log(helpDiv.style.visibility)
+        return 0
+      }      
       if (extras[xnew+X*ynew]==SOURCE) { // Mario bumps a P Switch, toggling it
         audioTock.play()
         if      (ground[xnew+X*ynew]<4) ground[xnew+X*ynew]=7
@@ -436,7 +457,10 @@
     function placeGrass() {ground[xCursor+X*yCursor]=0; audioTock.play()}
     function placeToad()  {ground[xCursor+X*yCursor]=4; audioTock.play()}
     function placeSubway(){ // actually TOGGLE SUBWAY ON/OFF
-      if(subway[xCursor+X*yCursor]) subway[xCursor+X*yCursor]=0;
+      if(subway[xCursor+X*yCursor]) {
+        subway[xCursor+X*yCursor]=0
+        if (!ground[xCursor+X*yCursor]) ground[xCursor+X*yCursor]=3
+      }
       else subway[xCursor+X*yCursor]=3
     }
     function goSlow()  {timeStepInMilliseconds=100}
@@ -452,6 +476,9 @@
     }
     
     async function keydown(e) {
+      if (helpDiv.style.visibility=="visible") {helpDiv.style.visibility="hidden"; return}
+
+
       if (e.ctrlKey||e.altKey) return // don't trap browser shortcuts involving Ctrl or Alt
       let processed=true
       switch (e.key) {
@@ -525,7 +552,15 @@
       btnToad.disabled = !sandbox
       btnCross.disabled = !sandbox
       btnGrass.disabled = !sandbox
-     
+ 
+      helpLevel="No help for this level!"
+      const regex5 = /<help>(.*?)<\/help>\s+/gs
+      match = regex5.exec(levelMap)
+      if (match) {
+        helpLevel=match[1]
+        levelMap = levelMap.replace(regex5, "")
+      }
+       
       let rows = /<levelmap>\s+(.*?)<\/levelmap>/gs . exec(levelMap) [1]        
       rows = rows.split(/[\r\n]/).filter(i=>i) 
       // console.log(rows)
@@ -568,12 +603,22 @@
             case 'P': extras[x+X*y]=PEACH; break // Peach starts unburned
             case 'B': extras[x+X*y]=BOWSER; break // Bowser starts unburned
             case '.':case'M':extras[x+X*y]=WALKABLE; break
+            case '?': extras[x+X*y]=QUESTION; break
             default:  extras[x+X*y]=UNWALKABLE; break
           }
         }
       }
       //-------- GAMEPLAY: PRE-CONVERGE TO STEADY STATE PREVENT PREMATURE WIN
       if (preconverge) for (let iter=0; iter<preconverge; ++iter) evolve()
+       //-------- GAMEPLAY: LOAD PEACHES AND BOWSERS AGAIN!!!! (UGLY HACK)
+      for (let y=0; y<rows.length; ++y) {
+        for (let x=0; x<rows[y].length && x<X; ++x) {
+          switch (rows[y][x]) {
+            case 'P': extras[x+X*y]=PEACH; ground[x+X*y]=0;break // Peach starts unburned
+            case 'B': extras[x+X*y]=BOWSER;ground[x+X*y]=0; break // Bowser starts unburned
+          }
+        }
+      }
       //-------- GAMEPLAY: IDENTIFY START POSITION
       for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) if (rows[y][x]=='M') {xCursor=x; yCursor=y}   
       xShaking=0;yShaking=0
@@ -591,7 +636,7 @@
       winWid=window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth
       winHei=window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight
       let availWidth =clamp(winWid, 300, 1600) // set canvas width according to window width; warning: btnSize=48
-      let availHeight=clamp(winHei, 300, 800) // may reduce this
+      let availHeight=clamp(winHei*(1-.16), 300, 1200) // may reduce this
       cellsize=Math.min(Math.floor(availWidth/X),Math.floor((availHeight)/Y)) // for graphics
       canvas.width=X*cellsize
       canvas.height=Y*cellsize
@@ -615,14 +660,28 @@
     async function prevLevel() {await setLevel(level-1)}
     async function nextLevel() {await setLevel(level+1)}
 
-    function openHelp() {
+    async function openHelp() {
+
       winWid=window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth
       winHei=window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight
-      const wid=winWid - 32
-      const hei=winHei - 32
-      const windowFeatures = `popup=true,width=${wid},height=${hei}`
-      console.log(windowFeatures)
-      let newWin = window.open('toadburnhelp.html', 'blankWindow', windowFeatures)
+      const wid=winWid - 64
+      const hei=winHei - 64
+      // const windowFeatures = `popup=true,width=${wid},height=${hei}`
+      // console.log(windowFeatures)
+      // let newWin = window.open('toadburnhelp.html', 'blankWindow', windowFeatures)
+      
+      helpDiv.style.width = wid + "px"
+      helpDiv.style.height = hei + "px"
+
+
+      if (helpLevel.trim()=="MAIN") helpDiv.innerHTML = await fetch('toadburnhelp.html').then(r=>r.text())
+      else helpDiv.innerHTML = helpLevel
+      // console.log(helpLevel)
+      helpDiv.onclick = ()=>helpDiv.style.visibility="hidden"
+      // helpDiv.onkeydown = (e)=>{e.preventDefault();e.stopPropagation();helpDiv.style.visibility="hidden"}
+      helpDiv.focus()
+      helpDiv.style.visibility = "visible"
+      //return new Promise((r)=>r())
       // if (newWin) {
       //   // newWin.document.write('<h1>Hello from the new window!</h1>')
       // }
@@ -652,6 +711,7 @@
     let audioOof  = await loadAudio('oof.mp3')
     let audioOw   = await loadAudio('ow.mp3')
 
+    let imgQuestion = await loadImage('question.webp')
     let imgMarioE = await loadImage('marioE.webp')
     let imgMarioW = await loadImage('marioW.webp')
     let imgMarioN = await loadImage('marioN.webp')
@@ -700,7 +760,7 @@
     btnFast.addEventListener('click', goFast)
     btnCheat.addEventListener('click', enterCheatMode)
 
-    btnHelp.addEventListener('click', openHelp)
+    // btnHelp.addEventListener('click', openHelp)
     
     requestAnimationFrame(animate)
   </script>

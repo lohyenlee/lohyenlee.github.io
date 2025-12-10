@@ -1,6 +1,7 @@
 
 
 <levelmap> <timestep> 200 </timestep> <preconverge> 0 </preconverge>
+<help> MAIN </help>
 <name>T O A D     B U R N<br>By Yen Lee Loh &amp; Isaac Hutchison (2025)
 </name>
 
@@ -16,14 +17,21 @@
 ..++++++++++++++++.
 ..#...#.#.###.###..
 ..###.#.#.#...#.#..
-..#.#.#.#.#.M.#.#..
+..#.#.#.#.#.?.#.#..
 ..###.###.#...#.#..
-...................
+............M......
 </levelmap>
 
 
-<levelmap> <timestep>100</timestep> <name> 1-1   LIGHT THE FUSE </name>
-..............
+<levelmap> <timestep>100</timestep> 
+<help>
+<div style="font-size: 2rem;">
+MOVE MARIO USING THE BUTTONS OR ESDF KEYS!
+TRY BUMPING INTO THE TOAD.
+</div>
+</help>
+<name> 1-1   LIGHT THE FUSE </name>
+?.............
 ...n##### ###
 ..      # # #
 M. ###### # #
@@ -35,7 +43,12 @@ M. ###### # #
 </levelmap>
 
 <levelmap> <timestep>100</timestep> <name> 1-2   SAVE THE PRINCESS </name>
-.. ..####..
+<help>
+<div style="font-size: 2rem;">
+WHICH TOAD SHOULD YOU BUMP?
+</div>
+</help>
+?. ..####..
 ..n###..#..
 .. ....P#..
 .M ....#...
@@ -121,7 +134,7 @@ M.s#+##.#.#...
 .. .#...#.#.#.
 .. .#.###.B.#.
 ..s##.#. ...#.
-.. ...#N#N#P#.
+.. ...7N#n#P#.
 ..           
 ..............
 </levelmap>
@@ -202,7 +215,7 @@ Ms#
   ### #               
     ##N################N#
                         N#####B
-    ##N################N#                  
+    ##N################N#  
   ### #                 
   # N##
   #            
@@ -216,7 +229,7 @@ Ms#
 ..                  
 </levelmap>
 
-<levelmap> <timestep>100</timestep> <sandbox> S-1 </sandbox> <name> SANDBOX: ROLL YOUR OWN! </name>
+<levelmap> <timestep>100</timestep> <sandbox> 1 </sandbox> <name> S-1   SANDBOX: ROLL YOUR OWN! </name>
 ..................................
 ..................................
 ..................................
@@ -238,7 +251,7 @@ Ms#
 ..................................
 </levelmap>
 
-<levelmap> <timestep>100</timestep> <name> S-2  Isaac </name>
+<levelmap> <timestep>100</timestep> <name> S-2   ISAAC </name>
 .
 .   B
 .S5N+3 
@@ -248,7 +261,7 @@ Ms#
 
 
 
-<levelmap> <timestep> 100 </timestep> <name> 2-1  AND, OR, NOT </name>
+<levelmap> <timestep> 100 </timestep> <name> 2-1   AND, OR, NOT </name>
 .......................
 .                     .
 M         ... ... ... .
@@ -266,7 +279,7 @@ M         ... ... ... .
 .                     .
 .......................
 </levelmap>
-<levelmap> <timestep> 100 </timestep> <name> 2-2  NOR, NAND </name>
+<levelmap> <timestep> 100 </timestep> <name> 2-2   NOR, NAND </name>
 ...........................
 M                     .....
 .s###     ... ... ...  ....
@@ -281,7 +294,7 @@ M                     .....
 ...........................
 </levelmap>
 
-<levelmap> <timestep>0</timestep> <name> 2-3  XOR, EQV </name>
+<levelmap> <timestep>0</timestep> <name> 2-3   XOR, EQV </name>
 ........................
 M                      .
 .s###N##   . . ... ... .
@@ -297,7 +310,7 @@ M                      .
 ........................
 </levelmap>
 
-<levelmap> <timestep>0</timestep> <name> 2-4  AND3, OR3, XOR3, MAJ3 </name>
+<levelmap> <timestep>0</timestep> <name> 2-4   AND3, OR3, XOR3, MAJ3 </name>
 .......................
 .        .            .
 .s#N##   .s##N##      .
@@ -316,7 +329,7 @@ M                      .
 M......................
 </levelmap>
 
-<levelmap> <timestep>0</timestep> <name> 2-5  HALF ADDER </name>
+<levelmap> <timestep>0</timestep> <name> 2-5   HALF ADDER </name>
 ..............................
 M                            .
 .  ###N#   ... ... .. .. . . .
@@ -331,7 +344,7 @@ M                            .
 ..............................
 </levelmap>
 
-<levelmap> <timestep>0</timestep> <name> 2-6  FULL ADDER </name>
+<levelmap> <timestep>0</timestep> <name> 2-6   FULL ADDER </name>
 .....................
 .s######N###      
 .  #     # N##  ###L
@@ -348,7 +361,7 @@ Ms#+####N+## #  #
 .      #####N#N##  
 </levelmap>
 
-<levelmap> <timestep>0</timestep> <name> 3-1  SR FLIP FLOP </name>
+<levelmap> <timestep>0</timestep> <name> 3-1   SR FLIP FLOP </name>
 ....................
 ...###..M......s.s..
 ...#.##...#+##.#.#..
@@ -359,7 +372,7 @@ Ms#+####N+## #  #
 </levelmap>
 
 <levelmap> <timestep>0</timestep> 
-<name> 3-2  D FLIP FLOP </name>
+<name> 3-2   D FLIP FLOP </name>
 ..7
 777
 7.7
@@ -375,7 +388,7 @@ Ms#+####N+## #  #
 
 <levelmap> <timestep> 0 </timestep> 
 <preconverge> 0 </preconverge> 
-<name> 3-3  T FLIP FLOP </name>
+<name> 3-3   T FLIP FLOP </name>
 .....
 ..MN########N#
     #        #       
@@ -392,7 +405,7 @@ Ms#+####N+## #  #
 
 <levelmap> <timestep> 0 </timestep> 
 <preconverge> 0 </preconverge> 
-<name> 3-4  THREE BIT COUNTER </name>
+<name> 3-4   THREE BIT COUNTER </name>
 .....
 ..MN########N#
     #        #       
@@ -433,7 +446,7 @@ Ms#+####N+## #  #
 
 <levelmap> <timestep> 0 </timestep> 
 <preconverge> 0 </preconverge> 
-<name> 3-4  CLOCK AND COUNTER </name>
+<name> 3-5   CLOCK AND COUNTER </name>
               ....
  n########N########N#
  # #       #        #       
