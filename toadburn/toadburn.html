@@ -18,29 +18,6 @@
   <!-- <link rel="preload" href="staron.webp" as="image"> -->
   <!-- <link rel="preload" href="staroff.webp" as="image"> -->
   <style>
-    .gradient {
-      height:300px; width:300px; border:1px solid black; font-size:30px;
-      background: linear-gradient(130deg, #262626, #ff7e00, #fff200);
-      background-size: 200% 200%;
-      -webkit-animation: Animation 4s ease infinite;
-      -moz-animation: Animation 4s ease infinite;
-      animation: Animation 4s ease infinite;
-    }   
-    @-webkit-keyframes Animation {
-      0%{background-position:10% 0%}
-      50%{background-position:91% 100%}
-      100%{background-position:10% 0%}
-    }
-    @-moz-keyframes Animation {
-      0%{background-position:10% 0%}
-      50%{background-position:91% 100%}
-      100%{background-position:10% 0%}
-    }
-    @keyframes Animation { 
-      0%{background-position:10% 0%}
-      50%{background-position:91% 100%}
-      100%{background-position:10% 0%}
-    }
     /* @font-face {
       font-family: 'Titillium Web';
       font-style: normal;
@@ -56,9 +33,26 @@
       font-style: normal;  /* Define the style (e.g., normal, italic) */
     }
     :root {--btnsize:8vmin;}
-    html,body { overflow: hidden;  /* don't use scrollbars ! */
-      background-color:#333; padding:0; margin:0; width:100%; height:100%; font-family:'gameFont',sans-serif;}
-    #title {position:absolute;top:2px;width:100%;padding:0;margin:0;text-align:center; font-size:3vmin; color:white;}
+    html,body { 
+      overflow: hidden;  /* prevent scrollbars */
+      background-color:#333; padding:0; margin:0; width:100%; height:100%; font-family:'gameFont',sans-serif;
+      text-align: center;
+    }
+    #splashScreen {
+      position: absolute;width: 100%; height:100%; text-align: center; color:white;
+      border:1px solid black; font-size:30px;
+      background: linear-gradient(130deg, #262626, #ff7e00, #fff200);
+      background-size: 200% 200%;
+      animation: Animation 4s ease infinite;
+    }   
+    @keyframes Animation { 
+      0%{background-position:10% 0%}
+      50%{background-position:91% 100%}
+      100%{background-position:10% 0%}
+    }
+    #canvas {position:absolute; z-index:1;}
+    #title {position:absolute; z-index:2; top:0; left:0; width:100%;padding:0;text-align:center; font-size:3vmin; color:white; white-space:pre;}
+    #controls {position:absolute; z-index:3; bottom:0; left:0; width:100%; visibility:hidden;}
     button {cursor:pointer;
             float:left;margin:0;padding:0;text-align:center; border-radius:8px; font-family:'gameFont',sans-serif; 
             font-size: 4vmin;
@@ -73,20 +67,21 @@
   </style>
 </head>
 <body>
-  <div id="splashScreen" class="gradient" style="width: 100%; height:100%; color:#FFF; text-align: center;">
-  <div style="text-align: center; vertical-align:center; height:25%; font-size:12vmin;
-  white-space: pre;"> T O A D   B U R N </div>
-  <div style="text-align: center; height: 25%; font-size:6vmin;"> By Yen Lee Loh and Isaac Hutchison </div>
-  <div style="text-align: center; height: 25%; font-size:4vmin;"> Loading... </div>
-  </div>
   <!-- <audio><source src="tock.mp3"></audio>
   <audio><source src="buzz.ogg"></audio>
   <audio><source src="win1.ogg"></audio>
   <audio><source src="win2.ogg"></audio>
   <audio><source src="lose.ogg"></audio> -->
-  <canvas id="canvas" style="position:absolute; top:0; left:0px;">Your browser does not support the HTML5 canvas tag.</canvas>
-  <div id="title"></div>
-  <div id="controls" style="position:absolute; bottom:0; left:0; width:100%; visibility:hidden;">
+  <div id="splashScreen">
+    <div style="text-align: center; vertical-align:center; height:25%; margin-top:12vmin; font-size:12vmin;
+    white-space: pre;"> T O A D   B U R N </div>
+    <div style="text-align: center; height: 25%; font-size:6vmin;"> By Yen Lee Loh and Isaac Hutchison </div>
+    <div style="text-align: center; height: 25%; font-size:4vmin;"> Loading... </div>
+  </div>
+
+  <div id="title"></div> 
+  <canvas id="canvas">Your browser does not support the HTML5 canvas tag.</canvas>
+  <div id="controls">
   <!-- <div id="controls" style="position:absolute; bottom:0; left:0; width:100%;"> -->
     <div style="float:left; width:calc(3*var(--btnsize));" id="movementKeypad">
       <!-- <div class="separator"></div> -->
@@ -98,13 +93,13 @@
       <button id="btnRight" class="btn1" style="background-image:url(arrowR.svg);"> F </button>
     </div>
     <div style="float:left; margin:0ex 5ex 0ex 5ex;">
-      <button id="btnPrev"  class="btn2" title="Key: [">       Prev </button>
-      <button id="btnReset" class="btn2" title="Key: Shift-R"> Reset </button>
-      <button id="btnNext"  class="btn2" title="Key: [">       Next  </button>
+      <button id="btnPrev"  class="btn2" title="Key: [">       PREV </button>
+      <button id="btnReset" class="btn2" title="Key: Shift-R"> RESET </button>
+      <button id="btnNext"  class="btn2" title="Key: [">       NEXT  </button>
       <br>
-      <button id="btnSlow"  class="btn2">Slow</button>
-      <button id="btnFast"  class="btn2">Fast</button>
-      <button id="btnCheat" class="btn2" title="Key: Shift-C"> Cheat</button>
+      <button id="btnSlow"  class="btn2">SLOW</button>
+      <button id="btnFast"  class="btn2">FAST</button>
+      <button id="btnCheat" class="btn2" title="Key: Shift-C"> CHEAT</button>
     </div>
     <div style="position:absolute; bottom: 0; right:0; width:calc(5*var(--btnsize));" id="actionButtons">
       <button id="btnLava"  class="btn1" style="background-image:url(lava.webp);" disabled="disabled"> H </button>
@@ -197,10 +192,14 @@
             S=subway[x+X*(y+1)]; if(S==0) S=ground[x+X*(y+1)]
           }
 
-          if (extras[(x+1)+X*y]==PEACH) E=0 // SPECIAL RULE: PEACH BLOCKS LAVA
-          if (extras[(x-1)+X*y]==PEACH) W=0 // SPECIAL RULE: PEACH BLOCKS LAVA
-          if (extras[x+X*(y-1)]==PEACH) N=0 // SPECIAL RULE: PEACH BLOCKS LAVA
-          if (extras[x+X*(y+1)]==PEACH) S=0 // SPECIAL RULE: PEACH BLOCKS LAVA
+          // if (extras[(x+1)+X*y]==PEACH) E=0 // SPECIAL RULE: PEACH BLOCKS LAVA
+          // if (extras[(x-1)+X*y]==PEACH) W=0 // SPECIAL RULE: PEACH BLOCKS LAVA
+          // if (extras[x+X*(y-1)]==PEACH) N=0 // SPECIAL RULE: PEACH BLOCKS LAVA
+          // if (extras[x+X*(y+1)]==PEACH) S=0 // SPECIAL RULE: PEACH BLOCKS LAVA
+          // if (extras[(x+1)+X*y]==BOWSER) E=0 // SPECIAL RULE: PEACH BLOCKS LAVA
+          // if (extras[(x-1)+X*y]==BOWSER) W=0 // SPECIAL RULE: PEACH BLOCKS LAVA
+          // if (extras[x+X*(y-1)]==BOWSER) N=0 // SPECIAL RULE: PEACH BLOCKS LAVA
+          // if (extras[x+X*(y+1)]==BOWSER) S=0 // SPECIAL RULE: PEACH BLOCKS LAVA
           
           //======== Update ground-level state 
           if (W==4)      {C=1}  // copy state from gate at west
@@ -219,6 +218,11 @@
                 if      (  (W&7)>4 || (N&7)>4 || (S&7)>4 )             C=4
                 else if (  isCold(W&7) || isCold(N&7) || isCold(S&7) ) C=8
                 else C=C 
+              case 0: // current ground is Peahc or Borwser
+                if (extras[x+X*y]==PEACH||extras[x+X*y]==BOWSER) {
+                  if ((E&7)==1 || (W&7)==1 || (N&7)==1 || (S&7)==1) C=1
+                  if ((E&7)==7 || (W&7)==7 || (N&7)==7 || (S&7)==7) C=7
+                }
             }
           }
           groundNew[x+X*y] = C
@@ -279,7 +283,7 @@
             ctx.drawImage(imgDirt, x*h, y*h, h, h)
             break
           case 5: case 6: case 7: 
-            ctx.drawImage(imgLava, x*h, y*h, h, h)
+            animLava.draw(x*h,y*h,h,h, (Math.floor((tcur+2*x+y)/16)%2))            
             break
           case 4: // at least one input is HIGH, output is LOW
             ctx.drawImage(imgDirt, x*h, y*h, h, h)
@@ -344,11 +348,13 @@
       //======== DRAW MARIO
       tcur += 1
       let asp = imgMarioE.height/imgMarioE.width;
+      xcen=(xCursor+.5)*h,ycen=(yCursor+.5)*h
+      let sy=h*1.1, sx=sy/asp
       switch (marioOrientation) {
-        case 0: ctx.drawImage(imgMarioE, xCursor*h, yCursor*h, h/asp, h); break
-        case 1: ctx.drawImage(imgMarioW, xCursor*h, yCursor*h, h/asp, h); break
-        case 2: ctx.drawImage(imgMarioN, xCursor*h, yCursor*h, h/asp, h); break
-        case 3: ctx.drawImage(imgMarioS, xCursor*h, yCursor*h, h/asp, h); break
+        case 0: ctx.drawImage(imgMarioE, xcen-sx/2, ycen-sy/2, sx, sy); break
+        case 1: ctx.drawImage(imgMarioW, xcen-sx/2, ycen-sy/2, sx, sy); break
+        case 2: ctx.drawImage(imgMarioN, xcen-sx/2, ycen-sy/2, sx, sy); break
+        case 3: ctx.drawImage(imgMarioS, xcen-sx/2, ycen-sy/2, sx, sy); break
       }
       //======== DRAW FRAME AROUND GAME AREA
       ctx.strokeStyle='#FFF'; ctx.strokeRect(0,0, X*h, Y*h)
@@ -400,10 +406,10 @@
         return 0
       }
       if (ground[xnew+X*ynew]==4) { // Mario bumps a toad, toggling it?
-        audioTock.play(); ground[xnew+X*ynew]=8; return 0
+        audioOof.play(); ground[xnew+X*ynew]=8; return 0
       }
       if (ground[xnew+X*ynew]==8) { // Mario bumps a toad, toggling it?
-        audioTock.play(); ground[xnew+X*ynew]=4; return 0
+        audioOw.play(); ground[xnew+X*ynew]=4; return 0
       }
       if (extras[xnew+X*ynew]!=WALKABLE) {audioBuzz.play(); return 0}
       xCursor=xnew; yCursor=ynew; audioTock.play(); return 1
@@ -483,8 +489,7 @@
     //===============================================
     async function loadLevel(levelMap) {
       levelMap = await levelMap
-      // console.log(levelMap)
-
+      
       let match
       const regex1 = /<timestep>(.*?)<\/timestep>\s+/gs
       match = regex1.exec(levelMap)
@@ -493,14 +498,14 @@
         levelMap = levelMap.replace(regex1, "")
       }
      
-      const regex2 = /<<<name>>>(.*?)<\/name>\s+/gs 
+      const regex2 = /<name>(.*?)<\/name>\s+/gs 
       match = regex2.exec(levelMap)
       if (match) {
         levelName=match[1]
         levelMap = levelMap.replace(regex2, "")
       }
 
-      let preconverge=1 // default is YES
+      let preconverge=100 // default
       const regex3 = /<preconverge>(.*?)<\/preconverge>\s+/gs
       match = regex3.exec(levelMap)
       if (match) {
@@ -521,9 +526,10 @@
       btnCross.disabled = !sandbox
       btnGrass.disabled = !sandbox
      
-      let rows = /<levelmap>\s+(.*?)<\/levelmap>/gs . exec(levelMap) [1]
+      let rows = /<levelmap>\s+(.*?)<\/levelmap>/gs . exec(levelMap) [1]        
       rows = rows.split(/[\r\n]/).filter(i=>i) 
-      
+      // console.log(rows)
+
       //-------- DETERMINE MAP SIZE AND ALLOCATE ARRAYS
       X = Math.max(...rows.map(s=>s.length))        // length of longest line
       Y = rows.length
@@ -559,15 +565,15 @@
             case 'L': extras[x+X*y]=LAMP; ground[x+X*y]=3; break // Lamp
             case 's': extras[x+X*y]=SOURCE; ground[x+X*y]=3; break // Source (P Switch) off
             case 'S': extras[x+X*y]=SOURCE; ground[x+X*y]=5; break // Source (P Switch) on
-            case 'P': extras[x+X*y]=PEACH; ground[x+X*y]=3; break // Peach starts unburned
-            case 'B': extras[x+X*y]=BOWSER; ground[x+X*y]=3; break // Bowser starts unburned
+            case 'P': extras[x+X*y]=PEACH; break // Peach starts unburned
+            case 'B': extras[x+X*y]=BOWSER; break // Bowser starts unburned
             case '.':case'M':extras[x+X*y]=WALKABLE; break
             default:  extras[x+X*y]=UNWALKABLE; break
           }
         }
       }
       //-------- GAMEPLAY: PRE-CONVERGE TO STEADY STATE PREVENT PREMATURE WIN
-      if (preconverge) for (let iter=0; iter<1000; ++iter) evolve()
+      if (preconverge) for (let iter=0; iter<preconverge; ++iter) evolve()
       //-------- GAMEPLAY: IDENTIFY START POSITION
       for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) if (rows[y][x]=='M') {xCursor=x; yCursor=y}   
       xShaking=0;yShaking=0
@@ -589,6 +595,9 @@
       cellsize=Math.min(Math.floor(availWidth/X),Math.floor((availHeight)/Y)) // for graphics
       canvas.width=X*cellsize
       canvas.height=Y*cellsize
+      canvas.style.left =  Math.floor((winWid-canvas.width)/2) + "px"
+      title.style.left = Math.floor((winWid-canvas.width)/2) + "px"
+      title.style.width = canvas.width + "px"
     }
     async function resetGame() {
       tcur=0; xCursor=0; yCursor=0; winlose=PLAYING
@@ -614,9 +623,9 @@
       const windowFeatures = `popup=true,width=${wid},height=${hei}`
       console.log(windowFeatures)
       let newWin = window.open('toadburnhelp.html', 'blankWindow', windowFeatures)
-      if (newWin) {
-        // newWin.document.write('<h1>Hello from the new window!</h1>')
-      }
+      // if (newWin) {
+      //   // newWin.document.write('<h1>Hello from the new window!</h1>')
+      // }
     }
     //===============================================
     // MAIN MODULE CODE
@@ -625,7 +634,7 @@
     document.body.addEventListener('dblclick', function(e) { e.preventDefault() })
     const ctx=canvas.getContext('2d')
     setScaling()
-    document.body.insertBefore(canvas, document.body.childNodes[0])
+    // document.body.insertBefore(canvas, document.body.childNodes[0])
     window.addEventListener('resize', setScaling)
 
     //===============================================
@@ -640,22 +649,23 @@
     let audioWin0 = loadAudio('win1.mp3')
     let audioWin1 = loadAudio('win2.mp3')
     let audioLose = loadAudio('lose.mp3')
+    let audioOof  = await loadAudio('oof.mp3')
+    let audioOw   = await loadAudio('ow.mp3')
 
     let imgMarioE = await loadImage('marioE.webp')
     let imgMarioW = await loadImage('marioW.webp')
     let imgMarioN = await loadImage('marioN.webp')
     let imgMarioS = await loadImage('marioS.webp')
-
-    // let imgMario = await loadImage('mario.png')
     let animPeach = new Animation([await loadImage('peach1.webp'),await loadImage('peach2.webp')])
     let imgBowser = await loadImage('bowser.webp')
     let imgGrass = await loadImage('grass.webp')
     let imgDirt = await loadImage('dirt.webp') // dirt
     let imgLava = await loadImage('lava.webp')
+    let imgLava2 = await loadImage('lava2.webp')
+    let animLava = new Animation([imgLava,imgLava2])
     // let imgCrying1 = await loadImage('crying1.webp')
     // let imgCrying2 = await loadImage('crying2.webp')
     let animCrying = new Animation([await loadImage('crying1.webp'),await loadImage('crying2.webp')])
-
     let imgHappy1 = await loadImage('happy1.webp')
     let imgHappy2 = await loadImage('happy2.webp')
     let animHappy = new Animation([imgHappy1,imgHappy2])
@@ -663,7 +673,6 @@
     let imgStarOff = await loadImage('staroff.webp')
     let imgSourceOff = await loadImage('sourceoff.webp')
     let imgSourceOn = await loadImage('sourceon.webp')
-
     let levelMaps = await loadString('toadburnmaps.txt') // clear browser cache if this file is edited
     // TBD: do properly using Promise
     levelMaps = [...levelMaps.matchAll(  /<levelmap>.*?<\/levelmap>/gs )].map(i=>i[0])
