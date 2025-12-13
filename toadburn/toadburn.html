@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -50,18 +50,31 @@
       100%{background-position:10% 0%}
     }
     #canvas {position:absolute; z-index:1;}
-    #helpDiv {z-index:4;position:absolute; top:8px;left:8px; background-color:green;
-      border:double 4px black;
-      visibility:hidden; overflow:scroll;
-      padding: 16px;
+    #helpDivContainer {
+      margin: 32px;
+      padddng: 32px;
     }
-    #helpDiv body {font-family:'gameFont',sans-serif; background-color:#333; color:#CCC;  }
-    #helpDiv h1 {color:white;}
+    #helpDiv {
+      display: none;  /* overflow:scroll; */
+      z-index:4;position:absolute; 
+      /* left:10vw;width:80vw; top:20vh;height:60vh;  */
+      /* left:10vw;width:80vw; top:20vh;height:60vh;  */
+      /* left: 70%; top: 0%; transform: translate(-70%, 0%); */
+      right: 0; bottom:0;
+      height:fit-content;
+      width:80%; 
+      /* max-content; */
+      /* width:auto; */
+      padding: 1rem 2rem 1rem 6rem; 
+      box-shadow: 0px 4 px 8px 0px #333, 0px 8px 16px 8px #000;
+      background-color:#666; border:double 4px black; border-radius: 20px; 
+      color:white; font-family:'gameFont',sans-serif; font-size: 1.5rem;
+      background-image:url('peach1.webp');background-size:6rem;background-repeat:no-repeat;background-position:0rem;
+    }
     #helpDiv h2 {
         background-image:url('happy1.webp');background-size:contain;background-repeat: no-repeat;background-position:0px;
         padding:0 0 0 48px; color:#fff;
     }
-
     #title {position:absolute; z-index:2; top:0; left:0; width:100%;padding:0;text-align:center; font-size:3vmin; color:white; white-space:pre;}
     #controls {position:absolute; z-index:3; bottom:0; left:0; width:100%; visibility:hidden;}
     button {cursor:pointer;
@@ -75,10 +88,10 @@
           } /* square button */
     .btn2 { width:calc(10vmin); height:var(--btnsize);margin:1px; padding:0; font-size: 2vmin;}
     .separator { height:16px; clear:left; }
-    
+    .indepth {font-size:1rem;color:#DDD;}
   </style>
 </head>
-<body>
+<body id="body">
   <!-- <audio><source src="tock.mp3"></audio>
   <audio><source src="buzz.ogg"></audio>
   <audio><source src="win1.ogg"></audio>
@@ -91,14 +104,16 @@
     <div style="text-align: center; height: 25%; font-size:2rem;"> Loading... </div>
   </div>
 
+  <div id="helpDivContainer">
   <div id="helpDiv"></div>
+  </div>
   
 
   <div id="title"></div> 
   <canvas id="canvas">Your browser does not support the HTML5 canvas tag.</canvas>
-  <div id="controls">
-  <!-- <div id="controls" style="position:absolute; bottom:0; left:0; width:100%;"> -->
-    <div style="float:left; width:calc(3*var(--btnsize));" id="movementKeypad">
+  <!-- <div id="controls"> -->
+  <div id="controls" style="position:absolute; bottom:0; left:0; width:100%;">
+    <div style="position: absolute; left:0;bottom:0; width:calc(3*var(--btnsize));" id="movementKeypad">
       <!-- <div class="separator"></div> -->
       <button               class="btn1" style="visibility: hidden;">  </button>
       <!-- <button id="btnHelp"  class="btn1" style="background-image:url(question.webp);"></button> -->
@@ -108,21 +123,20 @@
       <button id="btnDown"  class="btn1" style="background-image:url(arrowD.svg);"> D </button>
       <button id="btnRight" class="btn1" style="background-image:url(arrowR.svg);"> F </button>
     </div>
-    <div style="float:left; margin:0ex 5ex 0ex 5ex;">
-      <button id="btnPrev"  class="btn2" title="Key: [">       PREV </button>
-      <button id="btnReset" class="btn2" title="Key: Shift-R"> RESET </button>
-      <button id="btnNext"  class="btn2" title="Key: [">       NEXT  </button>
-      <br>
-      <button id="btnSlow"  class="btn2">SLOW</button>
-      <button id="btnFast"  class="btn2">FAST</button>
-      <button id="btnCheat" class="btn2" title="Key: Shift-C"> CHEAT</button>
-    </div>
-    <div style="position:absolute; bottom: 0; right:0; width:calc(5*var(--btnsize));" id="actionButtons">
+    <div style="float:right; width:calc(5*var(--btnsize));" id="actionButtons">
       <button id="btnLava"  class="btn1" style="background-image:url(lava.webp);" disabled="disabled"> H </button>
       <button id="btnDirt"  class="btn1" style="background-image:url(dirt.webp);" disabled="disabled"> J </button>
       <button id="btnCross" class="btn1" style="background-image:url(crossing.webp);" disabled="disabled"> K </button>
       <button id="btnToad"  class="btn1" style="background-image:url(happy1.webp); color:#FFF;" disabled="disabled"> L </button>
       <button id="btnGrass" class="btn1" style="background-image:url(grass.webp);" disabled="disabled"> ; </button>
+    </div>
+    <div style="display:flex; vertical-align:bottom; float:right; margin:0ex 5ex 0ex 5ex;">
+      <button id="btnPrev"  class="btn2" title="Key: [">       PREV </button>
+      <button id="btnReset" class="btn2" title="Key: Shift-R"> RESET </button>
+      <button id="btnNext"  class="btn2" title="Key: [">       NEXT  </button>
+      <button id="btnSlow"  class="btn2">SLOW</button>
+      <button id="btnFast"  class="btn2">FAST</button>
+      <button id="btnCheat" class="btn2" title="Key: Shift-C"> CHEAT</button>
     </div>
   </div>
   <script type="module">
@@ -173,7 +187,7 @@
     let xShaking=0,yShaking=0
     let winlose=PLAYING 
     let timeOfLastFrame=0
-    let helpLevel=""
+    let helpText=""
 
 
     function isHot(i)  {return i==5||i==6||i==7}
@@ -476,8 +490,7 @@
     }
     
     async function keydown(e) {
-      if (helpDiv.style.visibility=="visible") {helpDiv.style.visibility="hidden"; return}
-
+      if (helpDiv.style.display=="block") {helpDiv.style.display="none"; return}
 
       if (e.ctrlKey||e.altKey) return // don't trap browser shortcuts involving Ctrl or Alt
       let processed=true
@@ -553,17 +566,16 @@
       btnCross.disabled = !sandbox
       btnGrass.disabled = !sandbox
  
-      helpLevel="No help for this level!"
-      const regex5 = /<help>(.*?)<\/help>\s+/gs
+      helpText="No help for this level!"
+      const regex5 = /<help>\s+(.*?)<\/help>\s+/gs
       match = regex5.exec(levelMap)
       if (match) {
-        helpLevel=match[1]
+        helpText=match[1]
         levelMap = levelMap.replace(regex5, "")
       }
        
       let rows = /<levelmap>\s+(.*?)<\/levelmap>/gs . exec(levelMap) [1]        
       rows = rows.split(/[\r\n]/).filter(i=>i) 
-      // console.log(rows)
 
       //-------- DETERMINE MAP SIZE AND ALLOCATE ARRAYS
       X = Math.max(...rows.map(s=>s.length))        // length of longest line
@@ -623,7 +635,6 @@
       for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) if (rows[y][x]=='M') {xCursor=x; yCursor=y}   
       xShaking=0;yShaking=0
 
-
       // for (let y=0; y<Y; ++y) {
       //   let s=''
       //   for (let x=0; x<X; ++x) {
@@ -636,7 +647,7 @@
       winWid=window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth
       winHei=window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight
       let availWidth =clamp(winWid, 300, 1600) // set canvas width according to window width; warning: btnSize=48
-      let availHeight=clamp(winHei*(1-.16), 300, 1200) // may reduce this
+      let availHeight=clamp(winHei*(1-.08), 300, 1200) // may reduce this
       cellsize=Math.min(Math.floor(availWidth/X),Math.floor((availHeight)/Y)) // for graphics
       canvas.width=X*cellsize
       canvas.height=Y*cellsize
@@ -660,6 +671,12 @@
     async function prevLevel() {await setLevel(level-1)}
     async function nextLevel() {await setLevel(level+1)}
 
+    function convertHtmlToText(htmlString) {
+      const tempElement = document.createElement('div'); // Create a temporary, dummy element
+      tempElement.innerHTML = htmlString; // Assign the HTML string to its innerHTML property
+      return tempElement.textContent || tempElement.innerText || ""; // Retrieve the text content
+    }
+    function closeHelp() {helpDiv.style.display="none"}
     async function openHelp() {
 
       winWid=window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth
@@ -669,22 +686,23 @@
       // const windowFeatures = `popup=true,width=${wid},height=${hei}`
       // console.log(windowFeatures)
       // let newWin = window.open('toadburnhelp.html', 'blankWindow', windowFeatures)
-      
-      helpDiv.style.width = wid + "px"
-      helpDiv.style.height = hei + "px"
-
-
-      if (helpLevel.trim()=="MAIN") helpDiv.innerHTML = await fetch('toadburnhelp.html').then(r=>r.text())
-      else helpDiv.innerHTML = helpLevel
-      // console.log(helpLevel)
-      helpDiv.onclick = ()=>helpDiv.style.visibility="hidden"
-      // helpDiv.onkeydown = (e)=>{e.preventDefault();e.stopPropagation();helpDiv.style.visibility="hidden"}
+      // helpDiv.style.width = wid + "px"
+      // helpDiv.style.height = hei + "px"
+      // if (helpText.trim()=="MAIN") helpDiv.innerHTML = await fetch('toadburnhelp.html').then(r=>r.text())
+      helpDiv.innerHTML = helpText
+      helpDiv.onclick = closeHelp
       helpDiv.focus()
-      helpDiv.style.visibility = "visible"
-      //return new Promise((r)=>r())
+      helpDiv.style.display = "block"
+      // console.log(helpText)
+      // helpDiv.onkeydown = (e)=>{e.preventDefault();e.stopPropagation();helpDiv.style.visibility="hidden"}
       // if (newWin) {
       //   // newWin.document.write('<h1>Hello from the new window!</h1>')
       // }
+
+      // let utterance = new SpeechSynthesisUtterance(convertHtmlToText(helpText))
+      // utterance.pitch = 8.0
+      // utterance.rate = 3.0
+      // speechSynthesis.speak(utterance)
     }
     //===============================================
     // MAIN MODULE CODE
@@ -761,7 +779,8 @@
     btnCheat.addEventListener('click', enterCheatMode)
 
     // btnHelp.addEventListener('click', openHelp)
-    
+    openHelp()
+
     requestAnimationFrame(animate)
   </script>
 </body>
