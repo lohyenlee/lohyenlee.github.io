@@ -424,11 +424,12 @@
     // EVENT HANDLERS
     //=================================================
     async function tryWalk(xnew,ynew) {
+      audioCoin = await audioCoin
       audioTock = await audioTock
       audioBuzz = await audioBuzz
       if (xnew<0||xnew>=X||ynew<0||ynew>=Y) {audioBuzz.play(); return 0}
       if (extras[xnew+X*ynew]==QUESTION) { // Mario bumps a Question block
-        audioTock.play()
+        audioCoin.play()
         await openHelp()
         helpDiv.focus() // hmm
         // console.log(helpDiv.style.visibility)
@@ -721,6 +722,7 @@
     // let [imgMario,imgBowser,imgGrass,imgDirt,imgLava,imgCrying1,imgCrying2,imgHappy1,imgHappy2,
     //     imgStarOn,imgStarOff,
     //     audioTock,audioBuzz,audioWin,audioWin0] = resources
+    let audioCoin = loadAudio('coin.mp3')
     let audioTock = loadAudio('tock.mp3')
     let audioBuzz = loadAudio('buzz.mp3')
     let audioWin0 = loadAudio('win1.mp3')

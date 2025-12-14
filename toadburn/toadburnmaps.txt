@@ -1,3 +1,4 @@
+
 <help>
 <h2>WELCOME TO TOAD BURN!</h2>
 <p>
@@ -211,6 +212,24 @@ LAVA FLOWS TO CROSS WITHOUT INTERFERING. </p>
 ..............
 </levelmap>
 
+<levelmap> <timestep>100</timestep> <name> 1-10   SAVE PEACH AGAIN! </name>
+...................
+.M        
+..s#N#
+..   N####
+..s#N#   N##
+..   N#### N##
+..s#N# # N## #
+..   N#+##   N#N#B
+..s#N# # N## #
+..   N#+## N## 
+..s#N# # N## 
+..   N#+##
+..s#N# # 
+..   # #
+..   N#N#N#P 
+...................
+</levelmap>
 
 
 <levelmap> <timestep>100</timestep> <sandbox> 1 </sandbox> <name> S-1   SANDBOX: ROLL YOUR OWN! </name>
@@ -272,8 +291,8 @@ If the trigger is LOW, the input signal is held, and does not propagate.
 If the trigger is HIGH, then the input signal propagates to become the output.
 </p>
 </help>
-................
-................
+.................
+.................
 .................
 ..?..    n#
 .M..      N#
@@ -291,21 +310,65 @@ The three toads at the top control the triggers to the latches.
 Set the triggers to HIGH so that the signal can propagate through the latches.
 </p>
 </help>
-..................................................
-.M?...............................................
-.....n#..........n#..........n#..........
-...   #           #           #     
-..    #           #           #     
-...   N#          N#          N#    
-..     ## 1+##     ## 1+##     ## 1+##
-..   N#N+#N# #   N#N+#N# #   N#N+#N# #
-.s#L##  #  # ##L##  #  # ##L##  #  # ##L#B
-..   ##N+#N+##   ##N+#N+##   ##N+#N+##
-..     ## 7#       ## 7#       ## 7#  
+.................................
+.M?..............................
+.....n#.......n#.......n#........
+..... #        #        #     
+....  #        #        #      B  
+...   N#       N#       N#     #  
+..     ## 1+##  ## 1+##  ## 1+##  
+..   N#N+#N# #N#N+#N# #N#N+#N# #  
+.s#L##  #  # #   #  # #   #  # #  
+..   ##N+#n+#L##N+#n+#L##N+#n+#L
+..     ## 7#    ## 7#    ## 7#  
 ..             
 ..   
 </levelmap>
-<levelmap> <timestep> 1 </timestep> 
+
+<levelmap> <timestep> 0 </timestep> <name> 2-3    TREAD CAREFULLY </name>
+................................
+M...............................
+....n#.......n#.......n#........
+.... #        #        #     
+...  #        #        #      B   
+..   N#       N#       N#     # 
+.     ## 1+##  ## 1+##  ## 1+## 
+.   N#N+#N# #N#N+#N# #N#N+#N# # 
+s#L##  #  # #   #  # #   #  # # 
+. # ##N+#n+#L##N+#n+#L##N+#n+#L
+. #   ## 7#    ## 7# #  ## 7#  
+. #                  N#
+. ##################  N#P
+.                  ##N#
+</levelmap>
+
+<levelmap> <timestep> 0 </timestep> <name> 2-4    WALKING ON EGGSHELLS </name>
+<help>
+<p>
+STAR 1 + STAR 3 = BURNT PEACH
+<p></p>
+STAR 2 + STAR 4 = BURNT PEACH ALSO!
+</p>
+</help>
+M...........................S#
+..s#.......s#.......s#...    N##
+.? N#       N#       N#     N# #
+.   ## 1+##  ## 1+##  ## 1+##  # 
+.#N#N+#N# #N#N+#N# #N#N+#N# # ##
+s#   #  # #   #  # #   #  # # #
+.L##N+#n+#L##N+#n+#L##N+#n+#L #
+.#  ## 7# #  ## 7# #  ## 7# # #
+.#        #        #        # #
+.#        #   #+###+++####### #
+.#        #   N#   #N#        #
+.#        #    N##   N#P B### #
+.#        ####N# #  N# #    # #
+.#               #  #  # #### #
+.################+###  # #    #
+.                #+++++# ######
+</levelmap>
+
+<levelmap> <timestep> 1 </timestep> <name> 2-5   SHIFT TO SUCCESS </name>
 <help>
 <p class="indepth">
 This circuit is a shift register.
@@ -317,14 +380,13 @@ You can now change the state of star 1.
 This mechanism allows you to send data along the shift register, one bit at a time! 
 </p>
 </help>
-<name> 2-3   SHIFT TO SUCCESS </name>
 ..
 ..
 ..#########N########N########N########N########N########N#    
 ..#         #        #        #        #        #        #    
 .n#  #+##  ## #+##  ## #+##  ## #+##  ## 1+##  ## 1+##  ## 1+##
 ?M.##N# #N#n+#N# #N#n+#N7 #N#n+#N# #N#n+#N# #N#n+#N# #N#n+#N# #
-.s.#  # L   #  # L   #  7 L   #  7 L   #  7 L   #  7 L   #  7 L 
+.s##  # L   #  # L   #  7 L   #  7 L   #  7 L   #  7 L   #  7 L 
 .. n#n+####N+#n+####N+#n+11##N+#n+####N+#n+####N+#n+####N+#n+##
 ..   77    ## 77    ## 77    ## 77    ## 77    ## 77    ## 77 #
 ..                                                            #
