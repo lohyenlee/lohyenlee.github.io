@@ -735,27 +735,27 @@
     let audioOw   = await loadAudio('ow.mp3')
 
     let imgQuestion = await loadImage('question.webp')
-    let imgMarioE = await loadImage('marioE.webp')
-    let imgMarioW = await loadImage('marioW.webp')
-    let imgMarioN = await loadImage('marioN.webp')
-    let imgMarioS = await loadImage('marioS.webp')
+    let imgMarioE = imgQuestion
+    let imgMarioW = imgQuestion
+    let imgMarioN = imgQuestion
+    let imgMarioS = imgQuestion
     let animPeach = new Animation([await loadImage('peach1.webp'),await loadImage('peach2.webp')])
-    let imgBowser = await loadImage('bowser.webp')
-    let imgGrass = await loadImage('grass.webp')
-    let imgDirt = await loadImage('dirt.webp') // dirt
-    let imgLava = await loadImage('lava.webp')
-    let imgLava2 = await loadImage('lava2.webp')
+    let imgBowser = imgQuestion
+    let imgGrass = imgQuestion
+    let imgDirt = imgQuestion
+    let imgLava = imgQuestion
+    let imgLava2 = imgQuestion
     let animLava = new Animation([imgLava,imgLava2])
     // let imgCrying1 = await loadImage('crying1.webp')
     // let imgCrying2 = await loadImage('crying2.webp')
     let animCrying = new Animation([await loadImage('crying1.webp'),await loadImage('crying2.webp')])
-    let imgHappy1 = await loadImage('happy1.webp')
-    let imgHappy2 = await loadImage('happy2.webp')
+    let imgHappy1 = imgQuestion
+    let imgHappy2 = imgQuestion
     let animHappy = new Animation([imgHappy1,imgHappy2])
-    let imgStarOn = await loadImage('staron.webp')
-    let imgStarOff = await loadImage('staroff.webp')
-    let imgSourceOff = await loadImage('sourceoff.webp')
-    let imgSourceOn = await loadImage('sourceon.webp')
+    let imgStarOn = imgQuestion
+    let imgStarOff = imgQuestion
+    let imgSourceOff = imgQuestion
+    let imgSourceOn = imgQuestion
     let levelMaps = await loadString('toadburnmaps.txt') // clear browser cache if this file is edited
     // TBD: do properly using Promise
     levelMaps = [...levelMaps.matchAll(  /<levelmap>.*?<\/levelmap>/gs )].map(i=>i[0])

@@ -1,4 +1,5 @@
-
+<levelmap> <timestep>300</timestep> 
+<name>T O A D     B U R N<br>By Yen Lee Loh &amp; Isaac Hutchison (2025) </name>
 <help>
 <h2>WELCOME TO TOAD BURN!</h2>
 <p>
@@ -7,9 +8,7 @@ MOVE MARIO USING ARROW BUTTONS OR KEYS (E,S,D,F).
 CLICK "NEXT" TO GO TO WORLD 1-1.
 </p>
 <a href="toadburnhelp.html" style="color:cyan;">Click here to learn more about Toad Burn </a>
-</help>
-<name>T O A D     B U R N<br>By Yen Lee Loh &amp; Isaac Hutchison (2025)
-</name>
+</help>  
 
 ...................
 ...................
