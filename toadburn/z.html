@@ -98,10 +98,6 @@
   <audio><source src="win2.ogg"></audio>
   <audio><source src="lose.ogg"></audio> -->
   <div id="splashScreen">
-    <div style="text-align: center; vertical-align:center; height:25%; margin-top:12vmin; font-size:5rem;
-    white-space: pre;"> T O A D   B U R N </div>
-    <div style="text-align: center; height: 25%; font-size:3rem;"> By Yen Lee Loh and Isaac Hutchison </div>
-    <div style="text-align: center; height: 25%; font-size:2rem;"> Loading... </div>
   </div>
 
   <div id="helpDivContainer">
@@ -430,7 +426,7 @@
       if (xnew<0||xnew>=X||ynew<0||ynew>=Y) {audioBuzz.play(); return 0}
       if (extras[xnew+X*ynew]==QUESTION) { // Mario bumps a Question block
         audioCoin.play()
-        await openHelp()
+        // await openHelp()
         helpDiv.focus() // hmm
         // console.log(helpDiv.style.visibility)
         return 0
@@ -531,9 +527,6 @@
     async function loadLevel(levelMap) {
       levelMap = await levelMap
       
-      console.log(level)
-      console.log(levelMap)
-
       let match
       const regex1 = /<timestep>(.*?)<\/timestep>\s+/gs
       match = regex1.exec(levelMap)
@@ -725,14 +718,14 @@
     // let [imgMario,imgBowser,imgGrass,imgDirt,imgLava,imgCrying1,imgCrying2,imgHappy1,imgHappy2,
     //     imgStarOn,imgStarOff,
     //     audioTock,audioBuzz,audioWin,audioWin0] = resources
-    let audioCoin = loadAudio('coin.mp3')
-    let audioTock = loadAudio('tock.mp3')
-    let audioBuzz = loadAudio('buzz.mp3')
-    let audioWin0 = loadAudio('win1.mp3')
-    let audioWin1 = loadAudio('win2.mp3')
-    let audioLose = loadAudio('lose.mp3')
-    let audioOof  = await loadAudio('oof.mp3')
-    let audioOw   = await loadAudio('ow.mp3')
+    let audioCoin = await loadAudio('coin.mp3')
+    let audioTock = audioCoin
+    let audioBuzz = audioCoin
+    let audioWin0 = audioCoin
+    let audioWin1 = audioCoin
+    let audioLose = audioCoin
+    let audioOof  = audioCoin
+    let audioOw   = audioCoin
 
     let imgQuestion = await loadImage('question.webp')
     let imgMarioE = imgQuestion
@@ -784,7 +777,7 @@
     btnCheat.addEventListener('click', enterCheatMode)
 
     // btnHelp.addEventListener('click', openHelp)
-    openHelp()
+    // openHelp()
 
     requestAnimationFrame(animate)
   </script>
