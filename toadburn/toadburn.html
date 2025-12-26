@@ -167,7 +167,9 @@
       return fetch(url).then(r=>r.text()) 
     }
     function playAudio(audio) {  
-      audio.play().catch(error => console.log('audio.play() was blocked'))
+
+      //!!
+     // audio.play().catch(error => console.log('audio.play() was blocked'))
     }
     //===============================================
     // GLOBAL VARIABLES: CIRCUIT MODEL SIMULATION
