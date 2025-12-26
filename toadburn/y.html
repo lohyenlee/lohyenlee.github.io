@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <style>
+
+  </style>
+</head>
+<body id="body">
+  <!-- <audio><source src="tock.mp3"></audio>
+  <audio><source src="buzz.ogg"></audio>
+  <audio><source src="win1.ogg"></audio>
+  <audio><source src="win2.ogg"></audio>
+  <audio><source src="lose.ogg"></audio> -->
+
+  <script type="module">
+    //=======================================================
+    // IMAGE, AUDIO, AND STRING LOADERS
+    //=======================================================
+    function loadImage(url) { 
+      // console.log('Requesting', url)
+      return new Promise((resolve,reject) => { 
+        let image = new Image()
+        image.onload  = ()=>resolve(image)
+        // image.onload  = ()=>{console.log("Loaded"         ,url);resolve(image)}
+        image.onerror = ()=>{console.log("Failed to load ",url);reject()      }
+        image.src     = url
+      })
+    }
+    function loadAudio(url) {
+      // console.log('Requesting', url)
+      return new Promise((resolve,reject) => { 
+        let audio = new Audio(url)
+        audio.oncanplaythrough = ()=>resolve(audio)
+        //audio.oncanplaythrough = ()=>{console.log("Loaded"         ,url);resolve(audio)}
+        audio.onerror          = ()=>{console.log("Failed to load ",url);reject()}
+        // audio.addEventListener("canplaythrough", ()=>{console.log("Loaded", url); resolve(audio)})
+      })
+    }
+    function loadString(url) {
+      // console.log('Requesting', url)
+      return fetch(url).then(r=>r.text()) 
+    }
+
+    class FakeAudio {
+      constructor() {}
+      play() {}
+    }
+  
+    //===============================================
+    // MAIN MODULE CODE
+    //===============================================
+    let audioCoin = new FakeAudio()// await loadAudio('coin.mp3')
+    let audioTock = audioCoin
+    let audioBuzz = audioCoin
+    let audioWin0 = await loadAudio('win1.mp3')
+    let audioWin1 = await loadAudio('win2.mp3')
+    
+    
+    audioWin1.play().catch(error => console.log('audio.play() was blocked'))
+    // document.querySelector('video').play();
+
+    // if (promise !== undefined) {
+    //   promise.then(_ => {
+    //     console.log('playing')  
+    //     // Autoplay started!
+    //   }).catch(error => {
+    //     console.log('caught')  
+    //     // Autoplay was prevented.
+    //     // Show a "Play" button so that user can start playback.
+    //   });
+    // }
+
+    // try {
+    //   audioWin1.play()
+    // } catch(e) {
+    //   console.log('caught')  
+    // }
+
+  </script>
+</body>
+</html> 

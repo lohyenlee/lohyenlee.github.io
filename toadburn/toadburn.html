@@ -167,6 +167,9 @@
       // console.log('Requesting', url)
       return fetch(url).then(r=>r.text()) 
     }
+    function playAudio(audio) {  
+      audioWin1.play().catch(error => console.log('audio.play() was blocked'))
+    }
     //===============================================
     // GLOBAL VARIABLES: CIRCUIT MODEL SIMULATION
     //===============================================
@@ -427,50 +430,50 @@
       audioCoin = await audioCoin
       audioTock = await audioTock
       audioBuzz = await audioBuzz
-      if (xnew<0||xnew>=X||ynew<0||ynew>=Y) {audioBuzz.play(); return 0}
+      if (xnew<0||xnew>=X||ynew<0||ynew>=Y) {playAudio(audioBuzz); return 0}
       if (extras[xnew+X*ynew]==QUESTION) { // Mario bumps a Question block
-        audioCoin.play()
+        playAudio(audioCoin)
         await openHelp()
         helpDiv.focus() // hmm
         // console.log(helpDiv.style.visibility)
         return 0
       }      
       if (extras[xnew+X*ynew]==SOURCE) { // Mario bumps a P Switch, toggling it
-        audioTock.play()
+        playAudio(audioTock)
         if      (ground[xnew+X*ynew]<4) ground[xnew+X*ynew]=7
         else if (ground[xnew+X*ynew]>4) ground[xnew+X*ynew]=1
         return 0
       }
       if (ground[xnew+X*ynew]==4) { // Mario bumps a toad, toggling it?
-        audioOof.play(); ground[xnew+X*ynew]=8; return 0
+        playAudio(audioOof); ground[xnew+X*ynew]=8; return 0
       }
       if (ground[xnew+X*ynew]==8) { // Mario bumps a toad, toggling it?
-        audioOw.play(); ground[xnew+X*ynew]=4; return 0
+        playAudio(audioOw); ground[xnew+X*ynew]=4; return 0
       }
-      if (extras[xnew+X*ynew]!=WALKABLE) {audioBuzz.play(); return 0}
-      xCursor=xnew; yCursor=ynew; audioTock.play(); return 1
+      if (extras[xnew+X*ynew]!=WALKABLE) {playAudio(audioBuzz); return 0}
+      xCursor=xnew; yCursor=ynew; playAudio(audioTock); return 1
     }
     async function win() {
       tcur=0
       audioWin0 = await audioWin0
       audioWin1 = await audioWin1
-      audioWin0.play()
-      setTimeout( ()=>{audioWin1.play()}, 1000)
+      playAudio(audioWin0)
+      setTimeout( ()=>playAudio(audioWin1), 1000)
     }
     async function lose() {
       tcur=0
       audioLose = await audioLose
-      audioLose.play()
+      playAudio(audioLose)
       //alert("ARGH YOU BURNED THE PEACH!")
     }
     function walkW()      {marioOrientation=1; tryWalk(xCursor-1,yCursor)}
     function walkE()      {marioOrientation=0; tryWalk(xCursor+1,yCursor)}
     function walkN()      {marioOrientation=2; tryWalk(xCursor,yCursor-1)}
     function walkS()      {marioOrientation=3; tryWalk(xCursor,yCursor+1)}
-    function placeLava()  {ground[xCursor+X*yCursor]=7; audioTock.play()}
-    function placeDirt()  {ground[xCursor+X*yCursor]=1; audioTock.play()}
-    function placeGrass() {ground[xCursor+X*yCursor]=0; audioTock.play()}
-    function placeToad()  {ground[xCursor+X*yCursor]=4; audioTock.play()}
+    function placeLava()  {ground[xCursor+X*yCursor]=7; playAudio(audioTock)}
+    function placeDirt()  {ground[xCursor+X*yCursor]=1; playAudio(audioTock)}
+    function placeGrass() {ground[xCursor+X*yCursor]=0; playAudio(audioTock)}
+    function placeToad()  {ground[xCursor+X*yCursor]=4; playAudio(audioTock)}
     function placeSubway(){ // actually TOGGLE SUBWAY ON/OFF
       if(subway[xCursor+X*yCursor]) {
         subway[xCursor+X*yCursor]=0
@@ -506,7 +509,7 @@
           if      (ground[xCursor+X*yCursor]==0) ground[xCursor+X*yCursor]=1 // cold active
           else if (ground[xCursor+X*yCursor]<4)  ground[xCursor+X*yCursor]=7 // hot active
           else                           ground[xCursor+X*yCursor]=0
-          audioTock.play()
+          playAudio(audioTock)
           break
         case 'h': placeLava(); break    // add hot burning
         case 'j': placeDirt(); break    // add cold burning
@@ -531,9 +534,6 @@
     async function loadLevel(levelMap) {
       levelMap = await levelMap
       
-      console.log(level)
-      console.log(levelMap)
-
       let match
       const regex1 = /<timestep>(.*?)<\/timestep>\s+/gs
       match = regex1.exec(levelMap)
@@ -577,9 +577,9 @@
         helpText=match[1]
         levelMap = levelMap.replace(regex5, "")
       }
-       
-      let rows = /<levelmap>\s+(.*?)<\/levelmap>/gs . exec(levelMap) [1]        
-      rows = rows.split(/[\r\n]/).filter(i=>i) 
+
+      let rows = /<levelmap>\s+(.*?)<\/levelmap>/gs . exec(levelMap) [1]
+      rows = rows.split(/[\r\n]/).filter(i=>i)
 
       //-------- DETERMINE MAP SIZE AND ALLOCATE ARRAYS
       X = Math.max(...rows.map(s=>s.length))        // length of longest line
@@ -728,8 +728,9 @@
     let audioCoin = loadAudio('coin.mp3')
     let audioTock = loadAudio('tock.mp3')
     let audioBuzz = loadAudio('buzz.mp3')
-    let audioWin0 = loadAudio('win1.mp3')
-    let audioWin1 = loadAudio('win2.mp3')
+    let audioWin0 = await loadAudio('win1.mp3')
+    let audioWin1 = await loadAudio('win2.mp3')
+    try { await playAudio(audioWin0) } catch(e) {}
     let audioLose = loadAudio('lose.mp3')
     let audioOof  = await loadAudio('oof.mp3')
     let audioOw   = await loadAudio('ow.mp3')

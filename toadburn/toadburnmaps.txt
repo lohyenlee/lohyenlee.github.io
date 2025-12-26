@@ -1,15 +1,11 @@
-<levelmap> <timestep>300</timestep> 
+<levelmap> <timestep>100</timestep> <preconverge> 0 </preconverge> 
 <name>T O A D     B U R N<br>By Yen Lee Loh &amp; Isaac Hutchison (2025) </name>
 <help>
-<h2>WELCOME TO TOAD BURN!</h2>
-<p>
-MOVE MARIO USING ARROW BUTTONS OR KEYS (E,S,D,F).
-</p><p>
-CLICK "NEXT" TO GO TO WORLD 1-1.
-</p>
+<h3> WELCOME TO TOAD BURN! </h3>
+MOVE MARIO USING ARROW BUTTONS OR KEYS (E,S,D,F). <br>
+CLICK "NEXT" TO GO TO WORLD 1-1. <br>
 <a href="toadburnhelp.html" style="color:cyan;">Click here to learn more about Toad Burn </a>
-</help>  
-
+</help>
 ...................
 ...................
 .                 .
