@@ -63,8 +63,6 @@
       right: 0; bottom:0;
       height:fit-content;
       width:80%; 
-      /* max-content; */
-      /* width:auto; */
       padding: 1rem 2rem 1rem 6rem; 
       box-shadow: 0px 4 px 8px 0px #333, 0px 8px 16px 8px #000;
       background-color:#666; border:double 4px black; border-radius: 20px; 
@@ -92,11 +90,6 @@
   </style>
 </head>
 <body id="body">
-  <!-- <audio><source src="tock.mp3"></audio>
-  <audio><source src="buzz.ogg"></audio>
-  <audio><source src="win1.ogg"></audio>
-  <audio><source src="win2.ogg"></audio>
-  <audio><source src="lose.ogg"></audio> -->
   <div id="splashScreen">
     <div style="text-align: center; vertical-align:center; margin:2rem 0rem; font-size:5rem;"> T O A D   B U R N </div>
     <div style="text-align: center; margin:3rem 0rem; font-size:2rem;"> By Yen Lee Loh and Isaac Hutchison </div>
@@ -681,6 +674,7 @@
     }
     function closeHelp() {helpDiv.style.display="none"}
     async function openHelp() {
+        return //!!
 
       winWid=window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth
       winHei=window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight
@@ -713,9 +707,6 @@
     let winWid,winHei
     document.body.addEventListener('dblclick', function(e) { e.preventDefault() })
     const ctx=canvas.getContext('2d')
-    setScaling()
-    // document.body.insertBefore(canvas, document.body.childNodes[0])
-    window.addEventListener('resize', setScaling)
 
     //===============================================
     // Wait for ESSENTIAL resources to load
@@ -759,8 +750,11 @@
     // TBD: do properly using Promise
     levelMaps = [...levelMaps.matchAll(  /<levelmap>.*?<\/levelmap>/gs )].map(i=>i[0])
     await setLevel(0)
-    splashScreen.style.display = "none"
-    controls.style.display = "block"
+
+canvas.style.display ="none"
+    // splashScreen.style.display = "none"
+    // controls.style.display = "block"
+    
     document.body.addEventListener('keydown', keydown, false)
     btnReset.addEventListener('click', resetGame)
     btnPrev.addEventListener('click', prevLevel)
@@ -781,6 +775,7 @@
     btnSlow.addEventListener('click', goSlow)
     btnFast.addEventListener('click', goFast)
     btnCheat.addEventListener('click', enterCheatMode)
+    window.addEventListener('resize', setScaling)
 
     // btnHelp.addEventListener('click', openHelp)
     openHelp()
