@@ -143,6 +143,13 @@
       // console.log('Requesting', url)
       return fetch(url).then(r=>r.text()) 
     }
+
+    class FakeAudio {
+      constructor() {}
+      play() {}
+    }
+  
+
     //===============================================
     // GLOBAL VARIABLES: CIRCUIT MODEL SIMULATION
     //===============================================
@@ -698,7 +705,7 @@
     // let [imgMario,imgBowser,imgGrass,imgDirt,imgLava,imgCrying1,imgCrying2,imgHappy1,imgHappy2,
     //     imgStarOn,imgStarOff,
     //     audioTock,audioBuzz,audioWin,audioWin0] = resources
-    let audioCoin = await loadAudio('coin.mp3')
+    let audioCoin = new FakeAudio()// await loadAudio('coin.mp3')
     let audioTock = audioCoin
     let audioBuzz = audioCoin
     let audioWin0 = audioCoin
