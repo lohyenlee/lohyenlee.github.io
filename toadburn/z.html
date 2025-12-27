@@ -713,6 +713,9 @@
     let audioLose = audioCoin
     let audioOof  = audioCoin
     let audioOw   = audioCoin
+    
+    let audioBLAH = await loadAudio('coin.mp3')
+    audioBLAH.play().catch(error => console.log('audio.play() was blocked'))  //!!
 
     let imgQuestion = await loadImage('question.webp')
     let imgMarioE = imgQuestion
