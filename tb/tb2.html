@@ -43,9 +43,11 @@
     }
     #title {position:absolute; z-index:2; top:0;  
       width:fit-content;
-      padding:0;text-align:center; font-size:3vmin; color:white; white-space:pre;
+      margin:6px 0px 0px 0px;text-align:center; font-size:3vmin; color:white; white-space:pre;
       border: 6px outset #974; background-color:#530;
-  }
+      box-shadow: 0px 0px 1px 1px black, 0px 0px 8px 8px white;
+
+    }
     #controls {position:absolute; z-index:3; bottom:0; left:0; width:100%; display:none;}
     button {cursor:pointer;
             float:left;margin:0;padding:0;text-align:center; border-radius:8px; font-family:'gameFont',sans-serif;font-size: 4vmin;
@@ -97,7 +99,7 @@
 <img id="imgStarOff" src="staroff.webp"></img>
 <img id="imgSourceOff" src="sourceoff.webp"></img>
 <img id="imgSourceOn" src="sourceon.webp"></img>
-<img id="imgBrick" src="Bricks.gif"></img>
+<img id="imgBrick" src="brick.webp"></img>
 <audio id="audioBuzz"><source src="buzz.mp3"></audio>
 <audio id="audioWin0"><source src="win1.mp3"></audio>
 <audio id="audioWin1"><source src="win2.mp3"></audio>
@@ -107,7 +109,15 @@
 <audio id="audioOof"><source src="oof.mp3"></audio>
 <audio id="audioOw"><source src="ow.mp3"></audio>
   </div>
-  <div style="
+  
+  <div id="helpDivContainer">
+    <div id="helpDiv"></div>
+  </div>
+  <div id="title"></div> 
+  <canvas id="canvas">Your browser does not support the HTML5 canvas tag.</canvas>
+  <div id="controls" style="position:absolute; bottom:0; left:0; width:100%;">
+    <div style="position: absolute; left:0;bottom:0; width:calc(3*var(--btnsize));" id="movementKeypad">
+      <div style="
   z-index:2; position:absolute; left:0; bottom:0; width:140px; height:140px; 
   background-image:url('joystick.webp'); background-position:center; background-size:140px; background-repeat: no-repeat;">
   </div>
@@ -117,27 +127,12 @@
   background-image:url('joystick.webp'); background-position:center; background-size:100px; background-repeat: no-repeat;
   color:white; text-align:center; vertical-align:middle;
   transform:translate(0,0);">
-  ESDF
+  <br><br>E<br>S &nbsp; &nbsp;  F<br> D
   </div>
-  <div id="helpDivContainer">
-    <div id="helpDiv"></div>
-  </div>
-  <div id="title"></div> 
-  <canvas id="canvas">Your browser does not support the HTML5 canvas tag.</canvas>
-  <div id="controls" style="position:absolute; bottom:0; left:0; width:100%;">
-    <div style="position: absolute; left:0;bottom:0; width:calc(3*var(--btnsize));" id="movementKeypad">
-      <!-- <div class="separator"></div> -->
-      <button               class="btn1" style="visibility: hidden;">  </button>
-      <!-- <button id="btnHelp"  class="btn1" style="background-image:url(question.webp);"></button> -->
-      <button id="btnUp"    class="btn1" style="background-image:url(arrowU.svg);"> E </button>
-      <button               class="btn1" style="visibility: hidden;">  </button>
-      <button id="btnLeft"  class="btn1" style="background-image:url(arrowL.svg);"> S </button>
-      <button id="btnDown"  class="btn1" style="background-image:url(arrowD.svg);"> D </button>
-      <button id="btnRight" class="btn1" style="background-image:url(arrowR.svg);"> F </button>
     </div>
-    <button id="btnLava"  class="btn1" style="background-image:url(lava.webp);" disabled="disabled"> H </button>
     <div style="float:right; width:calc(5*var(--btnsize));" id="actionButtons">
-      <button id="btnDirt"  class="btn1" style="background-image:url(dirt.webp);" disabled="disabled"> J </button>
+      <button id="btnLava"  class="btn1" style="background-image:url(lava.webp);" disabled="disabled"> H </button>
+      <button id="btnWater"  class="btn1" style="background-image:url(water.webp);" disabled="disabled"> J </button>
       <button id="btnCross" class="btn1" style="background-image:url(crossing.webp);" disabled="disabled"> K </button>
       <button id="btnToad"  class="btn1" style="background-image:url(happy1.webp); color:#FFF;" disabled="disabled"> L </button>
       <button id="btnGrass" class="btn1" style="background-image:url(grass.webp);" disabled="disabled"> ; </button>
@@ -146,8 +141,12 @@
       <button id="btnPrev"  class="btn2" title="Key: [">       PREV </button>
       <button id="btnReset" class="btn2" title="Key: Shift-R"> RESET </button>
       <button id="btnNext"  class="btn2" title="Key: [">       NEXT  </button>
-      <button id="btnSlow"  class="btn2">SLOW</button>
-      <button id="btnFast"  class="btn2">FAST</button>
+      <!-- <button id="btnSlow"  class="btn2">SLOW</button> -->
+      <div>
+      <input type="range" min="0" max="200" value="50" class="slider" id="sliderSpeed">
+      <div id="divSpeed" style="color:white;">DELAY</div>
+      </div>
+      <!-- <button id="btnFast"  class="btn2">FAST</button> -->
       <button id="btnCheat" class="btn2" title="Key: Shift-C"> CHEAT</button>
     </div>
   </div>
@@ -164,6 +163,7 @@
     const ON=1,FRESH=2,CONDUCTING=4,SOURCE=8,GATE=16
     const WALL=1,UNWALKABLE=2,LAMP=4,PEACH=8,BOWSER=16,QUESTION=32
     const PLAYING=0,WIN=1,LOSE=-1
+    const DIRS=[[1,0],[-1,0],[0,1],[0,-1]]
     
     let X,Y // level size
     let xCursor,yCursor  // cursor (Mario) position
@@ -173,12 +173,14 @@
     let winlose=PLAYING 
     let preconverge=100,sandbox=0
 
+    let joystickForce=0
+
     function setPos(xnew,ynew) {xCursor=xnew;yCursor=ynew;xCurPrev=xCursor;yCurPrev=yCursor}
     function tryWalk(dir) {
       if (stalled && dir==marioOrientation) return false // already got stuck going in that direction
-      stalled=false; marioOrientation=dir
-      const dirs=[[1,0],[-1,0],[0,1],[0,-1]]
-      const dx=dirs[dir][0],dy=dirs[dir][1]
+      if (marioOrientation!=dir) {marioOrientation=dir; return true} // just change direction, don't move
+      stalled=false; 
+      const dx=DIRS[dir][0],dy=DIRS[dir][1]
       let xnew=xCursor+dx,ynew=yCursor+dy
       //======== Check for various cases including collisions with objects
       if (xMario!=xCursor || yMario!=yCursor) return false // Previous walk in progress; do nothing
@@ -200,10 +202,37 @@
       //======== No obstacles; start walking!
       soundTock.play(); setTimeout(()=>soundTock.play(),130); xCursor=xnew; yCursor=ynew; tWalk=Date.now(); return true
     }
+    function faceW() {marioOrientation=1}
+    function faceE() {marioOrientation=0}
+    function faceN() {marioOrientation=3}
+    function faceS() {marioOrientation=2}
     function walkW() {tryWalk(1)}
     function walkE() {tryWalk(0)}
     function walkN() {tryWalk(3)}
     function walkS() {tryWalk(2)}
+    // function goSlow()  {timeStepInMilliseconds=100}
+    // function goFast()  {timeStepInMilliseconds=0}
+    function placeLava()  {let x=xCursor+DIRS[marioOrientation][0],y=yCursor+DIRS[marioOrientation][1];ground[x+X*y]=FRESH|ON|CONDUCTING; audioCoin.play()}
+    function placeWater() {let x=xCursor+DIRS[marioOrientation][0],y=yCursor+DIRS[marioOrientation][1];ground[x+X*y]=CONDUCTING; audioCoin.play()}
+    function placeGrass() {let x=xCursor+DIRS[marioOrientation][0],y=yCursor+DIRS[marioOrientation][1];ground[x+X*y]=0;    audioCoin.play()}
+    function placeToad()  {let x=xCursor+DIRS[marioOrientation][0],y=yCursor+DIRS[marioOrientation][1];ground[x+X*y]=GATE; audioCoin.play()}
+    function placeSubway(){ // actually TOGGLE SUBWAY ON/OFF
+      if(subway[xCursor+X*yCursor]) {
+        subway[xCursor+X*yCursor]=0
+        if (!ground[xCursor+X*yCursor]) ground[xCursor+X*yCursor]=CONDUCTING
+      }
+      else subway[xCursor+X*yCursor]=3
+    }
+    function sandboxMode() {
+      sandbox = 1;
+      // for(let y=0;y<Y;++y)for(let x=0;x<X;++x)if (extras[x+X*y]==UNWALKABLE) extras[x+X*y]=WALKABLE
+      btnLava.disabled = false
+      btnWater.disabled = false
+      btnToad.disabled = false
+      btnCross.disabled = false
+      btnGrass.disabled = false
+    }
+
 
     function htmlExtractContent(tag, source) {
       const regex = new RegExp('<' + tag + '>(.*?)<\/' + tag + '>\\s+', 'gs')
@@ -215,16 +244,22 @@
     function setLevel(newLevel) {
       if (newLevel<0||newLevel>=levelMaps.length) return // if new level number is illegal, don't load it
       level = newLevel
-      // btnPrev.disabled = (level==0)             // if current level is 0, disable "Previous Level" button
-      // btnNext.disabled = (level==levelMaps.length-1) // if we are on last level, disable "Next Level" button
+      btnPrev.disabled = (level==0)             // if current level is 0, disable "Previous Level" button
+      btnNext.disabled = (level==levelMaps.length-1) // if we are on last level, disable "Next Level" button
       loadLevel(levelMaps[level])
       setScaling()
     }
+    function prevLevel() {setLevel(level-1)} 
+    function nextLevel() {setLevel(level+1)} 
+    function resetLevel() {setLevel(level)}
     function loadLevel(levelMap) {
       preconverge=100; sandbox=0; helpText='Level '+level  // defaults
       {
         const [content,remainder]=htmlExtractContent('timestep', levelMap); levelMap=remainder
-        if(content) timeStepInMilliseconds = Number(content)
+        if(content) {
+          timeStepInMilliseconds = Number(content)
+          sliderSpeed.value = timeStepInMilliseconds
+        }
       }{const [content,remainder]=htmlExtractContent('name', levelMap); levelMap=remainder
         levelName = content
         // console.log(levelName)
@@ -236,11 +271,11 @@
         if(content) helpText=content
       }
       title.innerHTML = levelName
-      // btnLava.disabled = !sandbox
-      // btnDirt.disabled = !sandbox
-      // btnToad.disabled = !sandbox
-      // btnCross.disabled = !sandbox
-      // btnGrass.disabled = !sandbox
+      btnLava.disabled = !sandbox
+      btnWater.disabled = !sandbox
+      btnToad.disabled = !sandbox
+      btnCross.disabled = !sandbox
+      btnGrass.disabled = !sandbox
       let rows = /<levelmap>\s+(.*?)<\/levelmap>/gs . exec(levelMap) [1]
       rows = rows.split(/[\r\n]/).filter(i=>i)
       //-------- DETERMINE MAP SIZE AND ALLOCATE ARRAYS
@@ -531,11 +566,11 @@
 
       } else {
         const maxWalkSteps = 6
-        if (xCurPrev!=xCursor||yCurPrev!=yCursor) nWalk = Math.floor(((Date.now() - tWalk))/34) // 17 ms per frame
+        if (xCurPrev!=xCursor||yCurPrev!=yCursor) nWalk = Math.floor(((Date.now() - tWalk))/17) // 17 ms per frame
+        if (nWalk>=maxWalkSteps) {  xCurPrev=xCursor; yCurPrev=yCursor; nWalk=0} // go back to standing still
         xMario = xCurPrev + (xCursor-xCurPrev)*nWalk/maxWalkSteps
         yMario = yCurPrev + (yCursor-yCurPrev)*nWalk/maxWalkSteps
-        if (nWalk==maxWalkSteps) {  xCurPrev=xCursor; yCurPrev=yCursor; nWalk=0} // go back to standing still
-
+        
         //let asp=imgMarioE.height/imgMarioE.width;
         ctx.imageSmoothingEnabled = false
         const xcen=(xMario+.5)*a,ycen=(yMario+.5)*a,sx=a,sy=a //,sy=a,sx=sy/asp
@@ -565,16 +600,16 @@
       render() 
       checkVictory()
 
-      if (isKeyDown('s')) walkW()//      if (isKeyDown('ArrowLeft')) walkW()
-      if (isKeyDown('f')) walkE()
-      if (isKeyDown('e')) walkN()
-      if (isKeyDown('d')) walkS()
-
       const elapsed = Date.now() - timeOfLastFrame
       if (elapsed <= timeStepInMilliseconds) return
       timeOfLastFrame = Date.now()
 
       evolve()
+
+      if (isKeyDown('s')||isKeyDown('S')) walkW()//      if (isKeyDown('ArrowLeft')) walkW()
+      else if (isKeyDown('f')||isKeyDown('F')) walkE()
+      else if (isKeyDown('e')||isKeyDown('E')) walkN()
+      else if (isKeyDown('d')||isKeyDown('D')) walkS()
     }
 
     //=================================================
@@ -604,10 +639,22 @@
       if (e.ctrlKey||e.altKey) return // don't trap browser shortcuts involving Ctrl or Alt
       let processed=true
       switch (e.key) {
-        case '[': setLevel(level-1); break
-        case ']': setLevel(level+1); break
+        // case 'f': if(marioOrientation!=0)faceE(); else processed=false; break
+        // case 's': if(marioOrientation!=1)faceW(); else processed=false; break
+        // case 'e': if(marioOrientation!=3)faceN(); else processed=false; break //VERY DODGY CODE
+        // case 'd': if(marioOrientation!=2)faceS(); else processed=false; break
+        case '[': prevLevel(); break
+        case ']': nextLevel(); break
+        case 'h':case'H':if(sandbox) placeLava(); break    // add hot burning
+        case 'j':case'J':if(sandbox) placeWater(); break    // add cold burning
+        case 'k':case'K':if(sandbox) placeSubway(); break // toggle crossing
+        case 'l':case'L':if(sandbox) placeToad(); break    // add NOR gate (Toad)
+        case ';':case';':if(sandbox) placeGrass(); break // erase current ground  //case 'Backspace': case 'Delete':                 
+        case 'C': sandboxMode(); break
+        case 'R': resetLevel(); break    // reset level
         default: processed=false
       }
+      
       if (processed) {e.preventDefault(); e.stopPropagation(); }
     }
     function keyUp(e) {
@@ -625,20 +672,39 @@
       x=clamp(x,-30,30)
       y=clamp(y,-30,30)
       joystick.style.transform=`translate(${x}px,${y}px)`
-      if (Math.abs(x)>Math.abs(y)) if (x>0) {walkE()} else walkW()
-      else                         if (y>0) {walkS()} else walkN()
+      
+      joystickForce = Math.hypot(x,y) 
+      if (joystickForce<20) {
+        if (Math.abs(x)>Math.abs(y)) if (x>0) {faceE()} else faceW()
+        else                         if (y>0) {faceS()} else faceN()
+      }
+      else {
+        if (Math.abs(x)>Math.abs(y)) if (x>0) {walkE()} else walkW()
+        else                         if (y>0) {walkS()} else walkN()
+      }
     }
     function joyTouchEnd(e) {
       joystick.style.transform='translate(0,0)'
       stalled=false
     }
-    
-
     function launchGame() {
-      loadLevel(levelMaps[0])
+      setLevel(0)
       tcur = 0
       setScaling()
-      splashScreen.style.display = 'none' // Hide splash screen
+
+      btnReset.addEventListener('click', resetLevel)
+      btnPrev.addEventListener('click', prevLevel)
+      btnNext.addEventListener('click', nextLevel)
+      
+      btnLava.addEventListener('click', placeLava)
+      btnWater.addEventListener('click', placeWater)
+      btnCross.addEventListener('click', placeSubway)
+      btnGrass.addEventListener('click', placeGrass)
+      btnToad.addEventListener('click', placeToad)
+      // btnSlow.addEventListener('click', goSlow)
+      // btnFast.addEventListener('click', goFast)
+      btnCheat.addEventListener('click', sandboxMode)
+
       document.body.removeEventListener('keydown', launchGame, false)
       window.addEventListener('resize', setScaling)
       document.body.addEventListener('dblclick', e=>e.preventDefault())
@@ -647,8 +713,15 @@
       joystick.addEventListener('touchstart', joyTouchStart)
       joystick.addEventListener('touchmove',  joyTouchMove)
       joystick.addEventListener('touchend',  joyTouchEnd)
+      splashScreen.style.display = 'none' // Hide splash screen
       joystick.style.display = 'block' // Show
       canvas.style.display = 'block' // Show
+      controls.style.display = 'block'
+      sliderSpeed.oninput = function() {timeStepInMilliseconds=this.value;
+        // divSpeed.innerText='DELAY '+timeStepInMilliseconds
+
+      }
+
       requestAnimationFrame(animate)
     }
 

@@ -1,0 +1,702 @@
+<levelmap> <timestep>100</timestep> <preconverge> 0 </preconverge> 
+<name>T O A D     B U R N<br>By Yen Lee Loh &amp; Isaac Hutchison (2025) </name>
+<help>
+<h3> WELCOME TO TOAD BURN! </h3>
+MOVE MARIO USING ARROW BUTTONS OR KEYS (E,S,D,F). <br>
+CLICK "NEXT" TO GO TO WORLD 1-1. <br>
+<a href="toadburnhelp.html" style="color:cyan;">Click here to learn more about Toad Burn </a>
+</help>
+WWWWWWWWWWWWWWWWWWW
+W.................W
+W.###.###.###...#.W
+W..#..#.#.#.#.###.W
+W..#..#.#.###.#.#.W
+W..#..###.#.#.###.W
+W.++++++++++++++++W
+WN###L###L###L###BW
+W.++++++++++++++++W
+W.#...#.#.###.###.W
+W.###.#.#.#...#.#.W
+W.#.#.#.#.#.?.#.#.W
+W.###.###.#...#.#.W
+W...........M.....W
+WWWWWWWWWWWWWWWWWWW
+</levelmap>
+
+
+<levelmap> <timestep>100</timestep> 
+<help>
+<p>
+MOVE MARIO USING THE BUTTONS OR ESDF KEYS.
+</p><p>
+TRY BUMPING TOAD!
+<p>
+</help>
+<name> 1-1   LIGHT THE FUSE </name>
+W?WWWWWWWWWWWW
+W.n######.###W
+W.W.....#.#.#W
+W.W######.#.#W
+WMW#......#.#W
+W.W#.B#####.#W
+W.W#........#W
+W.W##########W
+WWWWWWWWWWWWWW
+</levelmap>
+
+<levelmap> <timestep>100</timestep> <name> 1-2   SAVE THE PRINCESS </name>
+<help>
+<p>DON'T BUMP THE WRONG TOAD!</p>
+<p class="indepth">
+Each toad functions as a 
+<a href="https://learn.sparkfun.com/tutorials/button-and-switch-basics/what-is-a-switch">switch</a>.
+The switch remembers whether it is ON or OFF, and supplies either a positive voltage (HIGH) or zero voltage (LOW) to the circuit.
+</p>
+</help>
+WWWWWWWWWWW
+?.W..####.W
+..n###..#.W
+..W....P#.W
+.MW....#...
+..W....##B.
+..n###...#.
+..W..#####W
+WWWWWWWWWWW
+</levelmap>
+
+
+<levelmap> <timestep>100</timestep> <name> 1-3   Do unto others as they do NOT unto you </name>
+<help>
+<p>HAPPY TOADS SPEW LAVA.<p>
+<p>BURNING TOADS DON'T!</p>
+<p class="indepth">
+The second toad behaves as a 
+<a href="https://en.wikipedia.org/wiki/Inverter_(logic_gate)">NOT gate</a>,
+also known as an inverter.
+If the input of the NOT gate is HIGH, the output is LOW.
+If the input is LOW, the output is HIGH.
+</p>
+</help>
+W?WWWWWWWWWW
+.M
+..N###n###B
+..
+WWWWWWWWWWWW
+</levelmap>
+
+<levelmap> <timestep>100</timestep> <name> 1-4   HOT HEAD, HOT FEET </name>
+<help>
+<p>A BURNING TOAD IS NOT A HAPPY TOAD!</p>
+<p class="indepth">
+The second toad behaves as a 
+<a href="https://en.wikipedia.org/wiki/NOR_gate">NOR gate</a>.
+If either input of the NOR gate is HIGH, the output is LOW.
+Only if both inputs are LOW will the output be HIGH.
+</p>
+</help>
+W?WWWWWWWWWW
+WMW.....
+W.N###..
+W.W..N###B
+W.N###..
+W.W.....
+WWWWWWWWWWWW
+</levelmap>
+
+<levelmap> <timestep>100</timestep> <name> 1-5   On AND On to Victory </name>
+<help>
+<p>MAKE THE LAST TOAD HAPPY!</p>
+<p class="indepth">
+Both of the starting toads must be ON in order for Bowser to get burned.
+The three toads in the center function as an 
+<a href="https://en.wikipedia.org/wiki/AND_gate">AND gate</a>.
+Both inputs of the AND gate must be HIGH in order for the output to be HIGH!
+</p>
+</help>
+WWWWWWWWWWW
+.n##N#.....
+.W...N###B.
+.n##N#.....
+.WW?WW.....
+...M.W.....
+WWWWWWWWWWW
+</levelmap>
+
+<levelmap> <timestep>10</timestep> <name> 1-6   One XOR the Other </name>
+<help>
+<p class="indepth">
+The five toads at the right of this circuit constitute a
+<a href="https://en.wikipedia.org/wiki/XOR_gate">XOR gate</a>,
+which is short for Exclusive Or.
+The output of the XOR gate is HIGH if either, but not both, of the inputs are HIGH.
+</p>
+<p class="indepth">
+Bumping the middle toad causes both inputs to go HIGH, but the output remains LOW.
+Bumping the top toad causes only one input to go HIGH, so that th output is HIGH.
+</p>
+</help>
+...................
+..WWWWWWW..........
+..n###..WWWWWWWHHHH
+?.W..#..W###..W....
+..W##N#N##.N##W....
+M.n#....WN##.N#N#B.
+..W##N#N##.N##W....
+..W..#..W###..W.
+..n###..WWWWWWWHHHH
+..WWWWWWW..........
+...................
+</levelmap>
+
+<levelmap> <name> 1-7   TOADS GALORE </name>
+..................
+..      .....HHHH.
+.MS###    ....HH..
+..   N###    .....
+..S###  #     ....
+..      N####  ...
+..S###  #   #   ..
+..   N###   N#B ..
+..s###      #   ..
+..          #   ..
+..S##########   ..
+..              ..
+..................
+..................
+</levelmap>
+
+<levelmap> <timestep> 100 </timestep> <name> 1-8   A LIFE-OR-DEATH DECISION </name>
+<help>
+<p>REMEMBER, BOWSER IS THE BAD GUY!</p>
+</help>
+WWWWWWWWWWWWWW
+.. ..###..###.
+.. ..#.#..#.#.
+..s##+#+#.#.#.
+.. ..#.#+##.#.
+?. .##..#...#.
+.. .#...#.###.
+M.s#+##.#.#...
+.. .#.##+#+##.
+.. .#...#.#.#.
+.. .#.###.B.#.
+..s##.#.....#.
+.. ...#N#n#P#.
+WWWWWWWWWWWWWW
+</levelmap>
+
+<levelmap> <timestep>100</timestep> <name> 1-9   LOOP THE LOOP </name>
+<help>
+<h2>BRIDGES</h2>
+<p>BRIDGES ALLOW HORIZONTAL AND VERTICAL 
+<br>
+LAVA FLOWS TO CROSS WITHOUT INTERFERING. </p>
+</help>
+..............
+.M          ..
+..s#####    ..
+..     #    ..
+..   ##+##B ..
+..   # #    ..
+.?   ###    ..
+..          ..
+..............
+..............
+</levelmap>
+
+<levelmap> <timestep>100</timestep> <name> 1-10   SAVE PEACH AGAIN! </name>
+WWWWWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWWWWWWW
+M.s#N#
+..   N####
+..s#N#   N##
+..   n#### N##
+..s#N# # N## #
+..   N#+##   N#N#B
+..s#N# # N## #
+..   N#+## N##
+..s#N# # N##
+..   N#+##
+..s#N# # 
+..   # #
+..   N#N#N#P
+WWWWWWWWWWWWWWWWWWW
+</levelmap>
+
+<levelmap> <timestep>0</timestep> <sandbox> 1 </sandbox> <name> S-1   SANDBOX: ROLL YOUR OWN! </name>
+<help>
+USE THE BUTTONS OR THE H, J, K, AND L KEYS TO 
+BUILD YOUR OWN TOAD LOGIC CIRCUIT! 
+</help>
+?.................................
+.M................................
+..................................
+..................................
+..................................
+..................................
+..................................
+..................................
+..................................
+..................................
+..................................
+..................................
+..................................
+..................................
+..................................
+..................................
+..................................
+..................................
+..................................
+</levelmap>
+
+<levelmap> <timestep>100</timestep> <name> S-2   ISAAC </name>
+.
+.   B
+.S#N+# 
+.   ##
+.M
+</levelmap>
+
+
+<levelmap> <timestep> 100 </timestep> <name> 2-1    LET LOOSE THE LAVA </name>
+<help>
+<p>
+BUMP THE BOTTOM TOAD TO ARM THE CANNON.
+</p>
+<p>
+BUMP THE TOP TOAD TO FIRE!
+</p>
+<p class="indepth">
+The previous levels demonstrated 
+<a href="https://en.wikipedia.org/wiki/Combinational_logic">combinational logic</a>, 
+where the output is a pure function of the present input only.
+</p><p class="indepth">
+In contrast, in 
+<a href="https://en.wikipedia.org/wiki/Sequential_logic">sequential logic</a>, the output 
+depends on the present input and also on the sequence of past inputs.
+</p><p class="indepth"> 
+A key concept leading up to sequential logic is the idea of a latch.
+A stateless latch can be implemented with an AND gate. 
+If the trigger is LOW, the input signal is held, and does not propagate.
+If the trigger is HIGH, then the input signal propagates to become the output.
+</p>
+</help>
+.................
+.................
+..........WWWWWWW
+..?..    n#
+.M..      N#
+...        #
+..n######N#n####B
+...          W
+</levelmap>
+
+<levelmap> <timestep> 0 </timestep> <name> 2-2    LOOSEN THE LATCHES </name>
+<help>
+<p class="indepth">
+The toad circuit below implements a string of gated D latches.
+The output from the P switch is initially held at the first latch. 
+The three toads at the top control the triggers to the latches.
+Set the triggers to HIGH so that the signal can propagate through the latches.
+</p>
+</help>
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+.................................
+.M?..............................
+.....n#.......n#.......n#........
+..... #        #        #     
+....  #        #        #      B
+...   N#       N#       N#     #
+..     ## #+##  ## #+##  ## #+##
+..   N#N+#N# #N#N+#N# #N#N+#N# #
+.s#L##  #  # #   #  # #   #  # #
+..   ##N+#n+#L##N+#n+#L##N+#n+#L
+..     ## H#    ## H#    ## H#  
+..             
+..   
+</levelmap>
+
+<levelmap> <timestep> 0 </timestep> <name> 2-3    TREAD CAREFULLY </name>
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+................................
+M...............................
+....n#.......n#.......n#........
+.... #        #        #     
+...  #        #        #      B
+..   N#       N#       N#     #
+.     ## #+##  ## #+##  ## #+##
+.   N#N+#N# #N#N+#N# #N#N+#N# #
+s#L##  #  # #   #  # #   #  # #
+. # ##N+#n+#L##N+#n+#L##N+#n+#L
+. #   ## H#    ## H# #  ## H#  
+. #                  N#
+. ##################  N#P
+.                  ##N#
+</levelmap>
+
+<levelmap> <timestep> 0 </timestep> <name> 2-4    WALKING ON EGGSHELLS </name>
+<help>
+<p>
+STAR 1 + STAR 3 = BURNT PEACH
+<p></p>
+STAR 2 + STAR 4 = BURNT PEACH ALSO!
+</p>
+</help>
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+M...........................S#  W
+..s#.......s#.......s#...    N##W
+.? N#       N#       N#     N# #W
+.   ## #+##  ## #+##  ## #+##  #W
+.#N#N+#N# #N#N+#N# #N#N+#N# # ##W
+s#   #  # #   #  # #   #  # # # W
+.L##N+#n+#L##N+#n+#L##N+#n+#L # W
+.#  ## H# #  ## H# #  ## H# # # W
+.#        #        #        # # W
+.#        #   #+###+++####### # W
+.#        #   N#   #N#        # W
+.#        #    N##   N#P B### # W
+.#        ####N# #  N# #    # # W
+.#               #  #  # #### # W
+.################+###  # #    # W
+.                #+++++# ###### W
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+</levelmap>
+
+<levelmap> <timestep> 1 </timestep> <name> 2-5   SHIFT TO SUCCESS </name>
+<help>
+<p class="indepth">
+This circuit is a shift register.
+Load data into the first cell using the P switch.
+Bump the toad to open latches 1, 3, and 5. 
+Bump the toad again to close the odd latches and open the even latches.
+At this point, star 1 will have been copied to star 3.
+You can now change the state of star 1.
+This mechanism allows you to send data along the shift register, one bit at a time! 
+</p>
+</help>
+..
+..
+..#########N########N########N########N########N########N#    
+..#         #        #        #        #        #        #    
+.n#  #+##  ## #+##  ## #+##  ## #+##  ## #+##  ## #+##  ## #+##
+?M.##N# #N#n+#N# #N#n+#NH #N#n+#N# #N#n+#N# #N#n+#N# #N#n+#N# #
+.s##  # L   #  # L   #  H L   #  H L   #  H L   #  H L   #  H L 
+.. n#n+####N+#n+####N+#n+####N+#n+####N+#n+####N+#n+####N+#n+##
+..   HH    ## HH    ## HH    ## HH    ## HH    ## HH    ## HH #
+..                                                            #
+.. B########################################################### 
+..   
+</levelmap>
+
+<levelmap> <timestep>10</timestep> 
+<help>
+<p class="indepth">
+A clock circuit generates a signal that switches ON and OFF periodically. 
+</p>
+</help>
+<name> 2-4   TICK TOCK </name>
+.....................
+.
+ ### ### ### ### ###
+ # # # # # # # # # #
+ # ### ### ### ### #
+ #                 #
+ # ### ### ### ### #
+ # # # # # # # # # #
+ N## ### ### ### ###
+?  #
+.  N############B    
+. N#             
+Ms#               
+WWWWWWWWWWWWWWWWWWWWW
+</levelmap>
+
+<levelmap> <timestep> 20 </timestep> 
+<help>
+<p class="indepth">
+Switching on the P switch triggers a monostable multivibrator, also known as a pulse generator.  
+This fires a short pulse (3-5 squares long).
+The bottom half of the level consists of a clock circuit driving another pulse generator.
+To defeat Bowser, the upper pulse must reach the AND gate at the same time
+as the lower pulse!
+</p>
+</help>
+<name> 2-5   TIME IT RIGHT </name>
+.?..
+.M..
+ N#
+  #
+  #  
+  # N##           .......
+  ### #           .........
+    ##N#############L##N#...
+                  ......N####B 
+    ##N#############L##N#...
+  ### #           .........
+  # N##           .......
+  #            
+ N#########################
+ L                        #
+ ##########################
+...............................
+...............................
+</levelmap>
+
+<levelmap> <timestep> 20 </timestep> 
+<help>
+<p class="indepth">
+Toggling the P switch causes the two inputs to the EQV gate to change from (0,1) to (1,0).
+However, one input switches two ticks after the other, so the EQV gate outputs HIGH for two ticks.
+Thus we have a pulse generator that triggers 
+on both the rising edge and falling edge of the P switch signal.
+</p>
+</help>
+<name> 2-6   TIME IT RIGHT #2 </name>
+?         
+Ms###N##..        .......
+  #.N#.N##        .........
+  N##N##.###########L##N#...
+                  ......N###B 
+  N##N##.###########L##N#...
+  #.N#.N##        .........
+  ###N##..        .......
+  #      
+ N######################
+ L                     #
+ #######################
+............................
+............................
+</levelmap>
+
+<levelmap> <timestep> 100 </timestep> <name> 3-1   AND, OR, NOT </name>
+.......................
+.                     .
+M         ... ... ... .
+.s##N###L . . . .  .  .
+.         . . ...  .  .
+.                     .
+.s###     ... ...     .
+..  N#N#L . . .       .
+.s###     ... .       .
+.                     .
+.s#N#     ... ... ..  .
+..  N###L . . . . . . .
+.s#N#     ... . . . . .
+.         . . . . ..  .
+.                     .
+.......................
+</levelmap>
+<levelmap> <timestep> 100 </timestep> <name> 3-2   NOR, NAND </name>
+...........................
+M                     .....
+.s###     ... ... ...  ....
+..  N###L . . . . .     ...
+.s###     . . ... .      ..
+.                         .
+.s#N#     ... ... ... ..  .
+..  N#N#L . . . . . . . . .
+.s#N#     . . ... . . . . .
+.         . . . . . . ..  .
+.                        ..
+...........................
+</levelmap>
+
+<levelmap> <timestep>0</timestep> <name> 3-3   XOR, EQV </name>
+........................
+M                      .
+.s###N##   . . ... ... .
+..  N# ##L  .  . . .   .
+.s###N##   . . ... .   .
+.                      .
+.          ... ... . . .
+.s###N##   .   . . . . .
+..  N# N#L ... ... . . .
+.s###N##   .     . . . .
+.          ...   .  .  .
+.                      .
+........................
+</levelmap>
+
+<levelmap> <timestep>0</timestep> <name> 3-4   AND3, OR3, XOR3, MAJ3 </name>
+.......................
+.        .            .
+.s#N##   .s##N##      .
+.    #   .  N# #      .
+.s#N#N#L .s##N#N#N##  .
+.    #   .      N# #L .
+.s#N##   .s####N#N##  .
+.......................
+.        .s#N###      .
+.s##     .   # N##    .
+.  #     .s#N+## #    .
+.s#N#N#L .   # N#N#N#L.
+.  #     .s#N+## #    .
+.s##     .   # N##    .
+.        .   ###      .
+M......................
+</levelmap>
+
+<levelmap> <timestep>0</timestep> <name> 3-5   HALF ADDER </name>
+..............................
+M                            .
+.  ###N#   ... ... .. .. . . .
+.  #   N#L .   . . .  .   .  .
+.  # #N#   ... ... .  .   .  .
+.  # #         . .           .
+.s#+##N##  ...               .
+.. # N# #L .   . . .....     .
+.s####N##   .. . . . . .     .
+.          ... ... . . .     .
+.                            .
+..............................
+</levelmap>
+
+<levelmap> <timestep>0</timestep> <name> 3-6   FULL ADDER </name>
+.....................
+.s######N###      
+.  #     # N##  ###L
+Ms#+####N+## #  # 
+.  # #   # N#N#N# #L
+.s#+#+##N+## #    #
+.  # # # # N##    #
+.  # # # ###      #
+.  # # #          #
+.  ##+#+##N##     #
+.    # # N# #     #  
+.    ##+##N#N#N####
+.      #     N# #    
+.      #####N#N##  
+W
+</levelmap>
+
+<levelmap> <timestep>0</timestep> <name> 4-1   SR FLIP FLOP </name>
+....................
+...###..M......s.s..
+...#.##...#+##.#.#..
+.s#N#.#.s#N#.#.N#N#.
+....n#L....#.L.#..L.
+.s###...s#n+##.####.
+..........HH........
+.
+</levelmap>
+
+<levelmap> <timestep>0</timestep> 
+<name> 4-2   D FLIP FLOP </name>
+..H
+HHH
+H.H
+HHH s#####N##
+    M    #  #
+    .  HHn# #
+HHH s#nH  # #
+.H.    HHH+Hn#
+.H.       #  # 
+          nHLn#
+          #+++#
+          .
+</levelmap>
+
+<levelmap> <timestep> 0 </timestep> 
+<preconverge> 0 </preconverge> 
+<name> 4-3   T FLIP FLOP </name>
+.....
+..MN########N#
+    #        #       
+ ###+########+#######
+ #  #        #      #
+ # ## #+##  ## #+## #
+ N#n+#N# #N#n+#N# #N#
+    #  # L   #  # L 
+ N#N+#n+####N+#n+####
+ # ## HH    ## HH   #
+ #                  #
+ ####################
+ .
+</levelmap>
+
+<levelmap> <timestep> 0 </timestep> 
+<preconverge> 0 </preconverge> 
+<name> 4-4   THREE BIT COUNTER </name>
+.....
+..MN########N#
+    #        #       
+ ###+########+#######
+ #  #        #      #
+ # ## #+##  ## #+## #
+ N#n+#N# #N#n+#N# #N#
+    #  # #   #  # L 
+ N#N+#n+####N+#n+####
+ # ## HH    ## HH   #
+ #                  #
+ ####################
+   #
+   N########N#
+    #        #       
+ ###+########+#######
+ #  #        #      #
+ # ## #+##  ## #+## #
+ N#n+#N# #N#n+#N# #N#
+    #  # #   #  # L 
+ N#N+#n+####N+#n+####
+ # ## HH    ## HH   #
+ #                  #
+ ####################
+   #
+   N########N#
+    #        #       
+ ###+########+#######
+ #  #        #      #
+ # ## #+##  ## #+## #
+ N#n+#N# #N#n+#N# #N#
+    #  # #   #  # L 
+ N#N+#n+####N+#n+####
+ # ## HH    ## HH   #
+ #                  #
+ ####################
+ .
+</levelmap>
+
+<levelmap> <timestep> 0 </timestep> 
+<preconverge> 0 </preconverge> 
+<name> 4-5   CLOCK AND COUNTER </name>
+              ....
+ n########N########N#
+ # #       #        #       
+ # # M  ###+########+#######
+ # #    #  #        #      #
+ # #    # ## #+##  ## #+## #
+ # #    N#n+#N# #N#n+#N# #N#
+ # #       #  # #   #  # # 
+ # #    N#N+#n+####N+#n+#####L
+ # #    # ## HH    ## HH   #
+ # #    #                  #
+ # #    ####################
+ # #      #
+ # #      N########N#
+ # #       #        #       
+ # #    ###+########+#######
+ # #    #  #        #      #
+ # #    # ## #+##  ## #+## #
+ # #    N#n+#N# #N#n+#N# #N#
+ # #       #  # #   #  # # 
+ # #    N#N+#n+####N+#n+#####L
+ # #    # ## HH    ## HH   #
+ # #    #                  #
+ # #    ####################
+ # #      #
+ # #      N########N#
+ # #       #        #       
+ # #    ###+########+#######
+ # #    #  #        #      #
+ # #    # ## #+##  ## #+## #
+ # #    N#n+#N# #N#n+#N# #N#
+ # #       #  # #   #  # # 
+ # #    N#N+#n+####N+#n+#####L 
+ # #    # ## HH    ## HH   #
+ # #    #                  #
+ ###    ####################
+.
+</levelmap>
