@@ -1,7 +1,7 @@
 export function loadString(url) { return fetch(url).then(r=>r.text())  }
 export class Sound {
-  static masterVolume
-  vol=1 //; buf=null; node=null; static ctx     
+  //static masterVolume,ctx; buf=null; node=null
+  vol=1
   constructor(filename) {
     if(!Sound.ctx) Sound.ctx=new(window.AudioContext||window.webkitAudioContext)()
     let ajax =new XMLHttpRequest()
@@ -24,13 +24,13 @@ export class Sound {
   }
 }
 export class Animation {
-  //frames=null
-  // static ctx
+  //frames=null; static ctx
   constructor(frames) {this.frames=frames} // list of images
   draw(x,y,w,h,i) {
     let im=this.frames[Math.floor(i)%this.frames.length]; 
     Animation.ctx.drawImage(im,x,y,w,h)   //w*im.height/im.width)
   }
+  get aspect() { return this.frames[0].height/this.frames[0].width }
 }
 export const isKeyDown = (()=>{
       const state={};

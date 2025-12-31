@@ -15,17 +15,21 @@
       overflow: hidden;  /* prevent scrollbars */
       background-color:#333; padding:0; margin:0; width:100%; height:100%; font-family:'gameFont',sans-serif;
     }
-    @keyframes Animation { 
-      0%{background-position:10% 0%}
-      50%{background-position:91% 100%}
-      100%{background-position:10% 0%}
+    @keyframes gradientAnimation { 
+      0%  {background-position:10% 0%  ;}
+      50% {background-position:91% 100%;}
+      100%{background-position:10% 0%  ;}
+    }
+    @keyframes flashingAnimation { 
+      0%  {background-color: #993; box-shadow:0px 0px 5px 5px #993;}
+      100%{background-color: #666; box-shadow:0px 0px 2px 2px #993;}
     }
     #splashScreen {
       width: 100%; height:100%; text-align: center; color:white;
       border:1px solid black;
       background: linear-gradient(130deg, #262626, #ff7e00, #fff200);
       background-size: 200% 200%;
-      animation: Animation 4s ease infinite;
+      animation: gradientAnimation 4s ease infinite;
     }
     #canvas {position:absolute; z-index:1; display:none; top:0;}
     #helpDivContainer { margin: 32px; padding: 32px;}
@@ -46,7 +50,6 @@
       margin:6px 0px 0px 0px;text-align:center; font-size:3vmin; color:white; white-space:pre;
       border: 6px outset #974; background-color:#530;
       box-shadow: 0px 0px 1px 1px black, 0px 0px 8px 8px white;
-
     }
     #controls {position:absolute; z-index:3; bottom:0; left:0; width:100%; display:none;}
     button {cursor:pointer;
@@ -82,8 +85,11 @@
 <img id="imgMarioN" src="marioN1.webp"></img>
 <img id="imgMarioN2" src="marioN2.webp"></img>
 <img id="imgMarioN4" src="marioN4.webp"></img>
-<img id="imgPeach1" src="peach1.webp"></img>
-<img id="imgPeach2" src="peach2.webp"></img>
+<img id="imgMarioDead" src="marioDead.gif"></img>
+<!-- <img id="imgPeach1" src="peach1.webp"></img> -->
+<!-- <img id="imgPeach2" src="peach2.webp"></img> -->
+<img id="imgPeach1" src="peach.gif"></img>
+<img id="imgPeach2" src="peach.gif"></img>
 <img id="imgBowser" src="bowser.webp"></img>
 <img id="imgGrass" src="grass.webp"></img>
 <img id="imgDirt" src="dirt.webp"></img>
@@ -91,8 +97,8 @@
 <img id="imgWater2" src="water2.webp"></img>
 <img id="imgLava" src="lava.webp"></img>
 <img id="imgLava2" src="lava2.webp"></img>
-<img id="imgCrying1" src="crying1.webp"></img>
-<img id="imgCrying2" src="crying2.webp"></img>
+<img id="imgCrying1" src="cry1.webp"></img>
+<img id="imgCrying2" src="cry2.webp"></img>
 <img id="imgHappy1" src="happy1.webp"></img>
 <img id="imgHappy2" src="happy2.webp"></img>
 <img id="imgStarOn" src="staron.webp"></img>
@@ -130,24 +136,22 @@
   <br><br>E<br>S &nbsp; &nbsp;  F<br> D
   </div>
     </div>
+    <div style="display:flex; vertical-align:bottom; float:right; margin:0ex 5ex 0ex 5ex;">
+      <div>
+      <input type="range" min="0" max="200" value="50" class="slider" id="sliderSpeed">
+      <div id="divSpeed" style="color:white;">DELAY</div>
+      </div>
+      <button id="btnCheat" class="btn2" title="Key: Shift-C"> CHEAT</button>
+      <button id="btnPrev"  class="btn2" title="Key: [">       PREV </button>
+      <button id="btnReset" class="btn2" title="Key: Shift-R"> RESET </button>
+      <button id="btnNext"  class="btn2" title="Key: [">       NEXT  </button>
+    </div>
     <div style="float:right; width:calc(5*var(--btnsize));" id="actionButtons">
       <button id="btnLava"  class="btn1" style="background-image:url(lava.webp);" disabled="disabled"> H </button>
       <button id="btnWater"  class="btn1" style="background-image:url(water.webp);" disabled="disabled"> J </button>
       <button id="btnCross" class="btn1" style="background-image:url(crossing.webp);" disabled="disabled"> K </button>
       <button id="btnToad"  class="btn1" style="background-image:url(happy1.webp); color:#FFF;" disabled="disabled"> L </button>
       <button id="btnGrass" class="btn1" style="background-image:url(grass.webp);" disabled="disabled"> ; </button>
-    </div>
-    <div style="display:flex; vertical-align:bottom; float:right; margin:0ex 5ex 0ex 5ex;">
-      <button id="btnPrev"  class="btn2" title="Key: [">       PREV </button>
-      <button id="btnReset" class="btn2" title="Key: Shift-R"> RESET </button>
-      <button id="btnNext"  class="btn2" title="Key: [">       NEXT  </button>
-      <!-- <button id="btnSlow"  class="btn2">SLOW</button> -->
-      <div>
-      <input type="range" min="0" max="200" value="50" class="slider" id="sliderSpeed">
-      <div id="divSpeed" style="color:white;">DELAY</div>
-      </div>
-      <!-- <button id="btnFast"  class="btn2">FAST</button> -->
-      <button id="btnCheat" class="btn2" title="Key: Shift-C"> CHEAT</button>
     </div>
   </div>
 
@@ -177,8 +181,8 @@
 
     function setPos(xnew,ynew) {xCursor=xnew;yCursor=ynew;xCurPrev=xCursor;yCurPrev=yCursor}
     function tryWalk(dir) {
-      if (stalled && dir==marioOrientation) return false // already got stuck going in that direction
-      if (marioOrientation!=dir) {marioOrientation=dir; return true} // just change direction, don't move
+      if (marioOrientation!=dir) {marioOrientation=dir; stalled=true; setTimeout(()=>stalled=false,50); return true} // Mario changes direction
+      if (stalled) return false // already got stuck going in that direction
       stalled=false; 
       const dx=DIRS[dir][0],dy=DIRS[dir][1]
       let xnew=xCursor+dx,ynew=yCursor+dy
@@ -244,10 +248,12 @@
     function setLevel(newLevel) {
       if (newLevel<0||newLevel>=levelMaps.length) return // if new level number is illegal, don't load it
       level = newLevel
-      btnPrev.disabled = (level==0)             // if current level is 0, disable "Previous Level" button
-      btnNext.disabled = (level==levelMaps.length-1) // if we are on last level, disable "Next Level" button
       loadLevel(levelMaps[level])
       setScaling()
+      btnPrev.disabled = (level==0)             // if current level is 0, disable "Previous Level" button
+      btnNext.disabled = (level==levelMaps.length-1) // if we are on last level, disable "Next Level" button
+      btnNext.style.animation = ""
+      btnReset.style.animation = ""
     }
     function prevLevel() {setLevel(level-1)} 
     function nextLevel() {setLevel(level+1)} 
@@ -352,7 +358,7 @@
         // N=ground[x+X*(y-1)]
         // S=ground[x+X*(y+1)]        
         let EE=E&(CONDUCTING|SOURCE)
-        let WW=W&(CONDUCTING|SOURCE)
+        let WW=W&(CONDUCTING|SOURCE|GATE)
         let NN=N&(CONDUCTING|SOURCE)
         let SS=S&(CONDUCTING|SOURCE)
         //======== If cell is a NOR gate, do NOR logic
@@ -432,13 +438,10 @@
     let xMario,yMario,nWalk=0,tWalk=0 // appearance (but not gameplay)
     let tcur=0
     let timeOfLastFrame=0
-    let timeStepInMilliseconds = 1000/60.
-    //  let timeStepInMilliseconds = 300.
+    let timeStepInMilliseconds = 1000/60.  //300.
     let level=0,levelName // current level
     let xShaking=0,yShaking=0
 
-    
-    
     function setScaling() {
       winWid=window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth
       winHei=window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight
@@ -461,7 +464,7 @@
       ctx.lineWidth=2 //; ctx.font = '10px Arial'
       for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
         const g=ground[x+X*y]
-        const frm=(tcur+4*x+13*y)/20
+        const frm=(tcur+4*x+13*y)/17
 
         if (g==0)          {ctx.drawImage(imgGrass, x*a,y*a,a,a) }
         else if (g & CONDUCTING) {
@@ -469,20 +472,19 @@
           else         animWater.draw(x*a, y*a, a, a, frm)// conducting, off
         }
         else if (g & SOURCE) {
-          ctx.drawImage(imgGrass, x*a,y*a,a,a)  // grass under P Switch
-          if (g & ON) ctx.drawImage(imgSourceOn, x*a, y*a, a, a) // P Switch on
-          else        ctx.drawImage(imgSourceOff, x*a, y*a, a, a) // P Switch off
+          if (g & ON) {animLava.draw(x*a,y*a,a,a, frm); ctx.drawImage(imgSourceOn, x*a,y*a,a,a)} // P Switch on
+          else        {animWater.draw(x*a,y*a,a,a,frm); ctx.drawImage(imgSourceOff, x*a, y*a, a, a)} // P Switch off
         }
         else if (g & GATE) {
           if (g & ON) { // gate is ON
-            ctx.drawImage(imgWater, x*a, y*a, a, a)
-            animHappy.draw(x*a,y*a,a,a, tcur/12)
+            animWater.draw(x*a, y*a, a, a, frm)
+            animHappy.draw(x*a,y*a,a,a, tcur/14)
           } else { // gate is OFF
-            ctx.drawImage(imgWater, x*a, y*a, a, a)
+            animWater.draw(x*a, y*a, a, a, frm)
             if (ground[(x-1)+X*y]&ON) ctx.drawImage(imgLava, 0,0,32,64, x*a,y*a,a/2,a)
             if (ground[x+X*(y-1)]&ON) ctx.drawImage(imgLava, 0,0,64,32, x*a,y*a,a,a/2)
             if (ground[x+X*(y+1)]&ON) ctx.drawImage(imgLava, 0,32,64,32, x*a,y*a+a/2,a,a/2)
-            animCrying.draw(x*a,y*a,a,a, tcur/10)
+            animCrying.draw(x*a,y*a,a,a, tcur/15)
           }
         }
         
@@ -518,23 +520,23 @@
             else ctx.drawImage(imgStarOff, x*a-20, y*a-20, a+40, a+40)
             break
           case PEACH:
+            const sy=a,sx=a/animPeach.aspect
             if (ground[x+X*y]&ON) {
               animLava.draw(x*a, y*a, a, a, frm)
-              size=a*1.1,xcen=(x+.5)*a + xShaking,ycen=(y+.5)*a + yShaking // reuse  these variables
+              const xcen=(x+.5)*a + xShaking,ycen=(y+.5)*a + yShaking
               ctx.save(); // Save current canvas state
               ctx.translate(xcen,ycen); // Translate to the center of the image
               ctx.rotate(tcur*.1); // Rotate  by radians
-              animPeach.draw(-size/2, -size/2, size, size, 0)
+              animPeach.draw(-sx/2, -sy/2, sx, sy, 0)
               ctx.restore(); // Restore the canvas to its original state
               if (tcur<100) {xShaking+=Math.cos(tcur*.6)*2; yShaking=Math.sin(tcur*.3)*10 }
               else {xShaking=0; yShaking += (tcur-20)*.03}
-              break
             } else {
-              size=a*1.1,xcen=(x+.5)*a,ycen=(y+.5)*a
+              const xcen=(x+.5)*a,ycen=(y+.5)*a
               animWater.draw(x*a, y*a, a, a, frm)   
-              animPeach.draw(xcen-size/2, ycen-size/2, size,size, (Math.floor(tcur/140)%2))          
-              break
-            }            
+              animPeach.draw(xcen-sx/2, ycen-sy/2, sx,sy, tcur/140)                 
+            }
+            break
           case BOWSER:
             if (ground[x+X*y]&ON) {
               animLava.draw(x*a, y*a, a, a, frm)
@@ -557,9 +559,10 @@
 
       //======== DRAW MARIO
       if (ground[xCursor+X*yCursor]&ON) {
+        // Mario is burned (dead)
         const x=xCursor,y=yCursor
         const xcen=(x+.5)*a+xShaking,ycen=(y+.5)*a+yShaking,sx=a,sy=a
-        animMarioS.draw(xcen-sx/2, ycen-sy/2, sx,sy, 1);
+        ctx.drawImage(imgMarioDead, xcen-sx/2, ycen-sy/2, sx,sy);
 
         if (tcur<100) {xShaking+=Math.cos(tcur*.6)*2; yShaking=Math.sin(tcur*.3)*10 }
         else {xShaking=0; yShaking+=(tcur-20)*.03}      
@@ -591,25 +594,29 @@
         }
         if (ground[xCursor+X*yCursor]&ON) winlose=LOSE  // Mario is burning!
 
-        if (winlose==WIN) {tcur=0; audioWin0.play(); setTimeout( ()=>audioWin1.play(), 1000)}
-        else if (winlose==LOSE) {tcur=0;audioLose.play()}
+        if (winlose==WIN) {
+          tcur=0; audioWin0.play(); setTimeout( ()=>audioWin1.play(), 1000);               
+          setTimeout(()=>btnNext.style.animation = 'flashingAnimation 0.2s alternate infinite', 1000)
+        }
+        else if (winlose==LOSE) {
+          tcur=0;audioLose.play(); 
+          setTimeout(()=>btnReset.style.animation = 'flashingAnimation 0.2s alternate infinite', 1000)
+        }
       }  
     }
     function animate(timeCurrent) {
       requestAnimationFrame(animate)
       render() 
       checkVictory()
-
-      const elapsed = Date.now() - timeOfLastFrame
-      if (elapsed <= timeStepInMilliseconds) return
-      timeOfLastFrame = Date.now()
-
-      evolve()
-
-      if (isKeyDown('s')||isKeyDown('S')) walkW()//      if (isKeyDown('ArrowLeft')) walkW()
+      if      (isKeyDown('s')||isKeyDown('S')) walkW()//      if (isKeyDown('ArrowLeft')) walkW()
       else if (isKeyDown('f')||isKeyDown('F')) walkE()
       else if (isKeyDown('e')||isKeyDown('E')) walkN()
       else if (isKeyDown('d')||isKeyDown('D')) walkS()
+ 
+      const elapsed = Date.now() - timeOfLastFrame
+      if (elapsed <= timeStepInMilliseconds) return
+      timeOfLastFrame = Date.now()
+      evolve()
     }
 
     //=================================================
@@ -674,7 +681,7 @@
       joystick.style.transform=`translate(${x}px,${y}px)`
       
       joystickForce = Math.hypot(x,y) 
-      if (joystickForce<20) {
+      if (joystickForce<30) {
         if (Math.abs(x)>Math.abs(y)) if (x>0) {faceE()} else faceW()
         else                         if (y>0) {faceS()} else faceN()
       }

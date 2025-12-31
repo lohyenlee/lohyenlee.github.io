@@ -2,7 +2,7 @@
 <name>T O A D     B U R N<br>By Yen Lee Loh &amp; Isaac Hutchison (2025) </name>
 <help>
 <h3> WELCOME TO TOAD BURN! </h3>
-MOVE MARIO USING ARROW BUTTONS OR KEYS (E,S,D,F). <br>
+MOVE MARIO USING JOYSTICK OR ESDF KEYS. <br>
 CLICK "NEXT" TO GO TO WORLD 1-1. <br>
 <a href="toadburnhelp.html" style="color:cyan;">Click here to learn more about Toad Burn </a>
 </help>
@@ -27,14 +27,14 @@ WWWWWWWWWWWWWWWWWWW
 <levelmap> <timestep>100</timestep> 
 <help>
 <p>
-MOVE MARIO USING THE BUTTONS OR ESDF KEYS.
+MOVE MARIO USING JOYSTICK OR ESDF KEYS.
 </p><p>
-TRY BUMPING TOAD!
+TRY BUMPING THE SWITCH.
 <p>
 </help>
 <name> 1-1   LIGHT THE FUSE </name>
 W?WWWWWWWWWWWW
-W.n######.###W
+W.s######.###W
 W.W.....#.#.#W
 W.W######.#.#W
 WMW#......#.#W
@@ -46,7 +46,7 @@ WWWWWWWWWWWWWW
 
 <levelmap> <timestep>100</timestep> <name> 1-2   SAVE THE PRINCESS </name>
 <help>
-<p>DON'T BUMP THE WRONG TOAD!</p>
+<p>WHICH SWITCH?</p>
 <p class="indepth">
 Each toad functions as a 
 <a href="https://learn.sparkfun.com/tutorials/button-and-switch-basics/what-is-a-switch">switch</a>.
@@ -55,22 +55,21 @@ The switch remembers whether it is ON or OFF, and supplies either a positive vol
 </help>
 WWWWWWWWWWW
 ?.W..####.W
-..n###..#.W
+..s###..#.W
 ..W....P#.W
 .MW....#...
 ..W....##B.
-..n###...#.
+..s###...#.
 ..W..#####W
 WWWWWWWWWWW
 </levelmap>
-
 
 <levelmap> <timestep>100</timestep> <name> 1-3   Do unto others as they do NOT unto you </name>
 <help>
 <p>HAPPY TOADS SPEW LAVA.<p>
 <p>BURNING TOADS DON'T!</p>
 <p class="indepth">
-The second toad behaves as a 
+The toad behaves as a 
 <a href="https://en.wikipedia.org/wiki/Inverter_(logic_gate)">NOT gate</a>,
 also known as an inverter.
 If the input of the NOT gate is HIGH, the output is LOW.
@@ -78,9 +77,9 @@ If the input is LOW, the output is HIGH.
 </p>
 </help>
 W?WWWWWWWWWW
-.M
-..N###n###B
-..
+.MW
+..S###n###B
+..W
 WWWWWWWWWWWW
 </levelmap>
 
@@ -88,7 +87,7 @@ WWWWWWWWWWWW
 <help>
 <p>A BURNING TOAD IS NOT A HAPPY TOAD!</p>
 <p class="indepth">
-The second toad behaves as a 
+The toad behaves as a 
 <a href="https://en.wikipedia.org/wiki/NOR_gate">NOR gate</a>.
 If either input of the NOR gate is HIGH, the output is LOW.
 Only if both inputs are LOW will the output be HIGH.
@@ -96,9 +95,9 @@ Only if both inputs are LOW will the output be HIGH.
 </help>
 W?WWWWWWWWWW
 WMW.....
-W.N###..
-W.W..N###B
-W.N###..
+W.S###..
+W.W..n###B
+W.S###..
 W.W.....
 WWWWWWWWWWWW
 </levelmap>
@@ -114,9 +113,9 @@ Both inputs of the AND gate must be HIGH in order for the output to be HIGH!
 </p>
 </help>
 WWWWWWWWWWW
-.n##N#.....
+.s##N#.....
 .W...N###B.
-.n##N#.....
+.s##N#.....
 .WW?WW.....
 ...M.W.....
 WWWWWWWWWWW
@@ -131,19 +130,19 @@ which is short for Exclusive Or.
 The output of the XOR gate is HIGH if either, but not both, of the inputs are HIGH.
 </p>
 <p class="indepth">
-Bumping the middle toad causes both inputs to go HIGH, but the output remains LOW.
-Bumping the top toad causes only one input to go HIGH, so that th output is HIGH.
+Bumping the middle witch causes both inputs to go HIGH, but the output remains LOW.
+Bumping the top switch causes only one input to go HIGH, so that th output is HIGH.
 </p>
 </help>
 ...................
 ..WWWWWWW..........
-..n###..WWWWWWWHHHH
+..s###..WWWWWWWHHHH
 ?.W..#..W###..W....
 ..W##N#N##.N##W....
-M.n#....WN##.N#N#B.
+M.s#....WN##.N#N#B.
 ..W##N#N##.N##W....
 ..W..#..W###..W.
-..n###..WWWWWWWHHHH
+..s###..WWWWWWWHHHH
 ..WWWWWWW..........
 ...................
 </levelmap>
@@ -281,14 +280,13 @@ If the trigger is LOW, the input signal is held, and does not propagate.
 If the trigger is HIGH, then the input signal propagates to become the output.
 </p>
 </help>
-.................
-.................
-..........WWWWWWW
-..?..    n#
-.M..      N#
-...        #
-..n######N#n####B
-...          W
+..................
+.?................
+........WWWWWWWWWW
+.M.....n#N##.....W
+........W..#.....W
+..n######N#n####BW
+........WWWWWWWWWW
 </levelmap>
 
 <levelmap> <timestep> 0 </timestep> <name> 2-2    LOOSEN THE LATCHES </name>
@@ -302,19 +300,18 @@ Set the triggers to HIGH so that the signal can propagate through the latches.
 </help>
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-.................................
-.M?..............................
-.....n#.......n#.......n#........
-..... #        #        #     
-....  #        #        #      B
-...   N#       N#       N#     #
-..     ## #+##  ## #+##  ## #+##
-..   N#N+#N# #N#N+#N# #N#N+#N# #
-.s#L##  #  # #   #  # #   #  # #
-..   ##N+#n+#L##N+#n+#L##N+#n+#L
-..     ## H#    ## H#    ## H#  
-..             
-..   
+..............................WWW
+.M?...........................WWW
+..............................WWW
+....  s        s        s     ...
+...   N#       N#       N#    .B.
+..     ## #+##  ## #+##  ## #+##.
+..   N#N+#N# #N#N+#N# #N#N+#N# #.
+.s#L##  #  # #   #  # #   #  # #.
+..   ##N+#n+#L##N+#n+#L##N+#n+#L.
+..     ## H#    ## H#    ## H#  .
+..                              .
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 <levelmap> <timestep> 0 </timestep> <name> 2-3    TREAD CAREFULLY </name>
@@ -322,8 +319,7 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 ................................
 M...............................
-....n#.......n#.......n#........
-.... #        #        #     
+...  s        s        s        
 ...  #        #        #      B
 ..   N#       N#       N#     #
 .     ## #+##  ## #+##  ## #+##
@@ -334,6 +330,7 @@ s#L##  #  # #   #  # #   #  # #
 . #                  N#
 . ##################  N#P
 .                  ##N#
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 <levelmap> <timestep> 0 </timestep> <name> 2-4    WALKING ON EGGSHELLS </name>
@@ -347,7 +344,7 @@ STAR 2 + STAR 4 = BURNT PEACH ALSO!
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 M...........................S#  W
-..s#.......s#.......s#...    N##W
+...s        s        s       N##W
 .? N#       N#       N#     N# #W
 .   ## #+##  ## #+##  ## #+##  #W
 .#N#N+#N# #N#N+#N# #N#N+#N# # ##W
@@ -508,7 +505,7 @@ M                     .....
 ........................
 M                      .
 .s###N##   . . ... ... .
-..  N# ##L  .  . . .   .
+..  N# NN#L .  . . .   .
 .s###N##   . . ... .   .
 .                      .
 .          ... ... . . .
@@ -522,36 +519,36 @@ M                      .
 
 <levelmap> <timestep>0</timestep> <name> 3-4   AND3, OR3, XOR3, MAJ3 </name>
 .......................
-.        .            .
-.s#N##   .s##N##      .
-.    #   .  N# #      .
-.s#N#N#L .s##N#N#N##  .
-.    #   .      N# #L .
-.s#N##   .s####N#N##  .
+.       .             .
+.sN##   .s##N##       .
+.   #   .  N# #       .
+.sN#N#L .s##N#N#N##   .
+.   #   .      N# NN#L.
+.sN##   .s####N#N##   .
 .......................
-.        .s#N###      .
-.s##     .   # N##    .
-.  #     .s#N+## #    .
-.s#N#N#L .   # N#N#N#L.
-.  #     .s#N+## #    .
-.s##     .   # N##    .
-.        .   ###      .
+.       .s#N###       .
+.s#     .   # N##     .
+. #     .s#N+## #     .
+.sN#N#L .   # N#N#N#L .
+. #     .s#N+## #     .
+.s#     .   # N##     .
+.       .   ###       .
 M......................
 </levelmap>
 
 <levelmap> <timestep>0</timestep> <name> 3-5   HALF ADDER </name>
-..............................
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 M                            .
 .  ###N#   ... ... .. .. . . .
 .  #   N#L .   . . .  .   .  .
 .  # #N#   ... ... .  .   .  .
 .  # #         . .           .
-.s#+##N##  ...               .
-.. # N# #L .   . . .....     .
-.s####N##   .. . . . . .     .
-.          ... ... . . .     .
-.                            .
-..............................
+.s#+##N##    ...             .
+.. # N# NN#L .   . . .....   .
+.s####N##    ... . . . . .   .
+.              . ... . . .   .
+.            ...             .
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 <levelmap> <timestep>0</timestep> <name> 3-6   FULL ADDER </name>
@@ -566,7 +563,7 @@ Ms#+####N+## #  #
 .  # # #          #
 .  ##+#+##N##     #
 .    # # N# #     #  
-.    ##+##N#N#N####
+.    ##+##N#N#N#NN#
 .      #     N# #    
 .      #####N#N##  
 W
@@ -576,7 +573,7 @@ W
 ....................
 ...###..M......s.s..
 ...#.##...#+##.#.#..
-.s#N#.#.s#N#.#.N#N#.
+.s#N#.#.s#N#.#.N#n#.
 ....n#L....#.L.#..L.
 .s###...s#n+##.####.
 ..........HH........
@@ -588,14 +585,14 @@ W
 ..H
 HHH
 H.H
-HHH s#####N##
+HHH s##L##N##
     M    #  #
     .  HHn# #
 HHH s#nH  # #
-.H.    HHH+Hn#
-.H.       #  # 
-          nHLn#
-          #+++#
+.H.    HHH+Hn# W
+.H.       #  # W
+          nHLn#W
+          #+++#W
           .
 </levelmap>
 
@@ -606,7 +603,7 @@ HHH s#nH  # #
 ..MN########N#
     #        #       
  ###+########+#######
- #  #        #      #
+ #  #        #      # 
  # ## #+##  ## #+## #
  N#n+#N# #N#n+#N# #N#
     #  # L   #  # L 
@@ -620,7 +617,9 @@ HHH s#nH  # #
 <levelmap> <timestep> 0 </timestep> 
 <preconverge> 0 </preconverge> 
 <name> 4-4   THREE BIT COUNTER </name>
-.....
+WWWWWWWWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWWWWWWWWWW
 ..MN########N#
     #        #       
  ###+########+#######
@@ -665,7 +664,7 @@ HHH s#nH  # #
               ....
  n########N########N#
  # #       #        #       
- # # M  ###+########+#######
+ # #    ###+########+#######
  # #    #  #        #      #
  # #    # ## #+##  ## #+## #
  # #    N#n+#N# #N#n+#N# #N#
@@ -674,9 +673,9 @@ HHH s#nH  # #
  # #    # ## HH    ## HH   #
  # #    #                  #
  # #    ####################
- # #      #
- # #      N########N#
- # #       #        #       
+ # # ..   #
+ # # M.   N########N#
+ # # ..    #        #       
  # #    ###+########+#######
  # #    #  #        #      #
  # #    # ## #+##  ## #+## #
