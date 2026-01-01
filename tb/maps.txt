@@ -122,7 +122,7 @@ WM.........W
 WWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep>10</timestep> <name> 1-6   One XOR the Other </name>
+<levelmap> <timestep>100</timestep> <name> 1-6   One XOR the Other </name>
 <help>
 <p class="indepth">
 The five toads at the right of this circuit constitute a
@@ -131,38 +131,61 @@ which is short for Exclusive Or.
 The output of the XOR gate is HIGH if either, but not both, of the inputs are HIGH.
 </p>
 <p class="indepth">
-Bumping the middle witch causes both inputs to go HIGH, but the output remains LOW.
+Bumping the middle switch causes both inputs to go HIGH, but the output remains LOW.
 Bumping the top switch causes only one input to go HIGH, so that th output is HIGH.
 </p>
 </help>
-...................
-..WWWWWWW..........
-..s###..WWWWWWWHHHH
-?.W..#..W###..W....
-..W##N#N##.N##W....
-M.s#....WN##.N#N#B.
-..W##N#N##.N##W....
-..W..#..W###..W.
-..s###..WWWWWWWHHHH
-..WWWWWWW..........
-...................
+W.................W
+W.WWWWWWWWWWWWW...W
+W.s###..W###..W...W
+?.W..#..W#.#..W...W
+WMW##N#N##.N##W...W
+..s#....WN##.N#N#B.
+W.W##N#N##.N##W...W
+W.W..#..W#.#..W...W
+W.s###..W###..W...W
+W.WWWWWWWWWWWWW...W
+W.................W
+</levelmap>
+
+
+
+<levelmap> <timestep>100</timestep> <name> 1-6B   One XOR the Other?  </name>
+<help>
+<p class="indepth">
+In terms of combinational logic, this circuit functions as a XOR gate.
+In terms of sequential logic, it functions as a pulse generator.
+When the middle switch is switched OFF, there is a lag between some of the gates toggling,
+which results in a short pulse being generated. 
+</p>
+</help>
+W.................W
+W.WWWWWWWWWWWWW...W
+W.s###..W.....W...W
+?.W..#..W.....W...W
+WMW##N#N##+N##W...W
+..s#....WN##.N#N#B.
+W.W##N#N##+N##W...W
+W.W..#..W.....W...W
+W.s###..W.....W...W
+W.WWWWWWWWWWWWW...W
+W.................W
 </levelmap>
 
 <levelmap> <name> 1-7   TOADS GALORE </name>
-..................
-..      .....HHHH.
-.MS###    ....HH..
-..   N###    .....
-..S###  #     ....
-..      N####  ...
-..S###  #   #   ..
-..   N###   N#B ..
-..s###      #   ..
-..          #   ..
-..S##########   ..
-..              ..
-..................
-..................
+W.................
+W.      .....HHHH.
+WMS###    ....HH..
+W.   N###    .....
+W.S###  #     ....
+W.      N####  ...
+W.S###  #   #   ..
+W.   N###   N#B ..
+W.s###      #   ..
+W.          #   ..
+W.S##########   ..
+W.              ..
+W.................
 </levelmap>
 
 <levelmap> <timestep> 100 </timestep> <name> 1-8   A LIFE-OR-DEATH DECISION </name>
@@ -170,18 +193,18 @@ M.s#....WN##.N#N#B.
 <p>REMEMBER, BOWSER IS THE BAD GUY!</p>
 </help>
 WWWWWWWWWWWWWW
-.. ..###..###.
-.. ..#.#..#.#.
-..s##+#+#.#.#.
-.. ..#.#+##.#.
+W. ..###..###.
+W. ..#.#..#.#.
+W.s##+#+#.#.#.
+W. ..#.#+##.#.
 ?. .##..#...#.
-.. .#...#.###.
-M.s#+##.#.#...
-.. .#.##+#+##.
-.. .#...#.#.#.
-.. .#.###.B.#.
-..s##.#.....#.
-.. ...#N#n#P#.
+WM .#...#.###.
+..s#+##.#.#...
+W. .#.##+#+##.
+W. .#...#.#.#.
+W. .#.###.B.#.
+W.s##.#.....#.
+W. ...#N#n#P#.
 WWWWWWWWWWWWWW
 </levelmap>
 
@@ -192,34 +215,34 @@ WWWWWWWWWWWWWW
 <br>
 LAVA FLOWS TO CROSS WITHOUT INTERFERING. </p>
 </help>
-..............
-.M          ..
-..s#####    ..
-..     #    ..
-..   ##+##B ..
-..   # #    ..
-.?   ###    ..
-..          ..
-..............
-..............
+W.............
+WM          ..
+W.s#####    ..
+W.     #    ..
+W.   ##+##B ..
+W.   # #    ..
+..   ###    ..
+W?          ..
+W.............
+W.............
 </levelmap>
 
 <levelmap> <timestep>100</timestep> <name> 1-10   SAVE PEACH AGAIN! </name>
 WWWWWWWWWWWWWWWWWWW
 WWWWWWWWWWWWWWWWWWW
-M.s#N#
-..   N####
-..s#N#   N##
-..   n#### N##
-..s#N# # N## #
-..   N#+##   N#N#B
-..s#N# # N## #
-..   N#+## N##
-..s#N# # N##
-..   N#+##
-..s#N# # 
-..   # #
-..   N#N#N#P
+..s#N#
+WM   N####
+W.s#N#   N##
+W.   n#### N##
+W.s#N# # N## #
+W.   N#+##   N#N#B
+W.s#N# # N## #
+W.   N#+## N##
+W.s#N# # N##
+W.   N#+##
+W.s#N# # 
+W.   # #
+W.   N#N#N#P
 WWWWWWWWWWWWWWWWWWW
 </levelmap>
 
@@ -281,13 +304,13 @@ If the trigger is LOW, the input signal is held, and does not propagate.
 If the trigger is HIGH, then the input signal propagates to become the output.
 </p>
 </help>
-..................
-.?................
-........WWWWWWWWWW
-.M.....n#N##.....W
+W.................
+W?................
+W.......WWWWWWWWWW
+WM.....n#N##.....W
 ........W..#.....W
-..n######N#n####BW
-........WWWWWWWWWW
+W.n######N#n####BW
+W.......WWWWWWWWWW
 </levelmap>
 
 <levelmap> <timestep> 0 </timestep> <name> 2-2    LOOSEN THE LATCHES </name>
@@ -301,37 +324,37 @@ Set the triggers to HIGH so that the signal can propagate through the latches.
 </help>
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-..............................WWW
-.M?...........................WWW
-..............................WWW
-....  s        s        s     ...
-...   N#       N#       N#    .B.
-..     ## #+##  ## #+##  ## #+##.
+W.............................WWW
+WM?...........................WWW
+W.............................WWW
+W...  s        s        s     ...
+W..   N#       N#       N#    .B.
+W.     ## #+##  ## #+##  ## #+##.
 ..   N#N+#N# #N#N+#N# #N#N+#N# #.
-.s#L##  #  # #   #  # #   #  # #.
-..   ##N+#n+#L##N+#n+#L##N+#n+#L.
-..     ## H#    ## H#    ## H#  .
-..                              .
+Ws#L##  #  # #   #  # #   #  # #.
+W.   ##N+#n+#L##N+#n+#L##N+#n+#L.
+W.     ## H#    ## H#    ## H#  .
+W.                              .
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 <levelmap> <timestep> 0 </timestep> <name> 2-3    TREAD CAREFULLY </name>
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-................................
-M...............................
-...  s        s        s        
-...  #        #        #      B
-..   N#       N#       N#     #
-.     ## #+##  ## #+##  ## #+##
-.   N#N+#N# #N#N+#N# #N#N+#N# #
-s#L##  #  # #   #  # #   #  # #
-. # ##N+#n+#L##N+#n+#L##N+#n+#L
-. #   ## H#    ## H# #  ## H#  
-. #                  N#
-. ##################  N#P
-.                  ##N#
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+W................................
+WMM..............................
+W...  s        s        s        
+W...  #        #        #      B
+...   N#       N#       N#     #
+W.     ## #+##  ## #+##  ## #+##
+W.   N#N+#N# #N#N+#N# #N#N+#N# #
+Ws#L##  #  # #   #  # #   #  # #
+W. # ##N+#n+#L##N+#n+#L##N+#n+#L
+W. #   ## H#    ## H# #  ## H#  
+W. #                  N#
+W. ##################  N#P
+W.                  ##N#
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 <levelmap> <timestep> 0 </timestep> <name> 2-4    WALKING ON EGGSHELLS </name>
@@ -342,25 +365,25 @@ STAR 1 + STAR 3 = BURNT PEACH
 STAR 2 + STAR 4 = BURNT PEACH ALSO!
 </p>
 </help>
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-M...........................S#  W
-...s        s        s       N##W
-.? N#       N#       N#     N# #W
-.   ## #+##  ## #+##  ## #+##  #W
-.#N#N+#N# #N#N+#N# #N#N+#N# # ##W
-s#   #  # #   #  # #   #  # # # W
-.L##N+#n+#L##N+#n+#L##N+#n+#L # W
-.#  ## H# #  ## H# #  ## H# # # W
-.#        #        #        # # W
-.#        #   #+###+++####### # W
-.#        #   N#   #N#        # W
-.#        #    N##   N#P B### # W
-.#        ####N# #  N# #    # # W
-.#               #  #  # #### # W
-.################+###  # #    # W
-.                #+++++# ###### W
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+WM...........................S#  W
+W...s        s        s       N##W
+W.? N#       N#       N#     N# #W
+..   ## #+##  ## #+##  ## #+##  #W
+W.#N#N+#N# #N#N+#N# #N#N+#N# # ##W
+Ws#   #  # #   #  # #   #  # # # W
+W.L##N+#n+#L##N+#n+#L##N+#n+#L # W
+W.#  ## H# #  ## H# #  ## H# # # W
+W.#        #        #        # # W
+W.#        #   #+###+++####### # W
+W.#        #   N#   #N#        # W
+W.#        #    N##   N#P B### # W
+W.#        ####N# #  N# #    # # W
+W.#               #  #  # #### # W
+W.################+###  # #    # W
+W.                #+++++# ###### W
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 <levelmap> <timestep> 1 </timestep> <name> 2-5   SHIFT TO SUCCESS </name>
