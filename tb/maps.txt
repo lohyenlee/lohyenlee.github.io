@@ -17,12 +17,11 @@ WN###L###L###L###BW
 W.++++++++++++++++W
 W.#...#.#.###.###.W
 W.###.#.#.#...#.#.W
-W.#.#.#.#.#.?.#.#.W
+W.#.#.#.#.#.?.#.#..
 W.###.###.#...#.#.W
 W...........M.....W
 WWWWWWWWWWWWWWWWWWW
 </levelmap>
-
 
 <levelmap> <timestep>100</timestep> 
 <help>
@@ -34,15 +33,16 @@ TRY BUMPING THE SWITCH.
 </help>
 <name> 1-1   LIGHT THE FUSE </name>
 W?WWWWWWWWWWWW
-W.s######.###W
-W.W.....#.#.#W
-W.W######.#.#W
-WMW#......#.#W
-W.W#.B#####.#W
-W.W#........#W
-W.W##########W
+W..########..W
+W.s#......#.B.
+W.W..######.#.
+..W..#......#W
+WMW..########W
 WWWWWWWWWWWWWW
 </levelmap>
+
+
+
 
 <levelmap> <timestep>100</timestep> <name> 1-2   SAVE THE PRINCESS </name>
 <help>
@@ -54,13 +54,13 @@ The switch remembers whether it is ON or OFF, and supplies either a positive vol
 </p>
 </help>
 WWWWWWWWWWW
-?.W..####.W
-..s###..#.W
-..W....P#.W
-.MW....#...
-..W....##B.
-..s###...#.
-..W..#####W
+.....####.W
+W.s###..#.W
+W.W....P#.W
+WM?....#..W
+W.W....##B.
+W.s###...#W
+W.W..#####W
 WWWWWWWWWWW
 </levelmap>
 
@@ -77,9 +77,10 @@ If the input is LOW, the output is HIGH.
 </p>
 </help>
 W?WWWWWWWWWW
-.MW
-..S###n###B
-..W
+.MW......W..
+..S###n###BW
+..WWWWWWWW.W
+...........W
 WWWWWWWWWWWW
 </levelmap>
 
@@ -93,13 +94,13 @@ If either input of the NOR gate is HIGH, the output is LOW.
 Only if both inputs are LOW will the output be HIGH.
 </p>
 </help>
-W?WWWWWWWWWW
-WMW.....
-W.S###..
-W.W..n###B
-W.S###..
-W.W.....
-WWWWWWWWWWWW
+W?WWWWWWWWW
+W.S###..W..
+W.W..n###BW
+W.S###....W
+WMWWWW.H.HW
+W.........W
+WWWWWWWWWWW
 </levelmap>
 
 <levelmap> <timestep>100</timestep> <name> 1-5   On AND On to Victory </name>
@@ -112,13 +113,13 @@ The three toads in the center function as an
 Both inputs of the AND gate must be HIGH in order for the output to be HIGH!
 </p>
 </help>
-WWWWWWWWWWW
-.s##N#.....
-.W...N###B.
-.s##N#.....
-.WW?WW.....
-...M.W.....
-WWWWWWWWWWW
+WWWWWWWWWWWW
+W.s##N#..WWW
+W.W...N###B.
+W.s##N#WWW.W
+..WW?WWW...W
+WM.........W
+WWWWWWWWWWWW
 </levelmap>
 
 <levelmap> <timestep>10</timestep> <name> 1-6   One XOR the Other </name>

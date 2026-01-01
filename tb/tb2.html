@@ -167,7 +167,7 @@
     //=================================================
     const ON=1,FRESH=2,CONDUCTING=4,SOURCE=8,GATE=16
     const WALL=1,UNWALKABLE=2,LAMP=4,PEACH=8,BOWSER=16,QUESTION=32
-    const PLAYING=0,WIN=1,LOSE=-1
+    const PLAYING=0,WIN=1,PEACH_DIED=-1,MARIO_DIED=-2
     const DIRS=[[1,0],[-1,0],[0,1],[0,-1]]
     
     let X,Y // level size
@@ -189,6 +189,9 @@
       let xnew=xCursor+dx,ynew=yCursor+dy
       //======== Check for various cases including collisions with objects
       if (xMario!=xCursor || yMario!=yCursor) return false // Previous walk in progress; do nothing
+      //======== Check for transition to next/prev level
+      if (xnew<=-1 && level>0) {setLevel(level-1); return}
+      if (xnew>=X) {setLevel(level+1); return}
       if (xnew<0||xnew>=X||ynew<0||ynew>=Y) {soundBuzz.play(); stalled=true; return false} // Illegal move
       const G=ground[xnew+X*ynew],H=extras[xnew+X*ynew]
       if (H & WALL) {soundBuzz.play(); stalled=true; return false} // Can't walk into wall
@@ -555,12 +558,8 @@
             break
         }
       }
-    
-      //======== DRAW FRAME AROUND GAME AREA
-      // ctx.strokeStyle='#FFF'; ctx.strokeRect(0,0, X*a, Y*a)
-
       //======== DRAW MARIO
-      if (ground[xCursor+X*yCursor]&ON) {
+      if (winlose==MARIO_DIED) {
         // Mario is burned (dead)
         const x=xCursor,y=yCursor
         const xcen=(x+.5)*a+xShaking,ycen=(y+.5)*a+yShaking,sx=a,sy=a
@@ -589,18 +588,19 @@
     }
     
     function checkVictory() {
-      if (winlose==PLAYING) {   
+      if (winlose==PLAYING) {
         for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
           if (extras[x+X*y]==BOWSER && ground[x+X*y]&ON) {winlose=WIN; break}
-          if (extras[x+X*y]==PEACH && ground[x+X*y]&ON) {winlose=LOSE; break}
+          if (extras[x+X*y]==PEACH && ground[x+X*y]&ON) {winlose=PEACH_DIED; break}
         }
-        if (ground[xCursor+X*yCursor]&ON) winlose=LOSE  // Mario is burning!
+        if (ground[xCursor+X*yCursor]&ON) winlose=MARIO_DIED  // Mario is burning!
+        if (extras[xCursor+X*yCursor]==BOWSER) winlose=MARIO_DIED  // Mario got eaten by Bowser
 
         if (winlose==WIN) {
           tcur=0; audioWin0.play(); setTimeout( ()=>audioWin1.play(), 1000);               
           setTimeout(()=>btnNext.style.animation = 'flashingAnimation 0.2s alternate infinite', 1000)
         }
-        else if (winlose==LOSE) {
+        else if (winlose==MARIO_DIED||winlose==PEACH_DIED) {
           tcur=0;audioLose.play(); 
           setTimeout(()=>btnReset.style.animation = 'flashingAnimation 0.2s alternate infinite', 1000)
         }
