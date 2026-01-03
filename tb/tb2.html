@@ -86,7 +86,8 @@
 <img id="imgMarioN2" src="marioN2.webp"></img>
 <img id="imgMarioN4" src="marioN4.webp"></img>
 <img id="imgMarioDead" src="marioDead.gif"></img>
-<img id="imgAsh" src="ash.webp"></img>
+<img id="imgAsh1" src="ash1.webp"></img>
+<img id="imgAsh2" src="ash2.webp"></img>
 <!-- <img id="imgPeach1" src="peach1.webp"></img> -->
 <!-- <img id="imgPeach2" src="peach2.webp"></img> -->
 <img id="imgPeach1" src="peach.gif"></img>
@@ -537,7 +538,7 @@
               ctx.restore(); // Restore the canvas to its original state
               if (tcur<100) {xShaking+=Math.cos(tcur*.6)*2; yShaking=Math.sin(tcur*.3)*10 }
               else {xShaking=0; yShaking += (tcur-20)*.03}
-              if (tcur>150) {ctx.drawImage(imgDirt, x*a,y*a,a,a);ctx.drawImage(imgAsh, x*a,y*a,a,a)}
+              if (tcur>150) {ctx.drawImage(imgDirt, x*a,y*a,a,a);animAsh.draw(x*a,y*a,a,a,tcur/10)}
             } else {
               const xcen=(x+.5)*a,ycen=(y+.5)*a
               animWater.draw(x*a, y*a, a, a, frm)   
@@ -551,7 +552,7 @@
               ctx.drawImage(imgBowser, xcen-size/2, ycen-size/2, size,size)
               if (tcur<100) {xShaking+=Math.cos(tcur*.6)*2; yShaking=Math.sin(tcur*.3)*10 }
               else {xShaking=0; yShaking+=(tcur-20)*.03}  
-              if (tcur>150) {ctx.drawImage(imgDirt, x*a,y*a,a,a);ctx.drawImage(imgAsh, x*a,y*a,a,a)}
+              if (tcur>150) {ctx.drawImage(imgDirt, x*a,y*a,a,a);animAsh.draw(x*a,y*a,a,a,tcur/10)}
             } else {
               size=a*1.1,xcen=(x+.5)*a,ycen=(y+.5)*a
               animWater.draw(x*a, y*a, a, a, frm)     
@@ -751,6 +752,7 @@
     let animWater = new Animation([imgWater,imgWater2])
     let animCrying= new Animation([imgCrying1,imgCrying2])
     let animHappy = new Animation([imgHappy1,imgHappy2])
+    let animAsh   = new Animation([imgAsh1,imgAsh2])
     let soundTock = new Sound('tock.mp3')
     let soundBuzz = new Sound('buzz.mp3')
     let soundWin1 = new Sound('win1.mp3')

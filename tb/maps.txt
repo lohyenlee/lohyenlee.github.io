@@ -35,7 +35,7 @@ TRY BUMPING THE SWITCH.
 W?WWWWWWWWWWWW
 W..########..W
 W.s#......#.B.
-W.W..######.#.
+W.W..######.#W
 ..W..#......#W
 WMW..########W
 WWWWWWWWWWWWWW
@@ -173,19 +173,19 @@ W.................W
 </levelmap>
 
 <levelmap> <name> 1-7   TOADS GALORE </name>
-W.................
-W.      .....HHHH.
-WMS###    ....HH..
-W.   N###    .....
-W.S###  #     ....
-W.      N####  ...
-W.S###  #   #   ..
-W.   N###   N#B ..
-W.s###      #   ..
-W.          #   ..
-W.S##########   ..
-W.              ..
-W.................
+W............WWWWW
+W.      .....WHHHW
+WMS###    ...WHHHW
+W.   N###    WWWWW
+W.S###  #     WWWW
+W.      N####  WWW
+W.S###  #   #  WWW
+W.   N###   N#B...
+W.s###      # .WWW
+W.          # .WWW
+W.S########## .WWW
+W.            .WWW
+W..............WWW
 </levelmap>
 
 <levelmap> <timestep> 100 </timestep> <name> 1-8   A LIFE-OR-DEATH DECISION </name>
@@ -215,34 +215,32 @@ WWWWWWWWWWWWWW
 <br>
 LAVA FLOWS TO CROSS WITHOUT INTERFERING. </p>
 </help>
-W.............
-WM          ..
-W.s#####    ..
-W.     #    ..
-W.   ##+##B ..
-W.   # #    ..
-..   ###    ..
-W?          ..
-W.............
-W.............
+W...........W
+W.s#####   .W
+WM     #  WWW
+W.   ##+##B..
+..?  # #  .WW
+..   ###  ..W
+W...........W
 </levelmap>
 
 <levelmap> <timestep>100</timestep> <name> 1-10   SAVE PEACH AGAIN! </name>
 WWWWWWWWWWWWWWWWWWW
 WWWWWWWWWWWWWWWWWWW
-..s#N#
-WM   N####
-W.s#N#   N##
-W.   n#### N##
-W.s#N# # N## #
-W.   N#+##   N#N#B
-W.s#N# # N## #
-W.   N#+## N##
-W.s#N# # N##
-W.   N#+##
-W.s#N# # 
-W.   # #
-W.   N#N#N#P
+..s#N#             
+WM   N####         
+W.s#N#   N##     ..
+W.   n#### N##   . 
+W.s#N# # N## #   . 
+W.   N#+##   N#N#B 
+W.s#N# # N## #   . 
+W.   N#+## N##   . 
+W.s#N# # N##     . 
+W.   N#+##       . 
+W.s#N# #         . 
+W.   N#N#N#P     . 
+W.WWWWWWWWWWWWWWW.W
+W.................W
 WWWWWWWWWWWWWWWWWWW
 </levelmap>
 
@@ -273,11 +271,14 @@ BUILD YOUR OWN TOAD LOGIC CIRCUIT!
 </levelmap>
 
 <levelmap> <timestep>100</timestep> <name> S-2   ISAAC </name>
-.
-.   B
-.S#N+# 
-.   ##
-.M
+WWWWWWWW
+W.......
+W.WWWWWW
+W..  B W
+W.S#N+#W
+W..  ##W
+W.M    W
+WWWWWWWW
 </levelmap>
 
 
@@ -304,12 +305,12 @@ If the trigger is LOW, the input signal is held, and does not propagate.
 If the trigger is HIGH, then the input signal propagates to become the output.
 </p>
 </help>
-W.................
-W?................
-W.......WWWWWWWWWW
-WM.....n#N##.....W
-........W..#.....W
-W.n######N#n####BW
+W................W
+W?...............W
+W.......WWWWWWWW.W
+WM.....n#N##...W.W
+........W..#...W.W
+W.n######N#n####B.
 W.......WWWWWWWWWW
 </levelmap>
 
@@ -327,24 +328,24 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 W.............................WWW
 WM?...........................WWW
 W.............................WWW
-W...  s        s        s     ...
-W..   N#       N#       N#    .B.
-W.     ## #+##  ## #+##  ## #+##.
-..   N#N+#N# #N#N+#N# #N#N+#N# #.
-Ws#L##  #  # #   #  # #   #  # #.
-W.   ##N+#n+#L##N+#n+#L##N+#n+#L.
-W.     ## H#    ## H#    ## H#  .
-W.                              .
+W...  s        s        s    ...W
+W..   N#       N#       N#     B.
+W.     ## #+##  ## #+##  ## #+##W
+..   N#N+#N# #N#N+#N# #N#N+#N# #W
+Ws#L##  #  # #   #  # #   #  # #W
+W.   ##N+#n+#L##N+#n+#L##N+#n+#LW
+W.     ## H#    ## H#    ## H#  W
+W.                              W
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 <levelmap> <timestep> 0 </timestep> <name> 2-3    TREAD CAREFULLY </name>
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-W................................
-WMM..............................
-W...  s        s        s        
-W...  #        #        #      B
+W...............................W
+WMM.............................W
+W...  s        s        s     .  
+W...  #        #        #     .B.
 ...   N#       N#       N#     #
 W.     ## #+##  ## #+##  ## #+##
 W.   N#N+#N# #N#N+#N# #N#N+#N# #
@@ -365,25 +366,25 @@ STAR 1 + STAR 3 = BURNT PEACH
 STAR 2 + STAR 4 = BURNT PEACH ALSO!
 </p>
 </help>
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-WM...........................S#  W
-W...s        s        s       N##W
-W.? N#       N#       N#     N# #W
-..   ## #+##  ## #+##  ## #+##  #W
-W.#N#N+#N# #N#N+#N# #N#N+#N# # ##W
-Ws#   #  # #   #  # #   #  # # # W
-W.L##N+#n+#L##N+#n+#L##N+#n+#L # W
-W.#  ## H# #  ## H# #  ## H# # # W
-W.#        #        #        # # W
-W.#        #   #+###+++####### # W
-W.#        #   N#   #N#        # W
-W.#        #    N##   N#P B### # W
-W.#        ####N# #  N# #    # # W
-W.#               #  #  # #### # W
-W.################+###  # #    # W
-W.                #+++++# ###### W
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWWWWWWWWWWWWW.......W
+WM........................S#WWW.W
+W..s       s       s       N##N##
+W.?N#      N#      N#     N# #WWW
+..  ## #+## ## #+## ## #+##  #WWW
+W.#NN+#N# #NN+#N# #NN+#N# # ##WWW
+Ws#  #  # #  #  # #  #  # # # WWW
+W.L#N+#n+#L#N+#n+#L#N+#n+#L # WWW
+W.# ## H# # ## H# # ## H# # # WWW
+W.#       #       #       # # WWW
+W.#       #  #+###+++###### # WWW
+W.#       #  N#   #N#       # WWW
+W.#       #   N##   N#P B## # WWW
+W.#       ###N# #  N# #   # # WWW
+W.#             #  #  # ### # WWW
+W.##############+###  # #   # WWW
+W.              #+++++# ##### WWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 <levelmap> <timestep> 1 </timestep> <name> 2-5   SHIFT TO SUCCESS </name>
@@ -400,15 +401,15 @@ This mechanism allows you to send data along the shift register, one bit at a ti
 </help>
 ..
 ..
-..#########N########N########N########N########N########N#    
-..#         #        #        #        #        #        #    
-.n#  #+##  ## #+##  ## #+##  ## #+##  ## #+##  ## #+##  ## #+##
-?M.##N# #N#n+#N# #N#n+#NH #N#n+#N# #N#n+#N# #N#n+#N# #N#n+#N# #
-.s##  # L   #  # L   #  H L   #  H L   #  H L   #  H L   #  H L 
-.. n#n+####N+#n+####N+#n+####N+#n+####N+#n+####N+#n+####N+#n+##
-..   HH    ## HH    ## HH    ## HH    ## HH    ## HH    ## HH #
-..                                                            #
-.. B########################################################### 
+..#######N#######N#######N#######N#######N#######N#    
+..#       #       #       #       #       #       #    
+.n# #+## ## #+## ## #+## ## #+## ## #+## ## #+## ## #+##
+?MW#N# #Nn+#N# #Nn+#NH #Nn+#N# #Nn+#N# #Nn+#N# #Nn+#N# #
+.s## # L  #  # L  #  H L  #  H L  #  H L  #  H L  #  H L 
+.. nn+###N+#n+###N+#n+###N+#n+###N+#n+###N+#n+###N+#n+##
+..  HH   ## HH   ## HH   ## HH   ## HH   ## HH   ## HH #
+..                                                     #
+.. B#################################################### 
 ..   
 </levelmap>
 
