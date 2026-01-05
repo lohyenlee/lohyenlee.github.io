@@ -85,9 +85,8 @@ WWWWWWWWWWWWWW
 <help>
 <p>HELP ME, MARIO!</p>
 <p class="indepth">
-Each toad functions as a 
-<a href="https://learn.sparkfun.com/tutorials/button-and-switch-basics/what-is-a-switch">switch</a>.
-The switch remembers whether it is ON or OFF, and supplies either a positive voltage (HIGH) or zero voltage (LOW) to the circuit.
+A <a href="https://learn.sparkfun.com/tutorials/button-and-switch-basics/what-is-a-switch">switch</a>
+remembers whether it is ON or OFF, and supplies either a positive voltage (HIGH) or zero voltage (LOW) to the circuit.
 </p>
 </help>
 WWWWWWWWWWW
@@ -259,41 +258,55 @@ W.................W
 WWWWWWWWWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep>0</timestep> <sandbox> 1 </sandbox> <name> S-1   SANDBOX: ROLL YOUR OWN! </name>
+<levelmap> <timestep>100</timestep> <name> 1-12   BATTLE ROYALE </name>
 <help>
-USE THE BUTTONS OR THE H, J, K, AND L KEYS TO 
-BUILD YOUR OWN TOAD LOGIC CIRCUIT! 
+THIS IS COMPLICATED!
 </help>
-?.................................
-.M................................
-..................................
-..................................
-..................................
-..................................
-..................................
-..................................
-..................................
-..................................
-..................................
-..................................
-..................................
-..................................
-..................................
-..................................
-..................................
-..................................
-..................................
+WWWWWWWWWWWWWWWWWWWWWW
+WW?WW#WWWWWWWWWWWWWWWW
+W..Wn#.S..W..W...s.#.W
+W...#.W#..W..#...#.#.W
+WM..S.W#.....S###n##.W
+...WW###....W.W#W#.n#W
+WWWWWWWWWWWWW.W#WW.s.W
+WW...#.....#..##WWWW.W
+WW...#WWWWW####WS....W
+WW...#W   W...#W#WWW.W
+WW.Sn#####Wn#Wn#n###B.
+WW.......#.#.WWW#W.WWW
+Ww.......+.+..W.#..WPW
+Ww.......#####n##..WWW
+WWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep>100</timestep> <name> S-2   ISAAC </name>
-WWWWWWWW
-W.......
-W.WWWWWW
-W..  B W
-W.S#N+#W
-W..  ##W
-W.M    W
-WWWWWWWW
+
+<levelmap> <timestep>100</timestep> <name></name>
+<help>
+sadf
+</help>
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+                                         
+       H H H HHH     H     H    HHH      
+       H H H H H     H     H      H      
+       H H H H H HHH H   HHH    HHH      
+       H H H H H H   H   H H    H        
+       HHHHH HHH H   HHH HHH    HHH      
+                                         
+.M.......................................
+                                         
+ ### ### ### # # ### ### ### ###  #  #   
+ #   #   # # # # #   # #  #   #  # # #   
+ ### ### ### # # ### # #  #   #  ### #   
+   # #     # # # #   # #  #   #  # # #   
+ ### ###   # ### ### # #  #  ### # # ### 
+                                         
+           #   ### ### ### ###           
+           #   # # # #  #  #             
+           #   # # ###  #  #             
+           #   # #   #  #  #             
+           ### ### ### ### ###           
+                                         
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 
@@ -504,6 +517,48 @@ W L #+++++++++++++++++++++++#W
 W ##+## ### ### ### ### ###  W
 W............................W
 </levelmap>
+
+
+
+
+<levelmap> <timestep>0</timestep> <sandbox> 1 </sandbox> <name> S-1   SANDBOX: ROLL YOUR OWN! </name>
+<help>
+USE THE BUTTONS OR THE H, J, K, AND L KEYS TO 
+BUILD YOUR OWN TOAD LOGIC CIRCUIT! 
+</help>
+?.................................
+.M................................
+..................................
+..................................
+..................................
+..................................
+..................................
+..................................
+..................................
+..................................
+..................................
+..................................
+..................................
+..................................
+..................................
+..................................
+..................................
+..................................
+..................................
+</levelmap>
+
+<levelmap> <timestep>100</timestep> <name> S-2   ISAAC </name>
+WWWWWWWW
+W.......
+W.WWWWWW
+W..  B W
+W.S#N+#W
+W..  ##W
+W.M    W
+WWWWWWWW
+</levelmap>
+
+
 
 <levelmap> <timestep> 100 </timestep> <name> 3-1   AND, OR, NOT </name>
 .......................

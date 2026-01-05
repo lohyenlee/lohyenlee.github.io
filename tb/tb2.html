@@ -755,13 +755,13 @@
     let animCrying= new Animation([imgCrying1,imgCrying2])
     let animHappy = new Animation([imgHappy1,imgHappy2])
     let animAsh   = new Animation([imgAsh1,imgAsh2])
-    let soundTock = new Sound('tock.mp3')
+    let soundTock = new Sound('tock.mp3'); soundTock.vol = .1
     let soundBuzz = new Sound('buzz.mp3')
     let soundWin1 = new Sound('win1.mp3')
     let soundWin2 = new Sound('win2.mp3')
     //let soundOof = new Sound('oof.mp3')
-    let soundHoo = new Sound('hoo.mp3')
-    let soundOw = new Sound('ow.mp3')
+    let soundHoo = new Sound('hoo.mp3'); soundHoo.vol = .03
+    let soundOw = new Sound('ow.mp3'); soundOw.vol = .03
     let levelMaps = await loadString('maps.txt') // clear browser cache if this file is edited
     levelMaps = [...levelMaps.matchAll(  /<levelmap>.*?<\/levelmap>/gs )].map(i=>i[0])
     
