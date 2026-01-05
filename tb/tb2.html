@@ -39,7 +39,7 @@
       padding: 1rem 2rem 1rem 6rem; 
       box-shadow: 0px 4 px 8px 0px #333, 0px 8px 16px 8px #000; background-color:#666; border:double 4px black; border-radius: 20px; 
       color:white; font-family:'gameFont',sans-serif; font-size: 1.5rem;
-      background-image:url('peach1.webp');background-size:6rem;background-repeat:no-repeat;background-position:0rem;
+      background-image:url('peach.gif');background-size:3rem;background-repeat:no-repeat;background-position:1rem;
     }
     #helpDiv a { color: cyan; }
     #helpDiv a:visited { color: pink; }    
@@ -90,10 +90,8 @@
 <img id="imgMarioDead" src="marioDead.gif"></img>
 <img id="imgAsh1" src="ash1.webp"></img>
 <img id="imgAsh2" src="ash2.webp"></img>
-<!-- <img id="imgPeach1" src="peach1.webp"></img> -->
-<!-- <img id="imgPeach2" src="peach2.webp"></img> -->
-<img id="imgPeach1" src="peach.gif"></img>
-<img id="imgPeach2" src="peach.gif"></img>
+<img id="imgPeach1" src="peach1.webp"></img>
+<img id="imgPeach2" src="peach2.webp"></img>
 <img id="imgBowser" src="bowser.webp"></img>
 <img id="imgGrass" src="grass.webp"></img>
 <img id="imgDirt" src="dirt.webp"></img>
@@ -111,12 +109,12 @@
 <img id="imgSourceOn" src="sourceon.webp"></img>
 <img id="imgBrick" src="brick.webp"></img>
 <audio id="audioBuzz"><source src="buzz.mp3"></audio>
-<audio id="audioWin0"><source src="win1.mp3"></audio>
-<audio id="audioWin1"><source src="win2.mp3"></audio>
+<audio id="audioWin1"><source src="win1.mp3"></audio>
+<audio id="audioWin2"><source src="win2.mp3"></audio>
 <audio id="audioCoin"><source src="coin.mp3"></audio>
 <audio id="audioTock"><source src="tock.mp3"></audio>
 <audio id="audioLose"><source src="lose.mp3"></audio>
-<audio id="audioOof"><source src="oof.mp3"></audio>
+<audio id="audioHoo"><source src="hoo.mp3"></audio>
 <audio id="audioOw"><source src="ow.mp3"></audio>
   </div>
   
@@ -228,11 +226,12 @@
     function placeGrass() {let x=xCursor+DIRS[marioOrientation][0],y=yCursor+DIRS[marioOrientation][1];ground[x+X*y]=0;    audioCoin.play()}
     function placeToad()  {let x=xCursor+DIRS[marioOrientation][0],y=yCursor+DIRS[marioOrientation][1];ground[x+X*y]=GATE; audioCoin.play()}
     function placeSubway(){ // actually TOGGLE SUBWAY ON/OFF
-      if(subway[xCursor+X*yCursor]) {
-        subway[xCursor+X*yCursor]=0
-        if (!ground[xCursor+X*yCursor]) ground[xCursor+X*yCursor]=CONDUCTING
+      let x=xCursor+DIRS[marioOrientation][0],y=yCursor+DIRS[marioOrientation][1];
+      if(subway[x+X*y]) {
+        subway[x+X*y]=0
+        if (!ground[x+X*y]) ground[x+X*y]=CONDUCTING
       }
-      else subway[xCursor+X*yCursor]=3
+      else subway[x+X*y]=3
     }
     function sandboxMode() {
       sandbox = 1;
@@ -277,7 +276,6 @@
         }
       }{const [content,remainder]=htmlExtractContent('name', levelMap); levelMap=remainder
         levelName = content
-        // console.log(levelName)
       }{const [content,remainder]=htmlExtractContent('preconverge', levelMap); levelMap=remainder
         if(content) preconverge = Number(content)
       }{const [content,remainder]=htmlExtractContent('sandbox', levelMap); levelMap=remainder
@@ -285,7 +283,8 @@
       }{const [content,remainder]=htmlExtractContent('help', levelMap); levelMap=remainder
         if(content) helpText=content
       }
-      title.innerHTML = levelName
+      if (levelName) {title.innerHTML=levelName; title.style.display='block'}
+      else           {title.style.display='none'}
       btnLava.disabled = !sandbox
       btnWater.disabled = !sandbox
       btnToad.disabled = !sandbox
@@ -442,7 +441,7 @@
     //=================================================
     const ctx=canvas.getContext('2d')
     let winWid,winHei,cellsize
-    let marioOrientation=3
+    let marioOrientation=2 // start game facing South
     let xCurPrev,yCurPrev  // variables associated with Mario's
     let xMario,yMario,nWalk=0,tWalk=0 // appearance (but not gameplay)
     let tcur=0
@@ -545,7 +544,7 @@
             } else {
               const xcen=(x+.5)*a,ycen=(y+.5)*a
               animWater.draw(x*a, y*a, a, a, frm)   
-              animPeach.draw(xcen-sx/2, ycen-sy/2, sx,sy, tcur/140)                 
+              animPeach.draw(xcen-sx/2, ycen-sy/2, sx,sy, tcur/41)                 
             }
             break
           case BOWSER:
@@ -594,6 +593,7 @@
     }
     
     function checkVictory() {
+      if (sandbox) return // can't lose in cheat mode
       if (winlose==PLAYING) {
         for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
           if (extras[x+X*y]==BOWSER && ground[x+X*y]&ON) {winlose=WIN; break}
@@ -616,11 +616,25 @@
       requestAnimationFrame(animate)
       render() 
       checkVictory()
-      if      (isKeyDown('s')||isKeyDown('S')) walkW()//      if (isKeyDown('ArrowLeft')) walkW()
+      
+      if      (isKeyDown('s')||isKeyDown('S')) walkW()//if (isKeyDown('ArrowLeft')) walkW()
       else if (isKeyDown('f')||isKeyDown('F')) walkE()
       else if (isKeyDown('e')||isKeyDown('E')) walkN()
       else if (isKeyDown('d')||isKeyDown('D')) walkS()
- 
+      else { // process joystick ONLY if keyboard is not active
+        joystickForce = Math.hypot(joyX,joyY) 
+        if (joystickForce<5) { // weak force, do nothing
+        }
+        else if (joystickForce>40) { //strong force, walk
+          if (Math.abs(joyX)>Math.abs(joyY)) if (joyX>0) {walkE()} else walkW()
+          else                         if (joyY>0) {walkS()} else walkN()
+        }
+        else { // medium force, change direction only
+          if (Math.abs(joyX)>Math.abs(joyY)) if (joyX>0) {faceE()} else faceW()
+          else                         if (joyY>0) {faceS()} else faceN()
+        }
+      }
+  
       const elapsed = Date.now() - timeOfLastFrame
       if (elapsed <= timeStepInMilliseconds) return
       timeOfLastFrame = Date.now()
@@ -675,7 +689,7 @@
     function keyUp(e) {
       stalled=false
     }
-    let joyAnchorX,joyAnchorY;
+    let joyAnchorX,joyAnchorY,joyX=0,joyY=0;
     function joyTouchStart(e) {
       e.preventDefault()
       joyAnchorX=event.touches[0].pageX
@@ -683,22 +697,12 @@
     }
     function joyTouchMove(e) {
       e.preventDefault()
-      let x=event.touches[0].pageX-joyAnchorX,y=event.touches[0].pageY-joyAnchorY
-      x=clamp(x,-30,30)
-      y=clamp(y,-30,30)
-      joystick.style.transform=`translate(${x}px,${y}px)`
-      
-      joystickForce = Math.hypot(x,y) 
-      if (joystickForce<30) {
-        if (Math.abs(x)>Math.abs(y)) if (x>0) {faceE()} else faceW()
-        else                         if (y>0) {faceS()} else faceN()
-      }
-      else {
-        if (Math.abs(x)>Math.abs(y)) if (x>0) {walkE()} else walkW()
-        else                         if (y>0) {walkS()} else walkN()
-      }
+      joyX=clamp(event.touches[0].pageX-joyAnchorX,-40,40)
+      joyY=clamp(event.touches[0].pageY-joyAnchorY,-40,40)
+      joystick.style.transform=`translate(${joyX}px,${joyY}px)`
     }
     function joyTouchEnd(e) {
+      joyX=0; joyY=0
       joystick.style.transform='translate(0,0)'
       stalled=false
     }
@@ -712,16 +716,12 @@
       btnReset.addEventListener('click', resetLevel)
       btnPrev.addEventListener('click', prevLevel)
       btnNext.addEventListener('click', nextLevel)
-      
       btnLava.addEventListener('click', placeLava)
       btnWater.addEventListener('click', placeWater)
       btnCross.addEventListener('click', placeSubway)
       btnGrass.addEventListener('click', placeGrass)
       btnToad.addEventListener('click', placeToad)
-      // btnSlow.addEventListener('click', goSlow)
-      // btnFast.addEventListener('click', goFast)
       btnCheat.addEventListener('click', sandboxMode)
-
       document.body.removeEventListener('keydown', launchGame, false)
       window.addEventListener('resize', setScaling)
       document.body.addEventListener('dblclick', e=>e.preventDefault())
@@ -734,11 +734,8 @@
       joystick.style.display = 'block' // Show
       canvas.style.display = 'block' // Show
       controls.style.display = 'block'
-      sliderSpeed.oninput = function() {timeStepInMilliseconds=this.value;
-        // divSpeed.innerText='DELAY '+timeStepInMilliseconds
-
-      }
-
+      sliderSpeed.oninput=()=>{timeStepInMilliseconds=this.value;}
+      // divSpeed.innerText='DELAY '+timeStepInMilliseconds
       requestAnimationFrame(animate)
     }
 
@@ -760,7 +757,6 @@
     let soundBuzz = new Sound('buzz.mp3')
     let soundWin1 = new Sound('win1.mp3')
     let soundWin2 = new Sound('win2.mp3')
-    //let soundOof = new Sound('oof.mp3')
     let soundHoo = new Sound('hoo.mp3'); soundHoo.vol = .03
     let soundOw = new Sound('ow.mp3'); soundOw.vol = .03
     let levelMaps = await loadString('maps.txt') // clear browser cache if this file is edited

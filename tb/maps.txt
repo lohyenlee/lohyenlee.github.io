@@ -258,7 +258,7 @@ W.................W
 WWWWWWWWWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep>100</timestep> <name> 1-12   BATTLE ROYALE </name>
+<levelmap> <timestep>100</timestep> <name> 1-12   WORLD 1 BOSS FIGHT </name>
 <help>
 THIS IS COMPLICATED!
 </help>
