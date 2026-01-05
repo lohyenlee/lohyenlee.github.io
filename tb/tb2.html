@@ -12,7 +12,7 @@
     }
     :root {--btnsize:8vmin;}
     html,body { 
-      overflow: hidden;  /* prevent scrollbars */
+      overflow: hidden auto; scrollbar-width: thin; /* allow vertical scrolling? */
       background-color:#333; padding:0; margin:0; width:100%; height:100%; font-family:'gameFont',sans-serif;
     }
     @keyframes gradientAnimation { 
@@ -152,7 +152,7 @@
     </div>
     <div style="float:right; width:calc(5*var(--btnsize));" id="actionButtons">
       <button id="btnLava"  class="btn1" style="background-image:url(lava.webp);" disabled="disabled"> H </button>
-      <button id="btnWater"  class="btn1" style="background-image:url(water.webp);" disabled="disabled"> J </button>
+      <button id="btnWater" class="btn1" style="background-image:url(water.webp);" disabled="disabled"> J </button>
       <button id="btnCross" class="btn1" style="background-image:url(crossing.webp);" disabled="disabled"> K </button>
       <button id="btnToad"  class="btn1" style="background-image:url(happy1.webp); color:#FFF;" disabled="disabled"> L </button>
       <button id="btnGrass" class="btn1" style="background-image:url(grass.webp);" disabled="disabled"> ; </button>
@@ -462,6 +462,7 @@
       canvas.style.left = Math.floor((winWid-canvas.width)/2) + "px"
       title.style.left  = Math.floor((winWid-title.offsetWidth)/2) + "px"
       // title.style.width = canvas.width + "px"
+      canvas.height = winHei + 1 // ????????????
     }
     function render() {
       tcur += 1
