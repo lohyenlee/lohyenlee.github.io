@@ -21,8 +21,7 @@
       100%{background-position:10% 0%  ;}
     }
     @keyframes flashingAnimation { 
-      0%  {background-color: #993; box-shadow:0px 0px 5px 5px #993;}
-      100%{background-color: #666; box-shadow:0px 0px 2px 2px #993;}
+      50% {background-color: #993; box-shadow:0px 0px 5px 5px #993;}
     }
     #splashScreen {
       width: 100%; height:100%; text-align: center; color:white;
@@ -48,6 +47,7 @@
       padding:0 0 0 48px; color:#fff;
     }
     #title {position:absolute; z-index:2; top:0;  
+      display:none;
       width:fit-content;
       margin:6px 0px 0px 0px;text-align:center; font-size:3vmin; color:white; white-space:pre;
       border: 6px outset #974; background-color:#530;
@@ -261,7 +261,8 @@
       btnNext.disabled = (level==levelMaps.length-1) // if we are on last level, disable "Next Level" button
       btnNext.style.animation = ""
       btnReset.style.animation = ""
-      localStorage.setItem("storedLevel", level);
+      localStorage.setItem("storedLevel", level)
+      document.activeElement.blur()  // remove focus from whatever button was pressed
     }
     function prevLevel() {setLevel(level-1)} 
     function nextLevel() {setLevel(level+1)} 
@@ -603,12 +604,12 @@
         if (extras[xCursor+X*yCursor]==BOWSER) winlose=MARIO_DIED  // Mario got eaten by Bowser
 
         if (winlose==WIN) {
-          tcur=0; audioWin0.play(); setTimeout( ()=>audioWin1.play(), 1000);               
-          setTimeout(()=>btnNext.style.animation = 'flashingAnimation 0.2s alternate infinite', 1000)
+          tcur=0; audioWin1.play(); setTimeout( ()=>audioWin2.play(), 1000);               
+          setTimeout(()=>btnNext.style.animation = 'flashingAnimation 0.5s step-start infinite', 500)
         }
         else if (winlose==MARIO_DIED||winlose==PEACH_DIED) {
           tcur=0;audioLose.play(); 
-          setTimeout(()=>btnReset.style.animation = 'flashingAnimation 0.2s alternate infinite', 1000)
+          setTimeout(()=>btnReset.style.animation = 'flashingAnimation 0.5s step-start infinite', 500)
         }
       }  
     }

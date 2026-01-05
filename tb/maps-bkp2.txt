@@ -261,21 +261,43 @@ WWWWWWWWWWWWWWWWWWW
 
 <levelmap> <timestep>100</timestep> <name> 1-12   WORLD 1 BOSS FIGHT </name>
 <help>
-HELP ME, MARIO!<br>
-FLIP THE SWITCHES AS MANY TIMES AS YOU NEED TO!
+THIS IS COMPLICATED!
 </help>
 WWWWWWWWWWWWWWWWWWWWWW
 W?Wn##.s#n#W.sN#W..HHW
 WM.#.#..WW#W.WWnN#.HHW
 ...S.WW####W.sN#W#.HHW
 WWW#WWS.WWWW.WWWW#.WWW
-W###WW#.#n#..W...#.WWW
-W#WWWW#.S.##n#.##n#B.W
-W#W...#.#....#.SW#W...
+W###WW#.#n#......#.WWW
+W#WWWW#.S.#....##n#B.W
+W#W...#.#.#.S###W#W...
 W#WSWSWSWWWWWWWWW#WS+W
 W##n#n#n########N#WWPW
 WWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
+
+
+<levelmap> <timestep>100</timestep> <name> 1-12   WORLD 1 BOSS FIGHT-ORIG </name>
+<help>
+THIS IS COMPLICATED!
+</help>
+WWWWWWWWWWWWWWWWWWWWWW
+WW?WW#WWWWWWWWWWWWWWWW
+W..Wn#.S..W..W...s.#.W
+W...#.W#..W..#...#.#.W
+WM..S.W#.....S###n##.W
+...WW###....W.W#W#.n#W
+WWWWWWWWWWWWW.W#WW.s.W
+WW...#.....#..##WWWW.W
+WW...#WWWWW####WS....W
+WW...#W   W...#W#WWW.W
+WW.Sn#####Wn#Wn#n###B.
+WW.......#.#.WWW#W.WWW
+Ww.......+.+..W.#..WPW
+Ww.......#####n##..WWW
+WWWWWWWWWWWWWWWWWWWWWW
+</levelmap>
+
 
 <levelmap> <timestep>100</timestep> <name></name>
 <help>
@@ -459,7 +481,7 @@ WM................WWWW
 WWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep> 20 </timestep> <name> 2-7   TIME IT RIGHT </name>
+<levelmap> <timestep> 20 </timestep> 
 <help>
 <p class="indepth">
 Switching off the P switch triggers a monostable multivibrator, also known as a pulse generator.  
@@ -469,6 +491,7 @@ To defeat Bowser, the upper pulse must reach the AND gate at the same time
 as the lower pulse!
 </p>
 </help>
+<name> 2-7   TIME IT RIGHT </name>
 ..?............................W
 W.M............................W
 W S#                          .W
@@ -488,7 +511,7 @@ W ##########################  .W
 W..............................W
 </levelmap>
 
-<levelmap> <timestep> 20 </timestep> <name> 2-8   TIME IT RIGHT #2 </name>
+<levelmap> <timestep> 20 </timestep> 
 <help>
 <p class="indepth">
 Toggling the P switch causes the two inputs to the EQV gate to change from (0,1) to (1,0).
@@ -497,6 +520,7 @@ Thus we have a pulse generator that triggers
 on both the rising edge and falling edge of the P switch signal.
 </p>
 </help>
+<name> 2-8   TIME IT RIGHT #2 </name>
 W?...........................W
 W.MWWWWWWWWWWWWWWWWWWWWWWWWW.W
 ..s###N##..       ......    .W
@@ -511,40 +535,6 @@ W N## ### ### ### ### ### ###W
 W L #+++++++++++++++++++++++#W
 W ##+## ### ### ### ### ###  W
 W............................W
-</levelmap>
-
-
-<levelmap> <timestep>0</timestep> 
-<name> 2-9   WORLD 2 BOSS FIGHT </name>
-<help>
-HELP ME, MARIO!  THE PASSWORD IS 10101!
-<p class="indepth">
-You will need to load the correct bit value into the shift register,
-trigger the shift, and repeat for all 5 bits.
-</p>
-</help>
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-W#N#N##                                              W
-W# N# N##                                            W
-W###N## #                                            W
-W  #    #                                            W
-W ##    #                                            W
-W.#.#####............................................W
-W.#W#WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW.W
-..sWn#####n#####n#####n#####n#####n#####n#####n##..W.W
-?.MW.#+....#+....#+....#+....#+....#+....#+....#+..W.W
-WWs##+N#.##+N#.##+N#.##+N#.##+N#.##+N#.##+N#.##+N#.W.W
-W..#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.W.W
-W.##nnNN##nnNN##nnNN##nnNN##nnNN##nnNN##nnNN##nnNN#W.W
-W.#...#+#...#+#...#+#...#+#...#+#...#+#...#+#...#+#W.W
-W.L...........L...........L...........L...........LW.W
-W.#...........#...........#...........#...#+#######W.W
-W.#...........#...........n#..........#n#.n#.........W
-W.#...........#............#............#..#.........W
-W.##########n#n#...........#############n##n#n#..###B.
-W..............#..............................n###.W.W
-W..............##############################n#....WPW
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 
@@ -715,6 +705,30 @@ WWWWWWWW
 <name> 4-2   D LATCH </name>
 <help>
 <p class="indepth">
+Top P switch is D (Data).  Bottom P switch is T (Trigger).
+<br>
+While untriggered (T=0), the latch is opaque; the output does not change.
+<br>
+While triggered (T=1), the latch is transparent: data propagates through to the output (Q=D).
+</p>
+</help>
+..W
+WWW.?
+W.W..
+WWW.sn##n#
+...M...# #
+WWW.sN#n#+
+.W....#++n#
+.W......# #
+.W......N#n#L.
+........#++#..
+.
+</levelmap>
+
+<levelmap> <timestep>0</timestep> 
+<name> 4-2B   D LATCH </name>
+<help>
+<p class="indepth">
 Top P switch is Trigger (T).
 <br>
 Bottom P switch is Data (D).
@@ -724,14 +738,14 @@ While untriggered (T=0), latch is opaque; output doesn't change.
 While triggered (T=1), latch is transparent: data propagates to output (Q=D).
 </p>
 </help>
-WWW..
-.W...s#n##...
-.W..M...#+...
-...?..##+N#..
-..W...#.#.#..
+..W.?
+WWW..s#n##...
+W.W.M...#+...
+WWW...##+N#..
+......#.#.#..
 WWW..s#nnNN#L
-W.W......#+#..
-WWW
+.W.......#+#..
+.W
 </levelmap>
 
 <levelmap> <timestep>0</timestep> 
