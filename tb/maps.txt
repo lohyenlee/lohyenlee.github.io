@@ -3,7 +3,7 @@
 <help>
 <h3> WELCOME TO TOAD BURN! </h3>
 MOVE MARIO USING JOYSTICK OR ESDF KEYS. <br>
-GO THROUGH THE GAP IN THE WALL <br>
+ADVANCE THROUGH GAP IN WALL <br>
 OR CLICK "NEXT" TO GO TO WORLD 1-1. <br>
 <a href="toadburnhelp.html" style="color:cyan;">Click here to learn more about Toad Burn </a>
 </help>
@@ -49,7 +49,7 @@ WWWWWWWWW
 
 <levelmap> <timestep>100</timestep> <name> 1-3   HOT OR NOT? </name>
 <help>
-<p>THE GOLDEN RULE OF TOAD LOGIC: </p>
+<p>GOLDEN RULE OF TOAD LOGIC: </p>
 <p>DO UNTO OTHERS AS THEY DO <u>NOT</u> UNTO YOU.</p>
 <p class="indepth">
 The toad behaves as a 
