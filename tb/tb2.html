@@ -12,7 +12,8 @@
     }
     :root {--btnsize:8vmin;}
     html,body { 
-      overflow: hidden auto; scrollbar-width: thin; /* allow vertical scrolling? */
+      /* overflow: hidden auto; scrollbar-width: thin; */
+       /* allow vertical scrolling? */
       background-color:#333; padding:0; margin:0; width:100%; height:100%; font-family:'gameFont',sans-serif;
     }
     @keyframes gradientAnimation { 
@@ -118,25 +119,28 @@
 <audio id="audioOw"><source src="ow.mp3"></audio>
   </div>
   
+  <div id="scroller" style="width: 16px; height: 16px; background-color: #f00;"></div>
+  
   <div id="helpDivContainer">
     <div id="helpDiv"></div>
   </div>
   <div id="title"></div> 
   <canvas id="canvas">Your browser does not support the HTML5 canvas tag.</canvas>
-  <div id="controls" style="position:absolute; bottom:0; left:0; width:100%;">
-    <div style="position: absolute; left:0;bottom:0; width:calc(3*var(--btnsize));" id="movementKeypad">
+  
+  <div id="controls" style="position:fixed; bottom:0; left:0; width:100%;">
+    <div style="position: absolute; left:0;bottom:0; width:calc(3*var(--btnsize));" id="joyContainer">
       <div style="
-  z-index:2; position:absolute; left:0; bottom:0; width:140px; height:140px; 
-  background-image:url('joystick.webp'); background-position:center; background-size:140px; background-repeat: no-repeat;">
-  </div>
-  <div id="joystick" style="
-  display:none;
-  z-index:3; position:absolute; left:0; bottom:0; width:140px; height:140px; 
-  background-image:url('joystick.webp'); background-position:center; background-size:100px; background-repeat: no-repeat;
-  color:white; text-align:center; vertical-align:middle;
-  transform:translate(0,0);">
-  <br><br>E<br>S &nbsp; &nbsp;  F<br> D
-  </div>
+      z-index:2; position:absolute; left:0; bottom:0; width:140px; height:140px; 
+      background-image:url('joystick.webp'); background-position:center; background-size:140px; background-repeat: no-repeat;">
+      </div>
+      <div id="joystick" style="
+      display:none;
+      z-index:3; position:absolute; left:0; bottom:0; width:140px; height:140px; 
+      background-image:url('joystick.webp'); background-position:center; background-size:100px; background-repeat: no-repeat;
+      color:white; text-align:center; vertical-align:middle;
+      transform:translate(0,0);">
+      <br><br>E<br>S &nbsp; &nbsp;  F<br> D
+      </div>
     </div>
     <div style="display:flex; vertical-align:bottom; float:right; margin:0ex 5ex 0ex 5ex;">
       <div>
@@ -452,8 +456,8 @@
     let xShaking=0,yShaking=0
 
     function setScaling() {
-      winWid=window.visualViewport.innerWidth||window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth
-      winHei=window.visualViewport.innerHeight||window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight
+      winWid=visualViewport.width||window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth
+      winHei=visualViewport.height||window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight
       let availWidth =clamp(winWid, 300, 3000) // set canvas width according to window width; warning: btnSize=48
       let availHeight=clamp(winHei*(1-.08), 300, 3000) // may reduce this
       cellsize=Math.min(Math.floor(availWidth/X),Math.floor((availHeight)/Y)) // for graphics

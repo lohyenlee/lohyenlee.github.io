@@ -11,14 +11,14 @@
     }
   </style>
 </head>
-<body id="body">
+<body id="body" style="height: 101lvh;">
 
 
   <div id="logdiv" style="position:absolute; left:30%; bottom:50%;">
   </div> 
 
-  <div id="scroller" style="width: 16px; height: 16px; background-color: #f00;"></div>
-  </div>
+  <!-- <div id="scroller" style="width: 16px; height: 16px; background-color: #f00;"></div>
+  </div> -->
 
   <canvas id="canvas"
   style="position:absolute;top:0;left:0;"></canvas>
@@ -63,9 +63,11 @@
       winHei=visualViewport.height||window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight
       canvas.width = winWid
       canvas.height = winHei
-      scroller.style.height = (winHei + 64) + "px"
+      // scroller.style.height = (winHei + 64) + "px"
+      //body.style.height = (winHei + 64) + "px"
       console.log('asdf')
 
+      body.scrollBy(0,64)
       // canvas.style.left = Math.floor((winWid-canvas.width)/2) + "px"
       
       // const viewportHeight = window.visualViewport.innerHeight;
@@ -96,7 +98,7 @@
       log(`window: ${window.innerWidth} x ${window.innerHeight}\n`)
       log(`vvport: ${visualViewport.width} x ${window.visualViewport.height}\n`)
       log(`canvas: ${canvas.width} x ${canvas.height}\n`)
-      log(`scroller: ${scroller.style.width} x ${scroller.style.height}\n`)
+      // log(`scroller: ${scroller.style.width} x ${scroller.style.height}\n`)
       
       
     }
