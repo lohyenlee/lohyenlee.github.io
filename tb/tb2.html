@@ -731,8 +731,10 @@
       joystick.style.display = 'block' // Show
       canvas.style.display = 'block' // Show
       controls.style.display = 'block'
-      sliderSpeed.oninput=()=>{timeStepInMilliseconds=this.value;}
-      // divSpeed.innerText='DELAY '+timeStepInMilliseconds
+      sliderSpeed.oninput=()=>{
+        timeStepInMilliseconds=Number(sliderSpeed.value);
+        divSpeed.innerText='DELAY '+timeStepInMilliseconds
+      }
       requestAnimationFrame(animate)
     }
 

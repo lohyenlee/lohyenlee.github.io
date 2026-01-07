@@ -28,6 +28,10 @@ WWWWWWWWWWWWWWWWWWW
 <help><p>
 MOVE MARIO USING JOYSTICK OR ESDF KEYS.</p><p>
 BUMP THE P SWITCH TO STOP THE LAVA! </p>
+<p class="indepth">
+A <a href="https://learn.sparkfun.com/tutorials/button-and-switch-basics/what-is-a-switch">switch</a>
+remembers whether it is ON or OFF, and supplies either a positive voltage (HIGH) or zero voltage (LOW) to the circuit.
+</p>
 </help>
 W?WWWWWWW
 W...S###W
@@ -39,6 +43,9 @@ WWWWWWWWW
 <levelmap> <timestep>100</timestep> <name> 1-2   HIT ME UP </name>
 <help><p>
 HAPPY TOADS SPEW LAVA, CRYING TOADS EMIT WATER.</p>
+<p class="indepth">
+In Toad Burn, toads also behave like switches that may be toggled.
+</p>
 </help>
 W?WWWWWWW
 W....###W
@@ -47,7 +54,7 @@ WM.N####W
 WWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep>100</timestep> <name> 1-3   HOT OR NOT? </name>
+<levelmap> <timestep>100</timestep> <name> 1-3   HOT OR <span style="color:pink;">NOT</span>? </name>
 <help>
 <p>GOLDEN RULE OF TOAD LOGIC: </p>
 <p>DO UNTO OTHERS AS THEY DO <u>NOT</u> UNTO YOU.</p>
@@ -67,144 +74,51 @@ W?WWWWWWWWWW
 WWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep>100</timestep> <name> 1-4   LIGHT THE FUSE </name>
-<help><p>
-BOWSER IS BLOCKING THE WAY.
-GET RID OF HIM!</p>
-</help>
+<levelmap> <timestep>100</timestep> <name> 1-4  OPEN SESAME </name>
+<help><p>LIGHT THE FUSE TO CLEAR THE WAY!</p></help>
 W?WWWWWWWWWWWW
-W..########..W
-W.s#......#.B.
-W.W..######.#W
-..W..#......#W
-WMW..########W
+W...........WW
+W.s#.###....#.
+W.W#.#.#..WW#W
+..W#.#.#.##N#W
+WMW###.###..WW
 WWWWWWWWWWWWWW
 </levelmap>
 
 <levelmap> <timestep>100</timestep> <name> 1-5   WHICH SWITCH? </name>
 <help>
-<p>HELP ME, MARIO!</p>
-<p class="indepth">
-A <a href="https://learn.sparkfun.com/tutorials/button-and-switch-basics/what-is-a-switch">switch</a>
-remembers whether it is ON or OFF, and supplies either a positive voltage (HIGH) or zero voltage (LOW) to the circuit.
-</p>
+<p>MARIO, PLEASE BE CAREFUL!</p>
 </help>
 WWWWWWWWWWW
-.....####.W
-W.s###..#.W
-W.W....P#.W
-WM?....#..W
-W.W....##B.
-W.s###...#W
-W.W..#####W
+..###.####W
+W.#.#.#..#W
+?.s.###.P#W
+WM........W
+W.s.###W.#.
+W.#.#WWWW#W
+W.#####Ln#W
 WWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep>100</timestep> <name> 1-5   HOT HEAD, HOT FEET </name>
+<levelmap> <timestep>100</timestep> <name> 1-6   LOOP THE LOOP </name>
 <help>
-<p>A BURNING TOAD IS NOT A HAPPY TOAD!</p>
-<p class="indepth">
-The toad behaves as a 
-<a href="https://en.wikipedia.org/wiki/NOR_gate">NOR gate</a>.
-If either input of the NOR gate is HIGH, the output is LOW.
-Only if both inputs are LOW will the output be HIGH.
-</p>
+<h2>BRIDGES</h2>
+<p>BRIDGES ALLOW HORIZONTAL AND VERTICAL 
+<br>
+LAVA FLOWS TO CROSS WITHOUT INTERFERING. </p>
 </help>
-W?WWWWWWWWW
-W.S###..W..
-W.W..n###BW
-W.S###....W
-WMWWWW.H.HW
-W.........W
-WWWWWWWWWWW
+W...........W
+W.s#####   .W
+WM     #  WWW
+W.   ##+##B..
+..?  # #  .WW
+W.   ###  ..W
+W...........W
 </levelmap>
 
-<levelmap> <timestep>100</timestep> <name> 1-6   ON AND ON </name>
+<levelmap> <timestep> 100 </timestep> <name> 1-7   A LIFE-OR-DEATH DECISION </name>
 <help>
-<p>MAKE THE LAST TOAD HAPPY!</p>
-<p class="indepth">
-The three toads in the center function as an 
-<a href="https://en.wikipedia.org/wiki/AND_gate">AND gate</a>.
-Both inputs of the AND gate must be HIGH in order for the output to be HIGH.
-Both switches must be ON in order for Bowser to get burned.
-</p>
-</help>
-WWWWWWWWWWWW
-W.s##N#..WWW
-W.W...N###B.
-W.s##N#WWW.W
-..WW?WWW...W
-WM.........W
-WWWWWWWWWWWW
-</levelmap>
-
-<levelmap> <timestep>100</timestep> <name> 1-7   One XOR the Other </name>
-<help>
-<p class="indepth">
-The five toads at the right of this circuit constitute a
-<a href="https://en.wikipedia.org/wiki/XOR_gate">XOR gate</a>,
-which is short for Exclusive Or.
-The output of the XOR gate is HIGH if either, but not both, of the inputs are HIGH.
-</p>
-<p class="indepth">
-Bumping the middle switch causes both inputs to go HIGH, but the output remains LOW.
-Bumping the top switch causes only one input to go HIGH, so that th output is HIGH.
-</p>
-</help>
-W.................W
-W.WWWWWWWWWWWWW...W
-W.s###..W###..W...W
-?.W..#..W#.#..W...W
-WMW##N#N##.N##W...W
-..s#....WN##.N#N#B.
-W.W##N#N##.N##W...W
-W.W..#..W#.#..W...W
-W.s###..W###..W...W
-W.WWWWWWWWWWWWW...W
-W.................W
-</levelmap>
-
-<levelmap> <timestep>100</timestep> <name> 1-8   One XOR the Other?  </name>
-<help>
-<p class="indepth">
-In terms of combinational logic, this circuit functions as a XOR gate.
-But in terms of sequential logic, it functions as a pulse generator.
-When the middle switch is switched OFF, there is a lag between some of the gates toggling,
-which results in a short pulse being generated. 
-</p>
-</help>
-W.................W
-W.WWWWWWWWWWWWW...W
-W.s###..W.....W...W
-?.W..#..W.....W...W
-WMW##N#N##+N##W...W
-..s#....WN##.N#N#B.
-W.W##N#N##+N##W...W
-W.W..#..W.....W...W
-W.s###..W.....W...W
-W.WWWWWWWWWWWWW...W
-W.................W
-</levelmap>
-
-<levelmap> <name> 1-9   TOADS GALORE </name>
-W............WWWWW
-W.      .....WHHHW
-WMS###    ...WHHHW
-W.   N###    WWWWW
-W.S###  #     WWWW
-W.      N####  WWW
-W.S###  #   #  WWW
-W.   N###   N#B...
-W.s###      # .WWW
-W.          # .WWW
-W.S########## .WWW
-W.            .WWW
-W..............WWW
-</levelmap>
-
-<levelmap> <timestep> 100 </timestep> <name> 1-10   A LIFE-OR-DEATH DECISION </name>
-<help>
-<p>REMEMBER, BOWSER IS THE BAD GUY!</p>
+<p>BOWSER IS THE BAD GUY... NOT ME!</p>
 </help>
 WWWWWWWWWWWWWW
 W. ..###..###.
@@ -222,23 +136,179 @@ W. ...#N#n#P#.
 WWWWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep>100</timestep> <name> 1-11   LOOP THE LOOP </name>
+<levelmap> <timestep> 200 </timestep> <name> 1-8   WORLD 1 BOSS FIGHT </name>
 <help>
-<h2>BRIDGES</h2>
-<p>BRIDGES ALLOW HORIZONTAL AND VERTICAL 
-<br>
-LAVA FLOWS TO CROSS WITHOUT INTERFERING. </p>
+<p>HELP ME, MARIO!  YOU NEED TO RUN FAST!</p>
 </help>
-W...........W
-W.s#####   .W
-WM     #  WWW
-W.   ##+##B..
-..?  # #  .WW
-..   ###  ..W
-W...........W
+WWWWWWWWWWWWWWWWWWWWWWWW
+W########.#####.#nn###PW
+W#......#.#...#.#W#WWW.W
+W####.###.###.###W#WWW.W
+WWWW#.#.....#.WWWWs##L.W
+..WW#.#######.W....W...W
+?Ms##WWWWWWWWWWWW.WWWW.W
+W.W#WWWWWW###W###.###.B.
+W.Wn#W###W#W#W#W#W#W#W#W
+W.WW#W#W#W#W#W#W#W#W#W#W
+W...###W###W###W###Wn##W
+WWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep>100</timestep> <name> 1-11   SAVE PEACH AGAIN! </name>
+
+
+<levelmap> <timestep>100</timestep> <name></name>
+<help>
+sadf
+</help>
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+                                                   
+       H H H HHH     H     H    HHH                
+       H H H H H     H     H      H                
+       H H H H H HHH H   HHH    HHH                
+       H H H H H H   H   H H    H                  
+       HHHHH HHH H   HHH HHH    HHH                
+                                                   
+.M.................................................
+                                                   
+ ### ### ##### #   # ###  #  ### # ### ###  #  #   
+ #   # # # # # #   # # # # #  #  # # # # # # # #   
+ #   # # # # # ### # # # ###  #  # # # # # ### #   
+ #   # # # # # # # # # # # #  #  # # # # # # # #   
+ ### ### # # # ### # # # # #  #  # ### # # # # ### 
+                                                   
+           #   ### ### ### ###                     
+           #   # # # #  #  #                       
+           #   # # ###  #  #                       
+           #   # #   #  #  #                       
+           ### ### ### ### ###                     
+                                                   
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+</levelmap>
+
+
+
+
+
+<levelmap> <timestep>100</timestep> <name> 2-1   NEITHER HEAD <span style="color:pink;">NOR</span> FEET </name>
+<help>
+<p>TURN OFF ALL SWITCHES TO SAVE THE TOAD.</p>
+<p class="indepth">
+The toad behaves as a 
+<a href="https://en.wikipedia.org/wiki/NOR_gate">NOR gate</a>.
+If either input of the NOR gate is HIGH, the output is LOW.
+Only if both inputs are LOW will the output be HIGH.
+</p>
+</help>
+W?WWWWWWWWWW
+W.S###..Ln#.
+W.W..n###W.W
+W.S###WWWW.W
+WMWWWWW....W
+W.......WWWW
+WWWWWWWWW###
+</levelmap>
+
+<levelmap> <timestep>100</timestep> <name> 2-2   ON <span style="color:pink;">AND</span> ON </name>
+<help>
+<p>TURN ON ALL SWITCHES TO SAVE THE CENTER TOAD.</p>
+<p class="indepth">
+The three toads in the center function as an 
+<a href="https://en.wikipedia.org/wiki/AND_gate">AND gate</a>.
+Both inputs of the AND gate must be HIGH in order for the output to be HIGH.
+Both switches must be ON in order for Bowser to get burned.
+</p>
+</help>
+WWWWWWWWWWWW
+W.s#N#..Ln#.
+W.W..N###W.W
+W.s#N#WWWW.W
+..WW?WWW...W
+WM.........W
+WWWWWWWWWWWW
+</levelmap>
+
+<levelmap> <timestep>100</timestep> <name> 2-3   One <span style="color:pink;">XOR</span> the Other </name>
+<help>
+<p class="indepth">
+The five toads at the right of this circuit constitute a
+<a href="https://en.wikipedia.org/wiki/XOR_gate">XOR gate</a>,
+which is short for Exclusive Or.
+The output of the XOR gate is HIGH if either, but not both, of the inputs are HIGH.
+</p>
+<p class="indepth">
+Bumping the middle switch causes both inputs to go HIGH, but the output remains LOW.
+Bumping the top switch causes only one input to go HIGH, so that th output is HIGH.
+</p>
+</help>
+W..................W
+W.WWWWWWWWWWWWW....W
+W.s###..W###..W....W
+?.W..#..W#.#..W..W.W
+WMW##N#N##.N##W..W.W
+..s#....WN##.NN#LN#.
+W.W##N#N##.N##W..W.W
+W.W..#..W#.#..W..W.W
+W.s###..W###..W....W
+W.WWWWWWWWWWWWW....W
+W..................W
+</levelmap>
+
+<levelmap> <timestep>100</timestep> <name> 2-3B   One XOR the Other?  </name>
+<help>
+<p class="indepth">
+In terms of combinational logic, this circuit functions as a XOR gate.
+But in terms of sequential logic, it functions as a pulse generator.
+When the middle switch is switched OFF, there is a lag between some of the gates toggling,
+which results in a short pulse being generated. 
+This is a type of "hazard".
+</p>
+</help>
+W..................W
+W.WWWWWWWWWWWWW....W
+W.s###..W.....W....W
+?.W..#..W.....W..W.W
+WMW##N#N##+N##W..W.W
+..s#....WN##.N##LN#.
+W.W##N#N##+N##W..W.W
+W.W..#..W.....W..W.W
+W.s###..W.....W....W
+W.WWWWWWWWWWWWW....W
+W..................W
+</levelmap>
+
+<levelmap> <timestep>100</timestep> <name> 2-4   THE PASSWORD IS 0000  </name>
+<help>
+<p class="indepth">
+This circuit demonstrates a multi-input AND gate.  The output is HIGH only if all inputs are HIGH.
+</p>
+</help>
+W?WWWWWWWWWWWWW
+WM............W
+W.S.S.S.S..WW.W
+..nnnnnnn#L#n#
+W..........WWWW
+WWWWWWWWWWWWWWW
+</levelmap>
+
+<levelmap> <timestep>100</timestep> <name> 2-5   THE PASSWORD IS 101011  </name>
+<help>
+<p class="indepth">
+This circuit demosntrates a multi-input AND gate.  The output is HIGH only if all inputs are HIGH.
+To pass the level, Mario needs to set every switch to the correct state! 
+</p>
+</help>
+WWWWWWWWWWWWWWWWWWWWWWWW
+WM.....................W
+..s  s  s  s  s  s   W.W
+WWn#.##.n#.##.n#.n#..W.W
+W..#..#..#..#..#..#..W.W
+W.#n#nn#nn#nn#nn#nn#Ln#.
+W.....................WW
+WWWWWWWWWWWWWWWWWWWWWWWW
+</levelmap>
+
+
+<levelmap> <timestep>100</timestep> <name> 2-6   DON'T HIT THE WRONG SWITCH </name>
 WWWWWWWWWWWWWWWWWWW
 WWWWWWWWWWWWWWWWWWW
 ..s#N#             
@@ -246,7 +316,7 @@ WM   N####
 W.s#N#   N##     ..
 W.   n#### N##   . 
 W.s#N# # N## #   . 
-W.   N#+##   N#N#B 
+W.   N#+##   N#### 
 W.s#N# # N## #   . 
 W.   N#+## N##   . 
 W.s#N# # N##     . 
@@ -259,7 +329,23 @@ WWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 
-<levelmap> <timestep>100</timestep> <name> 1-12   WORLD 1 BOSS FIGHT </name>
+<levelmap> <name> 2-7   TOADS GALORE [TO BE CHANGED] </name>
+W............WWWWW
+W.      .....WHHHW
+WMS###    ...WHHHW
+W.   N###    WWWWW
+W.S###  #     WWWW
+W.      N####  WWW
+W.S###  #   #  WWW
+W.   N###   N#B...
+W.s###      # .WWW
+W.          # .WWW
+W.S########## .WWW
+W.            .WWW
+W..............WWW
+</levelmap>
+
+<levelmap> <timestep>100</timestep> <name> 2-8   WORLD 2 BOSS FIGHT </name>
 <help>
 HELP ME, MARIO!<br>
 FLIP THE SWITCHES AS MANY TIMES AS YOU NEED TO!
@@ -286,7 +372,7 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
        H H H HHH     H     H    HHH      
        H H H H H     H     H      H      
        H H H H H HHH H   HHH    HHH      
-       H H H H H H   H   H H    H        
+       H H H H H H   H   H H      H      
        HHHHH HHH H   HHH HHH    HHH      
                                          
 .M.......................................
@@ -307,7 +393,7 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 
-<levelmap> <timestep> 100 </timestep> <name> 2-1    LET LOOSE THE LAVA </name>
+<levelmap> <timestep> 100 </timestep> <name> 3-1    LET LOOSE THE LAVA </name>
 <help>
 <p>
 BUMP THE BOTTOM TOAD TO ARM THE CANNON.
@@ -339,7 +425,7 @@ W.n######N#n####B.
 W.......WWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep> 0 </timestep> <name> 2-2    LOOSEN THE LATCHES </name>
+<levelmap> <timestep> 0 </timestep> <name> 3-2    LOOSEN THE LATCHES </name>
 <help>
 <p class="indepth">
 The toad circuit below implements a string of gated D latches.
@@ -364,7 +450,7 @@ W.                              W
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep> 0 </timestep> <name> 2-3    TREAD CAREFULLY </name>
+<levelmap> <timestep> 0 </timestep> <name> 3-3    TREAD CAREFULLY </name>
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 W...............................W
@@ -383,7 +469,7 @@ W.                  ##N#
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep> 0 </timestep> <name> 2-4    WALKING ON EGGSHELLS </name>
+<levelmap> <timestep> 0 </timestep> <name> 3-4    WALKING ON EGGSHELLS </name>
 <help>
 <p>
 STAR 1 + STAR 3 = BURNT PEACH
@@ -412,7 +498,7 @@ W.              #+++++# ##### WWW
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep> 1 </timestep> <name> 2-5   SHIFT TO SUCCESS </name>
+<levelmap> <timestep> 1 </timestep> <name> 3-5   SHIFT TO SUCCESS </name>
 <help>
 BOTTOM=LOAD, TOP=SHIFT
 <p class="indepth">
@@ -436,7 +522,7 @@ W..................................W
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep>30</timestep> <name> 2-6   TICK TOCK </name>
+<levelmap> <timestep>30</timestep> <name> 3-6   TICK TOCK </name>
 <preconverge> 0 </preconverge> 
 <help>
 <p class="indepth">
@@ -459,7 +545,7 @@ WM................WWWW
 WWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep> 20 </timestep> <name> 2-7   TIME IT RIGHT </name>
+<levelmap> <timestep> 20 </timestep> <name> 3-7   TIME IT RIGHT </name>
 <help>
 <p class="indepth">
 Switching off the P switch triggers a monostable multivibrator, also known as a pulse generator.  
@@ -488,7 +574,7 @@ W ##########################  .W
 W..............................W
 </levelmap>
 
-<levelmap> <timestep> 20 </timestep> <name> 2-8   TIME IT RIGHT #2 </name>
+<levelmap> <timestep> 20 </timestep> <name> 3-8   TIME IT RIGHT #2 </name>
 <help>
 <p class="indepth">
 Toggling the P switch causes the two inputs to the EQV gate to change from (0,1) to (1,0).
@@ -515,7 +601,7 @@ W............................W
 
 
 <levelmap> <timestep>0</timestep> 
-<name> 2-9   WORLD 2 BOSS FIGHT </name>
+<name> 3-9   WORLD 2 BOSS FIGHT </name>
 <help>
 HELP ME, MARIO!  THE PASSWORD IS 10101!
 <p class="indepth">
@@ -557,7 +643,7 @@ BUILD YOUR OWN TOAD LOGIC CIRCUIT!
 </help>
 ?.................................
 .M................................
-..................................
+...........Sn#####n#############..
 ..................................
 ..................................
 ..................................
