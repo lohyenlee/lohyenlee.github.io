@@ -42,7 +42,7 @@ HAPPY TOADS SPEW LAVA, CRYING TOADS EMIT WATER.</p>
 </help>
 W?WWWWWWW
 W....###W
-.M..#####.
+.M..####.
 WM.N####W
 WWWWWWWWW
 </levelmap>

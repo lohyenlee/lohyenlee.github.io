@@ -10,9 +10,11 @@
       font-family:'gameFont';src:url('Retro Gaming.ttf') format('truetype');
       font-weight:normal;font-style:normal;
     }
-    :root {--btnsize:12vmin;}
+    :root {--btnsize:8vmin;}
     html,body { 
-      background-color:#333; padding:0; margin:0; width:100vh; height:200vh; font-family:'gameFont',sans-serif;
+      /* overflow: hidden auto; scrollbar-width: thin; */
+       /* allow vertical scrolling? */
+      background-color:#333; padding:0; margin:0; width:100%; height:100%; font-family:'gameFont',sans-serif;
     }
     @keyframes gradientAnimation { 
       0%  {background-position:10% 0%  ;}
@@ -23,19 +25,17 @@
       50% {background-color: #993; box-shadow:0px 0px 5px 5px #993;}
     }
     #splashScreen {
-      position:fixed;left:0;bottom:0;
       width: 100%; height:100%; text-align: center; color:white;
       border:1px solid black;
       background: linear-gradient(130deg, #262626, #ff7e00, #fff200);
       background-size: 200% 200%;
       animation: gradientAnimation 4s ease infinite;
     }
-    #viewarea {position:fixed; z-index:1; display:none; bottom:0; left:0;}
-    #canvas {position:fixed; z-index:1; display:none; top:0; left:0;}
+    #canvas {position:absolute; z-index:1; display:none; top:0;}
     #helpDivContainer { margin: 32px; padding: 32px;}
     #helpDiv {
       display: none;
-      z-index:4;position:fixed;  right: 0; bottom:0; height:fit-content; width:80%; 
+      z-index:4;position:absolute;  right: 0; bottom:0; height:fit-content; width:80%; 
       padding: 1rem 2rem 1rem 6rem; 
       box-shadow: 0px 4 px 8px 0px #333, 0px 8px 16px 8px #000; background-color:#666; border:double 4px black; border-radius: 20px; 
       color:white; font-family:'gameFont',sans-serif; font-size: 1.5rem;
@@ -47,14 +47,14 @@
       background-image:url('happy1.webp');background-size:contain;background-repeat: no-repeat;background-position:0px;
       padding:0 0 0 48px; color:#fff;
     }
-    #title {position:fixed; z-index:2; top:0;  
+    #title {position:absolute; z-index:2; top:0;  
       display:none;
       width:fit-content;
       margin:6px 0px 0px 0px;text-align:center; font-size:3vmin; color:white; white-space:pre;
       border: 6px outset #974; background-color:#530;
       box-shadow: 0px 0px 1px 1px black, 0px 0px 8px 8px white;
     }
-    #controls {position:fixed; z-index:3; bottom:0; left:0; width:100%; display:none;}
+    #controls {position:absolute; z-index:3; bottom:0; left:0; width:100%; display:none;}
     button {cursor:pointer;
             float:left;margin:0;padding:0;text-align:center; border-radius:8px; font-family:'gameFont',sans-serif;font-size: 4vmin;
             background-color:#666; color:white;
@@ -63,7 +63,7 @@
     .btn1 { width:var(--btnsize); height:var(--btnsize); background-size:cover; 
             text-shadow: 2px 2px 3px black;
           } /* square button */
-    .btn2 { width:var(--btnsize); height:var(--btnsize);font-size: 2.2vmin;}
+    .btn2 { width:calc(10vmin); height:var(--btnsize);margin:1px; padding:0; font-size: 2vmin;}
     .separator { height:16px; clear:left; }
     .indepth {font-size:1.3rem;color:#EEE;}
   </style>
@@ -119,6 +119,8 @@
 <audio id="audioOw"><source src="ow.mp3"></audio>
   </div>
   
+  <div id="scroller" style="width: 16px; height: 16px; background-color: #f00;"></div>
+  
   <div id="helpDivContainer">
     <div id="helpDiv"></div>
   </div>
@@ -127,24 +129,23 @@
   
   <div id="controls" style="position:fixed; bottom:0; left:0; width:100%;">
     <div style="position: absolute; left:0;bottom:0; width:calc(3*var(--btnsize));" id="joyContainer">
-      <div id="joyring" style="
-      z-index:2; position:absolute; left:0; bottom:0; width:130px; height:130px; 
-      background-image:url('joystick.webp'); background-position:center; background-size:130px; background-repeat: no-repeat;">
+      <div style="
+      z-index:2; position:absolute; left:0; bottom:0; width:140px; height:140px; 
+      background-image:url('joystick.webp'); background-position:center; background-size:140px; background-repeat: no-repeat;">
       </div>
       <div id="joystick" style="
       display:none;
-      z-index:3; position:absolute; left:0; bottom:0; width:130px; height:130px; 
-      background-image:url('joystick.webp'); background-position:center; background-size:90px; background-repeat: no-repeat;
+      z-index:3; position:absolute; left:0; bottom:0; width:140px; height:140px; 
+      background-image:url('joystick.webp'); background-position:center; background-size:100px; background-repeat: no-repeat;
       color:white; text-align:center; vertical-align:middle;
       transform:translate(0,0);">
-      <div style="height: 8px;"></div><br>E<br>S &nbsp; &nbsp;  F<br> D
+      <br><br>E<br>S &nbsp; &nbsp;  F<br> D
       </div>
     </div>
-    <div style="display:flex; vertical-align:bottom; float:right; margin:0ex 0ex 0ex 0ex;">
+    <div style="display:flex; vertical-align:bottom; float:right; margin:0ex 5ex 0ex 5ex;">
       <div>
-      <div style="height: 3vmin;"></div>
       <input type="range" min="0" max="200" value="50" class="slider" id="sliderSpeed">
-      <div id="divSpeed" style="color:white; font-size: 2vmin; text-align:center;">DELAY</div>
+      <div id="divSpeed" style="color:white;">DELAY</div>
       </div>
       <button id="btnCheat" class="btn2" title="Key: Shift-C"> CHEAT</button>
       <button id="btnPrev"  class="btn2" title="Key: [">       PREV </button>
@@ -182,7 +183,7 @@
     let winlose=PLAYING 
     let preconverge=100,sandbox=0
 
-    let joyForce=0
+    let joystickForce=0
 
     function setPos(xnew,ynew) {xCursor=xnew;yCursor=ynew;xCurPrev=xCursor;yCurPrev=yCursor}
     function tryWalk(dir) {
@@ -247,7 +248,7 @@
     }
 
 
-    function extract(tag, source) {
+    function htmlExtractContent(tag, source) {
       const regex = new RegExp('<' + tag + '>(.*?)<\/' + tag + '>\\s+', 'gs')
       const match = regex.exec(source)
       if (match) return [match[1], source.replace(regex,'')]
@@ -273,16 +274,20 @@
     function loadLevel(levelMap) {
       preconverge=100; sandbox=0; helpText='Level '+level  // defaults
       {
-        const [content,remainder]=extract('timestep', levelMap); levelMap=remainder
+        const [content,remainder]=htmlExtractContent('timestep', levelMap); levelMap=remainder
         if(content) {
           timeStepInMilliseconds = Number(content)
           sliderSpeed.value = timeStepInMilliseconds
         }
+      }{const [content,remainder]=htmlExtractContent('name', levelMap); levelMap=remainder
+        levelName = content
+      }{const [content,remainder]=htmlExtractContent('preconverge', levelMap); levelMap=remainder
+        if(content) preconverge = Number(content)
+      }{const [content,remainder]=htmlExtractContent('sandbox', levelMap); levelMap=remainder
+        if(content) sandbox = Number(content)
+      }{const [content,remainder]=htmlExtractContent('help', levelMap); levelMap=remainder
+        if(content) helpText=content
       }
-      {const [content,remainder]=extract('name', levelMap); levelMap=remainder;levelName=content}
-      {const [content,remainder]=extract('preconverge', levelMap); levelMap=remainder; if(content) preconverge=Number(content)}
-      {const [content,remainder]=extract('sandbox', levelMap); levelMap=remainder; if(content) sandbox=Number(content)}
-      {const [content,remainder]=extract('help', levelMap); levelMap=remainder; if(content) helpText=content}
       if (levelName) {title.innerHTML=levelName; title.style.display='block'}
       else           {title.style.display='none'}
       btnLava.disabled = !sandbox
@@ -459,7 +464,12 @@
       canvas.width=X*cellsize
       canvas.height=Y*cellsize
       canvas.style.left = Math.floor((winWid-canvas.width)/2) + "px"
-      title.style.left  = Math.floor((winWid-title.offsetWidth)/2) + "px"      
+      title.style.left  = Math.floor((winWid-title.offsetWidth)/2) + "px"
+      // title.style.width = canvas.width + "px"
+      canvas.height = winHei + 1 // ????????????
+
+      // const viewportHeight = window.visualViewport.innerHeight;
+      // document.documentElement.style.setProperty('--vh', `${viewportHeight}px`);
     }
     function render() {
       tcur += 1
@@ -620,10 +630,10 @@
       else if (isKeyDown('e')||isKeyDown('E')) walkN()
       else if (isKeyDown('d')||isKeyDown('D')) walkS()
       else { // process joystick ONLY if keyboard is not active
-        joyForce = Math.hypot(joyX,joyY) 
-        if (joyForce<5) { // weak force, do nothing
+        joystickForce = Math.hypot(joyX,joyY) 
+        if (joystickForce<5) { // weak force, do nothing
         }
-        else if (joyForce>40) { //strong force, walk
+        else if (joystickForce>40) { //strong force, walk
           if (Math.abs(joyX)>Math.abs(joyY)) if (joyX>0) {walkE()} else walkW()
           else                         if (joyY>0) {walkS()} else walkN()
         }
@@ -666,6 +676,10 @@
       if (e.ctrlKey||e.altKey) return // don't trap browser shortcuts involving Ctrl or Alt
       let processed=true
       switch (e.key) {
+        // case 'f': if(marioOrientation!=0)faceE(); else processed=false; break
+        // case 's': if(marioOrientation!=1)faceW(); else processed=false; break
+        // case 'e': if(marioOrientation!=3)faceN(); else processed=false; break //VERY DODGY CODE
+        // case 'd': if(marioOrientation!=2)faceS(); else processed=false; break
         case '[': prevLevel(); break
         case ']': nextLevel(); break
         case 'h':case'H':if(sandbox) placeLava(); break    // add hot burning
