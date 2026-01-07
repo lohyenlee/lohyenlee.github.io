@@ -11,17 +11,19 @@
     }
   </style>
 </head>
-<body id="body" style="height: 300lvh;">
+<body id="body" style="height: 190lvh;">
 
 
   <div id="logdiv" style="position:absolute; left:30%; bottom:50%;">
   </div> 
 
+  <div style="font-size: 100px; color:#0003;"> lorem ipsum lorem ipsum lorem ipsum lorem 
+  </div> 
+
   <!-- <div id="scroller" style="width: 16px; height: 16px; background-color: #f00;"></div>
   </div> -->
 
-  <canvas id="canvas"
-  style="position:absolute;top:0;left:0;"></canvas>
+  <canvas id="canvas" style="position:fixed;bottom:0;left:0;"></canvas>
 
   <div id="controls" style="position:fixed; bottom:0; left:0; width:100%;">
     <div style="position: absolute; left:0;bottom:0;" id="joyContainer">
@@ -58,10 +60,16 @@
       logdiv.innerText += s
     }
 
-
     function scrollToBottom() {
-      body.scrollBy(0,1)
-      setTimeout(()=>scrollToBottom(), 100)
+      // let y = window.scrollY
+      setTimeout(()=>{window.scrollTo(0, document.body.scrollHeight), 500})
+      
+      // document.body.scrollTo(0,document.body.scrollHeight)
+      // console.log ('scrollY = ' + window.scrollY)
+      // console.log ('scrollHeight = ' + document.body.scrollHeight)
+      if (window.scrollY < document.body.scrollHeight - window.innerHeight - 4) {
+        setTimeout(()=>{scrollToBottom(), 500})
+      }
     }
 
     function setScaling() {
@@ -71,7 +79,6 @@
       canvas.height = winHei
       // scroller.style.height = (winHei + 64) + "px"
       //body.style.height = (winHei + 64) + "px"
-      console.log('asdf')
       scrollToBottom()
       // canvas.style.left = Math.floor((winWid-canvas.width)/2) + "px"
       
@@ -81,11 +88,12 @@
     function render() {
       //======== DRAW BACKGROUND AND GAME AREA
       ctx.clearRect(0, 0, canvas.width, canvas.height)
-      ctx.fillStyle='#000'
       ctx.strokeStyle='#0F0'
       ctx.moveTo(0,0)
       ctx.lineTo(canvas.width, canvas.height)
       ctx.stroke()
+      ctx.fillStyle='#0FF3'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
 
     }
     
@@ -129,7 +137,7 @@
     }
 
     function onscroll(e) {
-      joyContainer.style.left = (Math.random()*100) + 'px'
+      joyContainer.style.left = (Math.random()*10) + 'px'
 
     }
 
