@@ -63,11 +63,11 @@
     function scrollToBottom() {
       // let y = window.scrollY
       // setTimeout(()=>{window.scrollTo(0, document.body.scrollHeight), 500})
-      setTimeout(()=>window.scrollBy({ top: 1, left: 0, behavior: 'smooth' })  , 400)
+      setTimeout(()=>window.scrollBy({ top: 20, left: 0, behavior: 'smooth' })  , 400)
       
       
       // document.body.scrollTo(0,document.body.scrollHeight)
-      // console.log ('scrollY = ' + window.scrollY)
+      console.log ('scrollY = ' + window.scrollY)
       // console.log ('scrollHeight = ' + document.body.scrollHeight)
       if (window.scrollY < document.body.scrollHeight - window.innerHeight - 4) {
         setTimeout(()=>{scrollToBottom(), 500})
