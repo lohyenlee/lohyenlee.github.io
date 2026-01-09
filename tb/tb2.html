@@ -255,6 +255,7 @@
     }
 
     function setLevel(newLevel) {
+      stalled=true           // Don't ever start a new level while walking
       if (newLevel<0) return // if new level number is illegal, don't load it
       if (newLevel>=levelMaps.length) newLevel=levelMaps.length-1
       level = newLevel
@@ -488,9 +489,9 @@
             animHappy.draw(x*a,y*a,a,a, tcur/14)
           } else { // gate is OFF
             animWater.draw(x*a, y*a, a, a, frm)
-            if (ground[(x-1)+X*y]&ON) ctx.drawImage(imgLava, 0,0,32,64, x*a,y*a,a/2,a)
-            if (ground[x+X*(y-1)]&ON) ctx.drawImage(imgLava, 0,0,64,32, x*a,y*a,a,a/2)
-            if (ground[x+X*(y+1)]&ON) ctx.drawImage(imgLava, 0,32,64,32, x*a,y*a+a/2,a,a/2)
+            if (ground[(x-1)+X*y]&ON) ctx.drawImage(imgLava, 0,0,16,32, x*a,y*a,a/2,a)
+            if (ground[x+X*(y-1)]&ON) ctx.drawImage(imgLava, 0,0,32,16, x*a,y*a,a,a/2)
+            if (ground[x+X*(y+1)]&ON) ctx.drawImage(imgLava, 0,16,32,16, x*a,y*a+a/2,a,a/2)
             animCrying.draw(x*a,y*a,a,a, tcur/15)
           }
         }
@@ -512,15 +513,22 @@
         }
       }
 
+      //======== DRAW CERTAIN EXTRAS (WALLS)
+      for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
+        switch (extras[x+X*y]) { 
+          case WALL: ctx.drawImage(imgBrick, x*a, y*a, a, a); break
+        }
+      }
+      //======== DRAW CERTAIN EXTRAS (QUESTION BLOCKS, LAMPS, ETC.)
       let size,xcen,ycen,sx,sy
       for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
         const frm=(tcur+4*x+13*y)/20
         switch (extras[x+X*y]) {
-          case WALL: ctx.drawImage(imgBrick, x*a, y*a, a, a); break
+          case WALL: break; // this was done in the earlier loop
           case QUESTION: ctx.drawImage(imgQuestion, x*a,y*a,a,a); break  
           case LAMP:
             if (ground[x+X*y]>4) {
-              if ((Math.floor(tcur/10)%2)) ctx.drawImage(imgStarOn, x*a-24, y*a-24, a+48, a+48)
+              if ((Math.floor(tcur/10)%2)) ctx.drawImage(imgStarOn, x*a-21, y*a-21, a+42, a+42)
               else                         ctx.drawImage(imgStarOn, x*a-20, y*a-20, a+40, a+40)
               // should remake this into an Animation
             }
@@ -568,7 +576,7 @@
         const xcen=(x+.5)*a+xShaking,ycen=(y+.5)*a+yShaking,sx=a,sy=a
         ctx.drawImage(imgMarioDead, xcen-sx/2, ycen-sy/2, sx,sy);
 
-        if (tcur<100) {xShaking+=Math.cos(tcur*.6)*2; yShaking=Math.sin(tcur*.3)*10 }
+        if (tcur<100) {xShaking+=Math.cos(tcur*1.2)*2; yShaking=Math.sin(tcur*.7)*10 }
         else {xShaking=0; yShaking+=(tcur-20)*.03}      
 
       } else {

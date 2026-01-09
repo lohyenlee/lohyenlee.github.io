@@ -35,8 +35,8 @@ remembers whether it is ON or OFF, and supplies either a positive voltage (HIGH)
 </help>
 W?WWWWWWW
 W...S###W
-W....###.
-M....###W
+WM...###.
+.....###W
 WWWWWWWWW
 </levelmap>
 
@@ -49,8 +49,8 @@ In Toad Burn, toads also behave like switches that may be toggled.
 </help>
 W?WWWWWWW
 W....###W
-M...####.
-W..N####W
+.M..####.
+WM.N####W
 WWWWWWWWW
 </levelmap>
 
@@ -67,10 +67,10 @@ If the input is LOW, the output is HIGH.
 </p>
 </help>
 W?WWWWWWWWWW
-W.W......W..
-M.s###N####W
-W.WWWWWWWW.W
-W..........W
+.MW......W..
+..s###N####W
+..WWWWWWWW.W
+...........W
 WWWWWWWWWWWW
 </levelmap>
 
@@ -80,8 +80,8 @@ W?WWWWWWWWWWWW
 W...........WW
 W.s#.###....#.
 W.W#.#.#..WW#W
-M.W#.#.#.##N#W
-W.W###.###..WW
+..W#.#.#.##N#W
+WMW###.###..WW
 WWWWWWWWWWWWWW
 </levelmap>
 
@@ -90,10 +90,10 @@ WWWWWWWWWWWWWW
 <p>MARIO, PLEASE BE CAREFUL!</p>
 </help>
 WWWWWWWWWWW
-M.###.####W
+..###.####W
 W.#.#.#..#W
 ?.s.###.P#W
-W.........W
+WM........W
 W.s.###W.#.
 W.#.#WWWW#W
 W.#####Ln#W
@@ -109,9 +109,9 @@ LAVA FLOWS TO CROSS WITHOUT INTERFERING. </p>
 </help>
 W...........W
 W.s#####   .W
-W.     #  WWW
+WM     #  WWW
 W.   ##+##B..
-M.?  # #  .WW
+..?  # #  .WW
 W.   ###  ..W
 W...........W
 </levelmap>
@@ -120,20 +120,20 @@ W...........W
 <help>
 <p>BOWSER IS THE BAD GUY... NOT ME!</p>
 </help>
-WWWWWWWWWWWWWWWW
-W########..###.W
-W#......#..#.#.W
-W####.##+#.#.#.W
-W...#.#.#+##.#.W
-?.s#+##..#...#.W
-M...#....#.###.W
-W.s#+###.#.#...W
-W...#..##+#+##.W
-W.s.#....#.#.#.W
-W.#.#..###.##+B.
-W.###..#.....#.W
-W......#N#n#P#.W
-WWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWW
+W. ..###..###.
+W. ..#.#..#.#.
+W.s##+#+#.#.#.
+W. ..#.#+##.#.
+?. .##..#...#.
+WM .#...#.###.
+..s#+##.#.#...
+W. .#.##+#+##.
+W. .#...#.#.#.
+W. .#.###.B.#.
+W.s##.#.....#.
+W. ...#N#n#P#.
+WWWWWWWWWWWWWW
 </levelmap>
 
 <levelmap> <timestep> 200 </timestep> <name> 1-8   WORLD 1 BOSS FIGHT </name>
@@ -214,8 +214,8 @@ W?WWWWWWWWWW
 W.S###..Ln#.
 W.W..n###W.W
 W.S###WWWW.W
-W.WWWWW....W
-M.......WWWW
+WMWWWWW....W
+........WWWW
 WWWWWWWWW###
 </levelmap>
 
@@ -233,8 +233,8 @@ W?WWWWWWWWWW
 W.s#N#..Ln#.
 W.W..N###W.W
 W.s#N#WWWW.W
-W.WWWWW....W
-M.......WWWW
+WMWWWWW....W
+........WWWW
 WWWWWWWWWWWW
 </levelmap>
 
@@ -254,8 +254,8 @@ Bumping the top switch causes only one input to go HIGH, so that th output is HI
 </help>
 W?WWWWWWWWWWWWW
 W.............W
-W..s##N##WWWW.W
-M...WN#.NN#LN#.
+WM.s##N##WWWW.W
+....WN#.NN#LN#.
 W..s##N##WWWW.W
 W.............W
 WWWWWWWWWWWWWWW
@@ -268,9 +268,9 @@ This circuit demonstrates a multi-input AND gate.  The output is HIGH only if al
 </p>
 </help>
 W?WWWWWWWWWWWWW
-W.............W
+WM............W
 W.S.S.S.S..WW.W
-M.nnnnnnn#L#n#
+..nnnnnnn#L#n#
 W..........WWWW
 WWWWWWWWWWWWWWW
 </levelmap>
@@ -393,56 +393,8 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 
-<levelmap> <timestep> 0 </timestep> <name> 3-1    SET AND RESET </name>
-<help>
-<p>TOP SWITCH LIGHTS STAR. </p>
-<p>BOTTOM SWITCH EXTINGUISHES STAR. </p>
-<p class="indepth"> 
-The two toads in the center form an
-<a href="https://en.wikipedia.org/wiki/Flip-flop_(electronics)">SR latch</a>,
-which is a bistable memory element.
-The state can be controlled by sending a pulse to 
-the Set (S) input or the Reset (R) input.
-When S=1 and R=0, then O=1.
-When S=0 and R=1, then O=0.
-This latch is R-dominated, such that R trumps S.
-</p>
-</help>
-WWWWWWWWWWWWWWWWW
-W............#.SW
-M..?WWWWWWW..#W#W
-W..s##W#+L##n#W#W
-W...W##Nn#W++++#W
-WWWsWWWW#WW......
-...######.WWWWWWW
-..........WWWWWWW
-</levelmap>
 
-<levelmap> <timestep> 0 </timestep> <name> 3-2    SET AND RESET #2 </name>
-<help>
-<p>TOP SWITCH LIGHTS STAR. </p>
-<p>BOTTOM SWITCH EXTINGUISHES STAR. </p>
-<p class="indepth"> 
-In this level the switches operate pulse generators.
-</p>
-</help>
-WWWWWWWWWWWWWWWW  
-  Wn##n##W     W  
-  W#.n#.n##    W  
-  W###n##W#    WWW
-WWWWWsWWWW# #+Ln#W
-M.....?...##Nn#W#W
-W.WWWsWWWW   # W#W
-W.W###n##W#### W#W
-W.W#.n#.n##WWWWW#W
-W.Wn##n##WWW#+++#W
-W.WWWWWWWWWW#.SWWW
-W...........#W#...
-W...........n#.WWW
-WWWWWWWWWWWWWWWWWW
-</levelmap>
-
-<levelmap> <timestep> 10 </timestep> <name> 3-3    LOOSEN THE LATCH </name>
+<levelmap> <timestep> 10 </timestep> <name> 3-1    LOOSEN THE LATCH </name>
 <help>
 <p>
 DO THE RIGHT THINGS IN THE RIGHT ORDER.
@@ -450,88 +402,92 @@ DO THE RIGHT THINGS IN THE RIGHT ORDER.
 <p class="indepth"> 
 The left switch operates a pulse generator.
 The top switch controls a 
-<a href="https://en.wikipedia.org/wiki/Flip-flop_(electronics)">D latch</a>.
+<a href="https://en.wikipedia.org/wiki/Flip-flop_(electronics)">latch</a>
+.
 Pulses pass through the latch only if it is open (on)!
 </p>
 </help>
-W?...........W
-M.....sN#....W
-W.WWWWWW#WWW.W
-Ws##n##.#..W.W
-W#.n#.nnn###B
-Wn##n##......W
-W............W
+W?............W
+W.M....sN#....W
+WW.WWWWWW#WWW.W
+W.s##n##.#..W.W
+W.#.n#.nnn###B
+W.n##n##......W
+W.............W
 </levelmap>
 
-<levelmap> <timestep> 0 </timestep> <name> 3-4    LOOSEN THE LATCHES </name>
+
+<levelmap> <timestep> 0 </timestep> <name> 3-2    LOOSEN THE LATCHES </name>
 <help>
-LET IT FLOW, LET IT FLOW!
 <p class="indepth">
-The toad circuit below implements a string of D latches.
-The left switch controls the input.
-The top three switches control the latches.
-Set the triggers to HIGH to let the input propagate through the latches.
+The toad circuit below implements a string of gated D latches.
+The output from the P switch is initially held at the first latch. 
+The three toads at the top control the triggers to the latches.
+Set the triggers to HIGH so that the signal can propagate through the latches.
 </p>
 </help>
-WWWWWWWWWWWWWWWWWWWWWW 
-W....................W 
-?.WsWWWWWsWWWWWsWWWW.W 
-M.Wn##...n##...n##.W.W 
-Ws#W#+....#+....#+.W.W 
-WW##+N#.##+N#.##+N#W.WW
- W#.#.#.#.#.#.#.#.#W.#.
- W#nnNN##nnNN##nnNN#n#W
- WL..#+L...#+L...#+LWWW
- W...................W 
- WWWWWWWWWWWWWWWWWWWWW 
+W?........................WWW
+W..M......................WWW
+.....s       s       s   ...W
+W... N#      N#      N#    B.
+W  s  # #+##  # #+##  # #+##W
+W  #Nn+#NH #Nn+#NH #Nn+#NH # 
+W  # ##  n## ##  n## ##  n## 
+W  ##n+### ##n+### ##n+### # 
+W  L       L       L       L 
+W                            
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
+<levelmap> <timestep> 0 </timestep> <name> 3-3    TREAD CAREFULLY </name>
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+W...............................W
+WMM.............................W
+W...  s        s        s     .  
+W...  #        #        #     .B.
+...   N#       N#       N#     #
+W.     ## #+##  ## #+##  ## #+##
+W.   N#N+#N# #N#N+#N# #N#N+#N# #
+Ws#L##  #  # #   #  # #   #  # #
+W. # ##N+#n+#L##N+#n+#L##N+#n+#L
+W. #   ## H#    ## H# #  ## H#  
+W. #                  N#
+W. ##################  N#P
+W.                  ##N#
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+</levelmap>
 
-<levelmap> <timestep> 0 </timestep> <name> 3-5    TREAD CAREFULLY </name>
+<levelmap> <timestep> 0 </timestep> <name> 3-4    WALKING ON EGGSHELLS </name>
 <help>
-SHUT THE DOOR BEHIND YOU!
-<p class="indepth">
-The three toads at the bottom form an AND gate.
-If star 2 and star 4 are both on, Peach will be cooked.
+<p>
+STAR 1 + STAR 3 = BURNT PEACH
+<p></p>
+STAR 2 + STAR 4 = BURNT PEACH ALSO!
 </p>
 </help>
-WWWWWWWWWWWWWWWWWWWWWW 
-W....................W 
-?.WsWWWWWsWWWWWsWWWW.W 
-M.Wn##...n##...n##.W.W 
-Ws#W#+....#+....#+.W.W 
-WW##+N#.##+N#.##+N#W.WW
- W#.#.#.#.#.#.#.#.#W.#.
- W#nnNN##nnNN##nnNN#n#W
- WL..#+L...#+L...#+LWWW
- W.....##..........n#.W
- W......##########n+nPW
- WWWWWWWWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWWWWWWWWWWWWW.......W
+WM........................S#WWW.W
+W..s       s       s       N##N##
+W.?N#      N#      N#     N# #WWW
+..  ## #+## ## #+## ## #+##  #WWW
+W.#NN+#N# #NN+#N# #NN+#N# # ##WWW
+Ws#  #  # #  #  # #  #  # # # WWW
+W.L#N+#n+#L#N+#n+#L#N+#n+#L # WWW
+W.# ## H# # ## H# # ## H# # # WWW
+W.#       #       #       # # WWW
+W.#       #  #+###+++###### # WWW
+W.#       #  N#   #N#       # WWW
+W.#       #   N##   N#P B## # WWW
+W.#       ###N# #  N# #   # # WWW
+W.#             #  #  # ### # WWW
+W.##############+###  # #   # WWW
+W.              #+++++# ##### WWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
-
-<levelmap> <timestep> 0 </timestep> <name> 3-6    WALKING ON EGGSHELLS </name>
-<help>
-1+3 = 2+4 = FAILURE
-</help>
-WWWWWWWWWWWWWWWWWWWWWWW
-W....................WW
-?.WsWWWWWsWWWWWsWWWW.WW
-M.Wn##...n##...n##.W.WW
-Ws#W#+....#+....#+.W.WW
-WW##+N#.##+N#.##+N#W.WW
- W#.#.#.#.#.#.#.#.#W.#.
- W#nnNN##nnNN##nnNN#n#W
- WL..#+L...#+L...#+LWWW
- W#....##....#.....n#.W
- W#.....#####+####n+n#W
- W#..........#.......#W
- W#..........n#..#P###W
- W##########n+n###....W
- WWWWWWWWWWWWWWWWWWWWWW
-</levelmap>
-
-<levelmap> <timestep> 1 </timestep> <name> 3-7   SHIFT TO SUCCESS </name>
+<levelmap> <timestep> 1 </timestep> <name> 3-5   SHIFT TO SUCCESS </name>
 <help>
 BOTTOM=LOAD, TOP=SHIFT
 <p class="indepth">
@@ -541,112 +497,73 @@ Hit the top switch again to open latches 2 and 4.
 This shift register shifts bits one step at a time!
 </p>
 </help>
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-?.sn#####n#####n#####n#####n#...W
-M.WW#+....#+....#+....#+....#+..W
-W.s#+N#.##+N#.##+N#.##+N#.##+N#.W
-W.#W#.#.#.#.#.#.#.#.#.#.#.#.#.#.W
-W.#nnNN##nnNN##nnNN##nnNN##nnNN#W
-W.#..#+#...#+#...#+#...#+#...#+#W
-W.L....L.....L.....L.....L.....LW
-W.............................##W
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWW.+.W
-                            W.n+.
-                            WWWWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+W..................................W
+..WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW.W
+W.s##n#####n#####n#####n#####n#..W.W
+?.MW..#+....#+....#+....#+....#+.W.W
+WWsW##+N#.##+N#.##+N#.##+N#.##+N#W.W
+W.#W#.#.#.#.#.#.#.#.#.#.#.#.#.#.#W.W
+W.###nnNN##nnNN##nnNN##nnNN##nnNN#B.
+W..#...#+#...#+#...#+#...#+#...#+#.W
+W..L.....L.....L.....L.....L.....L.W
+W..................................W
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
-
-<levelmap> <timestep>0</timestep> 
-<name> 3-8   WORLD 3 BOSS FIGHT </name>
-<help>
-HELP ME, MARIO!  THE PASSWORD IS 01101!
-<p class="indepth">
-You will need to load the correct bit value into the shift register,
-trigger the shift, and repeat for all 5 bits.
-</p>
-</help>
-WWWWWWWWWW                                          
-W#N#N##  W                                          
-W# N# N##W                                          
-W###N## #W                                          
-W  #    #W                                          
-W ##    #W                                          
-W # #####W                                          
-WW#W#WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-M.#Wn#####n#####n#####n#####n#####n#####n#####n##..W
-..sW.#+....#+....#+....#+....#+....#+....#+....#+..W
-W..s#+N#.##+N#.##+N#.##+N#.##+N#.##+N#.##+N#.##+N#.W
-W.?#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.W
-W.##nnNN##nnNN##nnNN##nnNN##nnNN##nnNN##nnNN##nnNN#W
-W.#W..#+#...#+#...#+#...#+#...#+#...#+#...#+#...#+#W
-W.LW..........L...........L...........L......###..LW
-W.#W..........#...........#...........#......#.####W
-W.#W..........n#..........n#..........##.....n#WWWWW
-W.############+nn#########+nn#########+nn####+n##...
-W..WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW#.WW
-W...............................................B.PW
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-</levelmap>
-
-
-
-<levelmap> <timestep>100</timestep> <name></name>
-<help>
-TIME TO MAKE THINGS AU-TOAD-MATIC!
-<p class="indepth">
-In this world you will meet astable systems 
-such as ring oscillators and other clock circuits, 
-which do not have a steady state.
-</p>
-</help>
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-                                                 
-       H H H HHH     H     H    H H              
-       H H H H H     H     H    H H              
-       H H H H H HHH H   HHH    HHH              
-       H H H H H H   H   H H      H              
-       HHHHH HHH H   HHH HHH      H              
-                   ?                             
-.M...............................................
-                                                 
-     ### #   #n# ### # # ###      #  ###   #     
-     #   #   # # #   ##  #       # # # #   #     
-     #   #   # # #   #   ###     ### # # #n#     
-     #   #   # # #   ##    #     # # # # # #     
-     ### ### ### ### # # ###     # # # # ###     
-                                                 
-## # # ## # #    #n# ### # ###  #  ### # #n# ### 
-#  # # #  # #    # # # # #   # # #  #  # # # # # 
-## ### #  ### ## # # # # #  #  ###  #  # # # # # 
- #  #  #  # # #  # # # # # #   # #  #  # # # # # 
-##  #  ## # # #  ### # # # ### # #  #  # ### # # 
-                                                 
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-</levelmap>
-
-<levelmap> <timestep>1</timestep> <name> 4-1   TICK TOCK </name>
-<preconverge> 40 </preconverge> 
+<levelmap> <timestep>30</timestep> <name> 3-6   TICK TOCK </name>
+<preconverge> 0 </preconverge> 
 <help>
 <p class="indepth">
 A clock circuit generates a signal that switches ON and OFF periodically. 
 </p>
 </help>
-WWWWWWWWWWWWWWWWWWWWWW
-W ### ### ### ### ###W
-W # # # # # # # # # #W
-W # ### ### ### ### #W
-W #                 #W
-W # ### ### ### ### #W
-W # # # # # # # # # #W
-W?n## ### ### ### ###W
-M.  #                W
-W...###n##n#n#WWWWWWWW
-W...#...#..#.#........
+W.....................
+W.
+W ### ### ### ### ###
+W # # # # # # # # # #
+W # ### ### ### ### #
+W #                 #
+W # ### ### ### ### #
+W # # # # # # # # # #
+W?n## ### ### ### ###
+..  #
+W.sNn############B....
+W..WWWWWWWWWWWWWW.WWWW
+WM................WWWW
 WWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep> 20 </timestep> <name> 4-2   TIME IT RIGHT </name>
+<levelmap> <timestep> 20 </timestep> <name> 3-7   TIME IT RIGHT </name>
+<help>
+<p class="indepth">
+Switching off the P switch triggers a monostable multivibrator, also known as a pulse generator.  
+This fires a short pulse (3-5 squares long).
+The bottom half of the level consists of a clock circuit driving another pulse generator.
+To defeat Bowser, the upper pulse must reach the AND gate at the same time
+as the lower pulse!
+</p>
+</help>
+..?............................W
+W.M............................W
+W S#                          .W
+W  #                          .W
+W  #                          .W
+W  # N##           .......    .W
+W  ### #           .........  .W
+W    ##N#############L##N#... .W
+W                  ......N####B.
+W    ##N#############L##N#... .W
+W  ### #           .........  .W
+W  # N##           .......    .W
+W  #                          .W
+W N#########################  .W
+W L                        #  .W
+W ##########################  .W
+W..............................W
+</levelmap>
+
+<levelmap> <timestep> 20 </timestep> <name> 3-8   TIME IT RIGHT #2 </name>
 <help>
 <p class="indepth">
 Toggling the P switch causes the two inputs to the EQV gate to change from (0,1) to (1,0).
@@ -671,151 +588,39 @@ W ##+## ### ### ### ### ###  W
 W............................W
 </levelmap>
 
-<levelmap> <timestep>50</timestep> <name> 4-3   BEWARE THE LIVE WIRES </name>
+
+<levelmap> <timestep>0</timestep> 
+<name> 3-9   WORLD 3 BOSS FIGHT </name>
 <help>
+HELP ME, MARIO!  THE PASSWORD IS 01101!
 <p class="indepth">
-An H tree is a fractal network used to distribute a clock signal synchronously to all parts of a device.
+You will need to load the correct bit value into the shift register,
+trigger the shift, and repeat for all 5 bits.
 </p>
 </help>
-WWWWWWWWWWWWWWWWWWWWW 
-W###  .....   ..... W 
-W# #  L###L   L###L W 
-W# #  . # .   . # . W 
-W# #  . ######### . W 
-Wn##  . # . # . # . W 
-WS #  L###L # L###L W 
-M. #  .   . # .   . W 
-W.Sn######### .   . W 
-W.    .   . # .   . W 
-W.    L###L # L###L W 
-W.?   . # . # . # . W 
-W.    . ######### . W 
-W.    . # .   . # . W 
-W.    L###L   L###L WW
-W......   .....   ....
-WWWWWWWWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+W#N#N##                                              W
+W# N# N##                                            W
+W###N## #                                            W
+W  #    #                                            W
+W ##    #                                            W
+W.#.#####............................................W
+W.#W#WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW.W
+..sWn#####n#####n#####n#####n#####n#####n#####n##..W.W
+?.MW.#+....#+....#+....#+....#+....#+....#+....#+..W.W
+WWs##+N#.##+N#.##+N#.##+N#.##+N#.##+N#.##+N#.##+N#.W.W
+W..#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.W.W
+W.##nnNN##nnNN##nnNN##nnNN##nnNN##nnNN##nnNN##nnNN#W.W
+W.#...#+#...#+#...#+#...#+#...#+#...#+#...#+#...#+#W.W
+W.L...........L...........L...........L......###..LW.W
+W.#...........#...........#...........#......#.####W.W
+W.#...........n#..........n#..........##.....n#......W
+W.############+nn#########+nn#########+nn####+n#####B.
+W..................................................W.W
+W..................................................WPW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
-
-
-
-<levelmap> <timestep>100</timestep> <name> WORLD 5: BUSES AND MEMORY </name>
-<help>
-STORING BITS IN MEMORY AND RETRIEVING THEM
-<p class="indepth">
-SLAKDFJASLDKFJADSLKFJSALFJF</p>
-</help>
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-                                                 
-       H H H HHH     H     H    HHH              
-       H H H H H     H     H    H                
-       H H H H H HHH H   HHH    HHH              
-       H H H H H H   H   H H      H              
-       HHHHH HHH H   HHH HHH    HHH              
- ?                                               
-.M...............................................
-                                                 
-       #  # # #  # # # # # #   # #  #  # # # # # 
-##  #  ## # # #  ### # # # ### # #  #  # ### # # 
-                                                 
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-</levelmap>
-
-<levelmap> <timestep> 10 </timestep> <name> 5-1    GET ON THE BUS </name>
-<help>
-FAST, MEDIUM, OR SLOW?  YOUR CHOICE!
-<p class="indepth">
-This is an input bus.  
-Use the address switches to decide which input line is connected to the output.
-</p>
-</help>
-WWWWWWWWWWWWWWWWWWWWW
-W?..................W
-W..M..s..s..s.......W
-W.....n# n# n#     .W
-W..##..#  #  #     .W
-W..n###n##+##+##   .W
-W......   #  # #   .W
-W#++#..   #  # #   .W
-Wn########n##+#nn#LB.
-W......      # #   .W
-W### ##      # #   .W
-Wn++++#######n##   .W
-W  ###             .W
-WWWWWWWWWWWWWWWWWWWWW
-</levelmap>
-
-
-
-<levelmap> <timestep>15</timestep> <name> 5-2    GET OFF THE BUS </name>
-<help>
-DELIVER PACKAGES TO TARGETS.
-<p class="indepth">
-Use the address switches to control where pulses go.
-</p>
-</help>
-WWWWWWWWWWWWWWWWWWWWW
-W...?...............W
-W...M.........     .W
-W....  s  s  sn#   .W
-W....  n# n#   #   .W
-W....   ## # ###   .W
-W....    # # #     .W
-W.... ###n#+#+##L##BW
-W.... #    # #     .W
-W.... #    # #     .W
-W.n###### #n#+##L##BW
-W.#.# # ###  #     .W
-W.#.# #      #     .W
-W.### #######n##L##B.
-W....              .W
-WWWWWWWWWWWWWWWWWWWWW
-</levelmap>
-
-
-
-<levelmap> <timestep>0</timestep> <name> 5-3    THREE BITS OF MEMORY </name>
-<help>
-<p class="indepth">
-Use the three SR latches at the left of the level to write bits to memory.
-NEEDS TO BE MORE USER FRIENDLY
-
-The three top switches control the address lines.
-The rightmost switch controls the D latch at the output.
-To read a bit, set an address line, then pulse the trigger to the D latch. 
-</p>
-</help>
-WWWWWWWWWWWWWWWWWWWWW
-W     ............
-W    ####n##
-W    #..n# n#####
-W?   ###sn##    #
-W...M...........#
-W.ss  S S S     #
-W.Nn#Ln#+#+##   ##
-W.#+#   # # #   #+
-W....   # # # ##+N#
-W.ss    # # # # # #
-W.nN#L##n#+#n##nnNN#L 
-W.H+#     # #    #+#
-W....     # #
-W.ss      # #
-W.Nn#L####n##
-W #+#        
-WWWWWWWWWWWWWWWWWW
-</levelmap>
-
-<levelmap> <timestep>0</timestep> <sandbox> 1 </sandbox> <name> THE END... FOR NOW </name>
-<help>
-THANK YOU MARIO!  
-THE MUSHROOM KINGDOM IS GRATEFUL TO YOU.
-STAY TUNED FOR MORE TOAD BURN LEVELS!
-</help>
-...........
-.......?...
-..M.....P..
-...........
-</levelmap>
 
 
 
@@ -1226,34 +1031,4 @@ WWWWWWWWWWWWWWWWWWWWWW
  # #    #                  #
  ###    ####################
 .
-</levelmap>
-
-
-<levelmap> <timestep> 20 </timestep> <name> APPENDIX: OLD TIME IT RIGHT </name>
-<help>
-<p class="indepth">
-Switching off the P switch triggers a monostable multivibrator, also known as a pulse generator.  
-This fires a short pulse (3-5 squares long).
-The bottom half of the level consists of a clock circuit driving another pulse generator.
-To defeat Bowser, the upper pulse must reach the AND gate at the same time
-as the lower pulse!
-</p>
-</help>
-..?............................W
-W.M............................W
-W S#                          .W
-W  #                          .W
-W  #                          .W
-W  # N##           .......    .W
-W  ### #           .........  .W
-W    ##N#############L##N#... .W
-W                  ......N####B.
-W    ##N#############L##N#... .W
-W  ### #           .........  .W
-W  # N##           .......    .W
-W  #                          .W
-W N#########################  .W
-W L                        #  .W
-W ##########################  .W
-W..............................W
 </levelmap>
