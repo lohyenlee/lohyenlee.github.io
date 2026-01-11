@@ -77,7 +77,7 @@
   <div id="preloadContainer" style="display:none;">
 <img id="imgQuestion" src="question.webp"></img>
 <img id="imgMarioE" src="marioE2.gif"></img>
-<img id="imgMarioE2" src="marioE3.gif"></img>
+<img id="imgMarioE2" src="marioE3.webp"></img>
 <img id="imgMarioE3" src="marioE1.gif"></img>
 <img id="imgMarioW" src="marioW2.gif"></img>
 <img id="imgMarioW2" src="marioW3.gif"></img>
@@ -180,7 +180,9 @@
     let lastDirWalked,stalled=false
     let helpText=''
     let winlose=PLAYING 
-    let preconverge=100,sandbox=0
+    let preconverge=100,cheating=0
+
+    const starSize =2.0 // can make this a TOADML flag
 
     let joyForce=0
 
@@ -236,19 +238,23 @@
       }
       else subway[x+X*y]=3
     }
-    function sandboxMode() {
-      sandbox = 1;
-      // for(let y=0;y<Y;++y)for(let x=0;x<X;++x)if (extras[x+X*y]==UNWALKABLE) extras[x+X*y]=WALKABLE
-      btnLava.disabled = false
-      btnWater.disabled = false
-      btnToad.disabled = false
-      btnCross.disabled = false
-      btnGrass.disabled = false
+    function toggleCheating() {
+      if (cheating) {
+        cheating = 0
+      }
+      else {
+        cheating = 1
+      }
+      btnLava.disabled = !cheating
+      btnWater.disabled = !cheating
+      btnToad.disabled = !cheating
+      btnCross.disabled = !cheating
+      btnGrass.disabled = !cheating
     }
 
 
     function extract(tag, source) {
-      const regex = new RegExp('<' + tag + '>(.*?)<\/' + tag + '>\\s+', 'gs')
+      const regex = new RegExp('\\s+<' + tag + '>(.*?)<\/' + tag + '>', 'gs')
       const match = regex.exec(source)
       if (match) return [match[1], source.replace(regex,'')]
       else return ["", source]
@@ -272,7 +278,7 @@
     function nextLevel() {setLevel(level+1)} 
     function resetLevel() {setLevel(level)}
     function loadLevel(levelMap) {
-      preconverge=100; sandbox=0; helpText='Level '+level  // defaults
+      preconverge=100; cheating=0; helpText='Level '+level  // defaults
       {
         const [content,remainder]=extract('timestep', levelMap); levelMap=remainder
         if(content) {
@@ -282,16 +288,16 @@
       }
       {const [content,remainder]=extract('name', levelMap); levelMap=remainder;levelName=content}
       {const [content,remainder]=extract('preconverge', levelMap); levelMap=remainder; if(content) preconverge=Number(content)}
-      {const [content,remainder]=extract('sandbox', levelMap); levelMap=remainder; if(content) sandbox=Number(content)}
+      {const [content,remainder]=extract('cheat', levelMap); levelMap=remainder; if(content) cheating=Number(content)}
       {const [content,remainder]=extract('help', levelMap); levelMap=remainder; if(content) helpText=content}
       if (levelName) {title.innerHTML=levelName; title.style.display='block'}
       else           {title.style.display='none'}
-      btnLava.disabled = !sandbox
-      btnWater.disabled = !sandbox
-      btnToad.disabled = !sandbox
-      btnCross.disabled = !sandbox
-      btnGrass.disabled = !sandbox
-      let rows = /<levelmap>\s+(.*?)<\/levelmap>/gs . exec(levelMap) [1]
+      btnLava.disabled = !cheating
+      btnWater.disabled = !cheating
+      btnToad.disabled = !cheating
+      btnCross.disabled = !cheating
+      btnGrass.disabled = !cheating
+      let rows = /<levelmap>\s+?[\r\n](.*?)<\/levelmap>/gs . exec(levelMap) [1]
       rows = rows.split(/[\r\n]/).filter(i=>i)
       //-------- DETERMINE MAP SIZE AND ALLOCATE ARRAYS
       X = Math.max(...rows.map(s=>s.length)) // length of longest line
@@ -501,10 +507,6 @@
           ctx.fillRect(x*a,y*a, a,4)
           ctx.fillRect(x*a,y*a+a-4, a,4)
         }
-
-        // ctx.fillStyle='#fff'
-        // ctx.font = 'bold 24px sans-serif'
-        // ctx.fillText(ground[x+X*y],  (x+.5)*a, (y+.5)*a)
       }
 
       for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
@@ -527,15 +529,20 @@
           case WALL: break; // this was done in the earlier loop
           case QUESTION: ctx.drawImage(imgQuestion, x*a,y*a,a,a); break  
           case LAMP:
-            if (ground[x+X*y]>4) {
-              if ((Math.floor(tcur/10)%2)) ctx.drawImage(imgStarOn, x*a-21, y*a-21, a+42, a+42)
-              else                         ctx.drawImage(imgStarOn, x*a-20, y*a-20, a+40, a+40)
+            xcen=(x+.5)*a; ycen=(y+.5)*a
+            if (ground[x+X*y]&ON) {
+              if ((Math.floor(tcur/10)%2)) {sx=1.05*starSize*a; sy=sx}
+              else                         {sx=starSize*a; sy=sx}
+              ctx.drawImage(imgStarOn, xcen-sx/2, ycen-sy/2, sx,sy)
               // should remake this into an Animation
             }
-            else ctx.drawImage(imgStarOff, x*a-20, y*a-20, a+40, a+40)
+            else {
+              sx=starSize*a; sy=sx
+              ctx.drawImage(imgStarOff,  xcen-sx/2, ycen-sy/2, sx,sy)
+            }
             break
           case PEACH:
-            const sy=a,sx=a/animPeach.aspect
+            sy=a,sx=a/animPeach.aspect
             if (ground[x+X*y]&ON) {
               animLava.draw(x*a, y*a, a, a, frm)
               const xcen=(x+.5)*a + xShaking,ycen=(y+.5)*a + yShaking
@@ -596,10 +603,18 @@
           case 3: animMarioN.draw(xcen-sx/2, ycen-sy/2, sx,sy, nWalk); break
         }
       }
+      //======== DEBUGGING
+      // if (cheating) {
+      //   for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) { 
+      //     ctx.fillStyle='#fff'
+      //     ctx.font = 'bold 20px sans-serif'
+      //     ctx.fillText(ground[x+X*y],  (x+.5)*a, (y+.5)*a)
+      //   }
+      // }
     }
     
     function checkVictory() {
-      if (sandbox) return // can't lose in cheat mode
+      if (cheating) return // can't lose in cheat mode
       if (winlose==PLAYING) {
         for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
           if (extras[x+X*y]==BOWSER && ground[x+X*y]&ON) {winlose=WIN; break}
@@ -676,12 +691,12 @@
       switch (e.key) {
         case '[': prevLevel(); break
         case ']': nextLevel(); break
-        case 'h':case'H':if(sandbox) placeLava(); break    // add hot burning
-        case 'j':case'J':if(sandbox) placeWater(); break    // add cold burning
-        case 'k':case'K':if(sandbox) placeSubway(); break // toggle crossing
-        case 'l':case'L':if(sandbox) placeToad(); break    // add NOR gate (Toad)
-        case ';':case';':if(sandbox) placeGrass(); break // erase current ground  //case 'Backspace': case 'Delete':                 
-        case 'C': sandboxMode(); break
+        case 'h':case'H':if(cheating) placeLava(); break    // add hot burning
+        case 'j':case'J':if(cheating) placeWater(); break    // add cold burning
+        case 'k':case'K':if(cheating) placeSubway(); break // toggle crossing
+        case 'l':case'L':if(cheating) placeToad(); break    // add NOR gate (Toad)
+        case ';':case';':if(cheating) placeGrass(); break // erase current ground  //case 'Backspace': case 'Delete':                 
+        case 'C': toggleCheating(); break
         case 'R': resetLevel(); break    // reset level
         default: processed=false
       }
@@ -723,7 +738,7 @@
       btnCross.addEventListener('click', placeSubway)
       btnGrass.addEventListener('click', placeGrass)
       btnToad.addEventListener('click', placeToad)
-      btnCheat.addEventListener('click', sandboxMode)
+      btnCheat.addEventListener('click', toggleCheating)
       document.body.removeEventListener('keydown', launchGame, false)
 
       window.addEventListener('resize', setScaling)
