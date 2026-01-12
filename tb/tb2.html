@@ -278,6 +278,10 @@
     function nextLevel() {setLevel(level+1)} 
     function resetLevel() {setLevel(level)}
     function loadLevel(levelMap) {
+      console.log(level)
+      console.log(levelMap)
+
+
       preconverge=100; cheating=0; helpText='Level '+level  // defaults
       {
         const [content,remainder]=extract('timestep', levelMap); levelMap=remainder
