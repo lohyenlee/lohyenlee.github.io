@@ -144,13 +144,13 @@ WWWWWWWWWWWWWWWWWWWWWWWW
 W########.#####.#nn###PW
 W#......#.#...#.#W#WWW.W
 W####.###.###.###W#WWW.W
-WWWW#.#.....#.WWWWs##L.W
-..WW#.#######.W....W...W
-?Ms##WWWWWWWWWWWW.WWWW.W
-W.W#WWWWWW###W###.###.B.
+WWWW#.#.....#WWWWWs##L.W
+..WW#.#######W###..W...W
+?Ms##WWWWWWWWW#W#WWWWW.W
+W.W#WWWWWW###W#W#W###.B.
 W.Wn#W###W#W#W#W#W#W#W#W
 W.WW#W#W#W#W#W#W#W#W#W#W
-W...###W###W###W###Wn##W
+W...###W###.###W###Wn##W
 WWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 

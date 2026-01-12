@@ -651,7 +651,7 @@
         joyForce = Math.hypot(joyX,joyY) 
         if (joyForce<5) { // weak force, do nothing
         }
-        else if (joyForce>40) { //strong force, walk
+        else if (joyForce>10) { //strong force, walk
           if (Math.abs(joyX)>Math.abs(joyY)) if (joyX>0) {walkE()} else walkW()
           else                         if (joyY>0) {walkS()} else walkN()
         }
@@ -714,13 +714,34 @@
     let joyAnchorX,joyAnchorY,joyX=0,joyY=0;
     function joyTouchStart(e) {
       e.preventDefault()
-      joyAnchorX=event.touches[0].pageX
-      joyAnchorY=event.touches[0].pageY
+      // joyAnchorX=event.touches[0].pageX // not appropriate
+      // joyAnchorY=event.touches[0].pageY
+      const rect = joyring.getBoundingClientRect()
+      joyAnchorX = (rect.left + rect.right)/2
+      joyAnchorY = (rect.top + rect.bottom)/2
+      
+      // console.log([joyAnchorX,joyAnchorY])
+      // console.log([event.touches[0].clientX,event.touches[0].clientY])
+
+      joyX=clamp(event.touches[0].clientX-joyAnchorX,-30,30)
+      joyY=clamp(event.touches[0].clientY-joyAnchorY,-30,30)
+      joystick.style.transform=`translate(${joyX}px,${joyY}px)`
+      joyForce = Math.hypot(joyX,joyY) // decide whether to walk ONE STEP
+      if (joyForce<5) { // weak force, do nothing
+      }
+      else if (joyForce>10) { //strong force, walk
+        if (Math.abs(joyX)>Math.abs(joyY)) if (joyX>0) {walkE()} else walkW()
+        else                         if (joyY>0) {walkS()} else walkN()
+      }
+      else { // medium force, change direction only
+        if (Math.abs(joyX)>Math.abs(joyY)) if (joyX>0) {faceE()} else faceW()
+        else                         if (joyY>0) {faceS()} else faceN()
+      }
     }
     function joyTouchMove(e) {
       e.preventDefault()
-      joyX=clamp(event.touches[0].pageX-joyAnchorX,-40,40)
-      joyY=clamp(event.touches[0].pageY-joyAnchorY,-40,40)
+      joyX=clamp(event.touches[0].clientX-joyAnchorX,-30,30)
+      joyY=clamp(event.touches[0].clientY-joyAnchorY,-30,30)
       joystick.style.transform=`translate(${joyX}px,${joyY}px)`
     }
     function joyTouchEnd(e) {
