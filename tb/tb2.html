@@ -278,8 +278,8 @@
     function nextLevel() {setLevel(level+1)} 
     function resetLevel() {setLevel(level)}
     function loadLevel(levelMap) {
-      console.log(level)
-      console.log(levelMap)
+      // console.log(level)
+      // console.log(levelMap)
 
 
       preconverge=100; cheating=0; helpText='Level '+level  // defaults
@@ -302,12 +302,7 @@
       btnCross.disabled = !cheating
       btnGrass.disabled = !cheating
       let rows = /<levelmap>\s*?[\r\n](.*?)<\/levelmap>/gs . exec(levelMap)
-      try {
-        rows = rows[1]
-      }
-      catch (e) {
-        rows = '####M####'
-      }
+      try { rows = rows[1] } catch (e) { rows = '####M####'}
       rows = rows.split(/[\r\n]/).filter(i=>i)
       //-------- DETERMINE MAP SIZE AND ALLOCATE ARRAYS
       X = Math.max(...rows.map(s=>s.length)) // length of longest line
