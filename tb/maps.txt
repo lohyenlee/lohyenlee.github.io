@@ -242,14 +242,13 @@ WWWWWWWWWWWW
 <help>
 MAKE A CHOICE!
 <p class="indepth">
-The five toads at the right of this circuit constitute a
-<a href="https://en.wikipedia.org/wiki/XOR_gate">XOR gate</a>,
-which is short for Exclusive Or.
-The output of the XOR gate is HIGH if either, but not both, of the inputs are HIGH.
+The five center toads form a
+<a href="https://en.wikipedia.org/wiki/XOR_gate">XOR (eXclusive Or) gate</a>.
+The output is HIGH if either, but not both, of the inputs are HIGH.
 </p>
 <p class="indepth">
-Bumping the middle switch causes both inputs to go HIGH, but the output remains LOW.
-Bumping the top switch causes only one input to go HIGH, so that th output is HIGH.
+The middle switch drives both inputs HIGH, but the output remains LOW.
+The side switches drives only one input, so the output is HIGH.
 </p>
 </help>
 W?WWWWWWWWWWWWW
@@ -496,20 +495,18 @@ WWWWWWWWWWWWWWWWWWWWW
 <help>
 LET IT FLOW, LET IT FLOW!
 <p class="indepth">
-The toad circuit below implements a string of D latches.
-The left switch controls the input.
-The top three switches control the latches.
-Set the triggers to HIGH to let the input propagate through the latches.
+First switch controls input.
+Other switches control three D latches in series.
+Open each latch to let signal through.
 </p>
 </help>
-WWWWWWWWWWWWWWWWWWWWWW 
-W....................W 
-?.WsWWWWWsWWWWWsWWWW.W 
-M.Wn#....n#....n#..W.W 
-Ws#W##....##....##.W.W 
-WW##+N#.##+N#.##+N#W.WW
- W#.#.#.#.#.#.#.#.#W.#.
- W#nnNN##nnNN##nnNN#n#W
+?WWWWWWWWWWWWWWWWWWWWW 
+M....................W 
+WsWsWWWWWsWWWWWsWWWW.W 
+W#WN##...N##...N##.W.W 
+W##++n#.#++n#.#++n#W.WW
+WW#.#.#.#.#.#.#.#.#W.#.
+ W#NnNn##NnNn##NnNn#N#W
  WL..#+L...#+L...#+LWWW
  W...................W 
  WWWWWWWWWWWWWWWWWWWWW 
@@ -524,14 +521,13 @@ The three toads at the bottom form an AND gate.
 If star 2 and star 4 are both on, Peach will be cooked.
 </p>
 </help>
-WWWWWWWWWWWWWWWWWWWWWW 
-W....................W 
-?.WsWWWWWsWWWWWsWWWW.W 
-M.Wn#....n#....n#..W.W 
-Ws#W##....##....##.W.W 
-WW##+N#.##+N#.##+N#W.WW
- W#.#.#.#.#.#.#.#.#W.#.
- W#nnNN##nnNN##nnNN#n#W
+?WWWWWWWWWWWWWWWWWWWWW 
+M....................W 
+WsWsWWWWWsWWWWWsWWWW.W 
+W#WN##...N##...N##.W.W 
+W##++n#.#++n#.#++n#W.WW
+WW#.#.#.#.#.#.#.#.#W.#.
+ W#NnNn##NnNn##NnNn#N#W
  WL..#+L...#+L...#+LWWW
  W.....##..........n#.W
  W......##########n+nPW
@@ -542,14 +538,13 @@ WW##+N#.##+N#.##+N#W.WW
 <help>
 1+3 = 2+4 = FAILURE
 </help>
-WWWWWWWWWWWWWWWWWWWWWWW
-W....................WW
-?.WsWWWWWsWWWWWsWWWW.WW
-M.Wn#....n#....n#..W.WW
-Ws#W##....##....##.W.WW
-WW##+N#.##+N#.##+N#W.WW
- W#.#.#.#.#.#.#.#.#W.#.
- W#nnNN##nnNN##nnNN#n#W
+?WWWWWWWWWWWWWWWWWWWWW 
+M....................W 
+WsWsWWWWWsWWWWWsWWWW.W 
+W#WN##...N##...N##.W.W 
+W##++n#.#++n#.#++n#W.WW
+WW#.#.#.#.#.#.#.#.#W.#.
+ W#NnNn##NnNn##NnNn#N#W
  WL..#+L...#+L...#+LWWW
  W#....##....#.....n#.W
  W#.....#####+####n+n#W
@@ -700,34 +695,56 @@ W   ### ### ### ### ### ### W
 W...........................W
 </levelmap>
 
-<levelmap> <timestep> 50 </timestep> <name> 4-3   SPIRAL NIGHTMARE </name>
-<preconverge> 0 </preconverge>
+
+<levelmap> <timestep> 120 </timestep> <name> 4-3    SPIRAL OF DEATH </name>
+<preconverge> 100 </preconverge>
 <help>
-asdf
-<p class="indepth">
-SDf
-</p>
+IF THIS IS TOO DIFFICULT, INCREASE THE DELAY USING THE SLIDER.
 </help>
-   ................. 
-   .            .  . 
-  N##########   .  . 
-  #  .      #   S n#.
-  # n###### #   n #  
-  # #  .  # #   # L  
-? # # ### # #   # #  
-M.# #.#.# # #.Snnn#  
-  # # n## # #   #    
-  # #     # #   #    
-  # #######.#   #    
-  #         #   #    
-  ###########   #    
-       .        #    
-       Sn########    
-                     
+                        
+                        
+  n##                   
+  # # #############     
+  # # #           #     
+  # # # ######### #     
+ n##nn# #       # #     
+?s    . # ##++#.#.# ... 
+M...... # # ##+#+#+## . 
+        # # #+# # # n#B.
+        # #     # #     
+        # ####### #   
+        #         #   
+        ###########   
+                      
 </levelmap>
 
 
-<levelmap> <timestep> 30 </timestep> <name> 4-4   WHEN THE PLANETS ALIGN </name>
+<levelmap> <timestep> 100 </timestep> <name> 4-4   NIGHTMARE CIRCLES </name>
+<preconverge> 100 </preconverge>
+<help>
+IF THIS IS TOO DIFFICULT, INCREASE THE DELAY USING THE SLIDER.
+</help>
+                   
+   ............    
+   .          ..   
+  N########## S#   
+  #  .      #  #   
+  # n###### #  #   
+  # #  .  # #  #   
+? # # ### # #  #.. 
+M.# #.#.# # #.SnN# 
+  # # n## # #  # ..
+  # #     # #  #   
+  # #######.#  #   
+  #         #  #   
+  ###########  #   
+       .       #   
+       S########   
+                   
+</levelmap>
+
+
+<levelmap> <timestep> 30 </timestep> <name> 4-5   WHEN THE PLANETS ALIGN </name>
 <preconverge> 9 </preconverge>
 <help>
 asdf
@@ -754,7 +771,7 @@ M.................
 </levelmap>
 
 
-<levelmap> <timestep> 0</timestep> <name> 4-5   RUN THE GAUNTLET </name>
+<levelmap> <timestep> 0</timestep> <name> 4-6   RUN THE GAUNTLET </name>
 <help>
 </help>
 WWWWWWWWWWWWWWWWWWWWWW
@@ -779,7 +796,7 @@ WWWWWWWWWWWWWWWWWWWWWW
 
 
 
-<levelmap> <timestep>50</timestep> <name> 4-6   BEWARE THE LIVE WIRES </name>
+<levelmap> <timestep>50</timestep> <name> 4-7   BEWARE THE LIVE WIRES </name>
 <help>
 <p class="indepth">
 An H tree is a fractal network used to distribute a clock signal synchronously to all parts of a device.
@@ -806,7 +823,7 @@ WWWWWWWWWWWWWWWWWWWWWW
 
 
 
-<levelmap> <timestep>30</timestep> <name> 4-7    ESCAPE FROM POMPEII! </name>
+<levelmap> <timestep>30</timestep> <name> 4-8    ESCAPE FROM POMPEII! </name>
                        
 Mn++++++++++++++#    .
 .################    .
@@ -823,7 +840,7 @@ Mn++++++++++++++#    .
                        
 </levelmap>
 
-<levelmap> <timestep>0</timestep> <name> 4-8   WORLD 4 BOSS FIGHT </name>
+<levelmap> <timestep>0</timestep> <name> 4-9   WORLD 4 BOSS FIGHT </name>
 <help>
 HELP ME, MARIO!  THE PASSWORD IS 100100110!
 <p class="indepth">
@@ -840,8 +857,8 @@ WWW#WWWW    #++++++++++++#++++++++++#
  #    #           #           #           #        
  # #++#++#     #++#++#     #++#++#     #++#++#     
  s n#    n#    n#    n#    n#    n#    n#    n#    
-?M  ##    ##    ##    ##    ##    ##    ##    ##   
-.s##+n#.##+n#.##+n#.##+n#.##+n#.##+n#.##+n#.##+n#..
+.Ms ##    ##    ##    ##    ##    ##    ##    ##   
+.?##+n#.##+n#.##+n#.##+n#.##+n#.##+n#.##+n#.##+n#..
 ..#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#...
 .##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn#..
 .#...#+#...#+#...#+#...#+#...#+#...#+#...#+#...#+#.....
@@ -881,10 +898,10 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
                                         
   #################################     
  ##............................#..#     
- #...#########################.#...#    
- #...#   #   #   #   #   #   #.#...##   
- #...#   #   #   #   #   #   #.#....### 
- #...##################### # #.#......##
+ #...H.###.H.H.###.###.H.#####.#...#    
+ #...H.# #.H.H.# #.# #.H.#   #.#...##   
+ #...H.# #.H.H.# #.# #.H.#   #.#....### 
+ #...H.###.H.H.###.###.H.# # #.#......##
  #.......................#   #.#.......L
  #.....####..............#   #.#..####.#
  #....#    #.............#   #.#.#    ##
@@ -947,6 +964,42 @@ WWWWWWWWWWWWWWWWWWWWW
 
 
 
+
+
+<levelmap> <timestep>0</timestep> <name> 5-3    BINARY BUS </name>
+<help>
+BOTTOM SWITCHES SELECT ADDRESS LINE.<br>
+TOP SWITCH SENDS PULSE.<br>
+AIM CAREFULLY!
+<p class="indepth">
+This toad circuit combines a binary decoder with a ???
+</p>
+</help>
+WWWWWWWW                    
+W###n##W                    
+W# N# Nn#######             
+W###n##W      #             
+WWW#WWWW      #             
+s###..........#............ 
+..WWWWWWWWWWWW#           . 
+.Wn#####n####Wn#######    . 
+.W#   # #   #W # # # #    . 
+.W# ##n#+## L#Nn#+#+#+##L#B.
+.W# #   # #  W   # # #      
+.W# #n### ##L###Nn#+#+##L#P 
+.W# #   #    W     # #      
+.s##+###n###L#####Nn#+##L   
+.W  #  #     W       #      
+Ms#####n####L#######Nn##L   
+?WWWWWWWWWWWWW              
+</levelmap>
+
+
+
+
+
+
+
 <levelmap> <timestep>0</timestep> <name> 5-3    THREE BITS OF MEMORY </name>
 <help>
 <p class="indepth">
@@ -977,6 +1030,16 @@ W.Nn#L####n##
 W #+#        
 WWWWWWWWWWWWWWWWWW
 </levelmap>
+
+
+
+
+
+
+
+
+
+
 
 <levelmap> <timestep>0</timestep> <name> THE END... FOR NOW </name>
 <help>
@@ -1186,7 +1249,35 @@ Ms###      .
 </levelmap>
 
 
-<levelmap> <timestep>0</timestep> <name> C-9   BINARY DECODER </name>
+
+
+<levelmap> <timestep>0</timestep> <name> C-9   BINARY DECODER (11x9) </name>
+<help>
+<p style="white-space: pre;">
+INPUT:  00, 01, 10, or 11
+OUTPUT: 0001, 0010, 0100, 1000
+y3 =  x1 &  x0 = (NOT x1) NOR (NOT x0)
+y2 =  x1 & ~x0 = (NOT x1) NOR x0
+y1 = ~x1 &  x0 = x1 NOR (NOT x0)
+y0 = ~x1 & ~x0 = x1 NOR x0
+</p> 
+</help>
+..............
+?            .
+. n#####n####.
+. #   # #   #.
+. # ##n#+## L.
+. # #   # #  .
+. # #n### ##L.
+. # #   #    .
+.s##+###n###L.
+..  #  #     .
+Ms#####n####L.
+..............
+</levelmap>
+
+
+<levelmap> <timestep>0</timestep> <name> C-9   BINARY DECODER B </name>
 <help>
 <p style="white-space: pre;">
 INPUT:  00, 01, 10, or 11
