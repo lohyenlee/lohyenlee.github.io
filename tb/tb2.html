@@ -301,7 +301,13 @@
       btnToad.disabled = !cheating
       btnCross.disabled = !cheating
       btnGrass.disabled = !cheating
-      let rows = /<levelmap>\s+?[\r\n](.*?)<\/levelmap>/gs . exec(levelMap) [1]
+      let rows = /<levelmap>\s+?[\r\n](.*?)<\/levelmap>/gs . exec(levelMap)
+      try {
+        rows = rows[1]
+      }
+      catch (e) {
+        rows = ['###','##M#']
+      }
       rows = rows.split(/[\r\n]/).filter(i=>i)
       //-------- DETERMINE MAP SIZE AND ALLOCATE ARRAYS
       X = Math.max(...rows.map(s=>s.length)) // length of longest line
