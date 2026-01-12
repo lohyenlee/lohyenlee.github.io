@@ -726,6 +726,7 @@
     function launchGame() {
       level = localStorage.getItem("storedLevel")
       if (level) {level=Number(level)} else level=0
+      if (!level) level=0
       setLevel(level)
       tcur = 0
       setScaling()
