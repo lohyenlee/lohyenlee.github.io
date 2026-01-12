@@ -301,7 +301,7 @@
       btnToad.disabled = !cheating
       btnCross.disabled = !cheating
       btnGrass.disabled = !cheating
-      let rows = /<levelmap>\s+?[\r\n](.*?)<\/levelmap>/gs . exec(levelMap)
+      let rows = /<levelmap>\s*?[\r\n](.*?)<\/levelmap>/gs . exec(levelMap)
       try {
         rows = rows[1]
       }
