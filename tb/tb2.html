@@ -76,29 +76,29 @@
   </div>
   <div id="preloadContainer" style="display:none;">
 <img id="imgQuestion" src="question.webp"></img>
-<img id="imgMarioE" src="marioE2.gif"></img>
+<img id="imgMarioE" src="marioE2.webp"></img>
 <img id="imgMarioE2" src="marioE3.webp"></img>
-<img id="imgMarioE3" src="marioE1.gif"></img>
-<img id="imgMarioW" src="marioW2.gif"></img>
-<img id="imgMarioW2" src="marioW3.gif"></img>
-<img id="imgMarioW3" src="marioW1.gif"></img>
+<img id="imgMarioE3" src="marioE1.webp"></img>
+<img id="imgMarioW" src="marioW2.webp"></img>
+<img id="imgMarioW2" src="marioW3.webp"></img>
+<img id="imgMarioW3" src="marioW1.webp"></img>
 <img id="imgMarioS" src="marioS1.webp"></img>
 <img id="imgMarioS2" src="marioS2.webp"></img>
 <img id="imgMarioS4" src="marioS4.webp"></img>
 <img id="imgMarioN" src="marioN1.webp"></img>
 <img id="imgMarioN2" src="marioN2.webp"></img>
 <img id="imgMarioN4" src="marioN4.webp"></img>
-<img id="imgMarioDead" src="marioDead.gif"></img>
+<img id="imgMarioDead" src="marioDead.webp"></img>
 <img id="imgAsh1" src="ash1.webp"></img>
 <img id="imgAsh2" src="ash2.webp"></img>
 <img id="imgPeach1" src="peach1.webp"></img>
 <img id="imgPeach2" src="peach2.webp"></img>
-<img id="imgBowser" src="bowser.webp"></img>
+<img id="imgBowser1234" src="bowser1234.webp"></img>
 <img id="imgGrass" src="grass.webp"></img>
 <img id="imgDirt" src="dirt.webp"></img>
-<img id="imgWater" src="water.webp"></img>
+<img id="imgWater" src="water1.webp"></img>
 <img id="imgWater2" src="water2.webp"></img>
-<img id="imgLava" src="lava.webp"></img>
+<img id="imgLava" src="lava1.webp"></img>
 <img id="imgLava2" src="lava2.webp"></img>
 <img id="imgCrying1" src="cry1.webp"></img>
 <img id="imgCrying2" src="cry2.webp"></img>
@@ -109,9 +109,12 @@
 <img id="imgSourceOff" src="sourceoff.webp"></img>
 <img id="imgSourceOn" src="sourceon.webp"></img>
 <img id="imgBrick" src="brick.webp"></img>
+<img id="imgBridge" src="bridge.webp"></img>
+<img id="imgMask" src="mask.webp"></img>
+
 <audio id="audioBuzz"><source src="buzz.mp3"></audio>
-<audio id="audioWin1"><source src="win1.mp3"></audio>
-<audio id="audioWin2"><source src="win2.mp3"></audio>
+<audio id="audioBowsFall"><source src="bowsfall.mp3"></audio>
+<audio id="audioWin"><source src="win.mp3"></audio>
 <audio id="audioCoin"><source src="coin.mp3"></audio>
 <audio id="audioTock"><source src="tock.mp3"></audio>
 <audio id="audioLose"><source src="lose.mp3"></audio>
@@ -152,8 +155,8 @@
       <button id="btnNext"  class="btn2" title="Key: [">       NEXT  </button>
     </div>
     <div style="float:right; width:calc(5*var(--btnsize));" id="actionButtons">
-      <button id="btnLava"  class="btn1" style="background-image:url(lava.webp);" disabled="disabled"> H </button>
-      <button id="btnWater" class="btn1" style="background-image:url(water.webp);" disabled="disabled"> J </button>
+      <button id="btnLava"  class="btn1" style="background-image:url(lava1.webp);" disabled="disabled"> H </button>
+      <button id="btnWater" class="btn1" style="background-image:url(water1.webp);" disabled="disabled"> J </button>
       <button id="btnCross" class="btn1" style="background-image:url(crossing.webp);" disabled="disabled"> K </button>
       <button id="btnToad"  class="btn1" style="background-image:url(happy1.webp); color:#FFF;" disabled="disabled"> L </button>
       <button id="btnGrass" class="btn1" style="background-image:url(grass.webp);" disabled="disabled"> ; </button>
@@ -164,14 +167,14 @@
 
 
   <script type="module">
-    import {loadString,Sound,Animation,isKeyDown} from "./utils.js";
+    import {loadString,Sound,Animation,isKeyDown,Filmstrip} from "./utils.js";
 
     //=================================================
     // GAMEPLAY VARIABLES AND FUNCTIONS
     //=================================================
     const ON=1,FRESH=2,CONDUCTING=4,SOURCE=8,GATE=16
-    const WALL=1,UNWALKABLE=2,LAMP=4,PEACH=8,BOWSER=16,QUESTION=32
-    const PLAYING=0,WIN=1,PEACH_DIED=-1,MARIO_DIED=-2
+    const WALL=1,VOID=2,LAMP=4,PEACH=8,BOWSER=16,PEACH_BURNING=32,BOWSER_BURNING=64,QUESTION=128
+    const PLAYING=0,BOWSER_DIED=1,PEACH_DIED=-1,MARIO_DIED=-2
     const DIRS=[[1,0],[-1,0],[0,1],[0,-1]]
     
     let X,Y // level size
@@ -186,7 +189,7 @@
 
     let joyForce=0
 
-    function setPos(xnew,ynew) {xCursor=xnew;yCursor=ynew;xCurPrev=xCursor;yCurPrev=yCursor}
+    function setPos(xnew,ynew) {xCursor=xnew;yCursor=ynew;xCurNext=xCursor;yCurNext=yCursor}
     function tryWalk(dir) {
       if (marioOrientation!=dir) {marioOrientation=dir; stalled=true; setTimeout(()=>stalled=false,50); return true} // Mario changes direction
       if (stalled) return false // already got stuck going in that direction
@@ -197,16 +200,18 @@
       if (xMario!=xCursor || yMario!=yCursor) return false // Previous walk in progress; do nothing
       //======== Check for transition to next/prev level
       if (xnew<=-1 && level>0) {setLevel(level-1); return}
-      if (xnew>=X) {setLevel(level+1); return}
+      if (xnew>=X && winlose!=PEACH_DIED) {setLevel(level+1); return} // Advance level provided that Peach didn't die
       if (xnew<0||xnew>=X||ynew<0||ynew>=Y) {soundBuzz.play(); stalled=true; return false} // Illegal move
-      const G=ground[xnew+X*ynew],H=extras[xnew+X*ynew]
+      const G=ground[xnew+X*ynew],H=extras[xnew+X*ynew],SCUR=subway[xCursor+X*yCursor],SNEW=subway[xnew+X*ynew]
+      if (SCUR!=0 & (dy!=0)) {soundBuzz.play(); stalled=true; return false}  // Mario can't jump off bridge
+      if (SNEW!=0 & (dy!=0)) {soundBuzz.play(); stalled=true; return false}  // Mario can't walk into subway tunnel
       if (H & WALL) {soundBuzz.play(); stalled=true; return false} // Can't walk into wall
       if (H & QUESTION) { // Mario bumps a Question block
-        audioCoin.play(); openHelp(); helpDiv.focus(); return false
+        soundCoin.play(); openHelp(); helpDiv.focus(); stalled=true; return false
       }
-      if (H & UNWALKABLE) {soundBuzz.play(); stalled=true; return false} // Can't walk into wall
+      if (H & VOID) {soundBuzz.play(); stalled=true; return false} // Can't walk into wall
       if (G & SOURCE) {                // Mario bumps a P Switch
-        audioTock.play(); ground[xnew+X*ynew] ^= ON  // Toggle the ON/OFF state
+        soundTock.play(); ground[xnew+X*ynew] ^= ON  // Toggle the ON/OFF state
         stalled=true; return false
       }
       if (G & GATE) { // Mario bumps a toad
@@ -214,7 +219,10 @@
         ground[xnew+X*ynew] ^= ON; stalled=true; return false            // Toggle the toad state
       }
       //======== No obstacles; start walking!
-      soundTock.play(); setTimeout(()=>soundTock.play(),130); xCursor=xnew; yCursor=ynew; tWalk=Date.now(); return true
+      soundTock.play(); setTimeout(()=>soundTock.play(),130); 
+      // xCursor=xnew; yCursor=ynew;
+      xCurNext=xnew; yCurNext=ynew; 
+      tWalk=Date.now(); return true
     }
     function faceW() {marioOrientation=1}
     function faceE() {marioOrientation=0}
@@ -226,10 +234,10 @@
     function walkS() {tryWalk(2)}
     // function goSlow()  {timeStepInMilliseconds=100}
     // function goFast()  {timeStepInMilliseconds=0}
-    function placeLava()  {let x=xCursor+DIRS[marioOrientation][0],y=yCursor+DIRS[marioOrientation][1];ground[x+X*y]=FRESH|ON|CONDUCTING; audioCoin.play()}
-    function placeWater() {let x=xCursor+DIRS[marioOrientation][0],y=yCursor+DIRS[marioOrientation][1];ground[x+X*y]=CONDUCTING; audioCoin.play()}
-    function placeGrass() {let x=xCursor+DIRS[marioOrientation][0],y=yCursor+DIRS[marioOrientation][1];ground[x+X*y]=0;    audioCoin.play()}
-    function placeToad()  {let x=xCursor+DIRS[marioOrientation][0],y=yCursor+DIRS[marioOrientation][1];ground[x+X*y]=GATE; audioCoin.play()}
+    function placeLava()  {let x=xCursor+DIRS[marioOrientation][0],y=yCursor+DIRS[marioOrientation][1];ground[x+X*y]=FRESH|ON|CONDUCTING; soundCoin.play()}
+    function placeWater() {let x=xCursor+DIRS[marioOrientation][0],y=yCursor+DIRS[marioOrientation][1];ground[x+X*y]=CONDUCTING; soundCoin.play()}
+    function placeGrass() {let x=xCursor+DIRS[marioOrientation][0],y=yCursor+DIRS[marioOrientation][1];ground[x+X*y]=0;    soundCoin.play()}
+    function placeToad()  {let x=xCursor+DIRS[marioOrientation][0],y=yCursor+DIRS[marioOrientation][1];ground[x+X*y]=GATE; soundCoin.play()}
     function placeSubway(){ // actually TOGGLE SUBWAY ON/OFF
       let x=xCursor+DIRS[marioOrientation][0],y=yCursor+DIRS[marioOrientation][1];
       if(subway[x+X*y]) {
@@ -288,6 +296,7 @@
         if(content) {
           timeStepInMilliseconds = Number(content)
           sliderSpeed.value = timeStepInMilliseconds
+          divSpeed.innerText='DELAY '+timeStepInMilliseconds
         }
       }
       {const [content,remainder]=extract('name', levelMap); levelMap=remainder;levelName=content}
@@ -307,18 +316,18 @@
       //-------- DETERMINE MAP SIZE AND ALLOCATE ARRAYS
       X = Math.max(...rows.map(s=>s.length)) // length of longest line
       Y = rows.length 
-      ground   = new Int8Array(X*Y)
-      groundNew= new Int8Array(X*Y)
-      subway   = new Int8Array(X*Y)
-      subwayNew= new Int8Array(X*Y)
-      extras   = new Int8Array(X*Y)
+      ground   = new Uint8Array(X*Y)
+      groundNew= new Uint8Array(X*Y)
+      subway   = new Uint8Array(X*Y)
+      subwayNew= new Uint8Array(X*Y)
+      extras   = new Uint8Array(X*Y)
       //-------- POPULATE ARRAYS
       for (let y=0; y<Y; ++y) {
         for (let x=0; x<rows[y].length && x<X; ++x) {
           let g
           switch (rows[y][x]) {
             case '.': g=0; break   // grass
-            case ' ': g=0; extras[x+X*y]=UNWALKABLE; break   // poison
+            case ' ': g=0; extras[x+X*y]=VOID; break   // poison
             case 'W': g=0; extras[x+X*y]=WALL; break   // void (forbidden)
             case '#': g=CONDUCTING; break           // dirt
             case 'H': g=CONDUCTING|ON|FRESH; break
@@ -336,7 +345,7 @@
           ground[x+X*y]=g
         }
       }
-      //-------- GAMEPLAY: PRE-CONVERGE TO STEADY STATE PREVENT PREMATURE WIN
+      //-------- GAMEPLAY: PRE-CONVERGE TO STEADY STATE PREVENT PREMATURE BOWSER_DIED
       Sound.masterVolume = 0 // don't play annoying toad sounds while preconverging
       for (let iter=0; iter<preconverge; ++iter) evolve()
       Sound.masterVolume = 1
@@ -351,7 +360,7 @@
       }
       //-------- GAMEPLAY: IDENTIFY START POSITION
       for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) if (rows[y][x]=='M') setPos(x,y)
-      xShaking=0; yShaking=0; tcur=0; winlose=PLAYING
+      xShaking=0; yShaking=0; tCur=0; winlose=PLAYING
     }
     //===============================================
     // evolve(): EVOLVE CELLULAR AUTOMATON
@@ -454,9 +463,10 @@
     const ctx=canvas.getContext('2d')
     let winWid,winHei,cellsize
     let marioOrientation=2 // start game facing South
-    let xCurPrev,yCurPrev  // variables associated with Mario's
+    // let xCurPrev,yCurPrev  // variables associated with Mario's
+    let xCurNext,yCurNext  // variables associated with Mario's
     let xMario,yMario,nWalk=0,tWalk=0 // appearance (but not gameplay)
-    let tcur=0
+    let tCur=0,tMario=0,tPeach=0,tBowser=0
     let timeOfLastFrame=0
     let timeStepInMilliseconds = 1000/60.  //300.
     let level=0,levelName // current level
@@ -474,16 +484,29 @@
       title.style.left  = Math.floor((winWid-title.offsetWidth)/2) + "px"      
     }
     function render() {
-      tcur += 1
+      tCur += 1
       const a=cellsize // convenience ALIAS
-      //======== DRAW BACKGROUND AND GAME AREA
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-      ctx.fillStyle='#000';   ctx.fillRect(0,0, X*a, Y*a)
+      //======== DRAW BACKGROUND AND GAME AREA? NO      
       //======== DRAW TERRAIN
       ctx.lineWidth=2 //; ctx.font = '10px Arial'
       for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
         const g=ground[x+X*y]
-        const frm=(tcur+4*x+13*y)/17
+        const s=subway[x+X*y]
+        const frm=(tCur+4*x+13*y)/17
+
+        if (s) { // if there is a subway, do special code
+          ctx.clearRect(x*a,y*a,a,a)
+          ctx.drawImage(imgMask, x*a,y*a,a,a)
+          ctx.globalCompositeOperation = 'source-atop'
+          if (s & ON)  animLava.draw(x*a, y*a, a, a, frm) // subway contains lava
+          else         animWater.draw(x*a, y*a, a, a, frm)// subway contains water
+          ctx.globalCompositeOperation = 'destination-over'
+          if (g & ON)  animLava.draw(x*a, y*a, a, a, frm) // conducting, on
+          else         animWater.draw(x*a, y*a, a, a, frm)// conducting, off
+          ctx.globalCompositeOperation = 'source-over'
+          ctx.drawImage(imgBridge, x*a,y*a,a,a)
+          continue
+        }
 
         if (g==0)          {ctx.drawImage(imgGrass, x*a,y*a,a,a) }
         else if (g & CONDUCTING) {
@@ -497,26 +520,22 @@
         else if (g & GATE) {
           if (g & ON) { // gate is ON
             animWater.draw(x*a, y*a, a, a, frm)
-            animHappy.draw(x*a,y*a,a,a, tcur/14)
+            animHappy.draw(x*a,y*a,a,a, tCur/14)
           } else { // gate is OFF
             animWater.draw(x*a, y*a, a, a, frm)
-            if (ground[(x-1)+X*y]&ON) ctx.drawImage(imgLava, 0,0,16,32, x*a,y*a,a/2,a)
-            if (ground[x+X*(y-1)]&ON) ctx.drawImage(imgLava, 0,0,32,16, x*a,y*a,a,a/2)
-            if (ground[x+X*(y+1)]&ON) ctx.drawImage(imgLava, 0,16,32,16, x*a,y*a+a/2,a,a/2)
-            animCrying.draw(x*a,y*a,a,a, tcur/15)
+            if (ground[(x-1)+X*y]&ON) ctx.drawImage(imgLava, 0,0,12,24, x*a,y*a,a/2,a)
+            if (ground[x+X*(y-1)]&ON) ctx.drawImage(imgLava, 0,0,24,12, x*a,y*a,a,a/2)
+            if (ground[x+X*(y+1)]&ON) ctx.drawImage(imgLava, 0,12,24,12, x*a,y*a+a/2,a,a/2)
+            animCrying.draw(x*a,y*a,a,a, tCur/15)
           }
         }
+
         
-        if (subway[x+X*y]) { // draw crossing as "bridge"
-          ctx.fillStyle='#964B00' // brown wood bridge
-          ctx.fillRect(x*a,y*a, a,4)
-          ctx.fillRect(x*a,y*a+a-4, a,4)
-        }
       }
 
       for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
         switch (extras[x+X*y]) {
-          case UNWALKABLE: ctx.fillStyle='#000';ctx.fillRect(x*a, y*a, a, a); break // void
+          case VOID: ctx.fillStyle='#000';ctx.fillRect(x*a, y*a, a, a); break // void
         }
       }
 
@@ -529,14 +548,14 @@
       //======== DRAW CERTAIN EXTRAS (QUESTION BLOCKS, LAMPS, ETC.)
       let size,xcen,ycen,sx,sy
       for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
-        const frm=(tcur+4*x+13*y)/20
+        const frm=(tCur+4*x+13*y)/20
         switch (extras[x+X*y]) {
           case WALL: break; // this was done in the earlier loop
           case QUESTION: ctx.drawImage(imgQuestion, x*a,y*a,a,a); break  
           case LAMP:
             xcen=(x+.5)*a; ycen=(y+.5)*a
             if (ground[x+X*y]&ON) {
-              if ((Math.floor(tcur/10)%2)) {sx=1.05*starSize*a; sy=sx}
+              if ((Math.floor(tCur/10)%2)) {sx=1.05*starSize*a; sy=sx}
               else                         {sx=starSize*a; sy=sx}
               ctx.drawImage(imgStarOn, xcen-sx/2, ycen-sy/2, sx,sy)
               // should remake this into an Animation
@@ -548,36 +567,50 @@
             break
           case PEACH:
             sy=a,sx=a/animPeach.aspect
-            if (ground[x+X*y]&ON) {
+            xcen=(x+.5)*a,ycen=(y+.5)*a
+            animWater.draw(x*a, y*a, a, a, frm)   
+            animPeach.draw(xcen-sx/2, ycen-sy/2, sx,sy, tCur/41)                 
+            break
+          case PEACH_BURNING:
+            if (tPeach<100) {xShaking+=Math.cos(tPeach*.6)*2; yShaking=Math.sin(tPeach*.3)*10 }
+            else {xShaking=0; yShaking += (tPeach-20)*.03}
+            if (tPeach<150) {
               animLava.draw(x*a, y*a, a, a, frm)
-              const xcen=(x+.5)*a + xShaking,ycen=(y+.5)*a + yShaking
+              sy=a,sx=a/animPeach.aspect
+              xcen=(x+.5)*a + xShaking,ycen=(y+.5)*a + yShaking
               ctx.save(); // Save current canvas state
               ctx.translate(xcen,ycen); // Translate to the center of the image
-              ctx.rotate(tcur*.1); // Rotate  by radians
-              animPeach.draw(-sx/2, -sy/2, sx, sy, 0)
+              ctx.rotate(tPeach*.1); // Rotate  by radians
+              animPeach.draw(-sx/2, -sy/2, sx, sy, tCur/17)
               ctx.restore(); // Restore the canvas to its original state
-              if (tcur<100) {xShaking+=Math.cos(tcur*.6)*2; yShaking=Math.sin(tcur*.3)*10 }
-              else {xShaking=0; yShaking += (tcur-20)*.03}
-              if (tcur>150) {ctx.drawImage(imgDirt, x*a,y*a,a,a);animAsh.draw(x*a,y*a,a,a,tcur/10)}
-            } else {
-              const xcen=(x+.5)*a,ycen=(y+.5)*a
-              animWater.draw(x*a, y*a, a, a, frm)   
-              animPeach.draw(xcen-sx/2, ycen-sy/2, sx,sy, tcur/41)                 
             }
+            else {
+              //Peach has become ashes, is now safe to walk on (not that it matters)
+              ground[x+X*y] = 0
+              ctx.drawImage(imgDirt, x*a,y*a,a,a);animAsh.draw(x*a,y*a,a,a,tPeach/10)
+            }
+            ++tPeach
             break
           case BOWSER:
-            if (ground[x+X*y]&ON) {
-              animLava.draw(x*a, y*a, a, a, frm)
-              size=a*1.1,xcen=(x+.5)*a+xShaking,ycen=(y+.5)*a+yShaking
-              ctx.drawImage(imgBowser, xcen-size/2, ycen-size/2, size,size)
-              if (tcur<100) {xShaking+=Math.cos(tcur*.6)*2; yShaking=Math.sin(tcur*.3)*10 }
-              else {xShaking=0; yShaking+=(tcur-20)*.03}  
-              if (tcur>150) {ctx.drawImage(imgDirt, x*a,y*a,a,a);animAsh.draw(x*a,y*a,a,a,tcur/10)}
-            } else {
-              size=a*1.1,xcen=(x+.5)*a,ycen=(y+.5)*a
-              animWater.draw(x*a, y*a, a, a, frm)     
-              ctx.drawImage(imgBowser, xcen-size/2, ycen-size/2, size,size)
+            size=a*1.5,xcen=(x+.5)*a,ycen=(y+.5)*a
+            animWater.draw(x*a, y*a, a, a, frm)     
+            fsBowser.draw(xcen-size/2, ycen-size/2, size,size, tCur/10)
+
+            break
+          case BOWSER_BURNING:
+            animLava.draw(x*a, y*a, a, a, frm)
+            size=a*1.5,xcen=(x+.5)*a+xShaking,ycen=(y+.5)*a+yShaking
+            if (tBowser<100) {xShaking+=Math.cos(tBowser*.9)*2; yShaking=Math.sin(tBowser*.6)*10 }
+            else {xShaking=0; yShaking+=(tBowser-20)*.03}  
+            if (tBowser<150) {
+              fsBowser.draw(xcen-size/2, ycen-size/2, size,size, tCur/10)
             }
+            else {
+              // Bowser has become ashes, is now safe to walk on
+              ground[x+X*y] = 0
+              ctx.drawImage(imgDirt, x*a,y*a,a,a);animAsh.draw(x*a,y*a,a,a,tBowser/10)
+            }
+            ++tBowser
             break
         }
       }
@@ -588,15 +621,15 @@
         const xcen=(x+.5)*a+xShaking,ycen=(y+.5)*a+yShaking,sx=a,sy=a
         ctx.drawImage(imgMarioDead, xcen-sx/2, ycen-sy/2, sx,sy);
 
-        if (tcur<100) {xShaking+=Math.cos(tcur*1.2)*2; yShaking=Math.sin(tcur*.7)*10 }
-        else {xShaking=0; yShaking+=(tcur-20)*.03}      
-
+        if (tMario<100) {xShaking+=Math.cos(tMario*1.2)*2; yShaking=Math.sin(tMario*.7)*10 }
+        else {xShaking=0; yShaking+=(tMario-20)*.03}      
+        ++tMario
       } else {
         const maxWalkSteps = 6
-        if (xCurPrev!=xCursor||yCurPrev!=yCursor) nWalk = Math.floor(((Date.now() - tWalk))/17) // 17 ms per frame
-        if (nWalk>=maxWalkSteps) {  xCurPrev=xCursor; yCurPrev=yCursor; nWalk=0} // go back to standing still
-        xMario = xCurPrev + (xCursor-xCurPrev)*nWalk/maxWalkSteps
-        yMario = yCurPrev + (yCursor-yCurPrev)*nWalk/maxWalkSteps
+        if (xCursor!=xCurNext||yCursor!=yCurNext) nWalk = Math.floor(((Date.now() - tWalk))/17) // 17 ms per frame
+        if (nWalk>=maxWalkSteps) {  xCursor=xCurNext; yCursor=yCurNext; nWalk=0} // go back to standing still
+        xMario = xCursor + (xCurNext-xCursor)*nWalk/maxWalkSteps
+        yMario = yCursor + (yCurNext-yCursor)*nWalk/maxWalkSteps
         
         //let asp=imgMarioE.height/imgMarioE.width;
         ctx.imageSmoothingEnabled = false
@@ -609,35 +642,53 @@
         }
       }
       //======== DEBUGGING
-      // if (cheating) {
-      //   for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) { 
-      //     ctx.fillStyle='#fff'
-      //     ctx.font = 'bold 20px sans-serif'
-      //     ctx.fillText(ground[x+X*y],  (x+.5)*a, (y+.5)*a)
-      //   }
-      // }
+      if (cheating) {
+        for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) { 
+          ctx.fillStyle='#fff'
+          ctx.font = 'bold 20px sans-serif'
+          ctx.fillText(ground[x+X*y],  (x+.5)*a, (y+.5)*a)
+        }
+      }
     }
     
     function checkVictory() {
-      if (cheating) return // can't lose in cheat mode
-      if (winlose==PLAYING) {
-        for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
-          if (extras[x+X*y]==BOWSER && ground[x+X*y]&ON) {winlose=WIN; break}
-          if (extras[x+X*y]==PEACH && ground[x+X*y]&ON) {winlose=PEACH_DIED; break}
-        }
-        if (ground[xCursor+X*yCursor]&ON) winlose=MARIO_DIED  // Mario is burning!
-        if (extras[xCursor+X*yCursor]==BOWSER) winlose=MARIO_DIED  // Mario got eaten by Bowser
+      //title.innerHTML = ''+winlose // TEMPORARY DEBUGGING
+      // title.innerHTML = ''+tBowser
 
-        if (winlose==WIN) {
-          tcur=0; audioWin1.play(); setTimeout( ()=>audioWin2.play(), 1000);               
-          setTimeout(()=>btnNext.style.animation = 'flashingAnimation 0.5s step-start infinite', 500)
+      //if (cheating) return // can't lose in cheat mode
+      for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
+        if (winlose!=BOWSER_DIED && extras[x+X*y]==BOWSER && ground[x+X*y]&ON) {
+          tBowser=0; soundBowsFall.play() // play Bowser death sound
+          extras[x+X*y]=BOWSER_BURNING
+
+          if (winlose==PLAYING) {
+            setTimeout( ()=>soundWin.play(), 1000) // play victory sound
+            // setTimeout(()=>btnNext.style.animation = 'flashingAnimation 0.5s step-start infinite', 500)
+            winlose=BOWSER_DIED
+          }
+          break
         }
-        else if (winlose==MARIO_DIED||winlose==PEACH_DIED) {
-          tcur=0;audioLose.play(); 
-          setTimeout(()=>btnReset.style.animation = 'flashingAnimation 0.5s step-start infinite', 500)
+        if (winlose!=PEACH_DIED && extras[x+X*y]==PEACH && ground[x+X*y]&ON) {
+          extras[x+X*y]=PEACH_BURNING
+          tPeach=0
+          if (winlose==PLAYING) { // don't celebrate if mraio or peach is already dead
+            soundLose.play(); 
+            setTimeout(()=>btnReset.style.animation = 'flashingAnimation 0.5s step-start infinite', 500)
+          }
+          winlose=PEACH_DIED
+          break
         }
-      }  
-    }
+      }
+      if (winlose!=MARIO_DIED &&
+        (ground[xCursor+X*yCursor]&ON         // Mario got burned in lava
+        || (extras[xCursor+X*yCursor]==BOWSER && winlose!=BOWSER_DIED))   // Mario got spiked by Bowser
+      ) {
+        soundLose.play()
+        setTimeout(()=>btnReset.style.animation = 'flashingAnimation 0.5s step-start infinite', 500)
+        tMario=0
+        winlose=MARIO_DIED
+      }
+    } 
     function animate(timeCurrent) {
       requestAnimationFrame(animate)
       render() 
@@ -754,7 +805,6 @@
       if (level) {level=Number(level)} else level=0
       if (!level) level=0
       setLevel(level)
-      tcur = 0
       setScaling()
 
       btnReset.addEventListener('click', resetLevel)
@@ -792,6 +842,7 @@
     // MAIN MODULE CODE
     //===============================================
     Animation.ctx = ctx
+    Filmstrip.ctx = ctx
     let animMarioE= new Animation([imgMarioE,imgMarioE2,imgMarioE3])
     let animMarioW= new Animation([imgMarioW,imgMarioW2,imgMarioW3])
     let animMarioN= new Animation([imgMarioN,imgMarioN2,imgMarioN,imgMarioN4])
@@ -802,12 +853,15 @@
     let animCrying= new Animation([imgCrying1,imgCrying2])
     let animHappy = new Animation([imgHappy1,imgHappy2])
     let animAsh   = new Animation([imgAsh1,imgAsh2])
+    let fsBowser  = new Filmstrip(imgBowser1234, 32, 32)
     let soundTock = new Sound('tock.mp3'); soundTock.vol = .1
+    let soundCoin = new Sound('coin.mp3')
     let soundBuzz = new Sound('buzz.mp3')
-    let soundWin1 = new Sound('win1.mp3')
-    let soundWin2 = new Sound('win2.mp3')
     let soundHoo = new Sound('hoo.mp3'); soundHoo.vol = .03
     let soundOw = new Sound('ow.mp3'); soundOw.vol = .03
+    let soundBowsFall = new Sound('bowsfall.mp3')
+    let soundLose = new Sound('lose.mp3')
+    let soundWin = new Sound('win.mp3')
     let levelMaps = await loadString('maps.txt') // clear browser cache if this file is edited
     levelMaps = [...levelMaps.matchAll(  /<levelmap>.*?<\/levelmap>/gs )].map(i=>i[0])
     

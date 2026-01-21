@@ -7,7 +7,7 @@ export class Sound {
     let ajax =new XMLHttpRequest()
     ajax.open("GET", filename, true); ajax.responseType="arraybuffer"
     ajax.onerror=()=>{debugger}
-    ajax.onload=()=>{ Sound.ctx.decodeAudioData(ajax.response, success=>{this.buf=success}, failure=>{ console.log('Failed to load '+filename) }) }
+    ajax.onload=()=>{ Sound.ctx.decodeAudioData(ajax.response, success=>{this.buf=success}, failure=>{debugger}) }
     ajax.send()
   }
   play() {    
@@ -23,8 +23,6 @@ export class Sound {
     if(this.node) this.node.gain.value=0
   }
 }
-
-
 export class Animation {
   //frames=null; static ctx
   constructor(frames) {this.frames=frames} // list of images
@@ -40,15 +38,3 @@ export const isKeyDown = (()=>{
       window.addEventListener('keydown',(e)=>state[e.key]=true);
       return (key)=>state.hasOwnProperty(key)&&state[key]||false;
     })();
-
-export class Filmstrip {
-  constructor(spritesheet, xs, ys) {
-    this.spritesheet=spritesheet; this.xs=xs; this.ys=ys
-    this.nframes=this.spritesheet.width/this.xs
-    console.log('Number of frames = ',this.nframes)
-  }
-  draw(x,y,w,h,i) {
-    let nframe=Math.floor(i)%this.nframes
-    Filmstrip.ctx.drawImage(this.spritesheet, nframe*this.xs,0,this.xs,this.ys, x,y,w,h)
-  }
-}

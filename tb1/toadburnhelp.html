@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@700&display=swap" rel="stylesheet">
+  <style>    
+    body {
+        font-family:'Titillium Web',sans-serif;
+        background-color:#333; color:#CCC;
+    }
+    h1 {color:white;}
+    h2 {
+        background-image:url('happy1.webp');background-size:contain;background-repeat: no-repeat;background-position:0px;
+        padding:0 0 0 48px; color:#fff;
+    }
+    .table {width: 15em; margin-left: 3em;}
+    .cell1 {width: 10em; display:inline-block; float:left;}
+    .cell2 {width: 5em; display:inline-block; clear:both; font-family:monospace;} 
+     /* min-width: 10em; margin-left: 2em;} */
+     /* min-width: 20em; margin-left: 2em;} */
+
+  </style>
+</head>
+<body>
+
+
+<h1>Toad Burn</h1>
+<p>By Yen Lee Loh and Isaac Hutchison (November 2025) </p>
+
+<!-- ############################ -->
+<h2>Summary</h2>
+
+<p>Toad Burn is an educational browser-based puzzle game 
+    designed to players of all ages learn about digital logic.</p>
+
+<!-- ############################ -->
+<h2>Gameplay</h2>
+<p>Toad Burn consists of a series of levels.  
+Each level takes the form of a finite grid of squares (cells).
+The player (Mario) can walk East, West, North, or South.  
+Walking into a P Switch toggles it between OFF and ON states.
+The objective of each level is to defeat the enemy (Bowser) by flooding his square with lava.
+Mario is not able to attack Bowser directly.  
+Instead, he must use logic and ingenuity to channel lava into Bowser's square.
+Mario must also avoid flooding Princess Peach with lava!  
+If Peach gets burned, the level is lost and must be restarted.
+</p>
+
+<p>Toad Logic plays a central role in the game.
+A cell may be occupied by a toad.
+If the cells to the north, south, and west are lava-free, the toad is happy (ON) and spews lava toward the east.
+If any of the three cells to the north, south, and west have lava, 
+the toad is crying (OFF) and emits no lava.
+</p>
+
+<p>Depending on how many input cells (N, S, or W) are active, 
+    a toad corresponds to a NOT, NOR, or 3-way NOR gate in digital electronics.
+</p>
+
+<p>Ordinarily, lava can spread in all directions.  
+If a cell has 3 or 4 neighbors, it functions as a splitter or merge point.
+However, <em>grade separation</em> can be enabled on a cell by toggling on a subway.
+Then, the lava flow along ground level in the East-West direction
+and the flow along the subway level in the North-South directions
+do not mix.
+This allows the level designer to route wires across each other without signal interference.
+This is necessary for creating complex circuits.
+</p>
+
+
+<p>Stars are the equivalent of lamps or LEDs in electronics.
+They merely indicate ON/OFF state at key points in the circuit, with no impact on circuit behavior or gameplay.
+</p>
+
+
+
+<!-- ############################ -->
+<h2>Controls</h2>
+<p> Default keybindings are as follows.</p>
+<div class="table">
+<!-- <div class="cell1">Go north </div><div class="cell2">&#8593; or E </div>
+<div class="cell1">Go south </div><div class="cell2">&#8595; or D </div>
+<div class="cell1">Go west </div><div class="cell2">&#8592; or J </div>
+<div class="cell1">Go east </div><div class="cell2">&#8594; or L </div> -->
+<div class="cell1">Go north </div><div class="cell2"> E </div>
+<div class="cell1">Go south </div><div class="cell2"> D </div>
+<div class="cell1">Go west  </div><div class="cell2"> S </div>
+<div class="cell1">Go east  </div><div class="cell2"> F </div>
+<div class="cell1">Reset level </div><div class="cell2">Shift-R </div>
+<div class="cell1">Go to previous level </div><div class="cell2"> [ </div>
+<div class="cell1">Go to next level     </div><div class="cell2"> ] </div>
+<div class="cell1">Enter cheat mode     </div><div class="cell2"> Shift-C </div>
+</div>
+<p> In cheat mode (or sandbox mode), additional abilities are available: </p>
+<div class="table">
+<div class="cell1">Place lava     </div><div class="cell2"> H </div>
+<div class="cell1">Place trench   </div><div class="cell2"> J </div>
+<div class="cell1">Toggle subway  </div><div class="cell2"> K </div>
+<div class="cell1">Place toad     </div><div class="cell2"> L </div>
+<div class="cell1">Place grass    </div><div class="cell2"> ; </div>
+</div>
+
+
+<h2>Implementation</h2>
+<p>
+The circuit dynamics is modeled as a finite-state cellular automaton.
+The state of each cell depends only on the states of five cells (Center, East, West, North, and South) at the previous timestep.
+The state of a cell has several possible values:
+<div class="table">
+    <div class="cell1">Empty </div><div class="cell2">0</div>
+    <div class="cell1">Cold, contagious </div><div class="cell2">1</div>
+    <div class="cell1">Cold, recovering </div><div class="cell2">2</div>
+    <div class="cell1">Cold, dormant    </div><div class="cell2">3</div>
+    <div class="cell1">Hot, contagious  </div><div class="cell2">7</div>
+    <div class="cell1">Hot, recovering  </div><div class="cell2">6</div>
+    <div class="cell1">Hot, dormant     </div><div class="cell2">5</div>
+    <div class="cell1">Toad, crying     </div><div class="cell2">4</div>
+    <div class="cell1">Toad, happy      </div><div class="cell2">8</div>
+</div>
+</p>
+Imagine that there are two kinds of viruses, hot and cold.  
+If a cell is contagious, on the next timestep it will enter recovery.
+If a cell is recovering, it cannot be re-infected, and on the next timestep the virus will become dormant 
+(although the cell is still a carrier of that type of virus).
+If a cell is dormant, it can be infected by EITHER type of virus if an adjacent cell is contagious.
+These rules allow unidirectional pulse propagation in either direction along a row of cells.
+See ToadBurnDetails.txt for more info.
+</p>
+<p>
+Recall that a toad emits lava only if there is no incoming lava.  
+This is equivalent to a NOR gate.
+If all inputs are OFF, then the output is ON.  
+If any input is ON, then the output is OFF. 
+</p>
+<p>
+More implementation details are below.
+</p>
+
+<pre>
+========================================
+LOGIC CIRCUIT CELLULAR AUTOMATON
+========================================
+
+
+==================================================
+1. BINARY MODEL
+==================================================
+Begin by considering a 1D chain with seven sites (X=7 and Y=1).
+Consider a binary model with only two states (0 and 1), representing "hot" and "cold". 
+
+1A. RIGHT-ADVECTION RULE.  Data, pulses, and information propagates to the right:
+
+    V(x) := V(x-1)
+
+    0011010 --> 0001101 --> 0000110 --> 0000011.
+
+1B. LEFT-ADVECTION RULE.
+
+    V(x) := V(x+1)
+
+    0011010 --> 0110100 --> 1101000 --> 1010000.
+
+For physical realism and gameplay, wires should be able to carry pulses in either direction.
+So V(x) must depend on both V(x-1) and V(x+1).  
+However, it is difficult to find a rule that works well.
+
+1C. MAJORITY-OF-3 GATE.  With this rule, 1's do not spread:
+    
+    V(x) := heaviside(V(x) + V(x-1) + V(x+1) - 1.5).  
+
+    0010000 --> 0000000   (one-site islands disappear)
+    0011000 --> 0011000   (two-site islands are stable)
+    0011010 --> 0011100   (coalescence can happen)
+
+1D. 3-INPUT OR GATE:
+    Lowering the threshold allows 1's to spread, 
+    but the spreading is omnidirectional and irreversible:  
+
+    V(x) := heaviside(V(x) + V(x-1) + V(x+1) - 1.5).  
+    
+    0010000 --> 0111000   (a hot spot spreads in both directions)
+    1101111 --> 1111111   (cold islands are swallowed up)
+
+1E. DIFFUSION: 
+    V must be floating-point or large integer.
+    Both high and low voltages can spread.
+    In the example below, consider a chain of seven sites.
+    The first site is held at V=15 (0xF in hexadecimal).
+
+    V(x) := (V(x-1) + V(x+1)) / 2
+
+    F0000 --> F8000 --> F8400 --> FA420 --> FA621 --> ....
+
+    The spreading is slow and weak.
+    For long wires, the diffusion may stall due to roundoff error!
+
+1F. WAVE EQUATION: 
+    Let V and P be sets of displacement and momentum variables obeying
+
+    P(x) += V(x-1) + V(x+1) - 2V(x)
+    V(x) += P(x)
+
+    10000 --> 11000 --> 11100 --> 11110 --> 11110
+     000       100       010       001       000
+
+    It turns out that even if V and P are binary variables,
+    this model does allow signal propagation.  
+    However, the wave equation has no dissipation.
+    Dirichlet boundary conditions cause reflection in antiphase.
+    Neumann boundary conditions cause reflection in phase.
+    Periodic boundary conditions allow the pulse to propagate infinitely.
+    If we want the system to settle down to a steady state,
+    we must introduce dissipation!
+    (One way to do this is by absorbers obeying an advection rule.) 
+
+
+==================================================
+2. FOUR-STATE MODEL
+==================================================
+Consider a four-state model below.  A "contagious" state decays to "dormant".
+Any state that is next to a contagious state will be "infected" or "catch fire":
+
+    STATE     DESCRIPTION      RULE
+    H         Hot contagious    H --> h
+    h         Hot dormant      hhh --> h, Chh --> c, ...
+    c         Cold dormant     ccc --> c, Hcc --> h, ...
+    C         Cold contagious   C --> c
+
+This model permits hotness and coldness to spread in the same way.  
+However, spreading is omnidirectional, and results in pulsing, due to "reinfection":
+
+    ccHcccc --> cHhHccc --> HhHhHcc
+
+==================================================
+3. SIX-STATE MODEL
+==================================================
+The above deficiencies are rectified by using three levels of hotness and coldness each.  
+This is similar to forest fire simulations, in which 3=burning, 2=burned, and
+1=regrown.
+The states 1 and 5 are susceptible to either "hot burn" or "cold burn" from their neighbors
+(catching fire or catching a cold):
+
+    STATE     DESCRIPTION      RULE
+    7         Hot infectious    7 --> 6 
+    6         Hot recovering    6 --> 5
+    5         Hot dormant       5 --> 5, 51 --> 12, 57 --> 76
+    1         Cold infections   1 --> 2
+    2         Cold recovering   2 --> 3
+    3         Cold dormant      3 --> 1, 31 --> 12, 37 --> 76
+
+This allows hot and cold pulses to propagate forwards or backwards, 
+depending on where they are launched:
+
+    73333 --> 67333 --> 56733 --> 55673 --> 55567 --> 55556 --> 55555 (heat spreading right)
+    15555 --> 21555 --> 32155 --> 33215 --> 33321 --> 33332 --> 33333 (cold spreading right)
+
+It is good that we can build wires that carry signals in either direction.
+However, in a digital circuit, we need to have buffering, 
+such that the input of a gate can affect the output, but the output cannot affect the input.
+I don't think this model supports buffering.
+
+==================================================
+4. EIGHT-STATE MODEL
+==================================================
+From here on, consider a 2D grid with cells labeled by coordinates x=0,...,X-1 and y=0,...,Y-1.
+Each cell has a state V(x,y).
+At every timestep, update all sites according to a 5-point rule of the form
+    V(x,y,t+1) := function( V(x,y,t), V(x+1,y,t), V(x-1,y,t), V(x,y+1,t), V(x,y-1,t) ) .
+To implement synchronous updating, store the new states in an array cnew, 
+and copy the results back into the original array.
+
+Starting from the previous model, add two states representing a multi-input OR gate. 
+The gate takes input from the north, west, and south.
+The gate output is updated at every time step:
+    if (n>4 || w>4 || s>4) c = 8 
+    else                   c = 0
+
+    STATE     DESCRIPTION      RULE
+    8         On               8 if any input is hot (5,6,7)
+    4         Off              4 otherwise
+
+In addition, if a wire has a gate at its west, it takes the output of that gate as "spreading hot" or "spreading cold". 
+In the example below, the OR gate switches on, causing its output to be held as 7:
+(which results in pulsing):
+
+     5         5         5         5         5                 5
+    54333 --> 58333 --> 58733 --> 58763 --> 58765 --> ... --> 5875765765765...
+     5         5         5         5         5                 5
+
+If we don't like the pulsing, we can modify the rules so that the output is "spreading" 
+ONLY if the output is cold and the gate is now hot, or vice versa.  
+Then a pulse is only generated when the gate switches.
+
+Toad Burn implements only one type of gate (NOR).
+
+==================================================
+5. SOURCES
+==================================================
+In Toad Burn, a source is represented by a P switch that retains its state (1 or 0) 
+until toggled by the user.
+
+    8... --> 875765765765...
+
+    4... --> 413123123123...
+
+We could have defined Toad Burn logic such that a 0-input NOR gate holds its state.
+In that case we could have used a 0-input NOR gate as a source.
+However, the present behavior of toads is that if they are not being burned, they are happy,
+so that wouldn't work.
+
+==================================================
+6. CROSSINGS
+==================================================
+To create complex circuits we must be able to route signals across each other.
+In the circuit below, ^ represents a XOR gate emitting to the right.
+Each XOR gate can be implemented with several NOR gates without crossings.
+Therefore the circuit below can be implemented in a plane with NOR gates only.
+However, the method is clunky:
+
+         ###########^######### x^(x^y) = y    
+         #          #
+    x #####^## x^y ###^####### (x^y)^y = x
+           #          #
+    y #################
+
+For gameplay and educational purposes, it is useful for the cellular automaton
+to allow a crossing with 'grade separation' (flyover, overpass, underpass, or subway tunnel).
+In Toad Burn level maps, the left map is a 4-way intersection, 
+whereas the right map has a crossing represented by +:
+
+        #           #
+        #           # 
+    #########   ####+####  
+        #           #
+        #           #
+
+I believe that implementing a crossing requires either
+(i) adding extra state to the model, or
+(ii) allowing the state of a cell to be affected by NEXT-nearest-neighbors at the previous time step.
+Toad Burn uses the first approach.  A new array ("subway") is used in addition to the original array ("ground").
+This means we are storing an additional 3-8 bits of state representing the lava state in the subway.
+
+
+==================================================
+CONCEPTS IN DIGITAL CIRCUITS
+==================================================
+LOGIC GATES.  Toad logic supplies NOR gates, which can be used as universal building blocks.
+
+SIGNAL PROPAGATION DELAY.  Signals propagate ballistically, by one cell each time step.
+
+JITTER.  The pulsed nature of the signal (765765... or 123123...) means that there is some uncertainty 
+in the behavior of the circuit, such that similar perturbations may give slightly different responses.
+
+MEANDERS.  Zig-zag or undulating paths can be used to delay signal propagation.
+
+FEEDBACK.  The output of a gate can be fed back to the input, directly or indirectly.
+
+CLOCK CIRCUIT.  This can be made using a simple ring oscillator with a NOT gate and delay loop.
+       
+        #####
+        #   #
+        ##N##--> square wave
+
+INPUT BUFFERING.  Suppose we want to sync the clock to a trigger pulse.  
+If we put a pulse into the left circuit, the clock signal is fed back, corrupting the input.
+To avoid this, we can insert a buffer along the input line.
+A buffer can be constructed using two toads (inverters) in series.
+This functions as an "information diode" to ensure that the output only depends on the input,
+and not vice versa.
+Alternatively, one can use the fact that NOR gates (toads) implement input buffering,
+and just insert the trigger line as in the third circuit:
+            
+            #####              #####             ##### 
+            #   #              #   #             #   #
+ TRIG-->######N##  TRIG-->#N#N###N##             ##N## 
+                                                   #
+                                      TRIG-->#######  
+
+OUTPUT BUFFERING.  The top circuit is susceptible to interference coming back from the output line.
+To prevent this, buffer the output, as in the bottom circuit.
+       
+        #####
+        #   #
+        ##N######### --> square wave output
+
+        #####
+        #   #
+        ##N####N#N## --> square wave output
+
+SR FLIP-FLOP.
+
+            ####
+            #  #
+    S ######N# #### Q
+             N##
+    R ########  
+
+FAN-OUT.  A 4-way intersection allows a fan-out factor of 3. 
+FAN-IN.  Toads have a maximum fan-in factor of 3.       
+
+         ###-->out   in-->###
+         #                  #
+    in-->#####-->out   in-->##N###-->output
+         #                  #
+         ###-->out   in-->###
+
+HAZARDS?
+
+
+SLEW RATE? RESPONSE TIME?
+DISTORTION?  Pulse sequence could get distorted due to jitter
+
+
+==================================================
+RESTORING SYMMETRY (NOT IMPLEMENTED)
+==================================================
+The cellular automaton described above is asymmetrical because outputs
+
+To restore fourfold symmetry, for each gate, one could designate one or more neighbors as an OUTPUT cell. 
+An output cell can only accept input from the neighboring gate.
+A gate cannot accept input from this cell.  
+Add two more states to the model.
+
+Alternatively, one could use 2 additional bits to represent the orientation of the gate.
+
+
+
+
+T flip flop?
+
+TXY -> TXY
+000    001   
+101    111   
+011    010 ????????
+110    100
+
+TAXY -> TAXY
+0000    0001
+1001 -> 1101 -> ????
+
+
+?????
+Y = (T==X) & !Y
+X = (T==Y) & X??
+
+T X Y   T==X T&Y Ynew  T==Y T&!X
+0 0 0   1    0   1     1    0
+
+
+
+
+</pre>
+</body>
+</html>
