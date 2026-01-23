@@ -39,7 +39,7 @@
       padding: 1rem 2rem 1rem 6rem; 
       box-shadow: 0px 4 px 8px 0px #333, 0px 8px 16px 8px #000; background-color:#666; border:double 4px black; border-radius: 20px; 
       color:white; font-family:'gameFont',sans-serif; font-size: 1.5rem;
-      background-image:url('peach.gif');background-size:3rem;background-repeat:no-repeat;background-position:1rem;
+      background-image:url('peach1.webp');background-size:3rem;background-repeat:no-repeat;background-position:1rem;
     }
     #helpDiv a { color: cyan; }
     #helpDiv a:visited { color: pink; }    
@@ -108,6 +108,8 @@
 <img id="imgStarOff" src="staroff.webp"></img>
 <img id="imgSourceOff" src="sourceoff.webp"></img>
 <img id="imgSourceOn" src="sourceon.webp"></img>
+<img id="imgPlateOff" src="plateoff.webp"></img>
+<img id="imgPlateOn" src="plateon.webp"></img>
 <img id="imgBrick" src="brick.webp"></img>
 <img id="imgBridge" src="bridge.webp"></img>
 <img id="imgMask" src="mask.webp"></img>
@@ -173,7 +175,9 @@
     // GAMEPLAY VARIABLES AND FUNCTIONS
     //=================================================
     const ON=1,FRESH=2,CONDUCTING=4,SOURCE=8,GATE=16
-    const WALL=1,VOID=2,LAMP=4,PEACH=8,BOWSER=16,PEACH_BURNING=32,BOWSER_BURNING=64,QUESTION=128
+    const WALL=1,VOID=2,LAMP=3,
+        PEACH=4,PEACH_BURNING=5,BOWSER=6,BOWSER_BURNING=7,ASHES=8,
+        PLATE=9,QUESTION=10
     const PLAYING=0,BOWSER_DIED=1,PEACH_DIED=-1,MARIO_DIED=-2
     const DIRS=[[1,0],[-1,0],[0,1],[0,-1]]
     
@@ -188,10 +192,11 @@
     const starSize =2.0 // can make this a TOADML flag
 
     let joyForce=0
+    let timeoutID
 
     function setPos(xnew,ynew) {xCursor=xnew;yCursor=ynew;xCurNext=xCursor;yCurNext=yCursor}
     function tryWalk(dir) {
-      if (marioOrientation!=dir) {marioOrientation=dir; stalled=true; setTimeout(()=>stalled=false,50); return true} // Mario changes direction
+      if (marioOrientation!=dir) {marioOrientation=dir; stalled=true; timeoutID=setTimeout(()=>stalled=false,50); return true} // Mario changes direction
       if (stalled) return false // already got stuck going in that direction
       stalled=false; 
       const dx=DIRS[dir][0],dy=DIRS[dir][1]
@@ -205,12 +210,12 @@
       const G=ground[xnew+X*ynew],H=extras[xnew+X*ynew],SCUR=subway[xCursor+X*yCursor],SNEW=subway[xnew+X*ynew]
       if (SCUR!=0 & (dy!=0)) {soundBuzz.play(); stalled=true; return false}  // Mario can't jump off bridge
       if (SNEW!=0 & (dy!=0)) {soundBuzz.play(); stalled=true; return false}  // Mario can't walk into subway tunnel
-      if (H & WALL) {soundBuzz.play(); stalled=true; return false} // Can't walk into wall
-      if (H & QUESTION) { // Mario bumps a Question block
+      if (H==VOID) {soundBuzz.play(); stalled=true; return false} // Can't walk into void
+      if (H==WALL) {soundBuzz.play(); stalled=true; return false} // Can't walk into wall
+      if (H==QUESTION) { // Mario bumps a Question block
         soundCoin.play(); openHelp(); helpDiv.focus(); stalled=true; return false
       }
-      if (H & VOID) {soundBuzz.play(); stalled=true; return false} // Can't walk into wall
-      if (G & SOURCE) {                // Mario bumps a P Switch
+      if ((G & SOURCE) && H!=PLATE) {  // Mario bumps a P Switch (not a plate)
         soundTock.play(); ground[xnew+X*ynew] ^= ON  // Toggle the ON/OFF state
         stalled=true; return false
       }
@@ -327,8 +332,9 @@
           let g
           switch (rows[y][x]) {
             case '.': g=0; break   // grass
-            case ' ': g=0; extras[x+X*y]=VOID; break   // poison
-            case 'W': g=0; extras[x+X*y]=WALL; break   // void (forbidden)
+            case ' ': g=0; extras[x+X*y]=VOID; break   // void
+            case 'W': g=0; extras[x+X*y]=WALL; break   // wall
+            case '_': g=SOURCE|FRESH; extras[x+X*y]=PLATE; break // pressure plate
             case '#': g=CONDUCTING; break           // dirt
             case 'H': g=CONDUCTING|ON|FRESH; break
             case 's': g=SOURCE|FRESH;    break 
@@ -371,6 +377,12 @@
       for (let y=1; y<Y-1; ++y) for (let x=1; x<X-1; ++x) {
         const G=ground[x+X*y]
         groundNew[x+X*y]=G 
+        if (extras[x+X*y]==PLATE) { //Pressure plate acts as SOURCE ON or SOURCE OFF depending
+          // on whether it is being stepped on
+          if (xCursor==x&&yCursor==y) groundNew[x+X*y]=SOURCE|FRESH|ON
+          else                        groundNew[x+X*y]=SOURCE|FRESH
+          continue
+        }
         if (G&SOURCE) {groundNew[x+X*y]=G;         continue} // Source persists unchanged 
         if (G&FRESH)  {groundNew[x+X*y]=G & ~FRESH;continue} // Fresh cell goes stale
         //======== We need to consider neighbors
@@ -418,7 +430,7 @@
           //======== Special handling: PEACH and BOWSER are absorbers (cannot be FRESH)
           // Also, if PEACH or BOWSER are already set on fire, they cannot be extinguished
           let H=extras[x+X*y]
-          if (H & PEACH || H & BOWSER) {
+          if (H==PEACH || H==BOWSER) {
             groundNew[x+X*y] &= ~FRESH
             if (ground[x+X*y]&ON)  groundNew[x+X*y] |= ON
           }
@@ -434,8 +446,8 @@
         if (!H) continue  // not a crossing
         if (H&FRESH)  {subwayNew[x+X*y]=H & ~FRESH;continue} // Fresh cell goes stale
 
-        const N=ground[x+X*(y-1)]
-        const S=ground[x+X*(y+1)]
+        const N=subway[x+X*(y-1)] ? subway[x+X*(y-1)] : ground[x+X*(y-1)]
+        const S=subway[x+X*(y+1)] ? subway[x+X*(y+1)] : ground[x+X*(y+1)]
         let flag=false,env=0 // env is the sum of +1's or -1's for each neighbor  
         if (N & FRESH) {flag=true; env+=(N&ON)?1:-1}
         if (S & FRESH) {flag=true; env+=(S&ON)?1:-1}
@@ -526,6 +538,7 @@
             if (ground[(x-1)+X*y]&ON) ctx.drawImage(imgLava, 0,0,12,24, x*a,y*a,a/2,a)
             if (ground[x+X*(y-1)]&ON) ctx.drawImage(imgLava, 0,0,24,12, x*a,y*a,a,a/2)
             if (ground[x+X*(y+1)]&ON) ctx.drawImage(imgLava, 0,12,24,12, x*a,y*a+a/2,a,a/2)
+            // this code does not correctly render lava coming from N/S subways
             animCrying.draw(x*a,y*a,a,a, tCur/15)
           }
         }
@@ -552,6 +565,10 @@
         switch (extras[x+X*y]) {
           case WALL: break; // this was done in the earlier loop
           case QUESTION: ctx.drawImage(imgQuestion, x*a,y*a,a,a); break  
+          case PLATE:
+            if (ground[x+X*y] & ON) ctx.drawImage(imgPlateOn, x*a,y*a,a,a)
+            else                    ctx.drawImage(imgPlateOff, x*a,y*a,a,a)
+            break
           case LAMP:
             xcen=(x+.5)*a; ycen=(y+.5)*a
             if (ground[x+X*y]&ON) {
@@ -572,8 +589,8 @@
             animPeach.draw(xcen-sx/2, ycen-sy/2, sx,sy, tCur/41)                 
             break
           case PEACH_BURNING:
-            if (tPeach<100) {xShaking+=Math.cos(tPeach*.6)*2; yShaking=Math.sin(tPeach*.3)*10 }
-            else {xShaking=0; yShaking += (tPeach-20)*.03}
+            if (tPeach<80) {xShaking+=Math.cos(tPeach*.6)*2; yShaking=Math.sin(tPeach*.3)*10 }
+            else {xShaking=0; yShaking+=(tPeach-80)*.15}
             if (tPeach<150) {
               animLava.draw(x*a, y*a, a, a, frm)
               sy=a,sx=a/animPeach.aspect
@@ -584,10 +601,8 @@
               animPeach.draw(-sx/2, -sy/2, sx, sy, tCur/17)
               ctx.restore(); // Restore the canvas to its original state
             }
-            else {
-              //Peach has become ashes, is now safe to walk on (not that it matters)
-              ground[x+X*y] = 0
-              ctx.drawImage(imgDirt, x*a,y*a,a,a);animAsh.draw(x*a,y*a,a,a,tPeach/10)
+            else { //Peach has become ashes, is now safe to walk on (not that it matters)
+              ground[x+X*y] = 0; extras[x+X*y] = ASHES
             }
             ++tPeach
             break
@@ -595,22 +610,22 @@
             size=a*1.5,xcen=(x+.5)*a,ycen=(y+.5)*a
             animWater.draw(x*a, y*a, a, a, frm)     
             fsBowser.draw(xcen-size/2, ycen-size/2, size,size, tCur/10)
-
             break
           case BOWSER_BURNING:
             animLava.draw(x*a, y*a, a, a, frm)
             size=a*1.5,xcen=(x+.5)*a+xShaking,ycen=(y+.5)*a+yShaking
-            if (tBowser<100) {xShaking+=Math.cos(tBowser*.9)*2; yShaking=Math.sin(tBowser*.6)*10 }
-            else {xShaking=0; yShaking+=(tBowser-20)*.03}  
+            if (tBowser<80) {xShaking+=Math.cos(tBowser*.9)*2; yShaking=Math.sin(tBowser*.6)*10 }
+            else {xShaking=0; yShaking+=(tBowser-80)*.15}
             if (tBowser<150) {
               fsBowser.draw(xcen-size/2, ycen-size/2, size,size, tCur/10)
             }
-            else {
-              // Bowser has become ashes, is now safe to walk on
-              ground[x+X*y] = 0
-              ctx.drawImage(imgDirt, x*a,y*a,a,a);animAsh.draw(x*a,y*a,a,a,tBowser/10)
+            else { // Bowser has become ashes, is now safe to walk on
+              ground[x+X*y] = 0; extras[x+X*y] = ASHES
             }
             ++tBowser
+            break
+          case ASHES:
+            ctx.drawImage(imgDirt, x*a,y*a,a,a);animAsh.draw(x*a,y*a,a,a,tCur/10)
             break
         }
       }
@@ -647,6 +662,7 @@
           ctx.fillStyle='#fff'
           ctx.font = 'bold 20px sans-serif'
           ctx.fillText(ground[x+X*y],  (x+.5)*a, (y+.5)*a)
+          ctx.fillText(extras[x+X*y],  (x+.5)*a, (y+.75)*a)
         }
       }
     }
@@ -657,7 +673,8 @@
 
       //if (cheating) return // can't lose in cheat mode
       for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
-        if (winlose!=BOWSER_DIED && extras[x+X*y]==BOWSER && ground[x+X*y]&ON) {
+        // if (winlose!=BOWSER_DIED && extras[x+X*y]==BOWSER && ground[x+X*y]&ON) {
+        if (extras[x+X*y]==BOWSER && ground[x+X*y]&ON) {
           tBowser=0; soundBowsFall.play() // play Bowser death sound
           extras[x+X*y]=BOWSER_BURNING
 
@@ -680,7 +697,7 @@
         }
       }
       if (winlose!=MARIO_DIED &&
-        (ground[xCursor+X*yCursor]&ON         // Mario got burned in lava
+        ((ground[xCursor+X*yCursor]&ON) && extras[xCursor+X*yCursor]!=PLATE     // Mario got burned in lava
         || (extras[xCursor+X*yCursor]==BOWSER && winlose!=BOWSER_DIED))   // Mario got spiked by Bowser
       ) {
         soundLose.play()
@@ -740,6 +757,8 @@
     // INTERACTIVITY
     //=================================================
     function keyDown(e) {
+      if (timeoutID) {clearTimeout(timeoutID); timeoutID=null}
+      
       if (helpDiv.style.display=="block") {helpDiv.style.display="none"; return}
 
       if (e.ctrlKey||e.altKey) return // don't trap browser shortcuts involving Ctrl or Alt
@@ -756,10 +775,10 @@
         case 'R': resetLevel(); break    // reset level
         default: processed=false
       }
-      
       if (processed) {e.preventDefault(); e.stopPropagation(); }
     }
     function keyUp(e) {
+      if (timeoutID) {clearTimeout(timeoutID); timeoutID=null}
       stalled=false
     }
     let joyAnchorX,joyAnchorY,joyX=0,joyY=0;
@@ -854,7 +873,7 @@
     let animHappy = new Animation([imgHappy1,imgHappy2])
     let animAsh   = new Animation([imgAsh1,imgAsh2])
     let fsBowser  = new Filmstrip(imgBowser1234, 32, 32)
-    let soundTock = new Sound('tock.mp3'); soundTock.vol = .1
+    let soundTock = new Sound('tock.mp3'); soundTock.vol = .3
     let soundCoin = new Sound('coin.mp3')
     let soundBuzz = new Sound('buzz.mp3')
     let soundHoo = new Sound('hoo.mp3'); soundHoo.vol = .03

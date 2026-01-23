@@ -414,7 +414,34 @@ W#####WWWWWW
 WWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep> 10 </timestep> <name> 3-2    OPEN THE GATE </name>
+<levelmap> <timestep> 0 </timestep> <name> 3-2    SET AND RESET #2 (TO REMOVE) </name>
+<help>
+<p>TOP SWITCH LIGHTS STAR. </p>
+<p>BOTTOM SWITCH EXTINGUISHES STAR. </p>
+<p class="indepth"> 
+In this level the switches operate pulse generators.
+</p>
+</help>
+WWWWWWWWWWWWWWWW  
+  Wn##n##W     W  
+  W#.n#.n##    W  
+  W###n##W#    WWW
+WWWWWsWWWW# #+Ln#W
+M.....?...##Nn#W#W
+W.WWWsWWWW   # W#W
+W.W###n##W#### W#W
+W.W#.n#.n##WWWWW#W
+W.Wn##n##WWW#+++#W
+W.WWWWWWWW###WWWWW
+W.....#.SW#Wn####W
+W.....#.#W#WWWWW#.
+W.....##+##W##..#.
+W.....WW#WWWW#WW#.
+W.......######W##W
+WWWWWWWWWWWWWWWWWW
+</levelmap>
+
+<levelmap> <timestep> 10 </timestep> <name> 3-3    OPEN THE GATE </name>
 <help>
 <p>
 DO THE RIGHT THINGS IN THE RIGHT ORDER.
@@ -425,19 +452,20 @@ The top switch controls a stateless latch, which is simply an AND gate.
 Pulses pass through the latch only if it is open (on).
 </p>
 </help>
-?........W
-W...WWW..W
-M.WsN#W..W
-W.W..#WW.W
-W_##nn##B
-W.W......W
+W?...........W
+M.......WWW..W
+W.WWWWWsN#WW.W
+Ws##n##..#.W.W
+W#.n#.nn#n##B
+Wn##n##......W
+W............W
 </levelmap>
 
 
-<levelmap> <timestep> 10 </timestep> <name> 3-3    FLASH TO WRITE </name>
+<levelmap> <timestep> 10 </timestep> <name> 3-4    FLASH TO RECORD TO MEMORY </name>
 <help>
 <p>
-USE THE BOTTOM SWITCH TO CHOOSE THE BIT TO LOAD. <br>
+USE THE BOTTOM SWITCH TO CHOOSE THE BIT TO LOAD.
 USE THE TOP SWITCH TO WRITE TO MEMORY! 
 </p>
 <p class="indepth"> 
@@ -447,16 +475,17 @@ This is an SR latch with a data input D and a trigger T.
 The data input is stored in the state of the SR latch ONLY when the trigger is on.
 </p>
 </help>
-WWWWWWWWWWWWWWWWWW
-W.............#..W
-W.?WWWWWWWWW#n#WSW
-W._#n++##  W#W.W#W
-W.W  ##+n# W#W.W#.
-M.s##LNnNnL####.#W
-W.W     #+# WW#W#W
-WWWWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWWWWWWWWW
+W...................W
+W.?WWsWWWWWWWWWWWWW.W
+W.W###n##         W.W
+W.W# n# nn++##    W.W
+W.W#n#n## ##+n#   W.W
+W.W       #.#.#   W.W
+M.s#######LNnNnL##n#.
+W.W          #+#    W
+WWWWWWWWWWWWWWWWWWWWW
 </levelmap>
-
 
 
 <levelmap> <timestep> 0 </timestep> <name> 3-4    LOOSEN THE LATCHES </name>
@@ -468,16 +497,18 @@ Other switches control three D latches in series.
 Open each latch to let signal through.
 </p>
 </help>
-?WWWWWWWWWWWWWWWWWWWWWW
-M.....................W
-WsW_WWWWW_WWWWW_WWWWW.W
-W#WN##   N##   N##  W.W
-W##++n# #++n# #++n#WW.W
- W#NnNn##NnNn##NnNn#N#.
+?WWWWWWWWWWWWWWWWWWWWW 
+M....................W 
+WsWsWWWWWsWWWWWsWWWW.W 
+W#WN##...N##...N##.W.W 
+W##++n#.#++n#.#++n#W.WW
+WW#.#.#.#.#.#.#.#.#W.#.
+ W#NnNn##NnNn##NnNn#N#W
  WL..#+L...#+L...#+LWWW
- W....................W
- WWWWWWWWWWWWWWWWWWWWWW
+ W...................W 
+ WWWWWWWWWWWWWWWWWWWWW 
 </levelmap>
+
 
 <levelmap> <timestep> 20 </timestep> <name> 3-5    TREAD CAREFULLY </name>
 <help>
@@ -487,12 +518,13 @@ The three toads at the bottom form an AND gate.
 If star 2 and star 4 are both on, Peach will be cooked.
 </p>
 </help>
-?WWWWWWWWWWWWWWWWWWWWWW
-M.....................W
-WsW_WWWWW_WWWWW_WWWWW.W
-W#WN##   N##   N##  W.W
-W##++n# #++n# #++n#WW.W
-WW#NnNn##NnNn##NnNn#N#.
+?WWWWWWWWWWWWWWWWWWWWW 
+M....................W 
+WsWsWWWWWsWWWWWsWWWW.W 
+W#WN##...N##...N##.W.W 
+W##++n#.#++n#.#++n#W.WW
+WW#.#.#.#.#.#.#.#.#W.#.
+ W#NnNn##NnNn##NnNn#N#W
  WL..#+L...#+L...#+LWWW
  W.....##..........n#.W
  W......##########n+nPW
@@ -503,12 +535,13 @@ WW#NnNn##NnNn##NnNn#N#.
 <help>
 1+3 = 2+4 = FAILURE
 </help>
-?WWWWWWWWWWWWWWWWWWWWWW
-M.....................W
-WsW_WWWWW_WWWWW_WWWWW.W
-W#WN##   N##   N##  W.W
-W##++n# #++n# #++n#WW.W
-WW#NnNn##NnNn##NnNn#N#W
+?WWWWWWWWWWWWWWWWWWWWW 
+M....................W 
+WsWsWWWWWsWWWWWsWWWW.W 
+W#WN##...N##...N##.W.W 
+W##++n#.#++n#.#++n#W.WW
+WW#.#.#.#.#.#.#.#.#W.#.
+ W#NnNn##NnNn##NnNn#N#W
  WL..#+L...#+L...#+LWWW
  W#....##....#.....n#.W
  W#.....#####+####n+n#W
@@ -516,30 +549,6 @@ WW#NnNn##NnNn##NnNn#N#W
  W#..........n#..#P###W
  W##########n+n###....W
  WWWWWWWWWWWWWWWWWWWWWW
-</levelmap>
-
-
-<levelmap> <timestep> 1 </timestep> <name> 3-7   SHIFT TO SUCCESS (NEW BUT BUGGY) </name>
-<help>
-BOTTOM=LOAD, TOP=SHIFT
-<p class="indepth">
-Load data into the first cell using the bottom switch.
-Hit the top switch to open latches 1, 3, and 5. 
-Hit the top switch again to open latches 2 and 4.
-This shift register shifts bits one step at a time!
-</p>
-</help>
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-?.sN#...........................W
-M.WW##+n++##+N++##+n++##+N++##..W
-W.s++n#.#++N#.#++n#.#++N#.#++n#.W
-W.#NnNn##NnNn##NnNn##NnNn##NnNn#W
-W.#W.#+#...#+#...#+#...#+#...#+#W
-W.LW...L.....L.....L.....L...WWLW
-W..WWWWWWWWWWWWWWWWWWWWWWWWWWW##W
-W.............................+.W
-WWWWWWWWWWWWWWWWWWWWWWWWWWWW..n#.
-                           WWWWWW
 </levelmap>
 
 <levelmap> <timestep> 1 </timestep> <name> 3-7   SHIFT TO SUCCESS </name>
@@ -553,9 +562,9 @@ This shift register shifts bits one step at a time!
 </p>
 </help>
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-?.snH...........................W
+?.sn#...........................W
 M.WW##+n++##+n++##+n++##+n++##..W
-W.s++N#.##+N#.##+N#.##+N#.##+N#.W
+W.s#+N#.##+N#.##+N#.##+N#.##+N#.W
 W.#W#.#.#.#.#.#.#.#.#.#.#.#.#.#.W
 W.#NnNn##NnNn##NnNn##NnNn##NnNn#W
 W.#W.#+#...#+#...#+#...#+#...#+#W
@@ -576,10 +585,17 @@ You will need to load the correct bit value into the shift register,
 trigger the shift, and repeat for all 5 bits.
 </p>
 </help>
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-WW##n#                                           ..W
-W._W.##+n++##+n++##+n++##+n++##+n++##+n++##+n++##..W
-M..s#+N#.##+N#.##+N#.##+N#.##+N#.##+N#.##+N#.##+N#.W
+WWWWWWWWWW                                          
+W#N#N##  W                                          
+W# N# N##W                                          
+W###N## #W                                          
+W  #    #W                                          
+W ##    #W                                          
+W # #####W                                          
+WW#W#WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+M.#Wn#                                           ..W
+..sW.##+n++##+n++##+n++##+n++##+n++##+n++##+n++##..W
+W..s#+N#.##+N#.##+N#.##+N#.##+N#.##+N#.##+N#.##+N#.W
 W.?#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.W
 W.##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn#W
 W.#W..#+#...#+#...#+#...#+#...#+#...#+#...#+#...#+#W
@@ -966,8 +982,12 @@ W.s##+###n###L###Nn#+#+#L# .
 W.W  #  #     W   # # #    . 
 M.s#####n####L#Nn#+#+#+#L# . 
 W..WWWWWWWWWWWW # # # #    . 
-W_#############n#######..... 
-WWWWWWWWWWWWWW.............. 
+Ws###..........n#######..... 
+WWWW#WWWW     .#............ 
+WW###n##W      #             
+WW# N# Nn#######             
+WW###n##W                    
+WWWWWWWWW                    
 </levelmap>
 
 

@@ -4,7 +4,7 @@ export class Sound {
   vol=1
   constructor(filename) {
     if(!Sound.ctx) Sound.ctx=new(window.AudioContext||window.webkitAudioContext)()
-    let ajax =new XMLHttpRequest()
+    const ajax =new XMLHttpRequest()
     ajax.open("GET", filename, true); ajax.responseType="arraybuffer"
     ajax.onerror=()=>{debugger}
     ajax.onload=()=>{ Sound.ctx.decodeAudioData(ajax.response, success=>{this.buf=success}, failure=>{ console.log('Failed to load '+filename) }) }
@@ -12,7 +12,7 @@ export class Sound {
   }
   play() {    
     if(!this.buf)return false
-    let src=Sound.ctx.createBufferSource(); if(!src)return false
+    const src=Sound.ctx.createBufferSource(); if(!src)return false
     src.buffer=this.buf; if(!src.start) src.start=src.noteOn; if(!src.start)return false
     this.node=Sound.ctx.createGain()
     this.node.gain.value=this.vol * Sound.masterVolume  // !!!!!
@@ -29,7 +29,7 @@ export class Animation {
   //frames=null; static ctx
   constructor(frames) {this.frames=frames} // list of images
   draw(x,y,w,h,i) {
-    let im=this.frames[Math.floor(i)%this.frames.length]; 
+    const im=this.frames[Math.floor(i)%this.frames.length]; 
     Animation.ctx.drawImage(im,x,y,w,h)   //w*im.height/im.width)
   }
   get aspect() { return this.frames[0].height/this.frames[0].width }
@@ -44,11 +44,12 @@ export const isKeyDown = (()=>{
 export class Filmstrip {
   constructor(spritesheet, xs, ys) {
     this.spritesheet=spritesheet; this.xs=xs; this.ys=ys
-    this.nframes=this.spritesheet.width/this.xs
-    console.log('Number of frames = ',this.nframes)
+    // this.nframes=this.spritesheet.width/this.xs
+    // console.log('Number of frames = ',this.nframes)
   }
   draw(x,y,w,h,i) {
-    let nframe=Math.floor(i)%this.nframes
+    const nframes=this.spritesheet.width/this.xs
+    const nframe=Math.floor(i)%nframes
     Filmstrip.ctx.drawImage(this.spritesheet, nframe*this.xs,0,this.xs,this.ys, x,y,w,h)
   }
 }
