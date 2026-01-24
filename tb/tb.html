@@ -59,11 +59,10 @@
             float:left;margin:0;padding:0;text-align:center; border-radius:8px; font-family:'gameFont',sans-serif;font-size: 4vmin;
             background-color:#666; color:white;
             background-repeat: no-repeat;}
-    button:disabled {opacity:25%;}
-    .btn1 { width:var(--btnsize); height:var(--btnsize); background-size:cover; 
-            text-shadow: 2px 2px 3px black;
-          } /* square button */
-    .btn2 { width:var(--btnsize); height:var(--btnsize);font-size: 2.2vmin;}
+    button:disabled {visibility:hidden; }/*opacity:25%;}*/
+    .btn1 {width:var(--btnsize); height:var(--btnsize); background-size:cover; text-shadow: 2px 2px 3px black;}
+    .btn1s{width:var(--btnsize); height:var(--btnsize); background-size:cover; text-shadow: 2px 2px 3px black; border:solid 5px yellow;}
+    .btn2 {width:var(--btnsize); height:var(--btnsize);font-size: 2.2vmin;}
     .separator { height:16px; clear:left; }
     .indepth {font-size:1.3rem;color:#EEE;}
   </style>
@@ -156,12 +155,15 @@
       <button id="btnReset" class="btn2" title="Key: Shift-R"> RESET </button>
       <button id="btnNext"  class="btn2" title="Key: [">       NEXT  </button>
     </div>
-    <div style="float:right; width:calc(5*var(--btnsize));" id="actionButtons">
-      <button id="btnLava"  class="btn1" style="background-image:url(lava1.webp);" disabled="disabled"> H </button>
-      <button id="btnWater" class="btn1" style="background-image:url(water1.webp);" disabled="disabled"> J </button>
-      <button id="btnCross" class="btn1" style="background-image:url(crossing.webp);" disabled="disabled"> K </button>
-      <button id="btnToad"  class="btn1" style="background-image:url(happy1.webp); color:#FFF;" disabled="disabled"> L </button>
-      <button id="btnGrass" class="btn1" style="background-image:url(grass.webp);" disabled="disabled"> ; </button>
+    <div style="float:right; width:calc(8*var(--btnsize));" id="divPalette">
+      <button id="btnLava"  class="btn1" style="background-image:url(lava1.webp);"> H </button>
+      <button id="btnWater" class="btn1" style="background-image:url(water1.webp);"> J </button>
+      <button id="btnCross" class="btn1" style="background-image:url(crossing.webp);"> K </button>
+      <button id="btnToad"  class="btn1" style="background-image:url(happy1.webp);"> L </button>
+      <button id="btnWall"  class="btn1" style="background-image:url(brick.webp);"> </button>
+      <button id="btnSwitch"  class="btn1" style="background-image:url(sourceoff.webp);"> </button>
+      <button id="btnPlate"  class="btn1" style="background-image:url(plateoff.webp);"> </button>
+      <button id="btnGrass" class="btn1" style="background-image:url(grass.webp);"> ; </button>
     </div>
   </div>
 
@@ -179,6 +181,7 @@
         PEACH=4,PEACH_BURNING=5,BOWSER=6,BOWSER_BURNING=7,ASHES=8,
         PLATE=9,QUESTION=10
     const PLAYING=0,BOWSER_DIED=1,PEACH_DIED=-1,MARIO_DIED=-2
+    const BRUSH_GRASS=0,BRUSH_LAVA=1,BRUSH_WATER=2,BRUSH_CROSS=3,BRUSH_TOAD=4,BRUSH_WALL=5,BRUSH_SWITCH=6,BRUSH_PLATE=7
     const DIRS=[[1,0],[-1,0],[0,1],[0,-1]]
     
     let X,Y // level size
@@ -187,10 +190,8 @@
     let lastDirWalked,stalled=false
     let helpText=''
     let winlose=PLAYING 
-    let preconverge=100,cheating=0
-
-    const starSize =2.0 // can make this a TOADML flag
-
+    let preconverge=100,cheating=false,brush=0
+    const starSize=2.0 // can make this a TOADML flag
     let joyForce=0
     let timeoutID
 
@@ -237,35 +238,30 @@
     function walkE() {tryWalk(0)}
     function walkN() {tryWalk(3)}
     function walkS() {tryWalk(2)}
-    // function goSlow()  {timeStepInMilliseconds=100}
-    // function goFast()  {timeStepInMilliseconds=0}
-    function placeLava()  {let x=xCursor+DIRS[marioOrientation][0],y=yCursor+DIRS[marioOrientation][1];ground[x+X*y]=FRESH|ON|CONDUCTING; soundCoin.play()}
-    function placeWater() {let x=xCursor+DIRS[marioOrientation][0],y=yCursor+DIRS[marioOrientation][1];ground[x+X*y]=CONDUCTING; soundCoin.play()}
-    function placeGrass() {let x=xCursor+DIRS[marioOrientation][0],y=yCursor+DIRS[marioOrientation][1];ground[x+X*y]=0;    soundCoin.play()}
-    function placeToad()  {let x=xCursor+DIRS[marioOrientation][0],y=yCursor+DIRS[marioOrientation][1];ground[x+X*y]=GATE; soundCoin.play()}
-    function placeSubway(){ // actually TOGGLE SUBWAY ON/OFF
-      let x=xCursor+DIRS[marioOrientation][0],y=yCursor+DIRS[marioOrientation][1];
-      if(subway[x+X*y]) {
-        subway[x+X*y]=0
-        if (!ground[x+X*y]) ground[x+X*y]=CONDUCTING
-      }
-      else subway[x+X*y]=3
+    function resetButtonStyles() {
+      btnLava.className="btn1"
+      btnWater.className="btn1"
+      btnCross.className="btn1"
+      btnToad.className="btn1"
+      btnGrass.className="btn1"
+      btnWall.className="btn1"
+      btnSwitch.className="btn1"
+      btnPlate.className="btn1"
     }
-    function toggleCheating() {
-      if (cheating) {
-        cheating = 0
-      }
-      else {
-        cheating = 1
-      }
-      btnLava.disabled = !cheating
-      btnWater.disabled = !cheating
-      btnToad.disabled = !cheating
-      btnCross.disabled = !cheating
-      btnGrass.disabled = !cheating
+    function selectLava()  {brush=BRUSH_LAVA; resetButtonStyles(); btnLava.className="btn1s"}
+    function selectWater() {brush=BRUSH_WATER; resetButtonStyles(); btnWater.className="btn1s"}
+    function selectCross() {brush=BRUSH_CROSS; resetButtonStyles(); btnCross.className="btn1s"}
+    function selectToad()  {brush=BRUSH_TOAD; resetButtonStyles(); btnToad.className="btn1s"}
+    function selectGrass() {brush=BRUSH_GRASS; resetButtonStyles(); btnGrass.className="btn1s"}
+    function selectWall()  {brush=BRUSH_WALL; resetButtonStyles(); btnWall.className="btn1s"}
+    function selectSwitch() {brush=BRUSH_SWITCH; resetButtonStyles(); btnSwitch.className="btn1s"}
+    function selectPlate()  {brush=BRUSH_PLATE; resetButtonStyles(); btnPlate.className="btn1s"}
+    // function selectLava()  {let x=xCursor+DIRS[marioOrientation][0],y=yCursor+DIRS[marioOrientation][1];ground[x+X*y]=FRESH|ON|CONDUCTING; soundCoin.play()}
+    function setCheating(c) {
+      if (c) {cheating=true; divPalette.style.visibility='visible'}
+      else   {cheating=false; divPalette.style.visibility='hidden'}
     }
-
-
+    function toggleCheating() { setCheating(!cheating) }
     function extract(tag, source) {
       const regex = new RegExp('\\s+<' + tag + '>(.*?)<\/' + tag + '>', 'gs')
       const match = regex.exec(source)
@@ -282,7 +278,6 @@
       setScaling()
       btnPrev.disabled = (level==0)             // if current level is 0, disable "Previous Level" button
       btnNext.disabled = (level==levelMaps.length-1) // if we are on last level, disable "Next Level" button
-      btnNext.style.animation = ""
       btnReset.style.animation = ""
       localStorage.setItem("storedLevel", level)
       document.activeElement.blur()  // remove focus from whatever button was pressed
@@ -293,9 +288,7 @@
     function loadLevel(levelMap) {
       // console.log(level)
       // console.log(levelMap)
-
-
-      preconverge=100; cheating=0; helpText='Level '+level  // defaults
+      preconverge=100; cheating=false; helpText='Level '+level  // defaults
       {
         const [content,remainder]=extract('timestep', levelMap); levelMap=remainder
         if(content) {
@@ -310,11 +303,8 @@
       {const [content,remainder]=extract('help', levelMap); levelMap=remainder; if(content) helpText=content}
       if (levelName) {title.innerHTML=levelName; title.style.display='block'}
       else           {title.style.display='none'}
-      btnLava.disabled = !cheating
-      btnWater.disabled = !cheating
-      btnToad.disabled = !cheating
-      btnCross.disabled = !cheating
-      btnGrass.disabled = !cheating
+      setCheating(cheating)
+      
       let rows = /<levelmap>\s*?[\r\n](.*?)<\/levelmap>/gs . exec(levelMap)
       try { rows = rows[1] } catch (e) { rows = '####M####'}
       rows = rows.split(/[\r\n]/).filter(i=>i)
@@ -658,21 +648,21 @@
         }
       }
       //======== DEBUGGING
-      if (cheating) {
-        for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) { 
-          ctx.fillStyle='#fff'
-          ctx.font = 'bold 16px sans-serif'
-          ctx.fillText(ground[x+X*y],  (x+.5)*a, (y+.25)*a)
-          ctx.fillText(extras[x+X*y],  (x+.5)*a, (y+.75)*a)
-        }
-      }
+      // if (cheating) {
+      //   for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) { 
+      //     ctx.fillStyle='#fff'
+      //     ctx.font = 'bold 16px sans-serif'
+      //     ctx.fillText(ground[x+X*y],  (x+.5)*a, (y+.25)*a)
+      //     ctx.fillText(extras[x+X*y],  (x+.5)*a, (y+.75)*a)
+      //   }
+      // }
     }
     
     function checkVictory() {
       //title.innerHTML = ''+winlose // TEMPORARY DEBUGGING
       // title.innerHTML = ''+tBowser
+      if (cheating) return // can't lose in cheat mode
 
-      //if (cheating) return // can't lose in cheat mode
       for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
         // if (winlose!=BOWSER_DIED && extras[x+X*y]==BOWSER && ground[x+X*y]&ON) {
         if (extras[x+X*y]==BOWSER && ground[x+X*y]&ON) {
@@ -766,11 +756,11 @@
       switch (e.key) {
         case '[': prevLevel(); break
         case ']': nextLevel(); break
-        case 'h':case'H':if(cheating) placeLava(); break    // add hot burning
-        case 'j':case'J':if(cheating) placeWater(); break    // add cold burning
-        case 'k':case'K':if(cheating) placeSubway(); break // toggle crossing
-        case 'l':case'L':if(cheating) placeToad(); break    // add NOR gate (Toad)
-        case ';':case';':if(cheating) placeGrass(); break // erase current ground  //case 'Backspace': case 'Delete':                 
+        case 'h':case'H':if(cheating) selectLava(); break    // add hot burning
+        case 'j':case'J':if(cheating) selectWater(); break    // add cold burning
+        case 'k':case'K':if(cheating) selectCross(); break // toggle crossing
+        case 'l':case'L':if(cheating) selectToad(); break    // add NOR gate (Toad)
+        case ';':case';':if(cheating) selectGrass(); break // erase current ground  //case 'Backspace': case 'Delete':                 
         case 'C': toggleCheating(); break
         case 'R': resetLevel(); break    // reset level
         default: processed=false
@@ -819,6 +809,56 @@
       joystick.style.transform='translate(0,0)'
       stalled=false
     }
+
+
+    function paint(x, y) { // overwrite cell using current brush
+      if (x>=0&&x<X&&y>=0&&y<Y) {
+        soundCoin.play()
+        switch (brush) {
+          case BRUSH_GRASS: subway[x+X*y]=extras[x+X*y]=0; ground[x+X*y]=0; break
+          case BRUSH_LAVA:  subway[x+X*y]=extras[x+X*y]=0; ground[x+X*y]=CONDUCTING|FRESH|ON; break
+          case BRUSH_WATER: subway[x+X*y]=extras[x+X*y]=0; ground[x+X*y]=CONDUCTING|FRESH; break
+          case BRUSH_WALL:  subway[x+X*y]=0; ground[x+X*y]=0; extras[x+X*y]=WALL; break
+          case BRUSH_TOAD:
+            if (ground[x+X*y] & GATE) {ground[x+X*y]^=ON}
+            else {subway[x+X*y]=extras[x+X*y]=0; ground[x+X*y]=GATE|ON}
+            break
+          case BRUSH_SWITCH:
+            if (ground[x+X*y] & SOURCE) {ground[x+X*y]^=ON}
+            else {subway[x+X*y]=0; ground[x+X*y]=SOURCE|FRESH;extras[x+X*y]=0;}     
+            break
+          case BRUSH_PLATE: subway[x+X*y]=0; ground[x+X*y]=SOURCE|FRESH;extras[x+X*y]=PLATE; break
+          case BRUSH_CROSS:
+            if(subway[x+X*y]) {subway[x+X*y]=0; if (!ground[x+X*y]) ground[x+X*y]=CONDUCTING} // REMOVE SUBWAY
+            else subway[x+X*y]=CONDUCTING|FRESH // ADD SUBWAY
+            break
+        }
+      }
+    }
+    let mouseIsDown = false
+    function canvasMouseDown(e) {
+      e.preventDefault(); e.stopPropagation()
+      const rect=canvas.getBoundingClientRect()
+      paint(Math.floor((e.clientX - rect.left)/cellsize), Math.floor((e.clientY - rect.top)/cellsize))
+    }
+    function canvasMouseMove(e) {
+      if (!e.buttons) return
+      e.preventDefault(); e.stopPropagation()
+      const rect=canvas.getBoundingClientRect()
+      paint(Math.floor((e.clientX - rect.left)/cellsize), Math.floor((e.clientY - rect.top)/cellsize))
+    }    
+    function canvasTouchStart(e) {
+      if (e.touches.length==1) {e.preventDefault(); e.stopPropagation()}
+      const rect=canvas.getBoundingClientRect()
+      paint(Math.floor((e.touches[0].clientX - rect.left)/cellsize), Math.floor((e.touches[0].clientY - rect.top)/cellsize))
+    }
+    function canvasTouchMove(e) {
+      if (e.touches.length==1) {e.preventDefault(); e.stopPropagation()}
+      const rect=canvas.getBoundingClientRect()
+      paint(Math.floor((e.touches[0].clientX - rect.left)/cellsize), Math.floor((e.touches[0].clientY - rect.top)/cellsize))
+    }
+    
+
     function launchGame() {
       level = localStorage.getItem("storedLevel")
       if (level) {level=Number(level)} else level=0
@@ -829,11 +869,14 @@
       btnReset.addEventListener('click', resetLevel)
       btnPrev.addEventListener('click', prevLevel)
       btnNext.addEventListener('click', nextLevel)
-      btnLava.addEventListener('click', placeLava)
-      btnWater.addEventListener('click', placeWater)
-      btnCross.addEventListener('click', placeSubway)
-      btnGrass.addEventListener('click', placeGrass)
-      btnToad.addEventListener('click', placeToad)
+      btnLava.addEventListener('click', selectLava)
+      btnWater.addEventListener('click', selectWater)
+      btnCross.addEventListener('click', selectCross)
+      btnGrass.addEventListener('click', selectGrass)
+      btnToad.addEventListener('click', selectToad)
+      btnWall.addEventListener('click', selectWall)
+      btnSwitch.addEventListener('click', selectSwitch)
+      btnPlate.addEventListener('click', selectPlate)
       btnCheat.addEventListener('click', toggleCheating)
       document.body.removeEventListener('keydown', launchGame, false)
 
@@ -843,6 +886,10 @@
       document.body.addEventListener('dblclick', e=>e.preventDefault())
       document.body.addEventListener('keydown', keyDown)
       document.body.addEventListener('keyup', keyUp)
+      canvas.addEventListener('touchstart', canvasTouchStart)
+      canvas.addEventListener('touchmove', canvasTouchMove)
+      canvas.addEventListener('mousedown', canvasMouseDown)
+      canvas.addEventListener('mousemove', canvasMouseMove)
       joystick.addEventListener('touchstart', joyTouchStart)
       joystick.addEventListener('touchmove',  joyTouchMove)
       joystick.addEventListener('touchend',  joyTouchEnd)
@@ -854,6 +901,7 @@
         timeStepInMilliseconds=Number(sliderSpeed.value);
         divSpeed.innerText='DELAY '+timeStepInMilliseconds
       }
+      selectWater()
       requestAnimationFrame(animate)
     }
 
