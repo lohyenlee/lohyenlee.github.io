@@ -132,9 +132,25 @@
   <div id="controls" style="position:fixed; bottom:0; left:0; width:100%;">
     <div style="position: absolute; left:0;bottom:0; width:calc(3*var(--btnsize));" id="joyContainer">
       <div id="joyring" style="
+      visibility:hidden;
       z-index:2; position:absolute; left:0; bottom:0; width:130px; height:130px; 
       background-image:url('joystick.webp'); background-position:center; background-size:130px; background-repeat: no-repeat;">
       </div>
+      <div id="joystick" style="
+      display:none;
+      z-index:3; position:absolute; left:0; bottom:0; width:150px; height:150px; 
+      background-image:url('dpad.webp'); background-position:center; background-size:130px; background-repeat: no-repeat;
+      color:white; text-align:center; vertical-align:middle;">
+      <!-- <div style="height: 8px;"></div><br>W<br>A &nbsp; &nbsp;  D<br> S -->
+      </div>
+
+      <!-- <div id="joyring" style="
+      z-index:2; position:absolute; left:0; bottom:0; width:130px; height:130px; 
+      background-image:url('joystick.webp'); background-position:center; background-size:130px; background-repeat: no-repeat;">
+      </div> -->
+
+
+<!-- 
       <div id="joystick" style="
       display:none;
       z-index:3; position:absolute; left:0; bottom:0; width:130px; height:130px; 
@@ -142,7 +158,7 @@
       color:white; text-align:center; vertical-align:middle;
       transform:translate(0,0);">
       <div style="height: 8px;"></div><br>W<br>A &nbsp; &nbsp;  D<br> S
-      </div>
+      </div> -->
     </div>
     <div style="display:flex; vertical-align:bottom; float:right; margin:0ex 0ex 0ex 0ex;">
       <div>
@@ -155,16 +171,17 @@
       <button id="btnReset" class="btn2" title="Key: Shift-R"> RESET </button>
       <button id="btnNext"  class="btn2" title="Key: [">       NEXT  </button>
     </div>
-    <div style="float:right; width:calc(8*var(--btnsize));" id="divPalette">
-      <button id="btnLava"  class="btn1" style="background-image:url(lava1.webp);"> H </button>
-      <button id="btnWater" class="btn1" style="background-image:url(water1.webp);"> J </button>
-      <button id="btnCross" class="btn1" style="background-image:url(crossing.webp);"> K </button>
-      <button id="btnToad"  class="btn1" style="background-image:url(happy1.webp);"> L </button>
-      <button id="btnWall"  class="btn1" style="background-image:url(brick.webp);"> </button>
-      <button id="btnSwitch"  class="btn1" style="background-image:url(sourceoff.webp);"> </button>
-      <button id="btnPlate"  class="btn1" style="background-image:url(plateoff.webp);"> </button>
-      <button id="btnGrass" class="btn1" style="background-image:url(grass.webp);"> ; </button>
-    </div>
+  </div>
+  <div style="position:fixed; right:0; top:0; visibility:hidden; z-index:5; width:calc(2*var(--btnsize));
+      border:solid 5px black; background-color: black;" id="divPalette">
+    <button id="btnWall"  class="btn1" style="background-image:url(brick.webp);"></button>
+    <button id="btnGrass" class="btn1" style="background-image:url(grass.webp);"></button>
+    <button id="btnLava"  class="btn1" style="background-image:url(lava1.webp);"></button>
+    <button id="btnWater" class="btn1" style="background-image:url(water1.webp);"></button>
+    <button id="btnCross" class="btn1" style="background-image:url(bridge.webp);"></button>
+    <button id="btnToad"  class="btn1" style="background-image:url(happy1.webp);"></button>
+    <button id="btnSwitch"  class="btn1" style="background-image:url(sourceoff.webp);"> </button>
+    <button id="btnPlate"  class="btn1" style="background-image:url(plateoff.webp);"> </button>
   </div>
 
 
@@ -519,7 +536,7 @@
           if (g & ON)  animLava.draw(x*a, y*a, a, a, frm) // conducting, on
           else         animWater.draw(x*a, y*a, a, a, frm)// conducting, off
         }
-        else if (g & SOURCE) {
+        else if ((g & SOURCE) && extras[x+X*y]!=PLATE) {
           if (g & ON) {animLava.draw(x*a,y*a,a,a, frm); ctx.drawImage(imgSourceOn, x*a,y*a,a,a)} // P Switch on
           else        {animWater.draw(x*a,y*a,a,a,frm); ctx.drawImage(imgSourceOff, x*a, y*a, a, a)} // P Switch off
         }
@@ -557,8 +574,8 @@
           case WALL: break; // this was done in the earlier loop
           case QUESTION: ctx.drawImage(imgQuestion, x*a,y*a,a,a); break  
           case PLATE:
-            if (ground[x+X*y] & ON) ctx.drawImage(imgPlateOn, x*a,y*a,a,a)
-            else                    ctx.drawImage(imgPlateOff, x*a,y*a,a,a)
+            if (ground[x+X*y] & ON) {animLava.draw(x*a,y*a,a,a, frm);ctx.drawImage(imgPlateOn, x*a,y*a,a,a)}
+            else                   {animWater.draw(x*a,y*a,a,a, frm);ctx.drawImage(imgPlateOff, x*a,y*a,a,a)}
             break
           case LAMP:
             xcen=(x+.5)*a; ycen=(y+.5)*a
@@ -756,11 +773,11 @@
       switch (e.key) {
         case '[': prevLevel(); break
         case ']': nextLevel(); break
-        case 'h':case'H':if(cheating) selectLava(); break    // add hot burning
-        case 'j':case'J':if(cheating) selectWater(); break    // add cold burning
-        case 'k':case'K':if(cheating) selectCross(); break // toggle crossing
-        case 'l':case'L':if(cheating) selectToad(); break    // add NOR gate (Toad)
-        case ';':case';':if(cheating) selectGrass(); break // erase current ground  //case 'Backspace': case 'Delete':                 
+        // case 'h':case'H':if(cheating) selectLava(); break    // add hot burning
+        // case 'j':case'J':if(cheating) selectWater(); break    // add cold burning
+        // case 'k':case'K':if(cheating) selectCross(); break // toggle crossing
+        // case 'l':case'L':if(cheating) selectToad(); break    // add NOR gate (Toad)
+        // case ';':case';':if(cheating) selectGrass(); break // erase current ground  //case 'Backspace': case 'Delete':                 
         case 'C': toggleCheating(); break
         case 'R': resetLevel(); break    // reset level
         default: processed=false
@@ -785,7 +802,7 @@
 
       joyX=clamp(event.touches[0].clientX-joyAnchorX,-30,30)
       joyY=clamp(event.touches[0].clientY-joyAnchorY,-30,30)
-      joystick.style.transform=`translate(${joyX}px,${joyY}px)`
+      // joystick.style.transform=`translate(${joyX}px,${joyY}px)`
       joyForce = Math.hypot(joyX,joyY) // decide whether to walk ONE STEP
       if (joyForce<5) { // weak force, do nothing
       }
@@ -802,18 +819,18 @@
       e.preventDefault()
       joyX=clamp(event.touches[0].clientX-joyAnchorX,-30,30)
       joyY=clamp(event.touches[0].clientY-joyAnchorY,-30,30)
-      joystick.style.transform=`translate(${joyX}px,${joyY}px)`
+      // joystick.style.transform=`translate(${joyX}px,${joyY}px)`
     }
     function joyTouchEnd(e) {
       joyX=0; joyY=0
-      joystick.style.transform='translate(0,0)'
+      // joystick.style.transform='translate(0,0)'
       stalled=false
     }
 
 
     function paint(x, y) { // overwrite cell using current brush
       if (x>=0&&x<X&&y>=0&&y<Y) {
-        soundCoin.play()
+        soundCoin.play()  // should add logic so that sound only plays if the map is actually changed
         switch (brush) {
           case BRUSH_GRASS: subway[x+X*y]=extras[x+X*y]=0; ground[x+X*y]=0; break
           case BRUSH_LAVA:  subway[x+X*y]=extras[x+X*y]=0; ground[x+X*y]=CONDUCTING|FRESH|ON; break
@@ -830,7 +847,7 @@
           case BRUSH_PLATE: subway[x+X*y]=0; ground[x+X*y]=SOURCE|FRESH;extras[x+X*y]=PLATE; break
           case BRUSH_CROSS:
             if(subway[x+X*y]) {subway[x+X*y]=0; if (!ground[x+X*y]) ground[x+X*y]=CONDUCTING} // REMOVE SUBWAY
-            else subway[x+X*y]=CONDUCTING|FRESH // ADD SUBWAY
+            else {subway[x+X*y]=CONDUCTING|FRESH; ground[x+X*y]|=CONDUCTING|FRESH}  // ADD SUBWAY
             break
         }
       }

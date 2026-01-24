@@ -452,8 +452,8 @@ W.............#..W
 W.?WWWWWWWWW#n#WSW
 W._#n++##  W#W.W#W
 W.W  ##+n# W#W.W#.
-M.s##LNnNnL####.#W
-W.W     #+# WW#W#W
+W.s##LNnNnL####.#W
+M.W     #+# WW#W#W
 WWWWWWWWWWWWWWWWWW
 </levelmap>
 
@@ -511,10 +511,9 @@ W##++n# #++n# #++n#WW.W
 WW#NnNn##NnNn##NnNn#N#.
  WL..#+L...#+L...#+LWWW
  W#....##....#.....n#.W
- W#.....#####+####n+n#W
- W#..........#.......#W
- W#..........n#..#P###W
- W##########n+n###....W
+ W#.....#####++###n+n#W
+ W#..........n#......#W
+ W##########n+n###P###W
  WWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
