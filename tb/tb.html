@@ -142,7 +142,7 @@
       background-image:url('joystick.webp'); background-position:center; background-size:90px; background-repeat: no-repeat;
       color:white; text-align:center; vertical-align:middle;
       transform:translate(0,0);">
-      <div style="height: 8px;"></div><br>E<br>S &nbsp; &nbsp;  F<br> D
+      <div style="height: 8px;"></div><br>W<br>A &nbsp; &nbsp;  D<br> S
       </div>
     </div>
     <div style="display:flex; vertical-align:bottom; float:right; margin:0ex 0ex 0ex 0ex;">
@@ -199,11 +199,11 @@
       if (marioOrientation!=dir) {marioOrientation=dir; stalled=true; timeoutID=setTimeout(()=>stalled=false,50); return true} // Mario changes direction
       if (stalled) return false // already got stuck going in that direction
       stalled=false; 
+      //======== Check for various cases including collisions with objects
+      if (xCurNext!=xCursor || yCurNext!=yCursor) return false // Previous walk in progress; do nothing
+      //======== Check for transition to next/prev level
       const dx=DIRS[dir][0],dy=DIRS[dir][1]
       let xnew=xCursor+dx,ynew=yCursor+dy
-      //======== Check for various cases including collisions with objects
-      if (xMario!=xCursor || yMario!=yCursor) return false // Previous walk in progress; do nothing
-      //======== Check for transition to next/prev level
       if (xnew<=-1 && level>0) {setLevel(level-1); return}
       if (xnew>=X && winlose!=PEACH_DIED) {setLevel(level+1); return} // Advance level provided that Peach didn't die
       if (xnew<0||xnew>=X||ynew<0||ynew>=Y) {soundBuzz.play(); stalled=true; return false} // Illegal move
@@ -225,7 +225,7 @@
       }
       //======== No obstacles; start walking!
       soundTock.play(); setTimeout(()=>soundTock.play(),130); 
-      // xCursor=xnew; yCursor=ynew;
+      // console.log(nWalk,xMario,yMario,stalled)
       xCurNext=xnew; yCurNext=ynew; 
       tWalk=Date.now(); return true
     }
@@ -398,12 +398,16 @@
         }
         // N=ground[x+X*(y-1)]
         // S=ground[x+X*(y+1)]        
-        let EE=E&(CONDUCTING|SOURCE)
-        let WW=W&(CONDUCTING|SOURCE|GATE)
-        let NN=N&(CONDUCTING|SOURCE)
-        let SS=S&(CONDUCTING|SOURCE)
         //======== If cell is a NOR gate, do NOR logic
         if (G&GATE) {
+          // within this code block, if N and S neighbors are gates, they do NOT count as inputs
+          if (N&GATE) N=0
+          if (S&GATE) S=0
+          let EE=E&(CONDUCTING|SOURCE)
+          let WW=W&(CONDUCTING|SOURCE|GATE)
+          let NN=N&(CONDUCTING|SOURCE)
+          let SS=S&(CONDUCTING|SOURCE)
+
           if      ( !WW && !NN && !SS ) continue                              // gate has no inputs
           else if ( !(W&ON) && !(N&ON) && !(S&ON)) groundNew[x+X*y] = GATE|ON // all inputs are OFF
           else if (  WW&&(W&ON)  || NN&&(N&ON)  || SS&&(S&ON) ) groundNew[x+X*y] = GATE&~ON
@@ -535,26 +539,23 @@
             animHappy.draw(x*a,y*a,a,a, tCur/14)
           } else { // gate is OFF
             animWater.draw(x*a, y*a, a, a, frm)
-            if (ground[(x-1)+X*y]&ON) ctx.drawImage(imgLava, 0,0,12,24, x*a,y*a,a/2,a)
-            if (ground[x+X*(y-1)]&ON) ctx.drawImage(imgLava, 0,0,24,12, x*a,y*a,a,a/2)
-            if (ground[x+X*(y+1)]&ON) ctx.drawImage(imgLava, 0,12,24,12, x*a,y*a+a/2,a,a/2)
-            // this code does not correctly render lava coming from N/S subways
+            let N=subway[x+X*(y-1)] ? subway[x+X*(y-1)] : ground[x+X*(y-1)]
+            let S=subway[x+X*(y+1)] ? subway[x+X*(y+1)] : ground[x+X*(y+1)]
+            let W=ground[(x-1)+X*y]&ON
+            if (ground[x+X*(y-1)] & GATE) N=0
+            if (ground[x+X*(y+1)] & GATE) S=0
+            if (W&ON) ctx.drawImage(imgLava, 0,0,12,24, x*a,y*a,a/2,a)
+            if (N&ON) ctx.drawImage(imgLava, 0,0,24,12, x*a,y*a,a,a/2)
+            if (S&ON) ctx.drawImage(imgLava, 0,12,24,12, x*a,y*a+a/2,a,a/2)
             animCrying.draw(x*a,y*a,a,a, tCur/15)
           }
-        }
-
-        
+        }        
       }
 
-      for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
-        switch (extras[x+X*y]) {
-          case VOID: ctx.fillStyle='#000';ctx.fillRect(x*a, y*a, a, a); break // void
-        }
-      }
-
-      //======== DRAW CERTAIN EXTRAS (WALLS)
+      //======== DRAW CERTAIN EXTRAS (VOIDS AND WALLS)
       for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
         switch (extras[x+X*y]) { 
+          case VOID: ctx.fillStyle='#000';ctx.fillRect(x*a, y*a, a, a); break // void
           case WALL: ctx.drawImage(imgBrick, x*a, y*a, a, a); break
         }
       }
@@ -642,7 +643,7 @@
       } else {
         const maxWalkSteps = 6
         if (xCursor!=xCurNext||yCursor!=yCurNext) nWalk = Math.floor(((Date.now() - tWalk))/17) // 17 ms per frame
-        if (nWalk>=maxWalkSteps) {  xCursor=xCurNext; yCursor=yCurNext; nWalk=0} // go back to standing still
+        if (nWalk>=maxWalkSteps) {xCursor=xCurNext; yCursor=yCurNext; nWalk=0} // go back to standing still
         xMario = xCursor + (xCurNext-xCursor)*nWalk/maxWalkSteps
         yMario = yCursor + (yCurNext-yCursor)*nWalk/maxWalkSteps
         
@@ -660,8 +661,8 @@
       if (cheating) {
         for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) { 
           ctx.fillStyle='#fff'
-          ctx.font = 'bold 20px sans-serif'
-          ctx.fillText(ground[x+X*y],  (x+.5)*a, (y+.5)*a)
+          ctx.font = 'bold 16px sans-serif'
+          ctx.fillText(ground[x+X*y],  (x+.5)*a, (y+.25)*a)
           ctx.fillText(extras[x+X*y],  (x+.5)*a, (y+.75)*a)
         }
       }
@@ -680,7 +681,6 @@
 
           if (winlose==PLAYING) {
             setTimeout( ()=>soundWin.play(), 1000) // play victory sound
-            // setTimeout(()=>btnNext.style.animation = 'flashingAnimation 0.5s step-start infinite', 500)
             winlose=BOWSER_DIED
           }
           break
@@ -711,10 +711,10 @@
       render() 
       checkVictory()
       
-      if      (isKeyDown('s')||isKeyDown('S')) walkW()//if (isKeyDown('ArrowLeft')) walkW()
-      else if (isKeyDown('f')||isKeyDown('F')) walkE()
-      else if (isKeyDown('e')||isKeyDown('E')) walkN()
-      else if (isKeyDown('d')||isKeyDown('D')) walkS()
+      if      (isKeyDown('a')||isKeyDown('A')||isKeyDown('ArrowLeft')) walkW()
+      else if (isKeyDown('d')||isKeyDown('D')||isKeyDown('ArrowRight')) walkE()
+      else if (isKeyDown('w')||isKeyDown('W')||isKeyDown('ArrowUp')) walkN()
+      else if (isKeyDown('s')||isKeyDown('S')||isKeyDown('ArrowDown')) walkS()
       else { // process joystick ONLY if keyboard is not active
         joyForce = Math.hypot(joyX,joyY) 
         if (joyForce<5) { // weak force, do nothing

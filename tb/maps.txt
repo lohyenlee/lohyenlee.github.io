@@ -2,7 +2,7 @@
 <name>T O A D     B U R N<br>By Yen Lee Loh &amp; Isaac Hutchison (2025) </name>
 <help>
 <h3> WELCOME TO TOAD BURN! </h3>
-MOVE MARIO USING JOYSTICK OR ESDF KEYS. <br>
+MOVE MARIO USING JOYSTICK OR ARROW KEYS. <br>
 ADVANCE THROUGH GAP IN WALL <br>
 OR CLICK "NEXT" TO GO TO WORLD 1-1. <br>
 <a href="toadburnhelp.html" style="color:cyan;">Click here to learn more about Toad Burn </a>
@@ -26,7 +26,7 @@ WWWWWWWWWWWWWWWWWWW
 
 <levelmap> <timestep>100</timestep> <name> 1-1   CLEAR THE WAY </name>
 <help><p>
-MOVE MARIO USING JOYSTICK OR ESDF KEYS.</p><p>
+MOVE MARIO USING JOYSTICK OR ARROW KEYS.</p><p>
 BUMP THE P SWITCH TO STOP THE LAVA! </p>
 <p class="indepth">
 A <a href="https://learn.sparkfun.com/tutorials/button-and-switch-basics/what-is-a-switch">switch</a>
@@ -508,7 +508,7 @@ M.....................W
 WsW_WWWWW_WWWWW_WWWWW.W
 W#WN##   N##   N##  W.W
 W##++n# #++n# #++n#WW.W
-WW#NnNn##NnNn##NnNn#N#W
+WW#NnNn##NnNn##NnNn#N#.
  WL..#+L...#+L...#+LWWW
  W#....##....#.....n#.W
  W#.....#####+####n+n#W
@@ -519,7 +519,7 @@ WW#NnNn##NnNn##NnNn#N#W
 </levelmap>
 
 
-<levelmap> <timestep> 1 </timestep> <name> 3-7   SHIFT TO SUCCESS (NEW BUT BUGGY) </name>
+<levelmap> <timestep> 0 </timestep> <name> 3-7   SHIFT TO SUCCESS </name>
 <help>
 BOTTOM=LOAD, TOP=SHIFT
 <p class="indepth">
@@ -542,30 +542,6 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWW..n#.
                            WWWWWW
 </levelmap>
 
-<levelmap> <timestep> 1 </timestep> <name> 3-7   SHIFT TO SUCCESS </name>
-<help>
-BOTTOM=LOAD, TOP=SHIFT
-<p class="indepth">
-Load data into the first cell using the bottom switch.
-Hit the top switch to open latches 1, 3, and 5. 
-Hit the top switch again to open latches 2 and 4.
-This shift register shifts bits one step at a time!
-</p>
-</help>
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-?.snH...........................W
-M.WW##+n++##+n++##+n++##+n++##..W
-W.s++N#.##+N#.##+N#.##+N#.##+N#.W
-W.#W#.#.#.#.#.#.#.#.#.#.#.#.#.#.W
-W.#NnNn##NnNn##NnNn##NnNn##NnNn#W
-W.#W.#+#...#+#...#+#...#+#...#+#W
-W.LW...L.....L.....L.....L...WWLW
-W..WWWWWWWWWWWWWWWWWWWWWWWWWWW##W
-W.............................+.W
-WWWWWWWWWWWWWWWWWWWWWWWWWWWW..n#.
-                           WWWWWW
-</levelmap>
-
 
 <levelmap> <timestep>0</timestep> 
 <name> 3-8   WORLD 3 BOSS FIGHT </name>
@@ -578,10 +554,9 @@ trigger the shift, and repeat for all 5 bits.
 </help>
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 WW##n#                                           ..W
-W._W.##+n++##+n++##+n++##+n++##+n++##+n++##+n++##..W
-M..s#+N#.##+N#.##+N#.##+N#.##+N#.##+N#.##+N#.##+N#.W
-W.?#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.W
-W.##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn#W
+?._W.##+n++##+n++##+n++##+n++##+n++##+n++##+n++##..W
+W..s#+N#.##+N#.##+N#.##+N#.##+N#.##+N#.##+N#.##+N#.W
+M.##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn#W
 W.#W..#+#...#+#...#+#...#+#...#+#...#+#...#+#...#+#W
 W.LW..........L...........L...........L......###..LW
 W.#W..........#...........#...........#......#.####W
@@ -591,8 +566,6 @@ W..WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW#.WW
 W...............................................B.PW
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
-
-
 
 <levelmap> <timestep>100</timestep> <name></name>
 <help>
@@ -751,7 +724,7 @@ M.................
 </levelmap>
 
 
-<levelmap> <timestep> 0</timestep> <name> 4-6   RUN THE GAUNTLET </name>
+<levelmap> <timestep> 20</timestep> <name> 4-6   RUN THE GAUNTLET </name>
 <help>
 </help>
 WWWWWWWWWWWWWWWWWWWWWW
@@ -895,13 +868,12 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 <help>
 FAST, MEDIUM, OR SLOW?  YOUR CHOICE!
 <p class="indepth">
-This is an input bus.  
-Use the address switches to decide which input line is connected to the output.
+Use one-hot addressing to select an input line to read from.
 </p>
 </help>
 WWWWWWWWWWWWWWWWWWWWW
 W?..................W
-W..M..s..s..s.......W
+.M...._.._.._.......W
 W.....n# n# n#     .W
 W..##..#  #  #     .W
 W..n###n##+##+##   .W
@@ -909,41 +881,32 @@ W......   #  # #   .W
 W#++#..   #  # #   .W
 Wn########n##+#nn#LB.
 W......      # #   .W
-W### ##      # #   .W
+W###.##      # #   .W
 Wn++++#######n##   .W
-W  ###             .W
+W..###.            .W
 WWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 
 
-<levelmap> <timestep>15</timestep> <name> 5-2    GET OFF THE BUS (broken) </name>
+<levelmap> <timestep>15</timestep> <name> 5-2    GET OFF THE BUS </name>
 <help>
 DELIVER PACKAGES TO TARGETS.
 <p class="indepth">
-Use the address switches to control where pulses go.
+Use one-hot addressing to select an output line to write to.
 </p>
 </help>
-WWWWWWWWWWWWWWWWWWWWW
-W...?...............W
-W...M.........     .W
-W....  s  s  sn#   .W
-W....  n# n#   #   .W
-W....   ## # ###   .W
-W....    # # #     .W
-W.... ###n#+#+##L##BW
-W.... #    # #     .W
-W.... #    # #     .W
-W.n###### #n#+##L##BW
-W.#.# # ###  #     .W
-W.#.# #      #     .W
-W.### #######n##L##B.
-W....              .W
-WWWWWWWWWWWWWWWWWWWWW
+W?.................W
+W..................W
+.M..  _  _  _     .W
+W...  n# n# n#    .W
+W... #+n#++#++#L##BW
+W... #    #  #    .W
+Wn########n##+#L##BW
+W#.# #       #    .W
+W### ########n#L##B.
+WWWWWWWWWWWWWWWWWWWW
 </levelmap>
-
-
-
 
 
 <levelmap> <timestep>0</timestep> <name> 5-3    WHAT'S YOUR ADDRESS? </name>
@@ -952,29 +915,21 @@ TOP SWITCHES SELECT ADDRESS LINE.<br>
 BOTTOM SWITCH SENDS PULSE.<br>
 AIM CAREFULLY!
 <p class="indepth">
-This toad circuit combines a binary decoder with a ???
+This toad circuit combines a binary decoder with a ???[
 </p>
 </help>
-  WWWWWWWWWWWWW              
-  Wn#####n####W              
-  W#   # #   #W              
-  W# ##n#+## L#Nn####Nn#L##B.
-  W# #   # #  W       #    . 
-  W# #n### ##L#####Nn#+#L# . 
-W?W# #   #    W     # #  P . 
-W.s##+###n###L###Nn#+#+#L# . 
-W.W  #  #     W   # # #    . 
-M.s#####n####L#Nn#+#+#+#L# . 
-W..WWWWWWWWWWWW # # # #    . 
-W_#############n#######..... 
-WWWWWWWWWWWWWW.............. 
+ WWWWWWWWWWWW.........W
+ Wn#++#n++#Ln##+n#L##B.
+ W# #+n+##  W  ##    .W
+WW# #n+# ##Ln#n++#L# .W
+W?# #  #    W ##   P .W
+W.s#+##n###Ln#++n#L# .W
+W.W # #     W  ##    .W
+M.s###n####Ln#n++#L# .W
+W..WWWWWWWWWW ##     .W
+W_###########n#   ....W
+WWWWWWWWWWWW..........W
 </levelmap>
-
-
-
-
-
-
 
 <levelmap> <timestep>0</timestep> <name> 5-4    THREE BITS OF MEMORY </name>
 <help>
