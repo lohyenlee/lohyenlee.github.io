@@ -141,7 +141,24 @@
       z-index:3; position:absolute; left:0; bottom:0; width:150px; height:150px; 
       background-image:url('dpad.webp'); background-position:center; background-size:130px; background-repeat: no-repeat;
       color:white; text-align:center; vertical-align:middle;">
+      <!-- <div style="height: 8px;"></div><br>W<br>A &nbsp; &nbsp;  D<br> S -->
       </div>
+
+      <!-- <div id="joyring" style="
+      z-index:2; position:absolute; left:0; bottom:0; width:130px; height:130px; 
+      background-image:url('joystick.webp'); background-position:center; background-size:130px; background-repeat: no-repeat;">
+      </div> -->
+
+
+<!-- 
+      <div id="joystick" style="
+      display:none;
+      z-index:3; position:absolute; left:0; bottom:0; width:130px; height:130px; 
+      background-image:url('joystick.webp'); background-position:center; background-size:90px; background-repeat: no-repeat;
+      color:white; text-align:center; vertical-align:middle;
+      transform:translate(0,0);">
+      <div style="height: 8px;"></div><br>W<br>A &nbsp; &nbsp;  D<br> S
+      </div> -->
     </div>
     <div style="display:flex; vertical-align:bottom; float:right; margin:0ex 0ex 0ex 0ex;">
       <div>
@@ -165,8 +182,6 @@
     <button id="btnToad"  class="btn1" style="background-image:url(happy1.webp);"></button>
     <button id="btnSwitch"  class="btn1" style="background-image:url(sourceoff.webp);"> </button>
     <button id="btnPlate"  class="btn1" style="background-image:url(plateoff.webp);"> </button>
-    <button id="btnPeach"  class="btn1" style="background-image:url(peach1.webp); background-size:calc(var(--btnsize)/2); background-position:center;"> </button>
-    <button id="btnQuestion"  class="btn1" style="background-image:url(question.webp);"> </button>
   </div>
 
 
@@ -183,7 +198,7 @@
         PEACH=4,PEACH_BURNING=5,BOWSER=6,BOWSER_BURNING=7,ASHES=8,
         PLATE=9,QUESTION=10
     const PLAYING=0,BOWSER_DIED=1,PEACH_DIED=-1,MARIO_DIED=-2
-    const BRUSH_GRASS=0,BRUSH_LAVA=1,BRUSH_WATER=2,BRUSH_CROSS=3,BRUSH_TOAD=4,BRUSH_WALL=5,BRUSH_SWITCH=6,BRUSH_PLATE=7,BRUSH_PEACH=8,BRUSH_QUESTION=9
+    const BRUSH_GRASS=0,BRUSH_LAVA=1,BRUSH_WATER=2,BRUSH_CROSS=3,BRUSH_TOAD=4,BRUSH_WALL=5,BRUSH_SWITCH=6,BRUSH_PLATE=7
     const DIRS=[[1,0],[-1,0],[0,1],[0,-1]]
     
     let X,Y // level size
@@ -249,8 +264,6 @@
       btnWall.className="btn1"
       btnSwitch.className="btn1"
       btnPlate.className="btn1"
-      btnPeach.className="btn1"
-      btnQuestion.className="btn1"
     }
     function selectLava()  {brush=BRUSH_LAVA; resetButtonStyles(); btnLava.className="btn1s"}
     function selectWater() {brush=BRUSH_WATER; resetButtonStyles(); btnWater.className="btn1s"}
@@ -260,8 +273,7 @@
     function selectWall()  {brush=BRUSH_WALL; resetButtonStyles(); btnWall.className="btn1s"}
     function selectSwitch() {brush=BRUSH_SWITCH; resetButtonStyles(); btnSwitch.className="btn1s"}
     function selectPlate()  {brush=BRUSH_PLATE; resetButtonStyles(); btnPlate.className="btn1s"}
-    function selectPeach()  {brush=BRUSH_PEACH; resetButtonStyles(); btnPeach.className="btn1s"}
-    function selectQuestion()  {brush=BRUSH_QUESTION; resetButtonStyles(); btnQuestion.className="btn1s"}
+    // function selectLava()  {let x=xCursor+DIRS[marioOrientation][0],y=yCursor+DIRS[marioOrientation][1];ground[x+X*y]=FRESH|ON|CONDUCTING; soundCoin.play()}
     function setCheating(c) {
       if (c) {cheating=true; divPalette.style.visibility='visible'}
       else   {cheating=false; divPalette.style.visibility='hidden'}
@@ -858,8 +870,6 @@
             if(subway[x+X*y]) {subway[x+X*y]=0; if (!ground[x+X*y]) ground[x+X*y]=CONDUCTING} // REMOVE SUBWAY
             else {subway[x+X*y]=CONDUCTING|FRESH; ground[x+X*y]|=CONDUCTING|FRESH}  // ADD SUBWAY
             break
-          case BRUSH_PEACH: subway[x+X*y]=0; ground[x+X*y]=CONDUCTING; extras[x+X*y]=PEACH; break
-          case BRUSH_QUESTION: subway[x+X*y]=0; ground[x+X*y]=0; extras[x+X*y]=QUESTION; break
         }
       }
     }
@@ -905,8 +915,6 @@
       btnWall.addEventListener('click', selectWall)
       btnSwitch.addEventListener('click', selectSwitch)
       btnPlate.addEventListener('click', selectPlate)
-      btnPeach.addEventListener('click', selectPeach)
-      btnQuestion.addEventListener('click', selectQuestion)
       btnCheat.addEventListener('click', toggleCheating)
       document.body.removeEventListener('keydown', launchGame, false)
 
