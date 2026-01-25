@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <style>
+    body {background: black; margin:0;padding:0;}
+    #canvas {background: #000; margin:0;padding:0;}
+  </style>
+</head>
+<body>
+  <canvas id="canvas" width="800" height="500"> </canvas>
+
+  <script type="module">
+    /*=======================================
+    MATH UTILITY FUNCTIONS
+    =======================================*/
+    const clamp = (num, min, max) => Math.min(Math.max(num, min), max)
+    const norm = (dx, dy) => Math.sqrt(dx * dx + dy * dy)
+    /*=======================================
+    GRAPHICS UTILITY FUNCTIONS: GRAPHICS PRIMITIVES
+    =======================================*/
+    function drawLine(ctx, r1, r2) {
+      ctx.beginPath();
+      ctx.moveTo(...r1); ctx.lineTo(...r2);
+      ctx.stroke();
+    }
+    function drawCircle(ctx, x, y, r, s = false, f = false) {
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, 2 * Math.PI);
+      if (s) ctx.stroke(); if (f) ctx.fill();
+    }
+    /*=======================================
+    GRAPHICS UTILITY FUNCTIONS: PLOTTING FUNCTIONS AND ASSOCIATED GLOBAL VARIABLES
+    If we were serious about this, we would store these global variables in an object
+    to encapsulate it so that they don't interact with user-defined code.
+    Or we would define a class.
+    =======================================*/
+    var xmin, xmax, ymin, ymax, Xmin, Xmax, Ymin, Ymax;
+    var Xorg, Yorg, xscal, yscal;
+
+    function rescale(x, x1, x2, y1, y2) { return y1 + (y2 - y1) / (x2 - x1) * (x - x1); }
+    function setAxes() { //xmin, xmax, ymin, ymax, Xmin, Xmax, Ymin, Ymax) {
+      xscal = (Xmax - Xmin) / (xmax - xmin); Xorg = Xmin - xscal * xmin;
+      yscal = (Ymax - Ymin) / (ymax - ymin); Yorg = Ymin - yscal * ymin;
+    }
+    function XFromx(x) { return Xorg + xscal * x; }
+    function YFromy(y) { return Yorg + yscal * y; }
+    function drawAxes(ctx) {
+      drawLine(ctx, [0, Yorg], [ctx.canvas.width, Yorg]);
+      drawLine(ctx, [Xorg, 0], [Xorg, ctx.canvas.height]);
+    }
+    function chooseTickParameters(x) {
+      let n = Math.floor(Math.log10(x)); // exponent n 
+      let p = Math.pow(10, n);  // 10^n
+      let m = x / p;   // mantissa
+      if (m > 5) return [10 * p, 5, 10, 10];   // xstep = 10x10^n
+      else if (m > 2) return [5 * p, 2, 4, 4]; // xstep = 5x10^n
+      else if (m > 1) return [2 * p, 5, 25, 5];
+      else return [p, 5, 10, 10]; // [xstep, nB, nA, nT]
+    }
+    function drawTicks(ctx, tickSpacing = 3, tickLengths = [6, 10, 14]) {
+      //const tickSpacing = 4; // minimum spacing between ticks, in pixels
+      //const tickLengths = [6, 9, 12]; // lengths of minor, med, and major ticks, in pixels
+      let nmin, nmax, lC, lB, lA, xstep, ystep, nB, nA, nT;
+      //======= DRAW X AXIS TICKS
+      [xstep, nB, nA, nT] = chooseTickParameters(tickSpacing / xscal);
+      nmin = Math.ceil(xmin / xstep);
+      nmax = Math.floor(xmax / xstep);
+      lC = tickLengths[0] / Math.abs(yscal); // length of minor ticks in world coords
+      lB = tickLengths[1] / Math.abs(yscal);
+      lA = tickLengths[2] / Math.abs(yscal);
+      ctx.textAlign = "center"; ctx.textBaseline = "top";
+      for (let n=nmin; n<=nmax; ++n) {
+        let l = (n % nB) ? lC : (n % nA ? lB : lA); // maj, min, or med tick?
+        let x = n * xstep;
+        if (n != 0) drawLine(ctx, [XFromx(x), YFromy(0)], [XFromx(x), YFromy(l)]);
+        if (n % nT == 0 && x != 0) ctx.fillText(x, XFromx(x), YFromy(0)+8); // tick text?
+      }
+      //======= DRAW Y AXIS TICKS
+      [ystep, nB, nA, nT] = chooseTickParameters(tickSpacing / Math.abs(yscal));
+      nmin = Math.ceil(Math.min(ymin, ymax) / ystep);
+      nmax = Math.floor(Math.max(ymin, ymax) / ystep);
+      lC = tickLengths[0] / Math.abs(xscal);
+      lB = tickLengths[1] / Math.abs(xscal);
+      lA = tickLengths[2] / Math.abs(xscal);
+      ctx.textAlign = "right"; ctx.textBaseline = "middle";
+      for (let n=nmin; n<=nmax; ++n) {
+        let l = (n % nB) ? lC : (n % nA ? lB : lA); // maj, min, or med tick?
+        let y = n * ystep;
+        if (n != 0) drawLine(ctx, [XFromx(0), YFromy(y)], [XFromx(l), YFromy(y)]);
+        if (n % nT == 0 && y != 0) ctx.fillText(y.toFixed(1), XFromx(-.1), YFromy(y));
+      }
+    }
+    function plotList(ctx, xx, yy) {
+      ctx.beginPath();
+      const X=xx.length;
+      for (let n=0; n<X; ++n) {
+        let x=xx[n], y=yy[n];
+        if (n==0) ctx.moveTo(XFromx(x), YFromy(y));
+        else ctx.lineTo(XFromx(x), YFromy(y));
+      }
+      ctx.stroke();
+    }
+
+    //================ GLOBAL SIMULATION VARIABLES
+    const ctx=canvas.getContext("2d");
+    const dt=.01
+    const X=100
+    const xx=new Float32Array(X)
+    const a=new Float32Array(X)
+    const b=new Float32Array(X)
+    const w=new Float32Array(X)
+    const ww=new Float32Array(X)
+    const u=new Float32Array(X)
+    const v=new Float32Array(X)
+    for (let x=0; x<X; ++x) {
+      xx[x]=x
+      a[x]= x/X<.5 ? -1 : +1
+      b[x]= x/X<.5 ?  1 : 1
+      w[x]= x/X<.5 ? 30 : .1
+      u[x]=1.0 + 0.1*Math.cos(.6*x)
+    }
+    w[X-1] = 0
+    for (let x=0; x<X-1; ++x) {
+      ww[x] = 2*w[x]*w[x+1]/(w[x]+w[x+1])
+    }
+    
+    function evolve(timeCurrent) {
+      for (let x=0; x<X; ++x) {
+        const xp = (x+1)%X
+        v[x] = ww[x] * (u[xp] - u[x])
+      }
+
+      for (let x=0; x<X; ++x) {
+        const xm = (x+X-1)%X
+        u[x] -= (a[x]*u[x] + b[x]*u[x]*u[x]*u[x] - v[x] + v[xm])*dt
+      }
+    }
+    function animate(timeCurrent) {
+      evolve()
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      xmin=-X/10; xmax=X; ymin=-1.5; ymax=+1.5
+      Xmin=0; Xmax=canvas.width; Ymin=canvas.height; Ymax=0
+      setAxes()
+      ctx.strokeStyle="#CCCCCC"; ctx.fillStyle="#CCCCCC"; ctx.lineWidth=1
+      drawAxes(ctx)
+      drawTicks(ctx)
+      ctx.strokeStyle="#009900"; ctx.lineWidth=2
+      plotList(ctx, xx, w)
+      ctx.strokeStyle="#996666"; ctx.lineWidth=2
+      plotList(ctx, xx, a)
+      ctx.strokeStyle="#3399CC"; ctx.lineWidth=4
+      plotList(ctx, xx, u)
+      requestAnimationFrame(animate)
+    }
+    
+    //================ MAIN CODE
+    document.body.addEventListener("dblclick", function (e) { e.preventDefault(); })
+    let winWid=visualViewport.width||window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth
+    let winHei=visualViewport.height||window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight
+    canvas.width=winWid
+    canvas.height=winHei
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>

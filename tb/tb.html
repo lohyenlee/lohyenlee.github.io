@@ -287,6 +287,13 @@
     }
 
     function setLevel(newLevel) {
+      //============================== If you're in sandbox mode, SAVE before changing level!
+      if (levelName.trim()=='SANDBOX') {
+        localStorage.setItem('ground', JSON.stringify(ground))
+        localStorage.setItem('subway', JSON.stringify(subway))
+        localStorage.setItem('extras', JSON.stringify(extras))
+      }
+      //==============================
       stalled=true           // Don't ever start a new level while walking
       if (newLevel<0) return // if new level number is illegal, don't load it
       if (newLevel>=levelMaps.length) newLevel=levelMaps.length-1
@@ -374,6 +381,20 @@
       //-------- GAMEPLAY: IDENTIFY START POSITION
       for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) if (rows[y][x]=='M') setPos(x,y)
       xShaking=0; yShaking=0; tCur=0; winlose=PLAYING
+
+
+      //-------- SPECIAL CASE: IF WE'RE IN SANDBOX LEVEL, LOAD SAVED DATA
+      if (levelName.trim()=="SANDBOX") {
+        const _ground = localStorage.getItem("ground")
+        const _subway = localStorage.getItem("subway")
+        const _extras = localStorage.getItem("extras")
+        if (_ground) {
+          ground = JSON.parse(_ground)
+          subway = JSON.parse(_subway)
+          extras = JSON.parse(_extras)
+        } 
+      }
+      
     }
     //===============================================
     // evolve(): EVOLVE CELLULAR AUTOMATON
@@ -492,7 +513,7 @@
     let tCur=0,tMario=0,tPeach=0,tBowser=0
     let timeOfLastFrame=0
     let timeStepInMilliseconds = 1000/60.  //300.
-    let level=0,levelName // current level
+    let level=0,levelName='' // current level
     let xShaking=0,yShaking=0
 
     function setScaling() {
@@ -918,6 +939,11 @@
         timeStepInMilliseconds=Number(sliderSpeed.value);
         divSpeed.innerText='DELAY '+timeStepInMilliseconds
       }
+
+      // window.addEventListener("beforeunload", function(e){
+      //   return "Are you sure to leave this page?";
+      // });
+
       selectWater()
       requestAnimationFrame(animate)
     }

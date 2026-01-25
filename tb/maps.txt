@@ -910,65 +910,86 @@ WWWWWWWWWWWWWWWWWWWW
 
 <levelmap> <timestep>0</timestep> <name> 5-3    WHAT'S YOUR ADDRESS? </name>
 <help>
-TOP SWITCHES SELECT ADDRESS LINE.<br>
-BOTTOM SWITCH SENDS PULSE.<br>
+SWITCHES SELECT ADDRESS LINE.<br>
+PRESSURE PLATE SENDS PULSE.<br>
 AIM CAREFULLY!
 <p class="indepth">
-This toad circuit combines a binary decoder with a ???[
+This toad circuit couples a binary decoder to an output bus(?)
+Depending on the 2-bit address (00,01,10,11), 
+the appropriate latch is opened, sending the pulse along the desired line.
 </p>
 </help>
- WWWWWWWWWWWW.........W
- Wn#++#n++#Ln##+n#L##B.
- W# #+n+##  W  ##    .W
-WW# #n+# ##Ln#n++#L# .W
-W?# #  #    W ##   P .W
-W.s#+##n###Ln#++n#L# .W
-W.W # #     W  ##    .W
-M.s###n####Ln#n++#L# .W
-W..WWWWWWWWWW ##     .W
-W_###########n#   ....W
-WWWWWWWWWWWW..........W
+ WWWWWWWWWWW........W
+ Wn#++#n++Ln#+n#L##B.
+ W# #+n+## W ##    .W
+WW# #n+# #Lnn++#L# .W
+W?# #  #   W##   P .W
+W.s#+##n##Ln++n#L# .W
+W.W # #    W ##    .W
+M.s###n###Lnn++#L# .W
+W..WWWWWWWWW##     .W
+W_#########n#   ....W
+WWWWWWWWWWW.........W
 </levelmap>
 
-<levelmap> <timestep>0</timestep> <name> 5-4    THREE BITS OF MEMORY </name>
+<levelmap> <timestep>0</timestep> <name> 5-4    READ A BIT </name>
+<preconverge> 100 </preconverge>
 <help>
+SWITCHES SELECT ADDRESS LINE.<br>
 <p class="indepth">
-Use the three SR latches at the left of the level to write bits to memory.
-NEEDS TO BE MORE USER FRIENDLY
-
-The three top switches control the address lines.
-The rightmost switch controls the D latch at the output.
-To read a bit, set an address line, then pulse the trigger to the D latch. 
+The binary decoder addresses a 4-bit memory (stored in the state of P switches).
+The addressed bit is copied to the output.
 </p>
 </help>
-WWWWWWWWWWWWWWWWWWWWW
-W     ............
-W    ####n##
-W    #..n# n#####
-W?   ###sn##    #
-W...M...........#
-W.ss  S S S     #
-W.Nn#Ln#+#+##   ##
-W.#+#   # # #   #+
-W....   # # # ##+N#
-W.ss    # # # # # #
-W.nN#L##n#+#n##nnNN#L 
-W.H+#     # #    #+#
-W....     # #
-W.ss      # #
-W.Nn#L####n##
-W #+#        
-WWWWWWWWWWWWWWWWWW
+.........................
+........................
+...............Lsn#   
+ WWWWWWWWWWW.##+++n## 
+ WN#++#n++LN## .... #    
+ W# #+n+## W   LSn# #   
+WW# #N+# #LN###+++n#nn#
+W?# #  #   W          nnL 
+W.s#+##n##LN## LSn#   # 
+WMW # #    W ##+++n#nn# 
+W.s###N###LN#  .... #
+W..WWWWWWWWW#  Lsn# #
+W...........###+++n##
+W
 </levelmap>
 
-
-
-
-
-
-
-
-
+<levelmap> <timestep>0</timestep> <name> 5-5    WRITE A BIT </name>
+<preconverge> 100 </preconverge>
+<help>
+TOP SWITCHES SELECT ADDRESS LINE.<br>
+BOTTOM SWITCH SELECTS DATA.<br>
+STEP ON THE PLATE TO COMMIT DATA TO MEMORY!
+<p class="indepth">
+Here, the binary decoder addresses a bank of four D latches.
+When triggered, the data bit is transmitted to the input of the selected D latch. 
+</p>
+</help>
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+                   #####N++HH   
+ WWWWWWWWWWWW......#     ##+n#  
+ WN#++#n++#LN#+n#L##  ####NnNn# 
+ W# #+n+##  W HH      #     #+L 
+WW# #N+# ##LNn++#L####+##       
+W?# #  #    WHH       # N++HH   
+W.s#+##n###LN++n#L### #  ##+n#  
+M.W # #     W HH    # ####NnNn# 
+W.s###N####Lnn++#L# # #     #+L 
+W..WWWWWWWWWWHH   # # #         
+W._#########NH    # ##+#N++##   
+W...........      #   #  ##+n#  
+W.s###############+#######NnNn# 
+W..............   #   #     #+L 
+W..............   #   #         
+W..............   ####+#N++##   
+W..............       #  ##+n#  
+W..............       ####NnNn# 
+W..............             #+L 
+W
+</levelmap>
 
 
 <levelmap> <timestep>0</timestep> <name> THE END... FOR NOW </name>
