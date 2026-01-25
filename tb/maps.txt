@@ -100,7 +100,16 @@ W.#####Ln#W
 WWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep>100</timestep> <name> 1-6   LOOP THE LOOP </name>
+
+<levelmap> <timestep>0</timestep> <name> 1-6   THE POINT OF NO RETURN </name>
+             
+             
+WWWWWWWWWWWWW
+M....#_......
+WWWWWWWWWWWWW
+</levelmap>
+
+<levelmap> <timestep>100</timestep> <name> 1-7   LOOP THE LOOP </name>
 <help>
 <h2>BRIDGES</h2>
 <p>BRIDGES ALLOW HORIZONTAL AND VERTICAL 
@@ -116,7 +125,7 @@ W.   ###  ..W
 W...........W
 </levelmap>
 
-<levelmap> <timestep> 100 </timestep> <name> 1-7   A LIFE-OR-DEATH DECISION </name>
+<levelmap> <timestep> 100 </timestep> <name> 1-8   A LIFE-OR-DEATH DECISION </name>
 <help>
 <p>BOWSER IS THE BAD GUY... NOT ME!</p>
 </help>
@@ -136,7 +145,7 @@ W......#N#n#P#.W
 WWWWWWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep> 200 </timestep> <name> 1-8   WORLD 1 BOSS FIGHT </name>
+<levelmap> <timestep> 200 </timestep> <name> 1-9   WORLD 1 BOSS FIGHT </name>
 <help>
 <p>HELP ME, MARIO!  YOU NEED TO RUN FAST!</p>
 </help>
@@ -929,7 +938,7 @@ W.W # #    W ##    .W
 M.s###n###Lnn++#L# .W
 W..WWWWWWWWW##     .W
 W_#########n#   ....W
-WWWWWWWWWWW.........W
+WWWWWWWWWW..........W
 </levelmap>
 
 <levelmap> <timestep>0</timestep> <name> 5-4    READ A BIT </name>
@@ -948,13 +957,13 @@ The addressed bit is copied to the output.
  WN#++#n++LN## .... #    
  W# #+n+## W   LSn# #   
 WW# #N+# #LN###+++n#nn#
-W?# #  #   W          nnL 
-W.s#+##n##LN## LSn#   # 
-WMW # #    W ##+++n#nn# 
-W.s###N###LN#  .... #
-W..WWWWWWWWW#  Lsn# #
-W...........###+++n##
-W
+W?# #  #   W          nnLW
+W.s#+##n##LN## LSn#   # #W
+WMW # #    W ##+++n#nn# #W
+W.s###N###LN#  .... #   #W
+W..WWWWWWWWW#  Lsn# #   #W
+W...........###+++n## ..B.
+W........................W
 </levelmap>
 
 <levelmap> <timestep>0</timestep> <name> 5-5    WRITE A BIT </name>

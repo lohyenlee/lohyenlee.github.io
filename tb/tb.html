@@ -636,9 +636,9 @@
             ++tPeach
             break
           case BOWSER:
-            size=a*1.5,xcen=(x+.5)*a,ycen=(y+.5)*a
-            animWater.draw(x*a, y*a, a, a, frm)     
-            fsBowser.draw(xcen-size/2, ycen-size/2, size,size, tCur/10)
+            size=Math.trunc(a*1.5),xcen=(x+.5)*a,ycen=(y+.5)*a
+            animWater.draw(x*a, y*a, a, a, frm)
+            fsBowser.draw(Math.trunc(xcen-size/2), Math.trunc(ycen-size/2), size,size, tCur/10)
             break
           case BOWSER_BURNING:
             animLava.draw(x*a, y*a, a, a, frm)
@@ -951,6 +951,7 @@
     //===============================================
     // MAIN MODULE CODE
     //===============================================
+    ctx.imageSmoothingEnabled = false   // don't antialias 
     Animation.ctx = ctx
     Filmstrip.ctx = ctx
     let animMarioE= new Animation([imgMarioE,imgMarioE2,imgMarioE3])

@@ -18,8 +18,9 @@
 </head>
 <body id="body">
   <canvas id="canvas">Your browser does not support the HTML5 canvas tag.</canvas>
-  
-
+  <div style="display:none;">
+    <img id="imgBowser1234" src="bowser1234.webp"></img>
+  </div>
   <script type="module">
     // function render() {
     //   const ctx=canvas.getContext('2d')
@@ -48,25 +49,23 @@
     
     // const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
-    canvas.width = 512
-    canvas.height = 512
-    
-    ctx.beginPath();
+    canvas.width = 1000
+    canvas.height = 800
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    ctx.beginPath();
-
     // ctx.fillStyle='#000';   ctx.fillRect(0,0, 512,512)
-
+    // ctx.globalCompositeOperation = "source-over";
+    // ctx.fillStyle = "blue";
+    // ctx.fillRect(10, 10, 100, 100);
+    // ctx.globalCompositeOperation = "source-atop";
+    // ctx.fillStyle = "red";
+    // ctx.fillRect(50, 50, 100, 100);
     
-    ctx.globalCompositeOperation = "source-over";
+    ctx.imageSmoothingEnabled = false;
 
-    ctx.fillStyle = "blue";
-    ctx.fillRect(10, 10, 100, 100);
+    ctx.drawImage(imgBowser1234, 0, 0, 400, 100)
 
-
-    ctx.globalCompositeOperation = "source-atop";
-    ctx.fillStyle = "red";
-    ctx.fillRect(50, 50, 100, 100);
+    ctx.drawImage(imgBowser1234, 0, 0, 32, 32,    10.5, 200, 500, 500)
+    
     
   </script>
 </body>

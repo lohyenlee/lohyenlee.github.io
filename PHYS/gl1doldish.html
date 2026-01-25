@@ -112,7 +112,7 @@
     const w=new Float32Array(X)
     const ww=new Float32Array(X)
     const u=new Float32Array(X)
-    const v=new Float32Array(X)
+    const wdu=new Float32Array(X)
     for (let x=0; x<X; ++x) {
       xx[x]=x
       a[x]= x/X<.5 ? -1 : +1
@@ -121,19 +121,20 @@
       u[x]=1.0 + 0.1*Math.cos(.6*x)
     }
     w[X-1] = 0
-    for (let x=0; x<X-1; ++x) {
-      ww[x] = 2*w[x]*w[x+1]/(w[x]+w[x+1])
+    for (let x=0; x<X; ++x) {
+      const xp = (x+1)%X
+      ww[x] = 2*w[x]*w[xp]/(w[x]+w[xp])
     }
     
     function evolve(timeCurrent) {
       for (let x=0; x<X; ++x) {
         const xp = (x+1)%X
-        v[x] = ww[x] * (u[xp] - u[x])
+        wdu[x] = ww[x] * (u[xp] - u[x])
       }
 
       for (let x=0; x<X; ++x) {
         const xm = (x+X-1)%X
-        u[x] -= (a[x]*u[x] + b[x]*u[x]*u[x]*u[x] - v[x] + v[xm])*dt
+        u[x] -= (a[x]*u[x] + b[x]*u[x]*u[x]*u[x] - wdu[x] + wdu[xm])*dt
       }
     }
     function animate(timeCurrent) {
@@ -143,14 +144,10 @@
       Xmin=0; Xmax=canvas.width; Ymin=canvas.height; Ymax=0
       setAxes()
       ctx.strokeStyle="#CCCCCC"; ctx.fillStyle="#CCCCCC"; ctx.lineWidth=1
-      drawAxes(ctx)
-      drawTicks(ctx)
-      ctx.strokeStyle="#009900"; ctx.lineWidth=2
-      plotList(ctx, xx, w)
-      ctx.strokeStyle="#996666"; ctx.lineWidth=2
-      plotList(ctx, xx, a)
-      ctx.strokeStyle="#3399CC"; ctx.lineWidth=4
-      plotList(ctx, xx, u)
+      drawAxes(ctx); drawTicks(ctx)
+      ctx.strokeStyle="#009900"; ctx.lineWidth=2; plotList(ctx, xx, w)
+      ctx.strokeStyle="#996666"; ctx.lineWidth=2; plotList(ctx, xx, a)
+      ctx.strokeStyle="#3399CC"; ctx.lineWidth=4; plotList(ctx, xx, u)
       requestAnimationFrame(animate)
     }
     

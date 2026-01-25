@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <style>
+    body {margin:0;padding:0; width:100vh; height:200vh;}
+    canvas {position:fixed;left:0;top:0;margin:0;padding:0;background:black;}
+    #controls {position:fixed;left:0;top:0;color:white;width:100vh;height:30vh;z-index:1;}
+  </style>
+</head>
+<body>
+  <div id="controls">
+    <label for="sliderB">Field B</label>
+    <input id="sliderB" class="slider" type="range" min="0.0" max="0.1" step="0.01" value="0.03">
+    <span id="textB"></span>
+  </div>
+
+
+
+  <canvas id="canvas"></canvas>
+
+  <script type="module">
+    /*=======================================
+    MATH UTILITY FUNCTIONS
+    =======================================*/
+    const clamp=(x,a,b)=>Math.min(Math.max(x,a),b)
+    const norm=(dx,dy)=>Math.sqrt(dx*dx + dy*dy)
+
+    //================ GLOBAL SIMULATION VARIABLES
+    const ctx=canvas.getContext("2d")
+    var B=.03
+    const dt2=.2,damp=.95
+    // const dt2=.24,damp=.95
+    const X=160,Y=100,I=X*Y
+    const u=new Float32Array(I)
+    const v=new Float32Array(I)
+    const p=new Float32Array(I)
+    const q=new Float32Array(I)
+    const wx=new Float32Array(I)
+    const wy=new Float32Array(I)
+    const Ax=new Float32Array(I)
+    const Ay=new Float32Array(I)
+    const alpha=new Float32Array(I)
+    const beta=new Float32Array(I)
+    for (let x=0; x<X; ++x) for (let y=0; y<Y; ++y) {
+      const i=x+X*y
+      alpha[i] = -1
+      beta[i]  = +1
+
+
+      u[i]=2*Math.random()-1
+      v[i]=2*Math.random()-1
+      // let xc,yc,theta=0
+      // xc=.3*X; yc=.5*Y; theta += Math.atan2(y-yc, x-xc) // add vortex
+      // xc=.6*X; yc=.6*Y; theta -= Math.atan2(y-yc, x-xc) // add antivortex
+      // xc=.9*X; yc=.2*Y; theta -= Math.atan2(y-yc, x-xc)
+      // u[i]=Math.cos(theta)
+      // v[i]=Math.sin(theta)
+
+
+      p[i]=0.
+      q[i]=0.
+      wx[i]=x<X-1? 1:0
+      wy[i]=y<Y-1? 1:0
+      
+      const R=.49*Y
+      if (((x-.5*X)/R)**2 + ((y-.5*Y)/R)**2 > 1) { // outside disk
+        alpha[i] = +1 // normal
+        wx[i] = 0
+        wy[i] = 0
+      }
+    }
+    function sliderBInput(e) {
+      B = Number(sliderB.value)
+      textB.innerHTML = B
+      for (let x=0; x<X; ++x) for (let y=0; y<Y; ++y) {
+        const i=x+X*y
+        Ax[i]=-(y-(Y-1)/2)*B/2
+        Ay[i]=+(x-(X-1)/2)*B/2
+      }
+    }
+
+    function evolve(t) {
+      for (let x=0; x<X; ++x) for (let y=0; y<Y; ++y) { // kick
+        const xp=(x+1)%X,xm=(x+X-1)%X
+        const yp=(y+1)%Y,ym=(y+Y-1)%Y
+        const i=x+X*y,iE=xp+X*y,iW=xm+X*y,iN=x+X*yp,iS=x+X*ym
+        const u2v2 = u[i]**2 + v[i]**2
+        let c,s
+        c=Math.cos(Ax[i]); s=Math.sin(Ax[i]);   const uE=c*u[iE] - s*v[iE], vE=s*u[iE] + c*v[iE]
+        c=Math.cos(Ax[iW]);s=-Math.sin(Ax[iW]); const uW=c*u[iW] - s*v[iW], vW=s*u[iW] + c*v[iW]
+        c=Math.cos(Ay[i]); s=Math.sin(Ay[i]);   const uN=c*u[iN] - s*v[iN], vN=s*u[iN] + c*v[iN]
+        c=Math.cos(Ay[iS]);s=-Math.sin(Ay[iS]); const uS=c*u[iS] - s*v[iS], vS=s*u[iS] + c*v[iS]
+        const f = wx[i]*(uE - u[i]) + wx[iW]*(uW - u[i]) + wy[i]*(uN - u[i]) + wy[iS]*(uS - u[i])
+        const g = wx[i]*(vE - v[i]) + wx[iW]*(vW - v[i]) + wy[i]*(vN - v[i]) + wy[iS]*(vS - v[i])
+        // const f = wx[i]*(u[iE] - u[i]) + wx[iW]*(u[iW] - u[i]) + wy[i]*(u[iN] - u[i]) + wy[iS]*(u[iS] - u[i])
+        // const g = wx[i]*(v[iE] - v[i]) + wx[iW]*(v[iW] - v[i]) + wy[i]*(v[iN] - v[i]) + wy[iS]*(v[iS] - v[i])
+        p[i] += f - (alpha[i] + beta[i]*u2v2) * u[i] // f and g are "Laplacian" force on real and imag components
+        q[i] += g - (alpha[i] + beta[i]*u2v2) * v[i]
+      }
+      for (let x=0; x<X; ++x) for (let y=0; y<Y; ++y) { // damp
+        const i=x+X*y
+        p[i] *= damp
+        q[i] *= damp
+      }
+      for (let x=0; x<X; ++x) for (let y=0; y<Y; ++y) { // drift
+        const i=x+X*y
+        u[i] += p[i]*dt2
+        v[i] += q[i]*dt2
+      }
+    }
+    function rgb2hsv(r,g,b) { //h in [0,360] and s,v in [0,1]; r,g,b in [0,1]
+      let v=Math.max(r,g,b), c=v-Math.min(r,g,b)
+      let h= c && ((v==r) ? (g-b)/c : ((v==g) ? 2+(b-r)/c : 4+(r-g)/c))
+      return [60*(h<0?h+6:h), v&&c/v, v]
+    }
+    // let f= (n,k=(n+h*3/Math.PI)%6) => v - v*s*Math.max( Math.min(k,4-k,1), 0) 
+    function hsv2rgb(h,s,v) { //h in [0,360] and s,v in [0,1]; r,g,b in [0,1]
+      let f= (n,k=(n+h*3/Math.PI)%6) => Math.floor(255*(v - v*s*Math.max( Math.min(k,4-k,1), 0)))
+      return [f(5),f(3),f(1)]
+    }
+    function animate(timeCurrent) {
+      evolve()
+      // ctx.clearRect(0, 0, canvas.width, canvas.height)
+      ctx.strokeStyle=ctx.fillStyle="#3399CC"; ctx.lineWidth=2
+      const a = Math.min(Math.floor(canvas.width/X),Math.floor(canvas.height/Y))
+      ctx.setTransform(a, 0, 0, -a, 0, canvas.height)
+      for (let x=0; x<X; ++x) for (let y=0; y<Y; ++y) {
+        const i=x+X*y
+        const arg=Math.atan2(v[i],u[i])
+        const mag=u[i]**2+v[i]**2
+        const [r,g,b] = hsv2rgb(arg, 1, mag/(1+mag))
+        ctx.fillStyle= `rgb(${r}, ${g}, ${b})`
+        ctx.fillRect(x,y,1,1)
+      }
+      requestAnimationFrame(animate)
+    }
+    function resize() {
+      canvas.width=visualViewport.width||window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth
+      canvas.height=visualViewport.height||window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight
+    }
+    //================ MAIN CODE
+    document.body.addEventListener('dblclick', function (e) { e.preventDefault() })
+    window.visualViewport.addEventListener('resize', resize)
+    sliderB.addEventListener('input', sliderBInput)
+    sliderBInput()
+    resize()
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <style>
+    body {margin:0;padding:0; width:100vh; height:200vh;
+      background: white; }
+    #canvas {position:fixed;left:0;top:0;margin:0;padding:0;
+      background: black;} 
+  </style>
+</head>
+<body>
+  <canvas id="canvas"> </canvas>
+
+  <script type="module">
+    /*=======================================
+    MATH UTILITY FUNCTIONS
+    =======================================*/
+    const clamp=(x,a,b)=>Math.min(Math.max(x,a),b)
+    const norm=(dx,dy)=>Math.sqrt(dx*dx + dy*dy)
+    /*=======================================
+    GRAPHICS UTILITY FUNCTIONS: GRAPHICS PRIMITIVES
+    =======================================*/
+    function drawLine(ctx, r1, r2) {
+      ctx.beginPath()
+      ctx.moveTo(...r1); ctx.lineTo(...r2);
+      ctx.stroke()
+    }
+    function drawCircle(ctx, x, y, r, s=false, f=false) {
+      ctx.beginPath()
+      ctx.arc(x, y, r, 0, 2 * Math.PI);
+      if (s) ctx.stroke()
+      if (f) ctx.fill()
+    }
+    /*=======================================
+    GRAPHICS UTILITY FUNCTIONS: PLOTTING FUNCTIONS AND ASSOCIATED GLOBAL VARIABLES
+    If we were serious about this, we would store these global variables in an object
+    to encapsulate it so that they don't interact with user-defined code.
+    Or we would define a class.
+    =======================================*/
+    var xmin,xmax,ymin,ymax,Xmin,Xmax,Ymin,Ymax;
+    var Xorg,Yorg,xscal,yscal;
+
+    function rescale(x, x1, x2, y1, y2) {return y1+(y2-y1)/(x2-x1)*(x-x1); }
+    function setAxes() { //xmin, xmax, ymin, ymax, Xmin, Xmax, Ymin, Ymax) {
+      xscal=(Xmax-Xmin)/(xmax-xmin); Xorg=Xmin-xscal*xmin;
+      yscal=(Ymax-Ymin)/(ymax-ymin); Yorg=Ymin-yscal*ymin;
+    }
+    function XFromx(x) { return Xorg+xscal*x; }
+    function YFromy(y) { return Yorg+yscal*y; }
+    function drawAxes(ctx) {
+      drawLine(ctx, [0,Yorg], [ctx.canvas.width, Yorg])
+      drawLine(ctx, [Xorg,0], [Xorg, ctx.canvas.height])
+    }
+    function plotList(ctx, xx, yy) {
+      ctx.beginPath()
+      const X=xx.length;
+      for (let n=0; n<X; ++n) {
+        let x=xx[n], y=yy[n];
+        if (n==0) ctx.moveTo(XFromx(x), YFromy(y))
+        else ctx.lineTo(XFromx(x), YFromy(y))
+      }
+      ctx.stroke()
+      for (let n=0; n<X; ++n) {drawCircle(ctx, XFromx(xx[n]), YFromy(yy[n]), 3, false, true)}
+    }
+
+    //================ GLOBAL SIMULATION VARIABLES
+    const ctx=canvas.getContext("2d")
+    const dt=.01
+    const X=100
+    const xx=new Float32Array(X)
+    const a=new Float32Array(X)
+    const b=new Float32Array(X)
+    const w=new Float32Array(X)
+    const ww=new Float32Array(X)
+    const u=new Float32Array(X)
+    const wdu=new Float32Array(X)
+    for (let x=0; x<X; ++x) {
+      xx[x]=x
+      a[x]= x/X<.5 ? -1 : +1
+      b[x]= x/X<.5 ?  1 : 1
+      w[x]= x/X<.5 ? 30 : .1
+      u[x]=1.0 + 0.1*Math.cos(.6*x)
+    }
+    w[X-1] = 0
+    for (let x=0; x<X; ++x) {
+      const xp = (x+1)%X
+      ww[x] = 2*w[x]*w[xp]/(w[x]+w[xp])
+    }
+    
+    function evolve(timeCurrent) {
+      for (let x=0; x<X; ++x) {
+        const xp = (x+1)%X
+        wdu[x] = ww[x] * (u[xp] - u[x])
+      }
+
+      for (let x=0; x<X; ++x) {
+        const xm = (x+X-1)%X
+        u[x] -= (a[x]*u[x] + b[x]*u[x]*u[x]*u[x] - wdu[x] + wdu[xm])*dt
+      }
+    }
+    function animate(timeCurrent) {
+      evolve()
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      // xmin=-X/10; xmax=X; ymin=-1.5; ymax=+1.5
+      // Xmin=0; Xmax=canvas.width; Ymin=canvas.height; Ymax=0
+
+      // setAxes()
+      // ctx.strokeStyle="#CCCCCC"; ctx.fillStyle="#CCCCCC"; ctx.lineWidth=1
+      // drawAxes(ctx)
+      ctx.strokeStyle=ctx.fillStyle="#3399CC"; ctx.lineWidth=2
+      // ; plotList(ctx, xx, u)
+
+      ctx.setTransform(20, 0, 0, 200, 0, 0)
+      for (let x=0; x<X; ++x) {
+        let y=u[x]
+        let r=.4
+        ctx.beginPath()
+        ctx.arc(x, y, r, 0, 2*Math.PI)
+        ctx.fill()
+      }
+
+      
+      requestAnimationFrame(animate)
+    }
+    
+    function resize() {
+      let winWid=visualViewport.width||window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth
+      let winHei=visualViewport.height||window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight
+      canvas.width=winWid
+      canvas.height=winHei
+      // canvas.style.left = Math.floor((winWid-canvas.width)/2) + "px"
+      // title.style.left  = Math.floor((winWid-title.offsetWidth)/2) + "px"      
+    }
+    
+    //================ MAIN CODE
+    document.body.addEventListener("dblclick", function (e) { e.preventDefault(); })
+    window.visualViewport.addEventListener('resize', resize)
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>
