@@ -55,10 +55,13 @@
       box-shadow: 0px 0px 1px 1px black, 0px 0px 8px 8px white;
     }
     #controls {position:fixed; z-index:3; bottom:0; left:0; width:100%; display:none;}
+    img {image-rendering: pixelated;}
     button {cursor:pointer;
             float:left;margin:0;padding:0;text-align:center; border-radius:8px; font-family:'gameFont',sans-serif;font-size: 4vmin;
             background-color:#666; color:white;
-            background-repeat: no-repeat;}
+            background-repeat: no-repeat;
+            image-rendering: pixelated;
+          }
     button:disabled {visibility:hidden; }/*opacity:25%;}*/
     .btn1 {width:var(--btnsize); height:var(--btnsize); background-size:cover; text-shadow: 2px 2px 3px black;}
     .btn1s{width:var(--btnsize); height:var(--btnsize); background-size:cover; text-shadow: 2px 2px 3px black; border:solid 5px yellow;}
@@ -838,6 +841,7 @@
 
 
     function paint(x, y) { // overwrite cell using current brush
+      if(!cheating) returnW
       if (x>=0&&x<X&&y>=0&&y<Y) {
         soundCoin.play()  // should add logic so that sound only plays if the map is actually changed
         switch (brush) {

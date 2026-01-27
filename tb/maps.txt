@@ -750,6 +750,7 @@ W  ### ### ### ###   W
 W   #+#+#   #+#+#    W
 W     #       #      W
 W     #+++#+++#      W
+W         #          W
 Wn###################W
 W#++++++++++++++++++#W
 WWWWWWWWWWWWWWWWWWWWWW
@@ -840,8 +841,7 @@ W......................................................W
 
 
 
-
-<levelmap> <timestep>100</timestep> <name> WORLD 5: BUSES AND MEMORY </name>
+<levelmap> <timestep>100</timestep> <name> WORLD 5: REGISTER OPERATIONS </name>
 <help>
 STORING BITS IN MEMORY AND RETRIEVING THEM
 <p class="indepth">
@@ -853,6 +853,125 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
        H H H H H     H     H    H        
        H H H H H HHH H   HHH    HHH      
        H H H H H H   H   H H      H      
+       HHHHH HHH H   HHH HHH    HHH      
+ ?                                       
+.M......................................
+                                        
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+</levelmap>
+
+<levelmap> <timestep> 0 </timestep> <name> 5-1    BITWISE NOR </name>
+<help>
+</help>
+W?WWWWWWWWWWWWW
+...W s s S sWWW
+W..W # # # #W..  
+W..s#n#+#+#+##W
+W.MW   # # #W.W
+W..s###n#+#+##W
+W..W     # #W.W
+W..s#####n#+##W
+W..W       #W.W
+W..s#######n##W
+W.............W
+WWWWWWWWWWWWWWW
+</levelmap>
+
+<levelmap> <timestep> 0 </timestep> <name> 5-2    BITWISE EQV </name>
+<help>
+</help>
+WWWWWWWWWWWWWWWWWWW
+W?WWWWWWWWWWWWWWWWW
+...W S S s S     WW
+W..W # # # #     WW
+W..W ##+#+#+##n# WW
+W..W   # # # n#+ ..
+W..s###+#+#+##nn##W
+W...   # # #     .W
+W...   ##+#+##n# .W
+W...     # # n#+ .W
+W..s#####+#+##nn##W
+W...     # #     .W
+W...     ##+##n# .W
+W...       # n#+ .W
+W..s#######+##nn##W
+W...       #     .W
+W...       ###n# .W
+W.M.         n#+ .W
+W..s#######+##nn##W
+W.................W
+</levelmap>
+
+
+<levelmap> <timestep> 0 </timestep> <name> 5-3    4-BIT D LATCH </name>
+<help>
+1101 IS THE CODE <br>
+TO KEEP THE LAVA OFF THE ROAD.
+</help>
+W?WWWWWWWWWWWWWWWWW
+.M................W
+W._#####n++HH    .W
+W.  #    ##+n#   .W
+W.s#+#####NnNnL#n#W
+W.  #       #+#  .W
+W.  ###n++HH     .W
+W.  #   ##+n#    .W
+W.s#+####NnNn#L#n#W
+W.  #      #+#   .W
+W.  ##n++HH      .W
+W.  #  ##+n#     .W
+W.s#+###NnNn##L###W
+W.  #     #+#    .W
+W.  #n++HH       .W
+W.    ##+n#      .W
+W.s####NnNn###L#n#W
+W.       #+#     ..
+WWWWWWWWWWWWWWWWWWW
+</levelmap>
+
+
+<levelmap> <timestep> 0 </timestep> <name> 5-4    4-BIT D LATCHES </name>
+<help>
+1101 IS THE CODE &mdash; <br>
+BITS OF DATA YOU MUST LOAD. <br>
+FIRST THE SWITCHES, THEN THE PLATE. <br>
+WATCH OUT FOR THE ONE-WAY GATE! 
+</help>
+W?WWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+W.....#_......................W
+M..WWWWWWWWWWWW...............W
+W._#####n++HH  _####n++HH    .W
+W.  #    ##+n#  #    ##+n#   .W
+W.s#+#####NnNnL#+#####NnNnL#n#W
+W.  #       #+# #       #+#  .W
+W.  ###n++HH    ###n++HH     .W
+W.  #   ##+n#   #   ##+n#    .W
+W.s#+####NnNn#L#+####NnNn#L#n#W
+W.  #      #+#  #      #+#   .W
+W.  ##n++HH     ##n++HH      .W
+W.  #  ##+n#    #  ##+n#     .W
+W.s#+###NnNn##L#+###NnNn##L###W
+W.  #     #+#   #     #+#    .W
+W.  #n++HH      #n++HH       .W
+W.    ##+n#       ##+n#      .W
+W.s####NnNn###L####NnNn###L#n#W
+W.       #+#         #+#     ..
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+</levelmap>
+ 
+
+<levelmap> <timestep>100</timestep> <name> WORLD 6: ADDRESSING, BUSES, MEMORY </name>
+<help>
+STORING BITS IN MEMORY AND RETRIEVING THEM
+<p class="indepth">
+SLAKDFJASLDKFJADSLKFJSALFJF</p>
+</help>
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW 
+                                         
+       H H H HHH     H     H    HHH      
+       H H H H H     H     H    H        
+       H H H H H HHH H   HHH    HHH      
+       H H H H H H   H   H H    H H      
        HHHHH HHH H   HHH HHH    HHH      
  ?                                       
 .M......................................
@@ -872,7 +991,7 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep> 10 </timestep> <name> 5-1    GET ON THE BUS </name>
+<levelmap> <timestep> 10 </timestep> <name> 6-1    GET ON THE BUS </name>
 <help>
 FAST, MEDIUM, OR SLOW?  YOUR CHOICE!
 <p class="indepth">
@@ -897,7 +1016,7 @@ WWWWWWWWWWWWWWWWWWWWW
 
 
 
-<levelmap> <timestep>15</timestep> <name> 5-2    GET OFF THE BUS </name>
+<levelmap> <timestep>15</timestep> <name> 6-2    GET OFF THE BUS </name>
 <help>
 DELIVER PACKAGES TO TARGETS.
 <p class="indepth">
@@ -917,7 +1036,7 @@ WWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 
-<levelmap> <timestep>0</timestep> <name> 5-3    WHAT'S YOUR ADDRESS? </name>
+<levelmap> <timestep>0</timestep> <name> 6-3    WHAT'S YOUR ADDRESS? </name>
 <help>
 SWITCHES SELECT ADDRESS LINE.<br>
 PRESSURE PLATE SENDS PULSE.<br>
@@ -941,7 +1060,7 @@ W_#########n#   ....W
 WWWWWWWWWW..........W
 </levelmap>
 
-<levelmap> <timestep>0</timestep> <name> 5-4    READ A BIT </name>
+<levelmap> <timestep>0</timestep> <name> 6-4    READ A BIT AT A TIME </name>
 <preconverge> 100 </preconverge>
 <help>
 SWITCHES SELECT ADDRESS LINE.<br>
@@ -950,13 +1069,12 @@ The binary decoder addresses a 4-bit memory (stored in the state of P switches).
 The addressed bit is copied to the output.
 </p>
 </help>
-.........................
-........................
-...............Lsn#   
- WWWWWWWWWWW.##+++n## 
- WN#++#n++LN## .... #    
- W# #+n+## W   LSn# #   
-WW# #N+# #LN###+++n#nn#
+WWWWWWWWWWWWWWWWWWWWWWWWWW
+W..............Lsn#      W
+WWWWWWWWWWWW.##+++n##    W
+WWN#++#n++LN## .... #    W
+WW# #+n+## W   LSn# #    W
+WW# #N+# #LN###+++n#nn#  W
 W?# #  #   W          nnLW
 W.s#+##n##LN## LSn#   # #W
 WMW # #    W ##+++n#nn# #W
@@ -966,7 +1084,7 @@ W...........###+++n## ..B.
 W........................W
 </levelmap>
 
-<levelmap> <timestep>0</timestep> <name> 5-5    WRITE A BIT </name>
+<levelmap> <timestep>0</timestep> <name> 6-5    WRITE A BIT AT A TIME </name>
 <preconverge> 100 </preconverge>
 <help>
 TOP SWITCHES SELECT ADDRESS LINE.<br>
@@ -977,27 +1095,66 @@ Here, the binary decoder addresses a bank of four D latches.
 When triggered, the data bit is transmitted to the input of the selected D latch. 
 </p>
 </help>
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-                   #####N++HH   
- WWWWWWWWWWWW......#     ##+n#  
- WN#++#n++#LN#+n#L##  ####NnNn# 
- W# #+n+##  W HH      #     #+L 
-WW# #N+# ##LNn++#L####+##       
-W?# #  #    WHH       # N++HH   
-W.s#+##n###LN++n#L### #  ##+n#  
-M.W # #     W HH    # ####NnNn# 
-W.s###N####Lnn++#L# # #     #+L 
-W..WWWWWWWWWWHH   # # #         
-W._#########NH    # ##+#N++##   
-W...........      #   #  ##+n#  
-W.s###############+#######NnNn# 
-W..............   #   #     #+L 
-W..............   #   #         
-W..............   ####+#N++##   
-W..............       #  ##+n#  
-W..............       ####NnNn# 
-W..............             #+L 
-W
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+WWWWWWWWWWWW      #######N++HH  WWW
+WWWWWWWWWWWW      #       ##+n# WWW
+WWN#++#n++LN#+n#L##  ######NnNn#W..
+WW# #+n+## W HH      #       #+LN#W
+WW# #N+# #LNn++#L####+##N++HH   W.W
+W?# #  #   WHH       #   ##+n#  W.W
+W.s#+##n##LN++n#L### #####NnNn# W.W
+M.W # #    W HH    # #      #+L#N#W
+W.s###N###Lnn++#L# ##+#N++##    W.W
+W.WWWWWWWWWWHH   #   #  ##+n#   W.W
+W._########NH    #   ####NnNn#  W.W
+W.W              #   #     #+L##N#W
+W.s############# ####+N++##     W.W
+W.W            #     # ##+n#    W.W
+W.W            #########NnNn#   W.W
+W.WWWWWWWWWWWWWWWWWWWWWWWW#+L###N#W
+W.................................W
+W.................................W
+</levelmap>
+
+<levelmap> <timestep>0</timestep> <name> 6-6    WRITE, WORD BY WORD </name>
+W?WWWWWWWWWWWWWWWWWWW
+ M       ###n++HH   
+W.       #   ##+n#  
+W. ######+####NnNn#L
+W. #     #      #+# 
+W. #     ##n++HH    
+W. #     #  ##+n#   
+W.s#   ##+###NnNn##L
+W. #   # #     #+#  
+W.s+#### #n++HH     
+W. # #   # ##+n#    
+W.s+#+###+##NnNn###L
+W. # # # #    #+#   
+W._+#+#+##           
+W..#.#.#............ 
+W._+#+#+##           
+WWW# # # ###n++HH   
+W. # # # #   ##+n#  
+W. ##+#+#+####NnNn#L
+W.   # # #      #+# 
+W.   # # ##n++HH    
+W.   # # #  ##+n#   
+W.   ##+#+###NnNn##L
+W.     # #     #+#  
+W.     # #n++HH     
+W.     #   ##+n#    
+W.     #####NnNn###L
+W.            #+#   
+WWWWWWWWWWWWWWWWWWWWW
+</levelmap>
+
+
+<levelmap> <timestep>0</timestep> <name> 6-7    WRITE AND READ, WORD BY WORD </name>
+<help>
+WRITE TWO PASSCODES.  WHEN YOU GET TO THE OTHER SIDE OF THE RIVER, YOU'LL NEED ONE OF THE TWO PASSCODES AT RANDOM!
+YOU'LL NEED TO RESTORE IT INTO THE FINAL REGISTER
+</help>
+#################  M?
 </levelmap>
 
 
@@ -1049,29 +1206,6 @@ W.M    W
 WWWWWWWW
 </levelmap>
 
-
-
-<levelmap> <timestep>100</timestep> <name> HTGFHGFHGFH </name>
-WWWWWWWW
-W.......
-W.WWWWWW
-W..  B W
-W.S#N+#W
-..................................
-..................................
-..................................
-..................................
-..................................
-..................................
-..................................
-..................................
-</levelmap>
-
-
-
-
-
-
 <levelmap> <timestep> 100 </timestep> <name> C-1   AND, OR, NOT </name>
 .......................
 .                     .
@@ -1122,34 +1256,19 @@ M                      .
 </levelmap>
 
 <levelmap> <timestep>0</timestep> <name> C-4   AND3, OR3, XOR3, MAJ3 </name>
-.......................
-.       .             .
-.sN##   .s##N##       .
-.   #   .  N# #       .
-.sN#N#L .s##N#N#N##   .
-.   #   .      N# N#L .
-.sN##   .s######N##   .
-.......................
-.       .s#N###       .
-.s#     .   # N##     .
-. #     .s#N+## #     .
-.sN#N#L .   # N#N#N#L .
-. #     .s#N+## #     .
-.s#     .   # N##     .
-.       .   ###       .
-M......................
-</levelmap>
-
-<levelmap> <timestep>0</timestep> <name> C-4   XOR3 SIMPLER </name>
-...............
-..            .
-..s##N#       .
-..  N#+       .
-..s##NN#NN#L  .
-..     N#+    .
-..s#####N#    .
-...............
-M..............
+.................
+.     .s#N#     .
+.sN#  . N#+     .
+.sNN#L.s#NN#NN#L.
+.sN#  .    N#+  .
+.     .s####N#  .
+.................
+.     .s#+#     .
+..s   ..n#+#    .
+.sNN#L.s# nn#L  .
+..s   ..n#+#    .
+.     .s#+#     .
+M................
 </levelmap>
 
 <levelmap> <timestep>0</timestep> <name> C-5   HALF ADDER </name>
@@ -1166,53 +1285,100 @@ M            ..            .
 WWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
-
 <levelmap> <timestep>0</timestep> <name> C-6   FULL ADDER </name>
-................
-.s###N#        .
-. # N#+        .
-Ms+##NN#NN###L .
-. # #  N#+     .
-.s+#+###N#     .
-. # # #        .
-. # # N###     .
-. # #  # N#    .
-. # ##N+##+    .
-. #    # NNN#L .
-. ####N+##+    .
-.      # N#    .
-.      ###     .
-................
+..............
+.s###N#      .
+. # N#+      .
+Ms+##NN#NN#L .
+. # #  N#+   .
+.s+#+###N#   .
+. # # #      .
+. # # #+#    .
+. # # n#+#   .
+. # ### nn#L .
+. #   n#+#   .
+. #####+#    .
+..............
 </levelmap>
 
 <levelmap> <timestep>0</timestep> <name> C-7   TWO BIT ADDER </name>
-................
-M              .
-.s####N#       .
-.. # N#+       .
-.s#+##NNN###L  .
-.  # #         .
-.  # N#        .
-.  N#+n#       .
-.      #       .
-....####       .
-..  #          .
-..###N#        .
-. # N#+        .
-.s+##NN##NN###L.
-. # #   N#+    .
-.s+#+####N#    .
-. # # #        .
-. # # N###     .
-. # #  # N#    .
-. # ##N+##+    .
-. #    # NNN##L.
-. ####N+##+    .
-.      # N#    .
-.      ###     .
-................
+..............
+M            .
+.s####N#     .
+.. # N#+     .
+.s#+##NNN###L.
+.  # #       .
+.  # N#      .
+.  N#+n#     .
+.      #     .
+.   #++#     .
+. ###N#      .
+. # N#+      .
+Ms+##NN#NN#L .
+. # #  N#+   .
+.s+#+###N#   .
+. # # #      .
+. # # #+#    .
+. # # n#+#   .
+. # ### nn#L .
+. #   n#+#   .
+. #####+#    .
+..............
 </levelmap>
 
+
+<levelmap> <timestep>0</timestep> <name> C-7   TWO BIT ADDER </name>
+..............
+M            .
+.s####N#     .
+.. # N#+     .
+.s#+##NNN###L.
+.  # #       .
+.  # N#      .
+.  N#+n###N#    .
+.      # N#+      .
+.s#####+##NN#NN#L .
+.      # #  N#+   .
+.s#####+#+###N#   .
+.      # # #      .
+.      # # #+#    .
+.      # # n#+#   .
+.      # ### nn#L .
+.      #   n#+#   .
+.      #####+#    .
+...................
+</levelmap>
+
+
+<levelmap> <timestep>0</timestep> <name> C-7   THREE BIT ADDER </name>
+.............................
+M                           .
+.s####N#                    .
+.. # N#+                    .
+.s#+##NNN##################L.
+.  # #                      .
+.  # N#                     .
+.  N#+n###N#                .
+.      # N#+                .
+.s#####+##NN#NN############L.
+.      # #  N#+             .
+.s#####+#+###N#             .
+.      # # #                .
+.      # # #+#              .
+.      # # n#+#             .
+.      # ### nn######N#     .
+.      #   n#+#   # N#+     .
+.      #####+# ###+##NN#NN#L.
+.             ##  # #  N#+  .
+.s############# ##+#+###N#  .
+.              ## # # #     .
+.s##############  # # #+#   .
+                  # # n#+#  .
+                  # ### nn#L.
+                  #   n#+#  .
+                  #####+#   .
+.............................
+</levelmap>
 
 
 <levelmap> <timestep>0</timestep> <name> C-8   BINARY ENCODER </name>
