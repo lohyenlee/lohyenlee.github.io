@@ -184,7 +184,7 @@
     const ON=1,FRESH=2,CONDUCTING=4,SOURCE=8,GATE=16
     const WALL=1,VOID=2,LAMP=3,
         PEACH=4,PEACH_BURNING=5,BOWSER=6,BOWSER_BURNING=7,ASHES=8,
-        PLATE=9,QUESTION=10
+        PLATE=9,QUESTION=128
     const PLAYING=0,BOWSER_DIED=1,PEACH_DIED=-1,MARIO_DIED=-2
     const BRUSH_GRASS=0,BRUSH_LAVA=1,BRUSH_WATER=2,BRUSH_CROSS=3,BRUSH_TOAD=4,BRUSH_WALL=5,BRUSH_SWITCH=6,BRUSH_PLATE=7,BRUSH_PEACH=8,BRUSH_QUESTION=9
     const DIRS=[[1,0],[-1,0],[0,1],[0,-1]]
@@ -193,7 +193,7 @@
     let xCursor,yCursor  // cursor (Mario) position
     let ground,groundNew,subway,subwayNew,extras // level map
     let lastDirWalked,stalled=false
-    let helpText=''
+    let helpTexts=[],helpText=''
     let winlose=PLAYING 
     let preconverge=100,cheating=false,brush=0
     const starSize=2.0 // can make this a TOADML flag
@@ -218,8 +218,8 @@
       if (SNEW!=0 & (dy!=0)) {soundBuzz.play(); stalled=true; return false}  // Mario can't walk into subway tunnel
       if (H==VOID) {soundBuzz.play(); stalled=true; return false} // Can't walk into void
       if (H==WALL) {soundBuzz.play(); stalled=true; return false} // Can't walk into wall
-      if (H==QUESTION) { // Mario bumps a Question block
-        soundCoin.play(); openHelp(); helpDiv.focus(); stalled=true; return false
+      if (H>=QUESTION) { // Mario bumps a Question block
+        soundCoin.play(); openHelp(H-QUESTION); helpDiv.focus(); stalled=true; return false
       }
       if ((G & SOURCE) && H!=PLATE) {  // Mario bumps a P Switch (not a plate)
         soundTock.play(); ground[xnew+X*ynew] ^= ON  // Toggle the ON/OFF state
@@ -271,10 +271,15 @@
     }
     function toggleCheating() { setCheating(!cheating) }
     function extract(tag, source) {
-      const regex = new RegExp('\\s+<' + tag + '>(.*?)<\/' + tag + '>', 'gs')
-      const match = regex.exec(source)
-      if (match) return [match[1], source.replace(regex,'')]
+      const re = new RegExp('\\s+<' + tag + '>(.*?)<\/' + tag + '>', 'gs')
+      const match = re.exec(source)
+      if (match) return [match[1], source.replace(re,'')]
       else return ["", source]
+    }
+    function extractAll(tag, source) {
+      const re = new RegExp('\\s+<' + tag + '>(.*?)<\/' + tag + '>', 'gs')
+      const matches = source.matchAll(re)
+      return [Array.from(matches, (m) => m[0]), source.replace(re,'')]
     }
 
     function setLevel(newLevel) {
@@ -315,7 +320,8 @@
       {const [content,remainder]=extract('name', levelMap); levelMap=remainder;levelName=content}
       {const [content,remainder]=extract('preconverge', levelMap); levelMap=remainder; if(content) preconverge=Number(content)}
       {const [content,remainder]=extract('cheat', levelMap); levelMap=remainder; if(content) cheating=Number(content)}
-      {const [content,remainder]=extract('help', levelMap); levelMap=remainder; if(content) helpText=content}
+      {const [contents,remainder]=extractAll('help', levelMap); levelMap=remainder; if(contents) helpTexts=contents}
+
       if (levelName) {title.innerHTML=levelName; title.style.display='block'}
       else           {title.style.display='none'}
       setCheating(cheating)
@@ -332,6 +338,7 @@
       subwayNew= new Uint8Array(X*Y)
       extras   = new Uint8Array(X*Y)
       //-------- POPULATE ARRAYS
+      let nQuestions=0
       for (let y=0; y<Y; ++y) {
         for (let x=0; x<rows[y].length && x<X; ++x) {
           let g
@@ -350,7 +357,8 @@
             case 'L': g=CONDUCTING; extras[x+X*y]=LAMP; break // Lamp
             case 'P': g=CONDUCTING; extras[x+X*y]=PEACH; break // Peach starts unburned
             case 'B': g=CONDUCTING; extras[x+X*y]=BOWSER; break // Bowser starts unburned
-            case '?': g=0; extras[x+X*y]=QUESTION; break // Question block
+            case '?': g=0; extras[x+X*y]=QUESTION+nQuestions; ++nQuestions; break // Question block
+            case 'r': g=SOURCE|FRESH|(Math.random()<.5?ON:0); break 
             default: g=0
           }
           ground[x+X*y]=g
@@ -437,16 +445,38 @@
         }
         //======== Cell is a normal conducting cell.  Check if any neighbors are FRESH, and if so, are they ON or OFF
         if (G&CONDUCTING) {
-          let flag=false,env=0 // env is the sum of +1's or -1's for each neighbor
+          // let flag=false,env=0 // env is the sum of +1's or -1's for each neighbor
           // if (W & GATE ) {flag=true; env+=(W&ON)?1:-1}
-          if (E & FRESH) {flag=true; env+=(E&ON)?1:-1}
-          if (W & FRESH) {flag=true; env+=(W&ON)?1:-1}
-          if (N & FRESH) {flag=true; env+=(N&ON)?1:-1}
-          if (S & FRESH) {flag=true; env+=(S&ON)?1:-1}
-          if (flag) { // Check whether we end up flipping state
-            if      (!(G&ON) && env>=0) groundNew[x+X*y] = G | ON | FRESH
-            else if ((G&ON) && env<=0) groundNew[x+X*y] = (G & (~ON)) | FRESH  
+
+
+          // THIS OLD LOGIC IS WRONG
+          // if (E & FRESH) {flag=true; env+=(E&ON)?1:-1}
+          // if (W & FRESH) {flag=true; env+=(W&ON)?1:-1}
+          // if (N & FRESH) {flag=true; env+=(N&ON)?1:-1}
+          // if (S & FRESH) {flag=true; env+=(S&ON)?1:-1}
+          // if (flag) { // Check whether we end up flipping state
+          //   if      (!(G&ON) && env>=0) groundNew[x+X*y] = G | ON | FRESH
+          //   else if ((G&ON) && env<=0) groundNew[x+X*y] = (G & (~ON)) | FRESH  
+          // }
+
+
+          // if cell is OFF and any neighbor is FRESH ON, turn on
+          if (!(G&ON)) {
+            if (
+              (E&FRESH) && (E&ON)
+            ||(W&FRESH) && (W&ON)
+            ||(N&FRESH) && (N&ON)
+            ||(S&FRESH) && (S&ON) ) groundNew[x+X*y] = G | ON | FRESH
           }
+          else { 
+            if (
+              (E&FRESH) && !(E&ON)
+            ||(W&FRESH) && !(W&ON)
+            ||(N&FRESH) && !(N&ON)
+            ||(S&FRESH) && !(S&ON) ) groundNew[x+X*y] = (G & (~ON)) | FRESH  
+          }
+
+          
 
           if (W & GATE) groundNew[x+X*y] = CONDUCTING | (W&ON) | FRESH // if fed by a gate, MUST be fresh - overrides prev.
         
@@ -577,6 +607,7 @@
           case VOID: ctx.fillStyle='#000';ctx.fillRect(x*a, y*a, a, a); break // void
           case WALL: ctx.drawImage(imgBrick, x*a, y*a, a, a); break
         }
+        if (extras[x+X*y]>=QUESTION) ctx.drawImage(imgQuestion, x*a,y*a,a,a)
       }
       //======== DRAW CERTAIN EXTRAS (QUESTION BLOCKS, LAMPS, ETC.)
       let size,xcen,ycen,sx,sy
@@ -584,7 +615,6 @@
         const frm=(tCur+4*x+13*y)/20
         switch (extras[x+X*y]) {
           case WALL: break; // this was done in the earlier loop
-          case QUESTION: ctx.drawImage(imgQuestion, x*a,y*a,a,a); break  
           case PLATE:
             if (ground[x+X*y] & ON) {animLava.draw(x*a,y*a,a,a, frm);ctx.drawImage(imgPlateOn, x*a,y*a,a,a)}
             else                   {animWater.draw(x*a,y*a,a,a, frm);ctx.drawImage(imgPlateOff, x*a,y*a,a,a)}
@@ -682,6 +712,7 @@
       //     ctx.fillStyle='#fff'
       //     ctx.font = 'bold 16px sans-serif'
       //     ctx.fillText(ground[x+X*y],  (x+.5)*a, (y+.25)*a)
+      //     ctx.fillStyle='#ff0'
       //     ctx.fillText(extras[x+X*y],  (x+.5)*a, (y+.75)*a)
       //   }
       // }
@@ -758,13 +789,13 @@
     // HELP
     //=================================================
     function closeHelp() {helpDiv.style.display="none"}
-    function openHelp() {
+    function openHelp(nQuestion) {
       winWid=window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth
       winHei=window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight
       const wid=winWid - 64
       const hei=winHei - 64
       helpDiv.style.display = "block"
-      helpDiv.innerHTML = helpText
+      helpDiv.innerHTML = helpTexts[nQuestion]
       helpDiv.onclick = closeHelp
       helpDiv.focus()
       // let utterance = new SpeechSynthesisUtterance(convertHtmlToText(helpText))
@@ -841,7 +872,7 @@
 
 
     function paint(x, y) { // overwrite cell using current brush
-      if(!cheating) returnW
+      if(!cheating) return
       if (x>=0&&x<X&&y>=0&&y<Y) {
         soundCoin.play()  // should add logic so that sound only plays if the map is actually changed
         switch (brush) {

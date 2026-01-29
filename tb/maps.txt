@@ -111,10 +111,8 @@ WWWWWWWWWWWWW
 
 <levelmap> <timestep>100</timestep> <name> 1-7   LOOP THE LOOP </name>
 <help>
-<h2>BRIDGES</h2>
-<p>BRIDGES ALLOW HORIZONTAL AND VERTICAL 
-<br>
-LAVA FLOWS TO CROSS WITHOUT INTERFERING. </p>
+  BRIDGES ALLOW HORIZONTAL AND VERTICAL <br>
+  LAVA FLOWS TO CROSS WITHOUT INTERFERING.
 </help>
 W...........W
 W._#####   .W
@@ -400,69 +398,87 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 
 <levelmap> <timestep> 0 </timestep> <name> 3-1    SET AND RESET </name>
 <help>
-<p>TOP SWITCH LIGHTS STAR. </p>
-<p>BOTTOM SWITCH EXTINGUISHES STAR. </p>
-<p class="indepth"> 
-The two toads in the center form an
-<a href="https://en.wikipedia.org/wiki/Flip-flop_(electronics)">SR latch</a>,
-which is a bistable memory element.
-The state can be controlled by sending a pulse to 
-the Set (S) input or the Reset (R) input.
-When S=1 and R=0, then O=1.
-When S=0 and R=1, then O=0.
-This latch is R-dominated, such that R trumps S.
-</p>
+  STEP ON "SET" &mdash; THE LAMP TURNS ON.
+</help>
+<help>
+  HIT "RESET" &mdash; THE LIGHT IS GONE!
+</help>
+<help>
+  <p class="indepth"> 
+  The two toads in the center form an
+  <a href="https://en.wikipedia.org/wiki/Flip-flop_(electronics)">SR latch</a>,
+  which is a bistable memory element.
+  The state can be controlled by sending a pulse to 
+  the Set (S) input or the Reset (R) input.
+  When S=1 and R=0, then O=1.
+  When S=0 and R=1, then O=0.
+  This latch is R-dominated, such that R trumps S.
+  </p>
 </help>
 WWWWWWWWWWWW
 W.........#W
 M..WWWWW#n#W
 W..W#+L##W.W
-?._#Nn#W.WSW
-W_WWW#WW..#.
-W#####WWWWWW
+W?._Nn#W.WSW
+W..WW#WW..#.
+W?._##WWWWWW
+W.........?W
 WWWWWWWWWWWW
 </levelmap>
 
+<levelmap>
 <levelmap> <timestep> 100 </timestep> <name> 3-2    OPEN THE GATE </name>
 <help>
-<p>
-DO THE RIGHT THINGS IN THE RIGHT ORDER.
-</p>
-<p class="indepth"> 
-The left switch operates a pulse generator.
-The top switch controls a stateless latch, which is simply an AND gate.
-Pulses pass through the latch only if it is open (on).
-</p>
+  THIS LATCH OBSTRUCTS THE RIFLE'S MUZZLE. <br>
+  TURN ON THE SWITCH TO SOLVE THE PUZZLE!
 </help>
-?........W
-W...WWW..W
-M.WsN#W..W
-W.W..#WW.W
-W_##nn##B
-W.W......W
+<help>
+  PUSH THIS PLATE TO TRY A SHOT.<br>
+  DON'T FALL IN &mdash; THE LAVA'S HOT!
+</help>
+<help>
+  <p class="indepth"> 
+  The left switch operates a pulse generator.
+  The top switch controls a stateless latch, which is simply an AND gate.
+  Pulses pass through the latch only if it is open (on).
+  </p>
+</help>
+                    
+                    
+     WWWWWWWWWW     
+   WWW####nn######B.
+  WWWW#WWWN#WWW   . 
+  WWWW#W WsW      . 
+ WWWWW#W W.?      . 
+WWWWWW_W W.W      . 
+WWWW ?.  W.W      . 
+WWW   M............?
+....................
 </levelmap>
 
 
 <levelmap> <timestep> 10 </timestep> <name> 3-3    FLASH TO WRITE </name>
 <help>
-<p>
-USE THE BOTTOM SWITCH TO CHOOSE THE BIT TO LOAD. <br>
-USE THE TOP SWITCH TO WRITE TO MEMORY! 
-</p>
-<p class="indepth"> 
-This toad circuit implements a
-<a href="https://en.wikipedia.org/wiki/Flip-flop_(electronics)">D latch</a>.
-This is an SR latch with a data input D and a trigger T.
-The data input is stored in the state of the SR latch ONLY when the trigger is on.
-</p>
+  <p class="indepth"> 
+  This toad circuit implements a
+  <a href="https://en.wikipedia.org/wiki/Flip-flop_(electronics)">D latch</a> &mdash;
+  an SR latch with a data input D (the P switch) and a trigger T (the pressure plate).
+  The data input is stored in the state of the SR latch ONLY when the trigger is on.
+  </p>
 </help>
-WWWWWWWWWWWWWWWWWW
+<help>
+  TRANSMIT THE MESSAGE TO YOUR FRIEND!
+</help>
+<help>
+  CHOOSE THE BIT YOU WISH TO SEND...
+</help>
+W?WWWWWWWWWWWWWWWW
 W.............#..W
 W.?WWWWWWWWW#n#WSW
-W._#n++##  W#W.W#W
-W.W  ##+n# W#W.W#.
-W.s##LNnNnL####.#W
-M.W     #+# WW#W#W
+W._#n++##   #W.W#W
+W.W  ##+n#  #W.W#.
+W.s#L#NnNn#L###.#W
+M.?     #+#  W#W#W
 WWWWWWWWWWWWWWWWWW
 </levelmap>
 
@@ -630,34 +646,117 @@ W?.#.....#...#.#.....
 WWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
+
 <levelmap> <timestep> 20 </timestep> <name> 4-2   TIME IT RIGHT </name>
 <help>
-HIT THE P SWITCH WHEN THE BOTTOM STAR LIGHTS UP!
-<p class="indepth">
-Toggling the P switch causes the two inputs to the EQV gate to change from (0,1) to (1,0).
-However, one input switches two ticks after the other, so the EQV gate outputs HIGH for two ticks.
-Thus we have a pulse generator that triggers 
-on both the rising edge and falling edge of the P switch signal.
-</p>
+  HOP ON THE PLATE WHEN THE TIME IS RIGHT. <br>
+  ......WHEN YOU SEE THE STAR SHINE BRIGHT, <br>
 </help>
-W?..........................W
-W.MWWWWWWWWWWWWWWWWWWWWWWWW.W
-..s##N##..       ......    .W
-W  +n#.n##       ........  .W
-W  N#n##.##########L##N#.. .W
-W                ......N###B.
-W  N#N##.##########L##N#..  W
-W  +n#.N##       ........   W
-W  ##N##.        ......     W
-W  #                        W
-W N## ### ### ### ### ###   W
-W L+++++++++++++++++++++++# W
-W   ### ### ### ### ### ### W
-W...........................W
+<help>
+  <p class="indepth">
+  This circuit contains 2-tick pulse generators.
+  Bowser is protected by an AND gate.
+  To defeat him, sync your pulse to the auto-pulser.
+  </p>
+</help>
+<help>
+  WHEN TOP AND BOTTOM TOADS BOTH CRY, <br>
+  BOWSER WILL BEGIN TO FRY.
+</help>
+W?WWWWWWWWWWWWWWWWWWWWWWWWW
+W.........................W
+.M.n#.....................W
+W_n#n#################N#..W
+W    ?.              .?n#B.
+WLn#n#################N#  W
+W# n#                     W
+W#                        W
+W# ### ### ### ### ### ## W
+W#++++++++++++++++++++++# W
+WN## ### ### ### ### ###  W
+WWWWWWWWWWWWWWWWWWWWWWWWWWW
+</levelmap>`
+
+
+<levelmap> <timestep> 100</timestep> <name> 4-2   frogger/toader ... </name>
+<help>
+</help>
+W?WWWWWWWWWWWWWWWWWWWWWWWW
+W.........................
+.........n#...............
+WN#####      #   n###P  .W
+W#++++#
+W# 
+W# n##
+W# # #    ............M    
+W####nn####################
+W       ...................
+WLn##nn#+#################
+W# # #      ...         .W
+W# n##                   .
+W#                        
+W#######                  
+WN+++++#                  
+WWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 
-<levelmap> <timestep> 120 </timestep> <name> 4-3    SPIRAL OF DEATH </name>
+
+<levelmap> <timestep> 100 </timestep> <name> 4-2   don't TIME IT wrong (NOT RIGHT) </name>
+<help>
+  HOP ON THE PLATE WHEN THE TIME IS RIGHT. <br>
+  ......WHEN YOU SEE THE STAR SHINE BRIGHT, <br>
+</help>
+<help>
+  <p class="indepth">
+  This circuit contains 2-tick pulse generators.
+  Bowser is protected by an AND gate.
+  To defeat him, sync your pulse to the auto-pulser.
+  </p>
+</help>
+<help>
+  WHEN TOP AND BOTTOM TOADS BOTH CRY, <br>
+  BOWSER WILL BEGIN TO FRY.
+</help>
+W?WWWWWWWWWWWWWWWWWWWWWWWWW
+W.........................W
+.M.......n#...............W
+W......_n#n###          .W
+W            #   n###P  .W
+W    ?.      #nnn#       .W
+WLn##nn######+##++########W
+W# # #       #           .W
+W# n##       #           .W
+W#           ############B.
+W#######                  W
+WN+++++#                  W
+WWWWWWWWWWWWWWWWWWWWWWWWWWW
+</levelmap>
+
+
+
+<levelmap> <timestep> 20 </timestep> <name> 4-3  HOW LONG A PULSE? </name>
+<help> 2-TICK PULSE </help>
+<help> 4-TICK PULSE </help>
+<help> 6-TICK PULSE </help>
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+W...........................W
+.MWWWWWWWWWWWWWWWWWWWWWWWWW.W
+?._NHn#################Nn#n#W
+W.W.n#.................#+#W.W
+W.W.......................W.W
+?._NHHn################Nn#n#W
+W.W.n+#................#+#W.W
+W.W.......................W.W
+?._NHHn################Nn#n#W
+W.W.# #................#+#W..
+W.W.# #...................WWW
+W.W.n##...................WWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+</levelmap>
+
+
+<levelmap> <timestep> 120 </timestep> <name> 4-3    SPIRAL OF DEATH (old) </name>
 <preconverge> 100 </preconverge>
 <help>
 IF THIS IS TOO DIFFICULT, INCREASE THE DELAY USING THE SLIDER.
@@ -860,12 +959,12 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep> 0 </timestep> <name> 5-1    BITWISE NOR </name>
+<levelmap> <timestep> 0 </timestep> <name> 5-1    BITWISE OR </name>
 <help>
 </help>
 W?WWWWWWWWWWWWW
-...W s s S sWWW
-W..W # # # #W..  
+...W r r r rWWW
+W..W # # # #W..
 W..s#n#+#+#+##W
 W.MW   # # #W.W
 W..s###n#+#+##W
@@ -877,12 +976,12 @@ W.............W
 WWWWWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep> 0 </timestep> <name> 5-2    BITWISE EQV </name>
+<levelmap> <timestep> 0 </timestep> <name> 5-2    BITWISE XOR </name>
 <help>
 </help>
 WWWWWWWWWWWWWWWWWWW
 W?WWWWWWWWWWWWWWWWW
-...W S S s S     WW
+...W r r r r     WW
 W..W # # # #     WW
 W..W ##+#+#+##n# WW
 W..W   # # # n#+ ..
@@ -993,24 +1092,30 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 
 <levelmap> <timestep> 10 </timestep> <name> 6-1    GET ON THE BUS </name>
 <help>
-FAST, MEDIUM, OR SLOW?  YOUR CHOICE!
-<p class="indepth">
-Use one-hot addressing to select an input line to read from.
-</p>
+  CHOOSE A LINE TO ACTIVATE <br>
+  AND THUS DETERMINE BOWSER'S FATE.
 </help>
-WWWWWWWWWWWWWWWWWWWWW
-W?..................W
-.M...._.._.._.......W
+<help>LOW HEAT</help>
+<help>MEDIUM HEAT</help>
+<help>HIGH HEAT</help>
+<help>
+  <p class="indepth">
+  Use one-hot addressing to select an input line to read from.
+  </p>
+</help>
+WWW?WWWWWWWWWWWWWWWWW
+W...................W
+.M...?_ ?_ ?_.......W
 W.....n# n# n#     .W
-W..##..#  #  #     .W
-W..n###n##+##+##   .W
-W......   #  # #   .W
-W#++#..   #  # #   .W
+W ###  #  #  #     .W
+Wn++++#n##+##+##   .W
+W## ###   #  # #   .?
+W         #  # #   .W
 Wn########n##+#nn#LB.
-W......      # #   .W
-W###.##      # #   .W
-Wn++++#######n##   .W
-W..###.            .W
+W#++#        # #   .W
+W            # #   .W
+Wn###########n##   .W
+W##                .W
 WWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
@@ -1018,17 +1123,20 @@ WWWWWWWWWWWWWWWWWWWWW
 
 <levelmap> <timestep>15</timestep> <name> 6-2    GET OFF THE BUS </name>
 <help>
-DELIVER PACKAGES TO TARGETS.
-<p class="indepth">
-Use one-hot addressing to select an output line to write to.
-</p>
+  CONNECT THE PULSER TO THE BUS <br>
+  TO SEND A GIFT TO EACH OF US!
 </help>
-W?.................W
+<help>
+  <p class="indepth">
+  Use one-hot addressing to select an output line to write to.
+  </p>
+</help>
 W..................W
-.M..  _  _  _     .W
+W..................W
+.M..  _  _  _    ..?
 W...  n# n# n#    .W
 W... #+n#++#++#L##BW
-W... #    #  #    .W
+W.?. #    #  #    .W
 Wn########n##+#L##BW
 W#.# #       #    .W
 W### ########n#L##B.
@@ -1042,7 +1150,7 @@ SWITCHES SELECT ADDRESS LINE.<br>
 PRESSURE PLATE SENDS PULSE.<br>
 AIM CAREFULLY!
 <p class="indepth">
-This toad circuit couples a binary decoder to an output bus(?)
+This toad circuit couples a binary decoder to an output bus.
 Depending on the 2-bit address (00,01,10,11), 
 the appropriate latch is opened, sending the pulse along the desired line.
 </p>
@@ -1050,17 +1158,17 @@ the appropriate latch is opened, sending the pulse along the desired line.
  WWWWWWWWWWW........W
  Wn#++#n++Ln#+n#L##B.
  W# #+n+## W ##    .W
-WW# #n+# #Lnn++#L# .W
-W?# #  #   W##   P .W
-W.s#+##n##Ln++n#L# .W
-W.W # #    W ##    .W
+ W# #n+# #Lnn++#L# .W
+WW# #  #   W##   P .W
+W?##+##n##Ln++n#L# .W
+W.s # #    W ##    .W
 M.s###n###Lnn++#L# .W
 W..WWWWWWWWW##     .W
 W_#########n#   ....W
 WWWWWWWWWW..........W
 </levelmap>
 
-<levelmap> <timestep>0</timestep> <name> 6-4    READ A BIT AT A TIME </name>
+<levelmap> <timestep>0</timestep> <name> 6-4    READ BIT BY BIT </name>
 <preconverge> 100 </preconverge>
 <help>
 SWITCHES SELECT ADDRESS LINE.<br>
@@ -1070,30 +1178,36 @@ The addressed bit is copied to the output.
 </p>
 </help>
 WWWWWWWWWWWWWWWWWWWWWWWWWW
-W..............Lsn#      W
+W..............Lrn#      W
 WWWWWWWWWWWW.##+++n##    W
 WWN#++#n++LN## .... #    W
 WW# #+n+## W   LSn# #    W
 WW# #N+# #LN###+++n#nn#  W
-W?# #  #   W          nnLW
-W.s#+##n##LN## LSn#   # #W
-WMW # #    W ##+++n#nn# #W
+WW# #  #   W          nnLW
+W?##+##n##LN## Lrn#   # #W
+WMs # #    W ##+++n#nn# #W
 W.s###N###LN#  .... #   #W
-W..WWWWWWWWW#  Lsn# #   #W
+W..WWWWWWWWW#  Lrn# #   #W
 W...........###+++n## ..B.
 W........................W
 </levelmap>
 
-<levelmap> <timestep>0</timestep> <name> 6-5    WRITE A BIT AT A TIME </name>
+<levelmap> <timestep>0</timestep> <name> 6-5    WRITE BIT BY BIT </name>
 <preconverge> 100 </preconverge>
 <help>
-TOP SWITCHES SELECT ADDRESS LINE.<br>
-BOTTOM SWITCH SELECTS DATA.<br>
-STEP ON THE PLATE TO COMMIT DATA TO MEMORY!
-<p class="indepth">
-Here, the binary decoder addresses a bank of four D latches.
-When triggered, the data bit is transmitted to the input of the selected D latch. 
-</p>
+  <p class="indepth">
+  The binary decoder addresses a bank of four D latches.
+  When triggered, the data bit is transmitted to the input of the selected D latch. 
+  </p>
+</help>
+<help>
+  SELECT ADDRESS LINE
+</help>
+<help>
+  PREPARE DATA
+</help>
+<help>
+  COMMIT DATA TO MEMORY
 </help>
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 WWWWWWWWWWWW      #######N++HH  WWW
@@ -1102,59 +1216,114 @@ WWN#++#n++LN#+n#L##  ######NnNn#W..
 WW# #+n+## W HH      #       #+LN#W
 WW# #N+# #LNn++#L####+##N++HH   W.W
 W?# #  #   WHH       #   ##+n#  W.W
-W.s#+##n##LN++n#L### #####NnNn# W.W
-M.W # #    W HH    # #      #+L#N#W
+W.##+##n##LN++n#L### #####NnNn# W.W
+?.s # #    W HH    # #      #+L#N#W
 W.s###N###Lnn++#L# ##+#N++##    W.W
-W.WWWWWWWWWWHH   #   #  ##+n#   W.W
-W._########NH    #   ####NnNn#  W.W
-W.W              #   #     #+L##N#W
-W.s############# ####+N++##     W.W
-W.W            #     # ##+n#    W.W
-W.W            #########NnNn#   W.W
+M.WWWWWWWWWWHH   #   #  ##+n#   W.W
+?.s#L##### NH    #   ####NnNn#  W.W
+W.W      # #     #   #     #+L##N#W
+?._######+##     ####+N++##     W.W
+W.W      #           # ##+n#    W.W
+W.W      ###############NnNn#   W.W
 W.WWWWWWWWWWWWWWWWWWWWWWWW#+L###N#W
 W.................................W
 W.................................W
 </levelmap>
 
-<levelmap> <timestep>0</timestep> <name> 6-6    WRITE, WORD BY WORD </name>
-W?WWWWWWWWWWWWWWWWWWW
- M       ###n++HH   
-W.       #   ##+n#  
-W. ######+####NnNn#L
-W. #     #      #+# 
-W. #     ##n++HH    
-W. #     #  ##+n#   
-W.s#   ##+###NnNn##L
-W. #   # #     #+#  
-W.s+#### #n++HH     
-W. # #   # ##+n#    
-W.s+#+###+##NnNn###L
-W. # # # #    #+#   
-W._+#+#+##           
-W..#.#.#............ 
-W._+#+#+##           
-WWW# # # ###n++HH   
-W. # # # #   ##+n#  
-W. ##+#+#+####NnNn#L
-W.   # # #      #+# 
-W.   # # ##n++HH    
-W.   # # #  ##+n#   
-W.   ##+#+###NnNn##L
-W.     # #     #+#  
-W.     # #n++HH     
-W.     #   ##+n#    
-W.     #####NnNn###L
-W.            #+#   
-WWWWWWWWWWWWWWWWWWWWW
+<levelmap> <timestep>0</timestep> <name> 6-6    WRITE WORD BY WORD </name>
+<help>
+  FIRST THREE BITS ARE ONE-OH-ONE, <br>
+  NEXT THREE BITS ARE OH-ONE-OH. <br>
+  WHEN THE SET-UP YOU HAVE DONE, <br>
+  THROUGH THE PASSAGE YOU CAN GO.
+</help>
+<help>
+  PREPARE BIT SEQUENCE TO LOAD
+</help>
+<help>
+  LOAD TOP REGISTER
+</help>
+<help>
+  LOAD BOTTOM REGISTER
+</help>
+W?WWWWWWWWWWWWWWWWWWWWWWW
+ M       ###n++HH     W..
+W.       #   ##+n#    W.W
+W. ######+####NnNn#Ln###W
+W. #     #      #+#   W.W
+W. #     ##n++HH      W.W
+W. #     #  ##+n#     W.W
+W.s#   ##+###NnNn##L####W
+W. #   # #     #+#    W.W
+?.s+#### #n++HH       W.W
+W. # #   # ##+n#      W.W
+W.s+#+###+##NnNn###Ln###W
+W. # # # #    #+#     W.W
+?._+#+#+##            W.W
+W..#.#.#..............W.W
+?._+#+#+##           .W.W
+WWW# # # ###n++HH    .W.W
+W. # # # #   ##+n#   .W.W
+W. ##+#+#+####NnNn#L##W.W
+W.   # # #      #+#  .W.W
+W.   # # ##n++HH     .W.W
+W.   # # #  ##+n#    .W.W
+W.   ##+#+###NnNn##Ln#W.W
+W.     # #     #+#   .W.W
+W.     # #n++HH      .W.W
+W.     #   ##+n#     .W.W
+W.     #####NnNn###L##W.W
+W.            #+#    ...W
+WWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 
-<levelmap> <timestep>0</timestep> <name> 6-7    WRITE AND READ, WORD BY WORD </name>
+
+<levelmap> <timestep>0</timestep> <name> 6-7    STORE AND RESTORE </name>
 <help>
-WRITE TWO PASSCODES.  WHEN YOU GET TO THE OTHER SIDE OF THE RIVER, YOU'LL NEED ONE OF THE TWO PASSCODES AT RANDOM!
-YOU'LL NEED TO RESTORE IT INTO THE FINAL REGISTER
+  THESE THREE STARS SHOW THE PASSCODE OF THE DAY.
 </help>
-#################  M?
+<help>
+  HAVE YOU PREPARED THE CODES?  NO TURNING BACK AFTER THIS POINT!
+</help>
+<help> USE THIS SWITCH TO SELECT 1 OF THE 2 CODES YOU HAVE PREPARED. </help>
+<help> PREPARE THIS REGISTER WITH CODE 101. </help>
+<help> THESE STARS SHOW THE CODE YOU SELECTED. </help>
+<help> YOU NEED TO SELECT THE CORRECT CODE TO GET PAST THIS POINT! </help>
+<help> PREPARE THIS REGISTER WITH CODE 010. </help>
+W                                              W
+W                                              W
+W###############Nn##Nn##########               W
+W#            #+# #+#          ###N++HH        W
+W#WWWWWWWWWWWWWWWWWWWWWWW####  #   ##+n#       W
+W#W           ###        #  nn#+####NnNn#      W
+W##########n# # #        # ##  #      #+##     W
+W W   #     n###nn#      #     ##N++HH   #     W
+W Wn# #    n# #+# # #+#  ## #  #  ##+n#  #     W
+W#N#n## n###      ##Nn####  nn#+###NnNn# L#### W
+W#W   # ## ## #+#    #   #n##  #     #+#     # W
+W#W   #     n###nn####   #     #N++HH  ##L## # W
+W#W   #####n# # #        ####    ##+n#     # # W
+W#W           ###        #  nn####NnNn###L # # W
+W#WWWWWWWWWWWWWWWWWWWWWWW####       #+#  # # # W
+W#_.....................WWWWWWWWWWWWWWWW?#W#W#WW
+W?#WWWWWWWWWWWWWWWWWWWW..................#W#W#WW
+W.....................?W.WWWWWWWWWWWWWWW.+.+.+.W
+W..WW################s...W ###############W#W#.W
+W..W #               W...W #               # #.W
+W..#n+n##############W...W #    ############ #.W
+WM.S ##             #W...W #n#  #            #.W
+?..sn+n############ #W...W n#+  #    #########.W
+W..s ##           # #W...W##nn##+### #       W.W
+W..#n+n########## # #W?WWW #    #  ##+#####  ?.W
+W..W #          # # # ######    #n#  #    n####W
+W..W n#         # # # #  W      n#+  #       W.W
+W..#n++n########+#+#nnL #########nn##+####n####W
+W..s  ##        # #     #W           #       W.W
+?..Sn#+n########+#nn##L##W           #n#  n####W
+W..S  ##        #        W           n#+  #  W..
+W..#n#+n########nn####L###############nn###  WWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 
@@ -1587,9 +1756,66 @@ Ms+###+## L.
 
 
 
+
+
+
+<levelmap> <timestep> 100 </timestep> <name> S-0    PULSE GENERATORS </name>
+<help>
+  When Mario steps on the pressure plate, it produces a step signal. <br>
+  Each pulse generator converts this step to a pulse. <br>
+  If Mario steps off too soon, the output pulse may be truncated!
+</help>
+<help> 2-TICK PULSE </help>
+<help> 4-TICK PULSE </help>
+<help> 6-TICK PULSE </help>
+?M....................
+?._NHn################
+W.W.n#................
+W.W...................
+?._NHHn###############
+W.W.n+#...............
+W.W...................
+?._NHHn###############
+W.W.# #...............
+W.W.# #...............
+W.W.n##...............
+WWWWWWWWWWWWWWWWWWWWWW
+</levelmap>
+
+<levelmap> <timestep> 100 </timestep> <name> S-0    PULSE EXTENDERS </name>
+<help>
+  When Mario steps on the pressure plate, it produces a step signal. <br>
+  The pulse generator converts this step to a 2-tick pulse. <br>
+  The pulse extendrer converts the pulse to a longer pulse. <br>
+  Even if Mario steps off prematurely, the output pulse length is guaranteed.
+</help>
+<help> 4-Tick Pulse Extender </help>
+<help> 6-Tick Pulse Extender </help>
+<help> 8-Tick Pulse Extender </help>
+...?..................................
+......................................
+............?#+#......................
+........#######nn###################L.
+........#.............................
+.M......#...?#+#.....................
+...n#...#.#####nn###################L.
+._n#n####.#..#.#......................
+........###..###......................
+........#.............................
+........#...?#+#.....................
+........#######nnnn#################L.
+.............#.#.#....................
+.............###.#....................
+...............###....................
+......................................
+</levelmap>
+
+
+
+
 <levelmap> <timestep>0</timestep> <name> S-1   SR LATCH (3x2) </name>
 <help>
-STORE A BIT IN MEMORY BY PULSING THE SET SWITCH OR RESET SWITCH!
+STORE A BIT IN MEMORY USING THE SET OR RESET BUTTONS
 <p class="indepth">
 A SR latch has two inputs called S (Set) and R (Reset), and one output (Q).
 <br>
@@ -1600,13 +1826,70 @@ If RESET is HIGH (S=0 and R=1), OUTPUT goes LOW (Q=0).
 </help>
 ........
 .M.....?
-.W..WW..
-.Wss W..
+.W__WW..
 .WNn#W..
 .W#+L##.
 .WWWWW..
-........
 </levelmap>
+
+<levelmap> <timestep>500</timestep> <name> S-1B   ANTI-GLITCH SR LATCH </name>
+<help>
+  IF THE SET BUTTON IS DEPRESSED FOR FEWER THAN 6 TICKS,
+  THIS SR LATCH WILL ENTER A GLITCHY UNSTABLE STATE
+</help>
+<help>
+  IF THE SET BUTTON IS DEPRESSED FOR FEWER THAN 6 TICKS,
+  THIS SR LATCH WILL STABILIZE WITHIN 3 CYCLES
+</help>
+..?......
+...._....
+.._Nn#...
+...#+#...
+.M.......
+...###...
+...#.#...
+.._Nn#...
+...#+#...
+.?.._....
+.........
+</levelmap>
+
+<levelmap> <timestep>0</timestep> <name> S-RNG    RANDOM NUMBER GENERATOR </name>
+<help> 6-Tick Pulse Extender </help>
+<help> AND Gate </help>
+<help> 2-Tick Pulse Generator </help>
+<help> Period-8 Clock </help>
+<help> SR Latch </help>
+<help> AND Gate </help>
+<help> 6-Tick Pulse Extender </help>
+<help>
+  <p class="indepth">
+  This is a time-based pseudorandom number generator.
+  When Mario steps on the pressure plate, a 2-tick pulse is generated.
+  The period-8 clock generates a waveform that is ON for 4 ticks and OFF for 4 ticks.
+  Together with the AND gates, this forms a pair of latches such that
+    either the top latch is transparent and the bottom is opaque,
+    or the top is opaque and the bottom is transparent.
+  Either the top or bottom pulse extender gets activated.
+  A 6-tick pulse is delivered to either the S or R input of the SR latch.
+  </p>
+</help>
+..........................
+..............###.........
+......#####n#.#?#.........
+......#....?n###nnL.......
+.M?n#.#.?..n#.#+#.#.#+#...
+._n#n##.n###......##Nn##L.
+......#.##.##.#+#....#?...
+......#....?n###nnL###....
+......#####n#.#?#.........
+..............###.........
+.......................?..
+</levelmap>
+
+
+
+
 
 
 <levelmap> <timestep>0</timestep> <name> S-2   D LATCH (6x5) </name>
