@@ -443,7 +443,7 @@ WWWWWWWWWWWW
   Pulses pass through the latch only if it is open (on).
   </p>
 </help>
-                    
+...................
                     
      WWWWWWWWWW     
    WWW####nn######B.
@@ -453,7 +453,7 @@ WWWWWWWWWWWW
 WWWWWW_W W.W      . 
 WWWW ?.  W.W      . 
 WWW   M............?
-....................
+................... 
 </levelmap>
 
 
