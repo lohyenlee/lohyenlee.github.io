@@ -487,13 +487,17 @@ WWWWWWWWWWWWWWWWWW
 <levelmap> <timestep> 0 </timestep> <name> 3-4    LOOSEN THE LATCHES </name>
 <help>
 LET IT FLOW, LET IT FLOW!
-<p class="indepth">
-First switch controls input.
-Other switches control three D latches in series.
-Open each latch to let signal through.
-</p>
+  <p class="indepth">
+  This level consists of an input switch and three D latches in series.
+  Trigger each latch to let the signal propagate.
+  </p>
 </help>
-?WWWWWWWWWWWWWWWWWWWWWW
+<help> THIS SWITCH CONTROLS STAR 1. </help>
+<help> STEP HERE TO LET SIGNAL FLOW FROM STAR 1 TO STAR 2. </help>
+<help> STEP HERE TO LET SIGNAL FLOW FROM STAR 2 TO STAR 3. </help>
+<help> STEP HERE TO LET SIGNAL FLOW FROM STAR 3 TO STAR 4. </help>
+                       
+??W?WWWWW?WWWWW?WWWWWWW
 M.....................W
 WsW_WWWWW_WWWWW_WWWWW.W
 W#WN##   N##   N##  W.W
@@ -506,13 +510,18 @@ W##++n# #++n# #++n#WW.W
 
 <levelmap> <timestep> 20 </timestep> <name> 3-5    TREAD CAREFULLY </name>
 <help>
-SHUT THE DOOR BEHIND YOU!
-<p class="indepth">
-The three toads at the bottom form an AND gate.
-If star 2 and star 4 are both on, Peach will be cooked.
-</p>
+  SHUT THE DOOR BEHIND YOU!
+  <p class="indepth">
+  The three toads at the bottom form an AND gate.
+  If star 2 and star 4 are both on, Peach will be cooked.
+  </p>
 </help>
-?WWWWWWWWWWWWWWWWWWWWWW
+<help> THIS SWITCH CONTROLS STAR 1. </help>
+<help> STEP HERE TO LET SIGNAL FLOW FROM STAR 1 TO STAR 2. </help>
+<help> STEP HERE TO LET SIGNAL FLOW FROM STAR 2 TO STAR 3. </help>
+<help> YOU'D BETTER EXTINGUISH STAR 2 BEFORE LIGHTING STAR 4! </help>
+                       
+??W?WWWWW?WWWWW?WWWWWWW
 M.....................W
 WsW_WWWWW_WWWWW_WWWWW.W
 W#WN##   N##   N##  W.W
@@ -567,8 +576,7 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWW..n#.
 </levelmap>
 
 
-<levelmap> <timestep>0</timestep> 
-<name> 3-8   WORLD 3 BOSS FIGHT </name>
+<levelmap> <timestep>0</timestep> <name> 3-A    WORLD 3 BOSS FIGHT #1 </name>
 <help>
 HELP ME, MARIO!  THE PASSWORD IS 01101!
 <p class="indepth">
@@ -590,6 +598,71 @@ W..WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW#.WW
 W...............................................B.PW
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
+
+
+
+<levelmap> <timestep>0</timestep> <name> 3-9    TOGGLY WOGGLY FLIPPY FLOPPY </name>
+<help>
+  asldfkjadslfj 
+  <p class="indepth">
+  This circuit implements a T flip flop, also known as a frequency divider.
+  This essentially consists of two D latches and a NOT gate in series.
+  On falling trigger, latch 1 closes and latch 2 opens, so X:=NOT Y.
+  On rising trigger, latch 1 opens and latch 2 closes, so Y:=X.
+  Thus the state (X,Y) cycles through the sequence 00, 10, 11, 01.
+  The output (Y) toggles on the rising edge of the trigger.
+  </p>
+</help>                
+WWWWWWWWWWWWWWWWWWWWWWWWW
+M..._...................W
+WWW?#WWWWWWWWWWWW.W.W.W.W
+W   ##+n++##  W###n#n#n#W
+W ##+n# ##+n# W#W.W.W.W.W
+Wn#NnNnL#NnNnL##WS##W.W#.
+W#   #+#   #+#WWWWW.W.W#W
+W####+++####  WWWWWS##W#W
+WWWWWWWWWWWWWWWWWWW...S##
+..................WWWWWWW
+</levelmap>
+
+
+<levelmap> <timestep>0</timestep> <name> 3-10    WORLD 3 BOSS FIGHT </name>
+<help>
+  SEVEN STEPS TO LIGHT ALL STARS!
+  <p class="indepth">
+  This binary counter consists of 3 T flip flops in series.
+  Its state is indicated by the stars (000, 001, 010, 011, ..., 111).
+  </p>
+</help>                
+            WWWWWWWWWWWWWWWWWWWWWWW
+            W##N++##+n++##       WW
+            W#W ##+n# ##+n#      WW
+            W#Wn#NnNn##NnNn#L##  WW
+            W#W#   #+#   #+#  #  WW
+            W#W####+++####    #  WW
+            W#                #  WW
+            W################ #  WW
+            W               # #  WW
+            WWWWWWWWWWWWWWWW# #  WW
+            W##N++##+n++##  # #  WW
+            W#W ##+n# ##+n# # n# WW
+            W#Wn#NnNn##NnNn#L#nn#B.
+            W#W#   #+#   #+#  n# .W
+WWW         W#W####+++####    #  .W
+..WWWWWWWWWWW#                #  .W
+WM...........################.#...W
+W.?n# ##    WWWWWWWWWWWWWWWW# #  WW
+W_n#n##nn######n++##+n++##  # #  WW
+W.W   #+    W W ##+n# ##+n# # #  WW
+WWW   ##    W Wn#NnNn##NnNn#L##  WW
+  WWWWWWWWWWW W#   #+#   #+#     WW
+            W W####+++####       WW
+            WWWWWWWWWWWWWWWWWWWWWWW
+</levelmap>
+
+
+
+
 
 <levelmap> <timestep>100</timestep> <name></name>
 <help>
@@ -625,7 +698,7 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep>1</timestep> <name> 4-1   TICK TOCK </name>
+<levelmap> <timestep>1</timestep> <name> 4-1    TICK TOCK </name>
 <preconverge> 40 </preconverge> 
 <help>
 <p class="indepth">
@@ -647,10 +720,10 @@ WWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 
-<levelmap> <timestep> 20 </timestep> <name> 4-2   TIME IT RIGHT </name>
+<levelmap> <timestep> 20 </timestep> <name> 4-2    TIME IT RIGHT </name>
 <help>
-  HOP ON THE PLATE WHEN THE TIME IS RIGHT. <br>
-  ......WHEN YOU SEE THE STAR SHINE BRIGHT, <br>
+  WHEN YOU SEE THE STAR SHINE BRIGHT, <br>
+  HOP ON THE PLATE &mdash; THE TIME IS RIGHT. <br>
 </help>
 <help>
   <p class="indepth">
@@ -675,67 +748,41 @@ W# ### ### ### ### ### ## W
 W#++++++++++++++++++++++# W
 WN## ### ### ### ### ###  W
 WWWWWWWWWWWWWWWWWWWWWWWWWWW
-</levelmap>`
-
-
-<levelmap> <timestep> 100</timestep> <name> 4-2   frogger/toader ... </name>
-<help>
-</help>
-W?WWWWWWWWWWWWWWWWWWWWWWWW
-W.........................
-.........n#...............
-WN#####      #   n###P  .W
-W#++++#
-W# 
-W# n##
-W# # #    ............M    
-W####nn####################
-W       ...................
-WLn##nn#+#################
-W# # #      ...         .W
-W# n##                   .
-W#                        
-W#######                  
-WN+++++#                  
-WWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
-
-
-<levelmap> <timestep> 100 </timestep> <name> 4-2   don't TIME IT wrong (NOT RIGHT) </name>
+<levelmap> <timestep> 20 </timestep> <name> 4-3    TIME IT RIGHT AGAIN </name>
 <help>
-  HOP ON THE PLATE WHEN THE TIME IS RIGHT. <br>
-  ......WHEN YOU SEE THE STAR SHINE BRIGHT, <br>
+  asdf
 </help>
-<help>
-  <p class="indepth">
-  This circuit contains 2-tick pulse generators.
-  Bowser is protected by an AND gate.
-  To defeat him, sync your pulse to the auto-pulser.
-  </p>
-</help>
-<help>
-  WHEN TOP AND BOTTOM TOADS BOTH CRY, <br>
-  BOWSER WILL BEGIN TO FRY.
-</help>
-W?WWWWWWWWWWWWWWWWWWWWWWWWW
-W.........................W
-.M.......n#...............W
-W......_n#n###          .W
-W            #   n###P  .W
-W    ?.      #nnn#       .W
-WLn##nn######+##++########W
-W# # #       #           .W
-W# n##       #           .W
-W#           ############B.
-W#######                  W
-WN+++++#                  W
+WWWWWWWWWWWWWWWWWWWWWWWWWWW
+.M........................W
+W.Wn#.....................W
+W_n#n#################N#..W
+W.W                  .?n#B.
+W_n#n## ### ### ### ##N#  W
+W.Wn# # # # # # # # #     W
+W.W   ### ### ### ###     W
+W.W                       W
 WWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
+<levelmap> <timestep> 20 </timestep> <name> 4-4    DON'T TIME IT WRONG! </name>
+<help>
+  asdf
+</help>
+WWWWWWWWWWWWWWWWWWWWWWW
+W.....................W
+W.Wn# ##..............W
+W_n#n##nn#########N#..W
+WMW              .?n#P.
+W_n#n##nn### ### #N#  W
+W.Wn+ ##   # # # #    W
+W.W        ### ###    W
+.MW                   W
+WWWWWWWWWWWWWWWWWWWWWWW
+</levelmap>
 
-
-<levelmap> <timestep> 20 </timestep> <name> 4-3  HOW LONG A PULSE? </name>
+<levelmap> <timestep> 20 </timestep> <name> 4-5    HOW LONG A PULSE? </name>
 <help> 2-TICK PULSE </help>
 <help> 4-TICK PULSE </help>
 <help> 6-TICK PULSE </help>
@@ -756,108 +803,32 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 
-<levelmap> <timestep> 120 </timestep> <name> 4-3    SPIRAL OF DEATH (old) </name>
-<preconverge> 100 </preconverge>
+<levelmap> <timestep> 200 </timestep> <name> 4-6    TOADER </name>
 <help>
-IF THIS IS TOO DIFFICULT, INCREASE THE DELAY USING THE SLIDER.
+  LET'S PLAY FROGGER... WITH TOADS!
 </help>
-                        
-                        
-  n##                   
-  # # #############     
-  # # #           #     
-  # # # ######### #     
- n##nn# #       # #     
-?s    . # ##++#.#.# ... 
-M...... # # ##+#+#+## . 
-        # # #+# # # n#B.
-        # #     # #     
-        # ####### #   
-        #         #   
-        ###########   
-                      
-</levelmap>
-
-
-<levelmap> <timestep> 100 </timestep> <name> 4-4   NIGHTMARE CIRCLES </name>
-<preconverge> 100 </preconverge>
-<help>
-IF THIS IS TOO DIFFICULT, INCREASE THE DELAY USING THE SLIDER.
-</help>
-                   
-   ............    
-   .          ..   
-  NHHHHHHHnN# S#   
-  #  .      #  #   
-  # n###### #  #   
-  # #  .  # #  #   
-? # # ### # #  #.. 
-M.# #.#.# # #.SnN# 
-  # # n## # #  # ..
-  # #     # #  #   
-  # #######.#  #   
-  #         #  #   
-  ###########  #   
-       .       #   
-       S########   
-                   
-</levelmap>
-
-
-<levelmap> <timestep> 30 </timestep> <name> 4-5   WHEN THE PLANETS ALIGN </name>
-<preconverge> 9 </preconverge>
-<help>
-asdf
-<p class="indepth">
-SDf
-</p>
-</help>
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-                              
-M.................            
-                ..   ........ 
-    #######n##   .   .      . 
-    #  # +n# nn###########  . 
-    n### ##n##   .   .   #  . 
-                 .   .   n# . 
-   ########n##   .   .    # . 
-   #   # +n# nn########n##n#B 
-   n#### ##n##   .   .    # ..
-                 .   .   n#   
- ##########n##   .   .   #    
- #     # +n# nn###########    
- n###### ##n##   .....        
-                              
-</levelmap>
-
-
-<levelmap> <timestep> 20</timestep> <name> 4-6   RUN THE GAUNTLET </name>
-<help>
-</help>
-WWWWWWWWWWWWWWWWWWWWWW
-Wn# ### ### ### ###  W
-W#++++++++++++++++++#W
-W ### ### ### ### ###W
-W # # # #  #   #  # #W
-M.###.#.#.###..#..#.#W
-W                  . W
-W................... W
-W.                   W
-W..#.#.#.#.#.#.#.#....
-W  # # # # # # # #   W
-W  ### ### ### ###   W
-W   #+#+#   #+#+#    W
-W     #       #      W
-W     #+++#+++#      W
-W         #          W
-Wn###################W
-W#++++++++++++++++++#W
-WWWWWWWWWWWWWWWWWWWWWW
+W?WWWWWWWWWWWWWWWWWWWWWWWWWWWW
+M............               WW
+Wn###########################W
+W##             ...         #W
+W++##########################W
+W      .....                WW
+W##        ...........      WW
+W#+ n# ##         ....      WW
+Wn###n##n####################W
+W                 ....      WW
+Wn###n##nnn##################W
+W+# n# ##+# #################W
+W#+         #################W
+W##         ################.W
+WWWWWWWWWWWWWWWWWWWWWWWWWWWW..
 </levelmap>
 
 
 
-<levelmap> <timestep>50</timestep> <name> 4-7   BEWARE THE LIVE WIRES </name>
+
+
+<levelmap> <timestep>50</timestep> <name> 4-7    BEWARE THE LIVE WIRES </name>
 <help>
 <p class="indepth">
 An H tree is a fractal network used to distribute a clock signal synchronously to all parts of a device.
@@ -884,24 +855,8 @@ WWWWWWWWWWWWWWWWWWWWWW
 
 
 
-<levelmap> <timestep>30</timestep> <name> 4-8    ESCAPE FROM POMPEII! </name>
-                       
-Mn++++++++++++++#    .
-.################    .
-.#                   .
-.####################.
-.####################..
-.####################. 
-.#############.######. 
-.#####.##############. 
-.####################. 
-.################.###. 
-.####################. 
-.####################. 
-                       
-</levelmap>
 
-<levelmap> <timestep>0</timestep> <name> 4-9   WORLD 4 BOSS FIGHT </name>
+<levelmap> <timestep>0</timestep> <name> 4-8   WORLD 4 BOSS FIGHT </name>
 <help>
 HELP ME, MARIO!  THE PASSWORD IS 100100110!
 <p class="indepth">
@@ -946,14 +901,14 @@ STORING BITS IN MEMORY AND RETRIEVING THEM
 <p class="indepth">
 SLAKDFJASLDKFJADSLKFJSALFJF</p>
 </help>
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW 
-                                         
-       H H H HHH     H     H    HHH      
-       H H H H H     H     H    H        
-       H H H H H HHH H   HHH    HHH      
-       H H H H H H   H   H H      H      
-       HHHHH HHH H   HHH HHH    HHH      
- ?                                       
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+                                        
+       H H H HHH     H     H    HHH     
+       H H H H H     H     H    H       
+       H H H H H HHH H   HHH    HHH     
+       H H H H H H   H   H H      H     
+       HHHHH HHH H   HHH HHH    HHH     
+ ?                                      
 .M......................................
                                         
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
@@ -1031,10 +986,10 @@ WWWWWWWWWWWWWWWWWWW
 
 <levelmap> <timestep> 0 </timestep> <name> 5-4    4-BIT D LATCHES </name>
 <help>
-1101 IS THE CODE &mdash; <br>
-BITS OF DATA YOU MUST LOAD. <br>
-FIRST THE SWITCHES, THEN THE PLATE. <br>
-WATCH OUT FOR THE ONE-WAY GATE! 
+  1101 IS THE CODE &mdash; <br>
+  BITS OF DATA YOU MUST LOAD. <br>
+  FIRST THE SWITCHES, THEN THE PLATE. <br>
+  WATCH OUT FOR THE ONE-WAY GATE! 
 </help>
 W?WWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 W.....#_......................W
@@ -1058,12 +1013,52 @@ W.       #+#         #+#     ..
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
  
+<levelmap> <timestep>0</timestep> <name> 5-5    THREE BIT ADDER </name>
+<help> THESE THREE RANDOM BITS ARE X </help>
+<help> THESE THREE RANDOM BITS ARE Z </help>
+<help> THESE THREE RANDOM BITS ARE Y; <br>
+  X PLUS Y MUST EQUAL Z!
+</help>
 
-<levelmap> <timestep>100</timestep> <name> WORLD 6: ADDRESSING, BUSES, MEMORY </name>
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWW            #####+#          WW
+WWW                       #   n#+#         WW
+WWW                       # ### nn###      WW
+WWW                       # # n#+#  #      WW
+WWW  ###################  # # #+#   L      WW
+WWW  #                 ## # # #            ..
+WWW  # ################ ##+#+###N#  ####nnn#W
+WWW  # #              ##  # #  N#+  #  n#+ .W
+WWW  # #       #####+# ###+##NN#NN##L Lrn# .W
+WWW  # #       #   n#+#   # N#+            .W
+WWW  # #       # ### nn######N#     ####nnn#W
+W?W### #       # # n#+#             #  n#+ .W
+W.Wr   #       # # #+#  ############L Lrn# .W
+W.Wr###+##     # # #    #                  .W
+W.Wr   # ######+#+###N# #           ####nnn#W
+W.W### #       # #  N#+ #           #  n#+ .W
+W.W  # # ######+##NN#NN## ##########L Lrn# .W
+W.W##+## #     # N#+      #           ?    .W
+W..r #   # N#+n###N#   ####           .    .W
+?..r#+#### # N#        #              .    .W
+W..r #     # #         #              .    .W
+W.W# ######+##NNN#######              .    .W
+M.W#       # N#+                      .    .W
+W.W###########N#                      .    .W
+W...........................................W
+</levelmap>
+
+
+
+
+<levelmap> <timestep>100</timestep> <name> WORLD 6: BUSES AND ADDRESSING </name>
 <help>
-STORING BITS IN MEMORY AND RETRIEVING THEM
 <p class="indepth">
-SLAKDFJASLDKFJADSLKFJSALFJF</p>
+  Writing data means copying bits from the <a href="https://en.wikipedia.org/wiki/Bus_(computing)">data bus</a> to memory.
+  Reading data means copying bits from memory to the bus.
+  To choose which memory slot to read or write, 
+  we need an <a href="https://en.wikipedia.org/wiki/Memory_address">addressing<a> scheme.
+</p>
 </help>
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW 
                                          
@@ -1100,59 +1095,66 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 <help>HIGH HEAT</help>
 <help>
   <p class="indepth">
-  Use one-hot addressing to select an input line to read from.
+  Use one-hot addressing to select an input line to read from!
   </p>
 </help>
-WWW?WWWWWWWWWWWWWWWWW
-W...................W
-.M...?_ ?_ ?_.......W
-W.....n# n# n#     .W
-W ###  #  #  #     .W
-Wn++++#n##+##+##   .W
-W## ###   #  # #   .?
-W         #  # #   .W
-Wn########n##+#nn#LB.
-W#++#        # #   .W
-W            # #   .W
-Wn###########n##   .W
-W##                .W
-WWWWWWWWWWWWWWWWWWWWW
+<help>
+  <p class="indepth">
+  The signal from the selected input line was delivered to this
+  <a href="https://en.wikipedia.org/wiki/Bus_(computing)">data bus</a>.
+  </p>
+</help>
+WWW?WWWWWWWWWWWWWWWWWWWW
+W.................     W
+.M...?_ ?_ ?_.....     W
+W.....n# n# n#.  .     W
+W ###  #  #  #?  .     W
+Wn++++#n##+##+## .     W
+W## ###   #  # # .     W
+W         #  # #?.     W
+Wn########n##+#nn##L##B.
+W#++#        # #      .W
+W            # #      .W
+Wn###########n##      .W
+W##                   .W
+WWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 
 
 <levelmap> <timestep>15</timestep> <name> 6-2    GET OFF THE BUS </name>
 <help>
-  CONNECT THE PULSER TO THE BUS <br>
-  TO SEND A GIFT TO EACH OF US!
-</help>
-<help>
+  GIVE AN ADDRESS TO THE BUS <br>
+  TO SEND A GIFT TO ONE OF US!
   <p class="indepth">
-  Use one-hot addressing to select an output line to write to.
+  The clock is coupled to the data bus.
+  Use one-hot addressing to couple the bus to an output line.
   </p>
 </help>
-W..................W
-W..................W
-.M..  _  _  _    ..?
-W...  n# n# n#    .W
-W... #+n#++#++#L##BW
-W.?. #    #  #    .W
-Wn########n##+#L##BW
-W#.# #       #    .W
-W### ########n#L##B.
-WWWWWWWWWWWWWWWWWWWW
+<help> CLOCK </help>
+<help> BUS </help>
+W.....................W
+W.....................W
+.M......  _  _  _    .?
+W.....    n# n# n#   .W
+W.....   #+n#++#++#L#BW
+W?   ?   #    #  #   .W
+Wn############n##+#L#BW
+W##      #       #   .W
+W        ########n#L#B.
+WWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 
 <levelmap> <timestep>0</timestep> <name> 6-3    WHAT'S YOUR ADDRESS? </name>
 <help>
-SWITCHES SELECT ADDRESS LINE.<br>
-PRESSURE PLATE SENDS PULSE.<br>
-AIM CAREFULLY!
-<p class="indepth">
-This toad circuit couples a binary decoder to an output bus.
-Depending on the 2-bit address (00,01,10,11), 
-the appropriate latch is opened, sending the pulse along the desired line.
+  SWITCHES SELECT ADDRESS LINE.<br>
+  PRESSURE PLATE SENDS PULSE.<br>
+  AIM CAREFULLY!
+  <p class="indepth">
+  This toad circuit couples a binary decoder to an output bus.
+  Depending on the 2-bit address (00,01,10,11), 
+  the appropriate latch is opened, sending the pulse along the desired line.
 </p>
 </help>
  WWWWWWWWWWW........W
@@ -1326,6 +1328,135 @@ W..#n#+n########nn####L###############nn###  WWW
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
+
+
+
+
+
+<levelmap> <timestep>100</timestep> <name> BONUS LEVELS </name>
+<help>
+  THESE ARE NOT PARTICULARLY EDUCATIONAL LEVELS
+</help>
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW                                                                                
+.M......................................
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+</levelmap>
+
+<levelmap> <timestep> 120 </timestep> <name> BONUS-7    SPIRAL OF DEATH </name>
+<preconverge> 100 </preconverge>
+<help>
+IF THIS IS TOO DIFFICULT, INCREASE THE DELAY USING THE SLIDER.
+</help>
+                        
+                        
+  n##                   
+  # # #############     
+  # # #           #     
+  # # # ######### #     
+ n##nn# #       # #     
+?s    . # ##++#.#.# ... 
+M...... # # ##+#+#+## . 
+        # # #+# # # n#B.
+        # #     # #     
+        # ####### #   
+        #         #   
+        ###########   
+                      
+</levelmap>
+
+
+<levelmap> <timestep> 100 </timestep> <name> BONUS-8   NIGHTMARE CIRCLES </name>
+<preconverge> 100 </preconverge>
+<help>
+IF THIS IS TOO DIFFICULT, INCREASE THE DELAY USING THE SLIDER.
+</help>
+                   
+   ............    
+   .          ..   
+  NHHHHHHHnN# S#   
+  #  .      #  #   
+  # n###### #  #   
+  # #  .  # #  #   
+? # # ### # #  #.. 
+M.# #.#.# # #.SnN# 
+  # # n## # #  # ..
+  # #     # #  #   
+  # #######.#  #   
+  #         #  #   
+  ###########  #   
+       .       #   
+       S########   
+                   
+</levelmap>
+
+
+<levelmap> <timestep> 30 </timestep> <name> BONUS-9   WHEN THE PLANETS ALIGN </name>
+<preconverge> 9 </preconverge>
+<help>
+asdf
+<p class="indepth">
+SDf
+</p>
+</help>
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+                              
+M.................            
+                ..   ........ 
+    #######n##   .   .      . 
+    #  # +n# nn###########  . 
+    n### ##n##   .   .   #  . 
+                 .   .   n# . 
+   ########n##   .   .    # . 
+   #   # +n# nn########n##n#B 
+   n#### ##n##   .   .    # ..
+                 .   .   n#   
+ ##########n##   .   .   #    
+ #     # +n# nn###########    
+ n###### ##n##   .....        
+                              
+</levelmap>
+
+
+<levelmap> <timestep> 20</timestep> <name> BONUS-10    RUN THE GAUNTLET </name>
+<help>
+</help>
+WWWWWWWWWWWWWWWWWWWWWW
+Wn# ### ### ### ###  W
+W#++++++++++++++++++#W
+W ### ### ### ### ###W
+W # # # #  #   #  # #W
+M.###.#.#.###..#..#.#W
+W                  . W
+W................... W
+W.                   W
+W..#.#.#.#.#.#.#.#....
+W  # # # # # # # #   W
+W  ### ### ### ###   W
+W   #+#+#   #+#+#    W
+W     #       #      W
+W     #+++#+++#      W
+W         #          W
+Wn###################W
+W#++++++++++++++++++#W
+WWWWWWWWWWWWWWWWWWWWWW
+</levelmap>
+
+<levelmap> <timestep>30</timestep> <name> BONUS-12    ESCAPE FROM POMPEII! </name>
+                       
+Mn++++++++++++++#    .
+.################    .
+.#                   .
+.####################.
+.####################..
+.####################. 
+.#############.######. 
+.#####.##############. 
+.####################. 
+.################.###. 
+.####################. 
+.####################. 
+                       
+</levelmap>
 
 <levelmap> <timestep>0</timestep> <name> THE END... FOR NOW </name>
 <help>
@@ -1782,7 +1913,7 @@ W.W.n##...............
 WWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep> 100 </timestep> <name> S-0    PULSE EXTENDERS </name>
+<levelmap> <timestep> 150 </timestep> <name> S-0    PULSE EXTENDERS </name>
 <help>
   When Mario steps on the pressure plate, it produces a step signal. <br>
   The pulse generator converts this step to a 2-tick pulse. <br>
@@ -1792,22 +1923,23 @@ WWWWWWWWWWWWWWWWWWWWWW
 <help> 4-Tick Pulse Extender </help>
 <help> 6-Tick Pulse Extender </help>
 <help> 8-Tick Pulse Extender </help>
-...?..................................
-......................................
-............?#+#......................
-........#######nn###################L.
-........#.............................
-.M......#...?#+#.....................
-...n#...#.#####nn###################L.
-._n#n####.#..#.#......................
-........###..###......................
-........#.............................
-........#...?#+#.....................
-........#######nnnn#################L.
-.............#.#.#....................
-.............###.#....................
-...............###....................
-......................................
+...?............................
+............?##.................
+........######nn#####L+++L#####.
+........#.......................
+......###.......................
+.M....#.#...?##.................
+...n#.#.######nn#####L+++++L###.
+._n#n##......#+.................
+......#......##.................
+......#.........................
+......###.......................
+........#...?##.................
+........######nnnn###L+++++++L#.
+.............#+.#...............
+.............##.#...............
+..............###...............
+................................
 </levelmap>
 
 
@@ -1892,51 +2024,45 @@ If RESET is HIGH (S=0 and R=1), OUTPUT goes LOW (Q=0).
 
 
 
-<levelmap> <timestep>0</timestep> <name> S-2   D LATCH (6x5) </name>
+<levelmap> <timestep>0</timestep> <name> S-2   D LATCH (6x4) </name>
+<help> TRIGGER T </help>
+<help> DATA D </help>
 <help>
-<p class="indepth">
-Top P switch is Trigger (T).
-<br>
-Bottom P switch is Data (D).
-<br>
-While untriggered (T=0), latch is opaque; output doesn't change.
-<br>
-While triggered (T=1), latch is transparent: data propagates to output (Q=D).
-</p>
+  Untriggered (T=0) latch is opaque; output doesn't change.<br>
+  Triggered (T=1) latch is transparent: data propagates to output (Q=D).
 </help>
-...............
-WWW.####.......
-.W..#WW#WWWWW..
-.W..#W n##  W..
-....sW#++N# W..
-..W?MW# # # W..
-WWW.s##nnNN##L.
-W.W..W   #+#W..
-WWW..WWWWWWWW..
+.............
+..####.......
+..#WW#WWWWW..
+..#W n##  W..
+?.sW#++N# W..
+?Ms##nnNN##L.
+...W   #+#W..
+.?.WWWWWWWW..
 </levelmap>
 
-<levelmap> <timestep>0</timestep> <name> S-3   D FLIP FLOP (12x5) </name>
+<levelmap> <timestep>0</timestep> <name> S-3   D FLIP FLOP (12x4) </name>
+<help> TRIGGER T </help>
+<help> DATA D </help>
 <help>
-<p class="indepth">
-This D flip flop is constructed from two D latches in series.<br>
-Trigger is top, data is bottom.<br>
-On the rising edge of the trigger, star 1 is copied to star 2.<br>
-On the falling edge of the trigger, star 2 is copied to star 3.
-Thus, one bit of data passes through the flip flop only upon the rising edge.
-</p>
+  <p class="indepth">
+  A pulse-triggered D flip flop is constructed from two D latches in series.<br>
+  When trigger rises, star 1 is copied to star 2.<br>
+  When trigger falls, star 2 is copied to star 3.
+  The D flip flop acts as a turnstile for one bit of data.
+  </p>
 </help>
-WWWWWWWWWWWWWWWWWWW
-W.###n#..........#.
-W.#WWW#WWWWWWWWWW#W
-?.#W  ##+n++##  W#W
-..sW##+n# ##+n# W#W
-W.MW# # # # # # W#W
-W.sL#NnNnL#NnNnL##W
-W..W   #+#   #+#W.W
-WWWWWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWWWWW
+W.###n#..........
+W.#WWW#WWWWWWWWWW
+..#W  ##+n++##  W
+?M_W##+n# ##+n# W
+?.sL#NnNnL#NnNnL#
+W..W   #+#   #+#W
+W?WWWWWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep>0</timestep> <name> S-4   T FLIP FLOP (13x7) </name>
+<levelmap> <timestep>0</timestep> <name> S-4   T FLIP FLOP (13x5) </name>
 <help>
 USE THE P SWITCH TO TOGGLE THE LAST STAR.
 <p class="indepth">
@@ -1947,18 +2073,15 @@ On rising trigger, latch 1 opens and latch 2 closes, so Y:=X.
 Thus the state (X,Y) cycles through the sequence 00, 10, 11, 01.
 The output (Y) toggles on the rising edge of the trigger.
 </p>
-</help>
-                   
-  ....M..........# 
-  WWW?sWWWWWWWWWW# 
-  W   ##+n++##  W# 
-  W ##+n# ##+n# W# 
-  W # # # # # # W# 
-  Wn#NnNnL#NnNnL## 
-  W#   #+#   #+#W  
-  W#         #  W
-  W###########  W
-  WWWWWWWWWWWWWWW  
+</help>                
+............... 
+WWWM_WWWWWWWWWW 
+W  ?##+n++##  W 
+W ##+n# ##+n# W 
+Wn#NnNnL#NnNnL# 
+W#   #+#   #+#W 
+W####+++####  W 
+WWWWWWWWWWWWWWW 
 </levelmap>
 
 
@@ -2101,8 +2224,8 @@ the counter is incremented by one, thus cycling through the sequence
 </p>
 </help>
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW 
-....M.........................#.
-WWWWsWWWWWWWWWWWWWWWWWWWWWWWWW# 
+...M_.........................#.
+WWWW#WWWWWWWWWWWWWWWWWWWWWWWWW# 
 W   ##+n++##  ##n++##+n++##  W# 
 W ##+n# ##+n# #W ##+n# ##+n# W# 
 W # # # # # # #W # # # # # # W# 
@@ -2125,8 +2248,8 @@ the counter is incremented by one, thus cycling through the sequence
 </p>
 </help>
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW 
-....M........................................#.
-WWWWsWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW# 
+...M_........................................#.
+WWWW#WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW# 
 W   ##+n++##  ##n++##+n++##  ##n++##+n++##   # 
 W ##+n# ##+n# #  ##+n# ##+n# #  ##+n# ##+n#  # 
 W # # # # # # #  # # # # # # #  # # # # # #  # 
