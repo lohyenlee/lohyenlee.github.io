@@ -209,13 +209,13 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 
 <levelmap> <timestep>100</timestep> <name> 2-1   NEITHER HEAD <span style="color:pink;">NOR</span> FEET </name>
 <help>
-  <p>TURN OFF ALL SWITCHES TO MAKE TOAD HAPPY.</p>
-  <p class="indepth">
-  The toad behaves as a 
-  <a href="https://en.wikipedia.org/wiki/NOR_gate">NOR gate</a>.
-  If either input of the NOR gate is HIGH, the output is LOW.
-  Only if both inputs are LOW will the output be HIGH.
-  </p>
+<p>TURN OFF ALL SWITCHES TO MAKE TOAD HAPPY.</p>
+<p class="indepth">
+The toad behaves as a 
+<a href="https://en.wikipedia.org/wiki/NOR_gate">NOR gate</a>.
+If either input of the NOR gate is HIGH, the output is LOW.
+Only if both inputs are LOW will the output be HIGH.
+</p>
 </help>
 W?WWWWWWWWWW
 W.S###..Ln#.
@@ -228,13 +228,13 @@ WWWWWWWWW###
 
 <levelmap> <timestep>100</timestep> <name> 2-2   ON <span style="color:pink;">AND</span> ON </name>
 <help>
-  <p>TURN ON ALL SWITCHES TO MAKE THE CENTER TOAD HAPPY.</p>
-  <p class="indepth">
-  The three toads in the center function as an 
-  <a href="https://en.wikipedia.org/wiki/AND_gate">AND gate</a>.
-  Both inputs of the AND gate must be HIGH in order for the output to be HIGH.
-  Both switches must be ON in order for Bowser to get burned.
-  </p>
+<p>TURN ON ALL SWITCHES TO MAKE THE CENTER TOAD HAPPY.</p>
+<p class="indepth">
+The three toads in the center function as an 
+<a href="https://en.wikipedia.org/wiki/AND_gate">AND gate</a>.
+Both inputs of the AND gate must be HIGH in order for the output to be HIGH.
+Both switches must be ON in order for Bowser to get burned.
+</p>
 </help>
 W?WWWWWWWWWW
 W.s#N#..Ln#.
@@ -247,16 +247,16 @@ WWWWWWWWWWWW
 
 <levelmap> <timestep>100</timestep> <name> 2-3   ONE <span style="color:pink;">XOR</span> THE OTHER </name>
 <help>
-  MAKE A CHOICE!
-  <p class="indepth">
-  The five center toads form a
-  <a href="https://en.wikipedia.org/wiki/XOR_gate">XOR (eXclusive Or) gate</a>.
-  The output is HIGH if either, but not both, of the inputs are HIGH.
-  </p>
-  <p class="indepth">
-  The middle switch drives both inputs HIGH, but the output remains LOW.
-  The side switches drives only one input, so the output is HIGH.
-  </p>
+MAKE A CHOICE!
+<p class="indepth">
+The five center toads form a
+<a href="https://en.wikipedia.org/wiki/XOR_gate">XOR (eXclusive Or) gate</a>.
+The output is HIGH if either, but not both, of the inputs are HIGH.
+</p>
+<p class="indepth">
+The middle switch drives both inputs HIGH, but the output remains LOW.
+The side switches drives only one input, so the output is HIGH.
+</p>
 </help>
 W?WWWWWWWWWWWWW
 W.............W
@@ -269,10 +269,9 @@ WWWWWWWWWWWWWWW
 
 <levelmap> <timestep>100</timestep> <name> 2-4   THE PASSWORD IS 0000  </name>
 <help>
-  TURN OFF ALL SWITCHES.
-  <p class="indepth">
-  This 4-input NOR gate is constructed from NOR and NOT gates.  The output is HIGH only if all inputs are LOW.
-  </p>
+<p class="indepth">
+This circuit demonstrates a multi-input AND gate.  The output is HIGH only if all inputs are HIGH.
+</p>
 </help>
 W?WWWWWWWWWWWWW
 W.............W
@@ -284,7 +283,10 @@ WWWWWWWWWWWWWWW
 
 <levelmap> <timestep>100</timestep> <name> 2-5   THE PASSWORD IS 101011  </name>
 <help>
-  SET EVERY SWITCH CORRECTLY.
+<p class="indepth">
+This circuit demosntrates a multi-input AND gate.  The output is HIGH only if all inputs are HIGH.
+To pass the level, Mario needs to set every switch to the correct state! 
+</p>
 </help>
 W?WWWWWWWWWWWWWWWWWWWWW
 WM...................#.
@@ -486,7 +488,7 @@ WWWWWWWWWWWWWWWWWW
 <help>
 LET IT FLOW, LET IT FLOW!
   <p class="indepth">
-  The P switch feeds data to three D latches in series.
+  This level consists of an input switch and three D latches in series.
   Trigger each latch to let the signal propagate.
   </p>
 </help>
@@ -533,7 +535,7 @@ WW#NnNn##NnNn##NnNn#N#.
 
 <levelmap> <timestep> 0 </timestep> <name> 3-6    WALKING ON EGGSHELLS </name>
 <help>
-  1+3 = 2+4 = FAILURE
+1+3 = 2+4 = FAILURE
 </help>
 ?WWWWWWWWWWWWWWWWWWWWWW
 M.....................W
@@ -549,20 +551,21 @@ WW#NnNn##NnNn##NnNn#N#.
  WWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
+
 <levelmap> <timestep> 0 </timestep> <name> 3-7   SHIFT TO SUCCESS </name>
 <help>
-  GO DOWN TO LOAD, GO RIGHT TO SHIFT
-  <p class="indepth">
-  Load data into the first cell using the bottom switch.
-  Hit the top switch to open latches 1, 3, and 5. 
-  Hit the top switch again to open latches 2 and 4.
-  This shift register shifts bits one step at a time!
-  </p>
+BOTTOM=LOAD, TOP=SHIFT
+<p class="indepth">
+Load data into the first cell using the bottom switch.
+Hit the top switch to open latches 1, 3, and 5. 
+Hit the top switch again to open latches 2 and 4.
+This shift register shifts bits one step at a time!
+</p>
 </help>
-WW?WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-W..s#...........................W
-M.sW##+n++##+N++##+n++##+N++##..W
-W.#++n#.#++N#.#++n#.#++N#.#++n#.W
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+?.sN#...........................W
+M.WW##+n++##+N++##+n++##+N++##..W
+W.s++n#.#++N#.#++n#.#++N#.#++n#.W
 W.#NnNn##NnNn##NnNn##NnNn##NnNn#W
 W.#W.#+#...#+#...#+#...#+#...#+#W
 W.LW...L.....L.....L.....L...WWLW
@@ -576,20 +579,13 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWW..n#.
 
 
 <levelmap> <timestep>0</timestep> <name> 3-A    WORLD 3 BOSS FIGHT #1 </name>
-<help> STEP HERE TO ENTER "1". </help>
-<help> STEP HERE TO ENTER "0". </help>
+<help> STEP HERE TO INPUT 1 </help>
+<help> STEP HERE TO INPUT 0 </help>
 <help> HELP ME, MARIO!  THE PASSWORD IS 1101, BUT YOU NEED TO ENTER IT IN REVERSE ORDER! <br> </help>
 <help><p class="indepth">
-  The two pressure plates are connected to the Set and Reset inputs of an
-  <a href="https://www.build-electronic-circuits.com/s-r-latch/"> SR latch </a>.
-  Pressing either plate also sends a pulse to the Trigger of a 
-  <a href="https://www.build-electronic-circuits.com/d-latch/"> D latch </a>.
-  Each pair of D latches forms a pulse-triggered 
-  <a href="https://www.build-electronic-circuits.com/d-flip-flop/">D flip flop </a>.
-  The chain of D flip flops forms a
-  <a href="https://www.build-electronic-circuits.com/shift-register/"> shift register </a>.
-</p><p class="indepth">
-
+  This toad circuit implements a shift register.
+  Load the correct bit value into the shift register,
+  trigger the shift, and repeat for all 5 bits.
 </p></help>
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
@@ -607,18 +603,47 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
+<levelmap> <timestep>0</timestep> <name> 3-A    WORLD 3 BOSS FIGHT #1 (OLD) </name>
+<help>
+  HELP ME, MARIO!  THE PASSWORD IS 01101! <br>
+  GO DOWN TO TOGGLE NEXT BIT.  GO RIGHT TO SHIFT.
+</help>
+<help><p class="indepth">
+This toad circuit implements a shift register.
+Load the correct bit value into the shift register,
+trigger the shift, and repeat for all 5 bits.
+</p></help>
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+W#N#N##W                                          W    
+W# N# Nn#                                         W    
+W###N##W#                                         W    
+WW?#WWWW#                                         W    
+WM.s ####
+..sW #                                           ..W
+W.#W.##+n++##+n++##+n++##+n++##+n++##+n++##+n++##..W
+W.###+N#.##+N#.##+N#.##+N#.##+N#.##+N#.##+N#.##+N#.W
+W.##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn#W
+W.#W..#+#...#+#...#+#...#+#...#+#...#+#...#+#...#+#W
+W.LW..........L...........L...........L......###..LW
+W.#W..........#...........#...........#......#.####W
+W.#W..........n#..........n#..........##.....n#WWWWW
+W.############+nn#########+nn#########+nn####+n##...
+W..WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW#.WW
+W...............................................B.PW
+W?WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+</levelmap>
+
+
+
 <levelmap> <timestep>0</timestep> <name> 3-9    TOGGLY WOGGLY FLIPPY FLOPPY </name>
 <help>
-  TOGGLE YOUR WAY TO THE EXIT!
+  asldfkjadslfj 
   <p class="indepth">
-  This circuit implements a 
-  <a href="https://www.build-electronic-circuits.com/t-flip-flop/">T flip flop </a>, 
-  also known as a frequency divider.
-  This T flip flop consists of two D latches in series with a NOT gate.
-  Let X and Y be the outputs of the D latches.
-  When T goes high, latch 1 opens and latch 2 closes, so Y:=X.
-  When T goes low, latch 1 closes and latch 2 opens, so X:=NOT Y.
-  The state (X,Y) cycles through the sequence 00, 10, 11, 01.
+  This circuit implements a T flip flop, also known as a frequency divider.
+  This essentially consists of two D latches and a NOT gate in series.
+  On falling trigger, latch 1 closes and latch 2 opens, so X:=NOT Y.
+  On rising trigger, latch 1 opens and latch 2 closes, so Y:=X.
+  Thus the state (X,Y) cycles through the sequence 00, 10, 11, 01.
   The output (Y) toggles on the rising edge of the trigger.
   </p>
 </help>                
@@ -637,19 +662,10 @@ WWWWWWWWWWWWWWWWWWW...S##
 
 <levelmap> <timestep>0</timestep> <name> 3-10    WORLD 3 BOSS FIGHT </name>
 <help>
+  SEVEN STEPS TO LIGHT ALL STARS!
   <p class="indepth">
-  This 3-way AND gate activates only if the counter's state is 111.
-  </p>
-</help>
-<help>
-  STEP HERE ONCE TO SHOOT THE GUN. <br>
-  SEVEN STEPS GIVES 111! <br>
-  AFTER KICKING BOWSER'S ASH, <br>
-  STEP ONCE MORE, THEN YOU CAN PASS.
-  <p class="indepth">
-  The three T flip flops in series form a 3-bit binary counter.
-  Triggering the counter causes it to cycle through the states
-  000, 001, 010, 011, 100, 101, 110, and 111, as indicated by the stars.
+  This binary counter consists of 3 T flip flops in series.
+  Its state is indicated by the stars (000, 001, 010, 011, ..., 111).
   </p>
 </help>                
             WWWWWWWWWWWWWWWWWWWWWWW
@@ -665,7 +681,7 @@ WWWWWWWWWWWWWWWWWWW...S##
             W##N++##+n++##  # #  WW
             W#W ##+n# ##+n# # n# WW
             W#Wn#NnNn##NnNn#L#nn#B.
-            W#W#   #+#   #+#  n#?.W
+            W#W#   #+#   #+#  n# .W
 WWW         W#W####+++####    #  .W
 ..WWWWWWWWWWW#                #  .W
 WM...........################.#...W
@@ -747,7 +763,7 @@ WWWWWWWWWWWWWWWWWWWWW
   <p class="indepth">
   This circuit contains 2-tick pulse generators.
   The goomba is protected by an AND gate.
-  To defeat it, sync your pulse to the auto-pulser.
+  To defeat Inverter_, sync your pulse to the auto-pulser.
   </p>
 </help>
 <help>
@@ -842,9 +858,9 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWW..
 
 <levelmap> <timestep>50</timestep> <name> 4-7    BEWARE THE LIVE WIRES </name>
 <help>
-  <p class="indepth">
-  An H tree is a fractal network used to distribute a clock signal synchronously to all parts of a device.
-  </p>
+<p class="indepth">
+An H tree is a fractal network used to distribute a clock signal synchronously to all parts of a device.
+</p>
 </help>
 WWWWWWWWWWWWWWWWWWWWW 
 W     .....   ..... W 
@@ -862,57 +878,53 @@ W   S . ######### . W
 M.... . # .   . # . W 
 W.... L###L   L###L WW
 W......   .....   ....
-WWWW?WWWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 
 
 
 <levelmap> <timestep>0</timestep> <name> 4-8   WORLD 4 BOSS FIGHT </name>
-<help> HELP ME, MARIO!  MAKE THE UPPER STARS MATCH THE LOWER STARS! </help>
+<help> HELP ME, MARIO!  THE PASSWORD IS 100100110! </help>
 <help> RIGHT=SHIFT, DOWN=TOGGLE </help>
 <help> SHIFT REGISTER </help>
 <help> PASSWORD </help>
 <help><p class="indepth">
-  The clock tree (top) drives a synchronous shift register (center).
-  The state of the shift register (upper row of stars)
-  is compared with a random 9-bit code (lower row of stars) 
-  generated during level initialization.
-  The comparison uses 9 XNOR gates and a 9-input AND gate.
+  This circuit is a synchronous shift register.
 </p> </help>
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-WW#N#N##W                                          WWWWW
-WW# N# N###################                        WWWWW
-WW###N##W                 #                        WWWWW
-W??W#WWWW    #++++++++++++#++++++++++#             WWWWW
-W.Ms#  #############           #############       WWWWW
-W.sW   #           #           #           #       WWWWW
-W.#W#++#++#     #++#++#     #++#++#     #++#++#    WWWWW
-W.#Wn#WWWWn#WWWWn#WWWWn#WWWWn#WWWWn#WWWWn#WWWWn#WWWWWWWW
-..#. ##    ##    ##    ##    ##    ##    ##    ##  WWWWW
-W.###+n#.##+n#.##+n#.##+n#.##+n#.##+n#.##+n#.##+n#.WWWWW
-W..#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.WWWWW
-W.##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn#WWWWW
+WWWWWWWWW                                          W    
+WW#N#N##W                                          W    
+WW# N# N###################                        W    
+WW###N##W                 #                        W    
+W??W#WWWW    #++++++++++++#++++++++++#             W    
+W.Ms#  #############           #############       W    
+W.s.   #           #           #           #       W    
+W.# #++#++#     #++#++#     #++#++#     #++#++#    W    
+W.#.n#    n#    n#    n#    n#    n#    n#    n#   W    
+..#. ##    ##    ##    ##    ##    ##    ##    ##  W    
+W.###+n#.##+n#.##+n#.##+n#.##+n#.##+n#.##+n#.##+n#.W    
+W..#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.W    
+W.##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn#W    
 W.#...#+#...#+#...#+#...#+#...#+#...#+#...#+#...#+#WWWWW
-W.#WWWWW#WWWWW#WWWWW#WWWWW#WWWWW#WWWWW#WWWWW#WWWWW#WWWWW
+W.#.    #     #     #     #     #     #     #     #    W
 W.#     #     #     #     #     #     #     #     #    W
 ?.Ln##  Ln##  Ln##  Ln##  Ln##  Ln##  Ln##  Ln##  Ln## W
 W.n# n# n# n# n# n# n# n# n# n# n# n# n# n# n# n# n# n#W
 ?.Ln##+ Ln##+ Ln##+ Ln##+ Ln##+ Ln##+ Ln##+ Ln##+ Ln##+W
-W.r   # r   # r   # r   # r   # r   # r   # r   # r   #W
+W.S   # s   # s   # S   # s   # s   # S   # S   # s   #W
 W.    #     #     #     #     #     #     #     #     #W
 W.#+### #+### #+### #+### #+### #+### #+### #+### #+###W
 W.n#    n#    n#    n#    n#    n#    n#    n#    n#   W
-W..n####nn####nn####nn####nn####nn####nn####nn####nn##B.
+W. n#    n#### n#### n#### n#### n#### n#### n#### n##B.
+W.  ####n#   #n#   #n#   #n#   #n#   #n#   #n#   #n#  .W
 ?......................................................W
 </levelmap>
 
 <levelmap> <timestep>100</timestep> <name> WORLD 5: REGISTER OPERATIONS </name>
-<help>  
-  <p class="indepth">
-  In digital logic, circuits that operate on groups of bits are useful building blocks.
-  This world explores some bitwise logical and bitwise arithmetic register operations.
-  </p>
+<help>
+STORING BITS IN MEMORY AND RETRIEVING THEM
+<p class="indepth">
+SLAKDFJASLDKFJADSLKFJSALFJF</p>
 </help>
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
                                         
@@ -927,31 +939,8 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep> 0 </timestep> <name> 5-1    BITWISE NOT </name>
+<levelmap> <timestep> 0 </timestep> <name> 5-1    BITWISE OR </name>
 <help>
-  TURN ON THE INPUTS TO TURN OFF THE OUTPUTS!
-  <p class="indepth">
-  This 4-bit NOT gate is simply four NOT gates in parallel.
-  The bitwise NOT of a binary integer is also known as the
-  <a href="https://en.wikipedia.org/wiki/Ones%27_complement"> ones' complement </a>.
-  </p>
-</help>
-W?WWWWWWWWWWWWW
-...r#L#n##L###.
-W.MW        W.W
-W..r#L#n##L###W
-W..W        W.W
-W..r#L#n##L###W
-W..W        W.W
-W..r#L#n##L###W
-W.............W
-WWWWWWWWWWWWWWW
-</levelmap>
-
-<levelmap> <timestep> 0 </timestep> <name> 5-2    BITWISE NOR </name>
-<help>
-  TO ENSURE THE OUTPUT'S LOW, <br>
-  SIMPLEST TO JUST SET INPUT TO HIGH...
 </help>
 W?WWWWWWWWWWWWW
 ...W r r r rWWW
@@ -967,40 +956,36 @@ W.............W
 WWWWWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep> 0 </timestep> <name> 5-3    BITWISE XNOR </name>
+<levelmap> <timestep> 0 </timestep> <name> 5-2    BITWISE XOR </name>
 <help>
-  TO TURN OFF ALL THE OUTPUTS, <br>
-  EACH PAIR OF INPUT BITS SHOULD BE DIFFERENT... 
 </help>
-WWWWWWWWWWWWWWWWWWWWW
-W?WWWWWWWWWWWWWWWWWWW
-M..W r r r r       WW
-W..W ##+#+#+##n#   WW
-W..W   # # # n#+   ..
-W..s###+#+#+##nn#L##W
-W...   # # #       .W
-W...   ##+#+##n#   .W
-W...     # # n#+   .W
-W..s#####+#+##nn#L##W
-W...     # #       .W
-W...     ##+##n#   .W
-W...       # n#+   .W
-W..s#######+##nn#L##W
-W...       #       .W
-W...       ###n#   .W
-W...         n#+   .W
-W..s#######+##nn#L##W
-W...................W
+WWWWWWWWWWWWWWWWWWW
+W?WWWWWWWWWWWWWWWWW
+...W r r r r     WW
+W..W # # # #     WW
+W..W ##+#+#+##n# WW
+W..W   # # # n#+ ..
+W..s###+#+#+##nn##W
+W...   # # #     .W
+W...   ##+#+##n# .W
+W...     # # n#+ .W
+W..s#####+#+##nn##W
+W...     # #     .W
+W...     ##+##n# .W
+W...       # n#+ .W
+W..s#######+##nn##W
+W...       #     .W
+W...       ###n# .W
+W.M.         n#+ .W
+W..s#######+##nn##W
+W.................W
 </levelmap>
 
 
-<levelmap> <timestep> 0 </timestep> <name> 5-4    4-BIT D LATCH </name>
+<levelmap> <timestep> 0 </timestep> <name> 5-3    4-BIT D LATCH </name>
 <help>
-  1101 IS THE CODE <br>
-  TO KEEP THE LAVA OFF THE ROAD.
-  <p class="indepth">
-  When triggered, this 4-bit D latch lets all input bits flow through.
-  </p>
+1101 IS THE CODE <br>
+TO KEEP THE LAVA OFF THE ROAD.
 </help>
 W?WWWWWWWWWWWWWWWWW
 .M................W
@@ -1024,22 +1009,15 @@ WWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 
-<levelmap> <timestep> 0 </timestep> <name> 5-5    4-BIT D LATCHES </name>
+<levelmap> <timestep> 0 </timestep> <name> 5-4    4-BIT D LATCHES </name>
 <help>
   1101 IS THE CODE &mdash; <br>
   BITS OF DATA YOU MUST LOAD. <br>
   FIRST THE SWITCHES, THEN THE PLATE. <br>
   WATCH OUT FOR THE ONE-WAY GATE! 
 </help>
-<help>
-  <p class="indepth">
-  After the first 4-bit D latch is loaded,
-  triggering the second D latch lets the signal flow to the second column of stars
-  to unlock the path to the next level.
-  </p>
-</help>
 W?WWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-W.....#_......................?
+W.....#_......................W
 M..WWWWWWWWWWWW...............W
 W._#####n++HH  _####n++HH    .W
 W.  #    ##+n#  #    ##+n#   .W
@@ -1060,30 +1038,16 @@ W.       #+#         #+#     ..
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
  
-<levelmap> <timestep>0</timestep> <name> 5-6    THREE BIT ADDER </name>
+<levelmap> <timestep>0</timestep> <name> 5-5    THREE BIT ADDER </name>
 <help> THESE THREE RANDOM BITS ARE X. </help>
 <help> YOU CAN CHOOSE THESE THREE BITS (Y). </help>
 <help> THESE THREE BITS ARE X+Y. </help>
 <help> X+Y MUST EQUAL Z! </help>
-<help>
-  <p class="indepth">
-  This three-bit adder consists of a 
-  <a href="https://www.build-electronic-circuits.com/half-adder/"> half adder </a>
-  and two 
-  <a href="https://www.build-electronic-circuits.com/full-adder/"> full adders </a>.  
-  The adder computes X+Y in 
-  <a href="https://en.wikipedia.org/wiki/Binary_number#Binary_arithmetic"> binary arithmetic </a>.
-  X+Y is displayed in the left column of stars.
-  The right column of stars is a random integer Z.
-  The XNOR gates perform the comparison X+Y=Z.
-  To pass this level, you must choose Y so that X+Y=Z (mod 8)!
-  </p>
-</help>
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-W. .   .   . .            #####+#          WW
-W .   ...   .             #   n#+#         WW
-W. .   .    .             # ### nn###      WW
-W                         # # n#+#  #      WW
+WWWWWWWWWWWWWW            #####+#          WW
+WWW                       #   n#+#         WW
+WWW                       # ### nn###      WW
+WWW                       # # n#+#  #      WW
 WWW  ###################  # # #+#   #      WW
 WWW  #                 ## # # #            ..
 WWW  # ################ ##+#+###N#  ####nnn#W
@@ -1104,13 +1068,13 @@ W..r #     # #         #            ...    .W
 W.W# ######+##NNN#######            ...    .W
 M.W#       # N#+                    ...    .W
 W.W###########N#                    ...    .W
-W...........................................?
+W...........................................W
 </levelmap>
 
 
 
 
-<levelmap> <timestep>100</timestep> <name> WORLD 6: DATA STORAGE AND RETRIEVAL </name>
+<levelmap> <timestep>100</timestep> <name> WORLD 6: BUSES AND ADDRESSING </name>
 <help>
 <p class="indepth">
   Writing data means copying bits from the <a href="https://en.wikipedia.org/wiki/Bus_(computing)">data bus</a> to memory.
@@ -1239,18 +1203,17 @@ The addressed bit is copied to the output.
 </p>
 </help>
 WWWWWWWWWWWWWWWWWWWWWWWWWW
-WWWWWWWWWWWWWWWWWWWWWWWWWW
-W          L   Lrn#      W
-WWWWWWWWWW##N##+++n##    W
-WWN#++#n++#         #    W
-WW# #+n+## L   LSn# #    W
-WW# #N+# ###N##+++n#nn#  W
-WW# #  #              nnLW
-W?##+##n###L## Lrn#   # #W
-WMs # #      N#+++n#nn# #W
-W.s###N####         #   #W
-W..W      #L## Lrn# #   #W
-W..WWWWWWWW  N#+++n## ..b.
+W..............Lrn#      W
+WWWWWWWWWWWW.##+++n##    W
+WWN#++#n++LN## .... #    W
+WW# #+n+## W   LSn# #    W
+WW# #N+# #LN###+++n#nn#  W
+WW# #  #   W          nnLW
+W?##+##n##LN## Lrn#   # #W
+WMs # #    W ##+++n#nn# #W
+W.s###N###LN#  .... #   #W
+W..WWWWWWWWW#  Lrn# #   #W
+W...........###+++n## ..b.
 W........................W
 </levelmap>
 
@@ -1258,30 +1221,36 @@ W........................W
 <preconverge> 100 </preconverge>
 <help>
   <p class="indepth">
-  The binary decoder (left half of level) addresses a bank of four D latches (right half of level).
+  The binary decoder addresses a bank of four D latches.
   When triggered, the data bit is transmitted to the input of the selected D latch. 
   </p>
 </help>
-<help> ADDRESS BITS </help>
-<help> DATA </help>
-<help> TRIGGER (PRESS TO WRITE DATA TO MEMORY) </help>
+<help>
+  SELECT ADDRESS LINE
+</help>
+<help>
+  PREPARE DATA
+</help>
+<help>
+  COMMIT DATA TO MEMORY
+</help>
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 WWWWWWWWWWWW      #######N++HH  WWW
 WWWWWWWWWWWW      #       ##+n# WWW
-WWN#++#n++LN#+n####  ######NnNn#W..
+WWN#++#n++LN#+n#L##  ######NnNn#W..
 WW# #+n+## W HH      #       #+LN#W
-WW# #N+# #LNn++######+##N++HH   W.W
+WW# #N+# #LNn++#L####+##N++HH   W.W
 W?# #  #   WHH       #   ##+n#  W.W
-W.##+##n##LN++n##### #####NnNn# W.W
-?.s # #    W HH    # #      #+#LN#W
-W.s###N###Lnn++### ##+#N++##    W.W
+W.##+##n##LN++n#L### #####NnNn# W.W
+?.s # #    W HH    # #      #+L#N#W
+W.s###N###Lnn++#L# ##+#N++##    W.W
 M.WWWWWWWWWWHH   #   #  ##+n#   W.W
 ?.s#L##### NH    #   ####NnNn#  W.W
-W.W      # #     #   #     #+##LN#W
+W.W      # #     #   #     #+L##N#W
 ?._######+##     ####+N++##     W.W
 W.W      #           # ##+n#    W.W
 W.W      ###############NnNn#   W.W
-W.WWWWWWWWWWWWWWWWWWWWWWWW#+###LN#W
+W.WWWWWWWWWWWWWWWWWWWWWWWW#+L###N#W
 W.................................W
 W.................................W
 </levelmap>
@@ -1293,9 +1262,15 @@ W.................................W
   WHEN THE SET-UP YOU HAVE DONE, <br>
   THROUGH THE PASSAGE YOU CAN GO.
 </help>
-<help> PREPARE BIT SEQUENCE TO LOAD </help>
-<help> LOAD TOP REGISTER </help>
-<help> LOAD BOTTOM REGISTER </help>
+<help>
+  PREPARE BIT SEQUENCE TO LOAD
+</help>
+<help>
+  LOAD TOP REGISTER
+</help>
+<help>
+  LOAD BOTTOM REGISTER
+</help>
 W?WWWWWWWWWWWWWWWWWWWWWWW
  M       ###n++HH     W..
 W.       #   ##+n#    W.W
@@ -1330,37 +1305,19 @@ WWWWWWWWWWWWWWWWWWWWWWWWW
 
 
 <levelmap> <timestep>0</timestep> <name> 6-7    STORE AND RESTORE </name>
-<help> THESE THREE STARS SHOW THE PASSCODE OF THE DAY. </help>
-<help> HAVE YOU PREPARED THE CODES?  NO TURNING BACK AFTER THIS POINT! </help>
+<help>
+  THESE THREE STARS SHOW THE PASSCODE OF THE DAY.
+</help>
+<help>
+  HAVE YOU PREPARED THE CODES?  NO TURNING BACK AFTER THIS POINT!
+</help>
 <help> USE THIS SWITCH TO SELECT 1 OF THE 2 CODES YOU HAVE PREPARED. </help>
 <help> PREPARE THIS REGISTER WITH CODE 101. </help>
 <help> THESE STARS SHOW THE CODE YOU SELECTED. </help>
 <help> YOU NEED TO SELECT THE CORRECT CODE TO GET PAST THIS POINT! </help>
 <help> PREPARE THIS REGISTER WITH CODE 010. </help>
-<help>
-  <p class="indepth">
-  The top half of the level is a pseudorandom number generator, implemented in Toad Logic.
-  Stepping on the pressure plate activates a 2-tick pulse generator.
-  There is a period-8 clock (a 2x2 square) generating a rapidly cycling square wave pattern.
-  The clock signal, and its complement, control latches (AND gates).
-  The 2-tick pulse passes through either the upper or lower latch, but not both.
-  A pulse extender in each channel lengthens the pulse to 6 ticks.
-  The 6-tick pulse drives an SR latch.
-  The state of the SR latch (0 or 1) acts as an address to either of two 3-bit registers
-  hardwired with contents 101 and 010 respectively.
-  The pressure plate also triggers a copy operation from the selected register 
-  to an array of 3 D latches (stars at top right of level) &mdash; the "passcode".
-  </p><p class="indepth">
-  The bottom half of the level contains two player-configurable registers, A and B.
-  When the player has arrived at the central island,
-  they may load the central register from either A or B.
-  The central register is compared with the passcode register using 3 XNOR gates.
-  The player does not know in advance which code (101 or 010) will be chosen by the RNG,
-  so without preparation, you only have a 25% chance of clearing this level!
-  </p>
-</help>
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+W                                              W
+W                                              W
 W###############Nn##Nn##########               W
 W#            #+# #+#          ###N++HH        W
 W#WWWWWWWWWWWWWWWWWWWWWWW####  #   ##+n#       W
@@ -1377,40 +1334,21 @@ W#WWWWWWWWWWWWWWWWWWWWWWW####       #+#  # # # W
 W#_.....................WWWWWWWWWWWWWWWW?#W#W#WW
 W?#WWWWWWWWWWWWWWWWWWWW..................#W#W#WW
 W.....................?W.WWWWWWWWWWWWWWW.+.+.+.W
-W..WWWWWW############s...W ###############W#W#.W
-W..W     #           W...W #               # #.W
-W..###L#n+n##########W...W #    ############ #.W
-WM.r     ##         #W...W #n#  #            #.W
-?..r##L#n+n######## #W...W n#+  #    #########.W
-W..r     ##       # #W...W##nn##+### #       W.W
-W..###L#n+n###### # #W?WWW #    #  ##+#####  ?.W
-W..W     #      # # # ######    #n#  #    n####W
-...W     n#     # # # #  W      n#+  #       W.W
-W..###L#n++n####+#+#nnL #########nn##+####n####W
-W..r      ##    # #     #W           #       W.W
-?..r##L#n#+n####+#nn##L##W           #n#  n####W
-W..r      ##    #        W           n#+  #  W..
-W..###L#n#+n####nn####L###############nn###  WWW
-W?WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-</levelmap>
-
-
-<levelmap> <timestep>0</timestep> <name> THE END... FOR NOW </name>
-<help><p style="white-space:pre; color:pink; font-size: 2rem;">
-THANK YOU, MARIO!  
-YOU HAVE SAVED THE MUSHROOM KINGDOM.
-CHECK OUT THE BONUS LEVELS AND SANDBOX AFTER THIS!
-</p>
-</help>
-...........
-.N#..N#..N.
-...........
-.......?...
-..M.....P..
-...........
-...........
-.N#..N#..N.
-...........
+W..WW################s...W ###############W#W#.W
+W..W #               W...W #               # #.W
+W..#n+n##############W...W #    ############ #.W
+WM.S ##             #W...W #n#  #            #.W
+?..sn+n############ #W...W n#+  #    #########.W
+W..s ##           # #W...W##nn##+### #       W.W
+W..#n+n########## # #W?WWW #    #  ##+#####  ?.W
+W..W #          # # # ######    #n#  #    n####W
+W..W n#         # # # #  W      n#+  #       W.W
+W..#n++n########+#+#nnL #########nn##+####n####W
+W..s  ##        # #     #W           #       W.W
+?..Sn#+n########+#nn##L##W           #n#  n####W
+W..S  ##        #        W           n#+  #  W..
+W..#n#+n########nn####L###############nn###  WWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 
@@ -1419,10 +1357,12 @@ CHECK OUT THE BONUS LEVELS AND SANDBOX AFTER THIS!
 
 
 <levelmap> <timestep>100</timestep> <name> BONUS LEVELS </name>
-<help> THESE ARE CHALLENGING ARCADE-GAME-TYPE LEVELS BUT THEY DON'T DEMONSTRATE ANY PARTICULAR CONCEPT IN DIGITAL LOGIC. </help>
-W?WWWW
-.M....
-WWWWWW
+<help>
+  THESE ARE NOT PARTICULARLY EDUCATIONAL LEVELS
+</help>
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW                                                                                
+.M......................................
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 <levelmap> <timestep> 120 </timestep> <name> BONUS-7    SPIRAL OF DEATH </name>
@@ -1539,6 +1479,20 @@ Mn++++++++++++++#    .
 .####################. 
 .####################. 
                        
+</levelmap>
+
+<levelmap> <timestep>0</timestep> <name> THE END... FOR NOW </name>
+<help>
+<p style="white-space:pre; color:pink; font-size: 2rem;">
+THANK YOU MARIO!  
+THE MUSHROOM KINGDOM IS GRATEFUL TO YOU.
+STAY TUNED FOR MORE TOAD BURN LEVELS!
+</p>
+</help>
+...........
+.......?...
+..M.....P..
+...........
 </levelmap>
 
 
@@ -2016,14 +1970,14 @@ WWWWWWWWWWWWWWWWWWWWWW
 
 <levelmap> <timestep>0</timestep> <name> S-1   SR LATCH (3x2) </name>
 <help>
-  STORE A BIT IN MEMORY USING THE SET OR RESET BUTTONS
-  <p class="indepth">
-  A SR latch has two inputs called S (Set) and R (Reset), and one output (Q).
-  <br>
-  If SET is HIGH (S=1 and R=0), OUTPUT goes HIGH (Q=1).
-  <br>
-  If RESET is HIGH (S=0 and R=1), OUTPUT goes LOW (Q=0).
-  </p>
+STORE A BIT IN MEMORY USING THE SET OR RESET BUTTONS
+<p class="indepth">
+A SR latch has two inputs called S (Set) and R (Reset), and one output (Q).
+<br>
+If SET is HIGH (S=1 and R=0), OUTPUT goes HIGH (Q=1).
+<br>
+If RESET is HIGH (S=0 and R=1), OUTPUT goes LOW (Q=0).
+</p>
 </help>
 ........
 .M.....?

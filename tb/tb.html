@@ -90,6 +90,7 @@
 <img id="imgPeach1" src="peach1.webp"></img>
 <img id="imgPeach2" src="peach2.webp"></img>
 <img id="imgBowser1234" src="bowser1234.webp"></img>
+<img id="imgGoomba12" src="goomba12.webp"></img>
 <img id="imgGrass" src="grass.webp"></img>
 <img id="imgDirt" src="dirt.webp"></img>
 <img id="imgWater" src="water1.webp"></img>
@@ -177,7 +178,7 @@
     //=================================================
     const ON=1,FRESH=2,CONDUCTING=4,SOURCE=8,GATE=16
     const WALL=1,VOID=2,LAMP=3,
-        PEACH=4,PEACH_BURNING=5,BOWSER=6,BOWSER_BURNING=7,ASHES=8,
+        PEACH=4,PEACH_BURNING=5,ENEMY=6,ENEMY_BURNING=7,ASHES=8,
         PLATE=9,QUESTION=128
     const PLAYING=0,BOWSER_DIED=1,PEACH_DIED=-1,MARIO_DIED=-2
     const BRUSH_GRASS=0,BRUSH_LAVA=1,BRUSH_WATER=2,BRUSH_CROSS=3,BRUSH_TOAD=4,BRUSH_WALL=5,BRUSH_SWITCH=6,BRUSH_PLATE=7,BRUSH_PEACH=8,BRUSH_QUESTION=9
@@ -186,6 +187,7 @@
     let X,Y // level size
     let xCursor,yCursor  // cursor (Mario) position
     let ground,groundNew,subway,subwayNew,extras // level map
+    let data // Array of dicts (?) associated with each 
     let lastDirWalked,stalled=false
     let helpTexts=[],helpText=''
     let winlose=PLAYING 
@@ -315,7 +317,7 @@
       {const [content,remainder]=extract('preconverge', levelMap); levelMap=remainder; if(content) preconverge=Number(content)}
       {const [content,remainder]=extract('cheat', levelMap); levelMap=remainder; if(content) cheating=Number(content)}
       {const [contents,remainder]=extractAll('help', levelMap); levelMap=remainder; if(contents) helpTexts=contents}
-
+      
       if (levelName) {title.innerHTML=levelName; title.style.display='block'}
       else           {title.style.display='none'}
       setCheating(cheating)
@@ -331,10 +333,16 @@
       subway   = new Uint8Array(X*Y)
       subwayNew= new Uint8Array(X*Y)
       extras   = new Uint8Array(X*Y)
+      data     = new Array(X*Y)
       //-------- POPULATE ARRAYS
+      for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
+        data[x+X*y] = new Object()
+      }
+
       let nQuestions=0
       for (let y=0; y<Y; ++y) {
         for (let x=0; x<rows[y].length && x<X; ++x) {
+          const i=x+X*y
           let g
           switch (rows[y][x]) {
             case '.': g=0; break   // grass
@@ -347,10 +355,17 @@
             case 'S': g=SOURCE|FRESH|ON; break 
             case 'n': g=GATE;    break // NOR gate, initially off?
             case 'N': g=GATE|ON; break // NOR gate, initially off?
-            case '+': g=CONDUCTING; subway[x+X*y]=CONDUCTING; break // crossing
-            case 'L': g=CONDUCTING; extras[x+X*y]=LAMP; break // Lamp
-            case 'P': g=CONDUCTING; extras[x+X*y]=PEACH; break // Peach starts unburned
-            case 'B': g=CONDUCTING; extras[x+X*y]=BOWSER; break // Bowser starts unburned
+            case '+': g=CONDUCTING; subway[i]=CONDUCTING; break // crossing
+            case 'L': g=CONDUCTING; extras[i]=LAMP; break // Lamp
+            case 'P': g=CONDUCTING; extras[i]=PEACH; break // Peach starts unburned
+            case 'b': g=CONDUCTING; extras[i]=ENEMY
+              data[i].fsEnemy = fsGoomba
+              data[i].sizeEnemy = 1.0
+              break
+            case 'B': g=CONDUCTING; extras[x+X*y]=ENEMY
+              data[i].fsEnemy = fsBowser
+              data[i].sizeEnemy = 1.5
+              break
             case '?': g=0; extras[x+X*y]=QUESTION+nQuestions; ++nQuestions; break // Question block
             case 'r': g=SOURCE|FRESH|(Math.random()<.5?ON:0); break 
             default: g=0
@@ -362,16 +377,13 @@
       Sound.masterVolume = 0 // don't play annoying toad sounds while preconverging
       for (let iter=0; iter<preconverge; ++iter) evolve()
       Sound.masterVolume = 1
-       //-------- GAMEPLAY: LOAD PEACHES AND BOWSERS AGAIN (IN CASE THEY GOT BURNED DURING PRE-CONVERGENCE)
-      for (let y=0; y<rows.length; ++y) {
-        for (let x=0; x<rows[y].length && x<X; ++x) {
-          switch (rows[y][x]) {
-            case 'P': ground[x+X*y]=CONDUCTING; extras[x+X*y]=PEACH; break // Peach starts unburned
-            case 'B': ground[x+X*y]=CONDUCTING; extras[x+X*y]=BOWSER; break // Bowser starts unburned            
-          }
-        }
+      //-------- GAMEPLAY: EXTINGUISH ANY LAVA IN SQUARES OCCUPIED BY PEACHES AND ENEMIES
+      for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {const i=x+X*y
+        if (extras[i]==PEACH) {ground[i]&=~ON;}
+        if (extras[i]==ENEMY) {ground[i]&=~ON;}
       }
       //-------- GAMEPLAY: IDENTIFY START POSITION
+      setPos(1,1) // default Mario position
       for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) if (rows[y][x]=='M') setPos(x,y)
       xShaking=0; yShaking=0; tCur=0; winlose=PLAYING
 
@@ -474,10 +486,10 @@
 
           if (W & GATE) groundNew[x+X*y] = CONDUCTING | (W&ON) | FRESH // if fed by a gate, MUST be fresh - overrides prev.
         
-          //======== Special handling: PEACH and BOWSER are absorbers (cannot be FRESH)
-          // Also, if PEACH or BOWSER are already set on fire, they cannot be extinguished
+          //======== Special handling: PEACH and ENEMY are absorbers (cannot be FRESH)
+          // Also, if PEACH or ENEMY are already set on fire, they cannot be extinguished
           let H=extras[x+X*y]
-          if (H==PEACH || H==BOWSER) {
+          if (H==PEACH || H==ENEMY) {
             groundNew[x+X*y] &= ~FRESH
             if (ground[x+X*y]&ON)  groundNew[x+X*y] |= ON
           }
@@ -603,9 +615,23 @@
         }
         if (extras[x+X*y]>=QUESTION) ctx.drawImage(imgQuestion, x*a,y*a,a,a)
       }
-      //======== DRAW CERTAIN EXTRAS (QUESTION BLOCKS, LAMPS, ETC.)
+
+      //======== DRAW CERTAIN EXTRAS (STAR SHADOWS)
       let size,xcen,ycen,sx,sy
+      for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) { const i=x+X*y
+        if (extras[i]==LAMP) {
+          xcen=(x+.5)*a; ycen=(y+.5)*a; const rad=1.5*a
+          // ctx.globalCompositeOperation = 'saturation'
+          ctx.beginPath()
+          ctx.ellipse(xcen,ycen,rad,rad,0,0,2*Math.PI)
+          if (ground[x+X*y] & ON) ctx.fillStyle='#FF99'; else ctx.fillStyle='#3339'
+          ctx.fill()
+          ctx.globalCompositeOperation = 'source-over'
+        }
+      }
+      //======== DRAW CERTAIN EXTRAS (QUESTION BLOCKS, LAMPS, ETC.)
       for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
+        const i=x+X*y
         const frm=(tCur+4*x+13*y)/20
         switch (extras[x+X*y]) {
           case WALL: break; // this was done in the earlier loop
@@ -650,23 +676,24 @@
             }
             ++tPeach
             break
-          case BOWSER:
-            size=Math.trunc(a*1.5),xcen=(x+.5)*a,ycen=(y+.5)*a
+          case ENEMY:
+            size=Math.trunc(data[i].sizeEnemy*a),xcen=(x+.5)*a,ycen=(y+.5)*a
             animWater.draw(x*a, y*a, a, a, frm)
-            fsBowser.draw(Math.trunc(xcen-size/2), Math.trunc(ycen-size/2), size,size, tCur/10)
+            data[i].fsEnemy.draw(Math.trunc(xcen-size/2), Math.trunc(ycen-size/2), size,size, tCur/10)
             break
-          case BOWSER_BURNING:
+          case ENEMY_BURNING:
             animLava.draw(x*a, y*a, a, a, frm)
-            size=a*1.5,xcen=(x+.5)*a+xShaking,ycen=(y+.5)*a+yShaking
-            if (tBowser<80) {xShaking+=Math.cos(tBowser*.9)*2; yShaking=Math.sin(tBowser*.6)*10 }
-            else {xShaking=0; yShaking+=(tBowser-80)*.15}
-            if (tBowser<150) {
-              fsBowser.draw(xcen-size/2, ycen-size/2, size,size, tCur/10)
+            size=Math.trunc(data[i].sizeEnemy*a),xcen=(x+.5)*a+data[i].xRel,ycen=(y+.5)*a+data[i].yRel
+            if (data[i].time<80) {data[i].xRel+=Math.cos(data[i].time*.9)*2; data[i].yRel=Math.sin(data[i].time*.6)*10 }
+            else {data[i].xRel=0; data[i].yRel+=(data[i].time-80)*.15}
+            // if (data[i].time<150) {
+            if (ycen<canvas.height) {
+              data[i].fsEnemy.draw(xcen-size/2, ycen-size/2, size,size, tCur/10)
             }
-            else { // Bowser has become ashes, is now safe to walk on
+            else { // Enemy has become ashes, is now safe to walk on
               ground[x+X*y] = 0; extras[x+X*y] = ASHES
             }
-            ++tBowser
+            ++data[i].time
             break
           case ASHES:
             ctx.drawImage(imgDirt, x*a,y*a,a,a);animAsh.draw(x*a,y*a,a,a,tCur/10)
@@ -714,14 +741,17 @@
     
     function checkVictory() {
       //title.innerHTML = ''+winlose // TEMPORARY DEBUGGING
-      // title.innerHTML = ''+tBowser
       if (cheating) return // can't lose in cheat mode
 
-      for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
-        // if (winlose!=BOWSER_DIED && extras[x+X*y]==BOWSER && ground[x+X*y]&ON) {
-        if (extras[x+X*y]==BOWSER && ground[x+X*y]&ON) {
-          tBowser=0; soundBowsFall.play() // play Bowser death sound
-          extras[x+X*y]=BOWSER_BURNING
+      for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) { const i=x+X*y
+        // if (winlose!=BOWSER_DIED && extras[x+X*y]==ENEMY && ground[x+X*y]&ON) {
+        if (extras[i]==ENEMY && ground[i]&ON) {
+          data[i].time = 0  // death animation time
+          data[i].xRel = 0  // death animation position
+          data[i].yRel = 0
+          // tBowser=0;
+          soundBowsFall.play() // play Bowser death sound
+          extras[x+X*y]=ENEMY_BURNING
 
           if (winlose==PLAYING) {
             setTimeout( ()=>soundWin.play(), 1000) // play victory sound
@@ -742,7 +772,7 @@
       }
       if (winlose!=MARIO_DIED &&
         ((ground[xCursor+X*yCursor]&ON) && extras[xCursor+X*yCursor]!=PLATE     // Mario got burned in lava
-        || (extras[xCursor+X*yCursor]==BOWSER && winlose!=BOWSER_DIED))   // Mario got spiked by Bowser
+        || (extras[xCursor+X*yCursor]==ENEMY))   // Mario got spiked by Bowser
       ) {
         soundLose.play()
         setTimeout(()=>btnReset.style.animation = 'flashingAnimation 0.5s step-start infinite', 500)
@@ -986,6 +1016,7 @@
     let animHappy = new Animation([imgHappy1,imgHappy2])
     let animAsh   = new Animation([imgAsh1,imgAsh2])
     let fsBowser  = new Filmstrip(imgBowser1234, 32, 32)
+    let fsGoomba  = new Filmstrip(imgGoomba12, 16, 16)
     let soundTock = new Sound('tock.mp3'); soundTock.vol = .3
     let soundCoin = new Sound('coin.mp3')
     let soundBuzz = new Sound('buzz.mp3')
