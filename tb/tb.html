@@ -62,6 +62,7 @@
     .btn1s{width:var(--btnsize); height:var(--btnsize); background-size:cover; text-shadow: 2px 2px 3px black; border:solid 5px yellow;}
     .btn2 {width:5rem; height:auto;font-size: 2.2vmin;}
     .indepth {font-size:1.3rem;color:#EEE;}
+    .small {display:block;font-size:1.0rem;}
   </style>
 </head>
 <body id="body">
@@ -72,6 +73,7 @@
   </div>
   <div id="preloadContainer" style="display:none;">
 <img id="imgQuestion" src="question.webp"></img>
+<img id="imgBook" src="book.webp"></img>
 <img id="imgMarioE" src="marioE2.webp"></img>
 <img id="imgMarioE2" src="marioE3.webp"></img>
 <img id="imgMarioE3" src="marioE1.webp"></img>
@@ -107,10 +109,11 @@
 <img id="imgSourceOn" src="sourceon.webp"></img>
 <img id="imgPlateOff" src="plateoff.webp"></img>
 <img id="imgPlateOn" src="plateon.webp"></img>
+<img id="imgButtonOff" src="buttonoff.webp"></img>
+<img id="imgButtonOn" src="buttonon.webp"></img>
 <img id="imgBrick" src="brick.webp"></img>
 <img id="imgBridge" src="bridge.webp"></img>
 <img id="imgMask" src="mask.webp"></img>
-
 <audio id="audioBuzz"><source src="buzz.mp3"></audio>
 <audio id="audioBowsFall"><source src="bowsfall.mp3"></audio>
 <audio id="audioWin"><source src="win.mp3"></audio>
@@ -147,10 +150,10 @@
       <input type="range" min="0" max="200" value="50" class="slider" id="sliderSpeed">
       <div id="divSpeed" style="color:white; font-size: 2vmin; text-align:center;">DELAY</div>
       </div>
-      <button id="btnCheat" class="btn2" title="Key: Shift-C"> CHEAT</button>
-      <button id="btnPrev"  class="btn2" title="Key: [">       PREV </button>
-      <button id="btnReset" class="btn2" title="Key: Shift-R"> RESET </button>
-      <button id="btnNext"  class="btn2" title="Key: [">       NEXT  </button>
+      <button id="btnCheat" class="btn2" title="Key: Shift-C"> CHEAT <span class="small">C</span> </button>
+      <button id="btnPrev"  class="btn2" title="Key: [">       PREV  <span class="small">&lt;</span> </button>
+      <button id="btnReset" class="btn2" title="Key: Shift-R"> RESET <span class="small">R</span> </button>
+      <button id="btnNext"  class="btn2" title="Key: [">       NEXT  <span class="small">&gt;</span>  </button>
     </div>
   </div>
   <div style="position:fixed; right:0; top:0; visibility:hidden; z-index:5; width:calc(2*var(--btnsize));
@@ -177,9 +180,7 @@
     // GAMEPLAY VARIABLES AND FUNCTIONS
     //=================================================
     const ON=1,FRESH=2,CONDUCTING=4,SOURCE=8,GATE=16
-    const WALL=1,VOID=2,LAMP=3,
-        PEACH=4,PEACH_BURNING=5,ENEMY=6,ENEMY_BURNING=7,ASHES=8,
-        PLATE=9,QUESTION=128
+    const WALL=1,VOID=2,LAMP=3,PEACH=4,PEACH_BURNING=5,ENEMY=6,ENEMY_BURNING=7,ASHES=8,PLATE=9,BUTTON=10,SWITCH=11,QUESTION=128
     const PLAYING=0,BOWSER_DIED=1,PEACH_DIED=-1,MARIO_DIED=-2
     const BRUSH_GRASS=0,BRUSH_LAVA=1,BRUSH_WATER=2,BRUSH_CROSS=3,BRUSH_TOAD=4,BRUSH_WALL=5,BRUSH_SWITCH=6,BRUSH_PLATE=7,BRUSH_PEACH=8,BRUSH_QUESTION=9
     const DIRS=[[1,0],[-1,0],[0,1],[0,-1]]
@@ -215,11 +216,18 @@
       if (H==VOID) {soundBuzz.play(); stalled=true; return false} // Can't walk into void
       if (H==WALL) {soundBuzz.play(); stalled=true; return false} // Can't walk into wall
       if (H>=QUESTION) { // Mario bumps a Question block
-        soundCoin.play(); openHelp(H-QUESTION); helpDiv.focus(); stalled=true; return false
+        soundCoin.play(); openHelp(H-QUESTION,xnew,ynew); helpDiv.focus(); stalled=true; return false
       }
-      if ((G & SOURCE) && H!=PLATE) {  // Mario bumps a P Switch (not a plate)
-        soundTock.play(); ground[xnew+X*ynew] ^= ON  // Toggle the ON/OFF state
-        stalled=true; return false
+      if (G & SOURCE) {  // Mario bumps a SOURCE
+        if (H==SWITCH) {
+          soundTock.play(); ground[xnew+X*ynew] ^= ON  // Bumping a SWITCH toggles its ON/OFF state
+          stalled=true; return false
+        }
+        else if (H==BUTTON) {
+          soundTock.play(); ground[xnew+X*ynew] = SOURCE|FRESH|ON  // Bumping a BUTTON causess it to go FRESH ON
+          stalled=true; return false
+        }
+        else if (H==PLATE) {} // Mario can walk ONTO a pressure plate
       }
       if (G & GATE) { // Mario bumps a toad
         if (G & ON) {soundOw.play()} else soundHoo.play(); // Play appropriate sound
@@ -267,24 +275,27 @@
     }
     function toggleCheating() { setCheating(!cheating) }
     function extract(tag, source) {
-      const re = new RegExp('\\s+<' + tag + '>(.*?)<\/' + tag + '>', 'gs')
+      const re = new RegExp('\\s*<' + tag + '>(.*?)<\/' + tag + '>', 'gs')
       const match = re.exec(source)
       if (match) return [match[1], source.replace(re,'')]
       else return ["", source]
     }
     function extractAll(tag, source) {
-      const re = new RegExp('\\s+<' + tag + '>(.*?)<\/' + tag + '>', 'gs')
+      const re = new RegExp('\\s*<' + tag + '>(.*?)<\/' + tag + '>', 'gs')
       const matches = source.matchAll(re)
       return [Array.from(matches, (m) => m[0]), source.replace(re,'')]
     }
 
-    function setLevel(newLevel) {
+    function saveSandbox() {
       //============================== If you're in sandbox mode, SAVE before changing level!
       if (levelName.trim()=='SANDBOX') {
         localStorage.setItem('ground', JSON.stringify(ground))
         localStorage.setItem('subway', JSON.stringify(subway))
         localStorage.setItem('extras', JSON.stringify(extras))
       }
+    }
+    function setLevel(newLevel) {
+      saveSandbox() 
       //==============================
       stalled=true           // Don't ever start a new level while walking
       if (newLevel<0) return // if new level number is illegal, don't load it
@@ -346,13 +357,15 @@
           let g
           switch (rows[y][x]) {
             case '.': g=0; break   // grass
-            case ' ': g=0; extras[x+X*y]=VOID; break   // void
-            case 'W': g=0; extras[x+X*y]=WALL; break   // wall
-            case '_': g=SOURCE|FRESH; extras[x+X*y]=PLATE; break // pressure plate
+            case ' ': g=0; extras[i]=VOID; break   // void
+            case 'W': g=0; extras[i]=WALL; break   // wall
+            case 'o': g=SOURCE; extras[i]=BUTTON; break // button
+            case '_': g=SOURCE|FRESH; extras[i]=PLATE; break // pressure plate
             case '#': g=CONDUCTING; break           // dirt
             case 'H': g=CONDUCTING|ON|FRESH; break
-            case 's': g=SOURCE|FRESH;    break 
-            case 'S': g=SOURCE|FRESH|ON; break 
+            case 's': g=SOURCE|FRESH;    extras[i]=SWITCH; break 
+            case 'S': g=SOURCE|FRESH|ON; extras[i]=SWITCH; break 
+            case 'r': g=SOURCE|FRESH|(Math.random()<.5?ON:0); extras[i]=SWITCH; break 
             case 'n': g=GATE;    break // NOR gate, initially off?
             case 'N': g=GATE|ON; break // NOR gate, initially off?
             case '+': g=CONDUCTING; subway[i]=CONDUCTING; break // crossing
@@ -362,15 +375,15 @@
               data[i].fsEnemy = fsGoomba
               data[i].sizeEnemy = 1.0
               break
-            case 'B': g=CONDUCTING; extras[x+X*y]=ENEMY
+            case 'B': g=CONDUCTING; extras[i]=ENEMY
               data[i].fsEnemy = fsBowser
               data[i].sizeEnemy = 1.5
               break
-            case '?': g=0; extras[x+X*y]=QUESTION+nQuestions; ++nQuestions; break // Question block
-            case 'r': g=SOURCE|FRESH|(Math.random()<.5?ON:0); break 
+            case '?': g=0; extras[i]=QUESTION+nQuestions; data[i].img=imgQuestion; ++nQuestions; break // Question block
+            case '"': g=0; extras[i]=QUESTION+nQuestions; data[i].img=imgBook; ++nQuestions; break // Book
             default: g=0
           }
-          ground[x+X*y]=g
+          ground[i]=g
         }
       }
       //-------- GAMEPLAY: PRE-CONVERGE TO STEADY STATE PREVENT PREMATURE BOWSER_DIED
@@ -407,30 +420,32 @@
     function evolve() {
 
       //======== Calculate groundNew[...] 
-      for (let y=1; y<Y-1; ++y) for (let x=1; x<X-1; ++x) {
-        const G=ground[x+X*y]
-        groundNew[x+X*y]=G 
-        if (extras[x+X*y]==PLATE) { //Pressure plate acts as SOURCE ON or SOURCE OFF depending
+      for (let y=1; y<Y-1; ++y) for (let x=1; x<X-1; ++x) { const i=x+X*y
+        const G=ground[i]
+        groundNew[i]=G 
+        if (extras[i]==PLATE) { //Pressure plate acts as SOURCE ON or SOURCE OFF depending
           // on whether it is being stepped on
-          if (xCursor==x&&yCursor==y) groundNew[x+X*y]=SOURCE|FRESH|ON
-          else                        groundNew[x+X*y]=SOURCE|FRESH
+          if (xCursor==x&&yCursor==y) groundNew[i]=SOURCE|FRESH|ON
+          else                        groundNew[i]=SOURCE|FRESH
           continue
         }
-        if (G&SOURCE) {groundNew[x+X*y]=G;         continue} // Source persists unchanged 
-        if (G&FRESH)  {groundNew[x+X*y]=G & ~FRESH;continue} // Fresh cell goes stale
+        if (G&SOURCE) {
+          if (extras[i]==BUTTON) groundNew[i]=SOURCE|FRESH // If source is a BUTTON, it turns off when time-evolved
+          else                   groundNew[i]=G      // If source is a SWITCH or a PLATE, its state does not evolve automatically
+          continue
+        } 
+        if (G&FRESH)  {groundNew[i]=G & ~FRESH;continue} // Fresh cell goes stale
         //======== We need to consider neighbors
         let E=ground[(x+1)+X*y]
         let W=ground[(x-1)+X*y]
         
         let N,S;
-        if (subway[x+X*y]) {N=0; S=0} // If subway exists, then ground has no N and S neighbors
+        if (subway[i]) {N=0; S=0} // If subway exists, then ground has no N and S neighbors
         else {
           // If North neighbor has a subway, use the subway value; otherwise use ground value
           N=subway[x+X*(y-1)]; if(N==0) N=ground[x+X*(y-1)]
           S=subway[x+X*(y+1)]; if(S==0) S=ground[x+X*(y+1)]
         }
-        // N=ground[x+X*(y-1)]
-        // S=ground[x+X*(y+1)]        
         //======== If cell is a NOR gate, do NOR logic
         if (G&GATE) {
           // within this code block, if N and S neighbors are gates, they do NOT count as inputs
@@ -442,68 +457,49 @@
           let SS=S&(CONDUCTING|SOURCE)
 
           if      ( !WW && !NN && !SS ) continue                              // gate has no inputs
-          else if ( !(W&ON) && !(N&ON) && !(S&ON)) groundNew[x+X*y] = GATE|ON // all inputs are OFF
-          else if (  WW&&(W&ON)  || NN&&(N&ON)  || SS&&(S&ON) ) groundNew[x+X*y] = GATE&~ON
+          else if ( !(W&ON) && !(N&ON) && !(S&ON)) groundNew[i] = GATE|ON // all inputs are OFF
+          else if (  WW&&(W&ON)  || NN&&(N&ON)  || SS&&(S&ON) ) groundNew[i] = GATE&~ON
 
-          if      (G&ON && !(groundNew[x+X*y]&ON)) soundOw.play();    // gate switched OFF
-          else if (!(G&ON) && (groundNew[x+X*y]&ON)) soundHoo.play(); // gate switched ON
+          if      (G&ON && !(groundNew[i]&ON)) soundOw.play();    // gate switched OFF
+          else if (!(G&ON) && (groundNew[i]&ON)) soundHoo.play(); // gate switched ON
           continue
         }
         //======== Cell is a normal conducting cell.  Check if any neighbors are FRESH, and if so, are they ON or OFF
         if (G&CONDUCTING) {
-          // let flag=false,env=0 // env is the sum of +1's or -1's for each neighbor
-          // if (W & GATE ) {flag=true; env+=(W&ON)?1:-1}
-
-
-          // THIS OLD LOGIC IS WRONG
-          // if (E & FRESH) {flag=true; env+=(E&ON)?1:-1}
-          // if (W & FRESH) {flag=true; env+=(W&ON)?1:-1}
-          // if (N & FRESH) {flag=true; env+=(N&ON)?1:-1}
-          // if (S & FRESH) {flag=true; env+=(S&ON)?1:-1}
-          // if (flag) { // Check whether we end up flipping state
-          //   if      (!(G&ON) && env>=0) groundNew[x+X*y] = G | ON | FRESH
-          //   else if ((G&ON) && env<=0) groundNew[x+X*y] = (G & (~ON)) | FRESH  
-          // }
-
-
-          // if cell is OFF and any neighbor is FRESH ON, turn on
-          if (!(G&ON)) {
+          if (!(G&ON)) {// if cell is OFF and any neighbor is FRESH ON, cell becomes FRESH ON
             if (
               (E&FRESH) && (E&ON)
             ||(W&FRESH) && (W&ON)
             ||(N&FRESH) && (N&ON)
-            ||(S&FRESH) && (S&ON) ) groundNew[x+X*y] = G | ON | FRESH
+            ||(S&FRESH) && (S&ON) ) groundNew[i] = G | ON | FRESH
           }
-          else { 
+          else { // if cell is ON and any neighbor is FRESH OFF, cell becomes FRESH OFF
             if (
               (E&FRESH) && !(E&ON)
             ||(W&FRESH) && !(W&ON)
             ||(N&FRESH) && !(N&ON)
-            ||(S&FRESH) && !(S&ON) ) groundNew[x+X*y] = (G & (~ON)) | FRESH  
+            ||(S&FRESH) && !(S&ON) ) groundNew[i] = (G & (~ON)) | FRESH  
           }
-
-          
-
-          if (W & GATE) groundNew[x+X*y] = CONDUCTING | (W&ON) | FRESH // if fed by a gate, MUST be fresh - overrides prev.
+          if (W & GATE) groundNew[i] = CONDUCTING | (W&ON) | FRESH // if cell fed by a gate, MUST be fresh - overrides prev.
         
           //======== Special handling: PEACH and ENEMY are absorbers (cannot be FRESH)
           // Also, if PEACH or ENEMY are already set on fire, they cannot be extinguished
-          let H=extras[x+X*y]
+          let H=extras[i]
           if (H==PEACH || H==ENEMY) {
-            groundNew[x+X*y] &= ~FRESH
-            if (ground[x+X*y]&ON)  groundNew[x+X*y] |= ON
+            groundNew[i] &= ~FRESH
+            if (ground[i]&ON)  groundNew[i] |= ON
           }
           continue
         }
       }
 
       //======== Calculate subwayNew[...] based on NORTH and SOUTH neighbors only
-      for (let y=1; y<Y-1; ++y) for (let x=1; x<X-1; ++x) {
-        const H = subway[x+X*y]
-        subwayNew[x+X*y] = H // default: same
+      for (let y=1; y<Y-1; ++y) for (let x=1; x<X-1; ++x) { const i=x+X*y
+        const H = subway[i]
+        subwayNew[i] = H // default: same
 
         if (!H) continue  // not a crossing
-        if (H&FRESH)  {subwayNew[x+X*y]=H & ~FRESH;continue} // Fresh cell goes stale
+        if (H&FRESH)  {subwayNew[i]=H & ~FRESH;continue} // Fresh cell goes stale
 
         const N=subway[x+X*(y-1)] ? subway[x+X*(y-1)] : ground[x+X*(y-1)]
         const S=subway[x+X*(y+1)] ? subway[x+X*(y+1)] : ground[x+X*(y+1)]
@@ -511,8 +507,8 @@
         if (N & FRESH) {flag=true; env+=(N&ON)?1:-1}
         if (S & FRESH) {flag=true; env+=(S&ON)?1:-1}
         if (flag) { // Check whether we end up flipping state
-          if      (!(H&ON) && env>=0) subwayNew[x+X*y] = H | ON | FRESH
-          else if ( (H&ON) && env<=0) subwayNew[x+X*y] = (H & (~ON)) | FRESH  
+          if      (!(H&ON) && env>=0) subwayNew[i] = H | ON | FRESH
+          else if ( (H&ON) && env<=0) subwayNew[i] = (H & (~ON)) | FRESH  
         }
       }
       
@@ -534,7 +530,6 @@
     const ctx=canvas.getContext('2d')
     let winWid,winHei,cellsize
     let marioOrientation=2 // start game facing South
-    // let xCurPrev,yCurPrev  // variables associated with Mario's
     let xCurNext,yCurNext  // variables associated with Mario's
     let xMario,yMario,nWalk=0,tWalk=0 // appearance (but not gameplay)
     let tCur=0,tMario=0,tPeach=0,tBowser=0
@@ -608,12 +603,12 @@
       }
 
       //======== DRAW CERTAIN EXTRAS (VOIDS AND WALLS)
-      for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
-        switch (extras[x+X*y]) { 
+      for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) { const i=x+X*y
+        switch (extras[i]) { 
           case VOID: ctx.fillStyle='#000';ctx.fillRect(x*a, y*a, a, a); break // void
           case WALL: ctx.drawImage(imgBrick, x*a, y*a, a, a); break
         }
-        if (extras[x+X*y]>=QUESTION) ctx.drawImage(imgQuestion, x*a,y*a,a,a)
+        if (extras[i]>=QUESTION) ctx.drawImage(data[i].img, x*a,y*a,a,a)
       }
 
       //======== DRAW CERTAIN EXTRAS (STAR SHADOWS)
@@ -624,7 +619,7 @@
           // ctx.globalCompositeOperation = 'saturation'
           ctx.beginPath()
           ctx.ellipse(xcen,ycen,rad,rad,0,0,2*Math.PI)
-          if (ground[x+X*y] & ON) ctx.fillStyle='#FF99'; else ctx.fillStyle='#3339'
+          if (ground[i] & ON) ctx.fillStyle='#FF99'; else ctx.fillStyle='#3339'
           ctx.fill()
           ctx.globalCompositeOperation = 'source-over'
         }
@@ -633,15 +628,19 @@
       for (let y=0; y<Y; ++y) for (let x=0; x<X; ++x) {
         const i=x+X*y
         const frm=(tCur+4*x+13*y)/20
-        switch (extras[x+X*y]) {
+        switch (extras[i]) {
           case WALL: break; // this was done in the earlier loop
           case PLATE:
-            if (ground[x+X*y] & ON) {animLava.draw(x*a,y*a,a,a, frm);ctx.drawImage(imgPlateOn, x*a,y*a,a,a)}
-            else                   {animWater.draw(x*a,y*a,a,a, frm);ctx.drawImage(imgPlateOff, x*a,y*a,a,a)}
+            if (ground[i] & ON) {animLava.draw(x*a,y*a,a,a, frm);ctx.drawImage(imgPlateOn, x*a,y*a,a,a)}
+            else                {animWater.draw(x*a,y*a,a,a, frm);ctx.drawImage(imgPlateOff, x*a,y*a,a,a)}
+            break
+          case BUTTON:
+            if (ground[i] & ON) {ctx.drawImage(imgButtonOn, x*a,y*a,a,a)}
+            else                {ctx.drawImage(imgButtonOff, x*a,y*a,a,a)}
             break
           case LAMP:
             xcen=(x+.5)*a; ycen=(y+.5)*a
-            if (ground[x+X*y]&ON) {
+            if (ground[i]&ON) {
               if ((Math.floor(tCur/10)%2)) {sx=1.05*starSize*a; sy=sx}
               else                         {sx=starSize*a; sy=sx}
               ctx.drawImage(imgStarOn, xcen-sx/2, ycen-sy/2, sx,sy)
@@ -672,7 +671,7 @@
               ctx.restore(); // Restore the canvas to its original state
             }
             else { //Peach has become ashes, is now safe to walk on (not that it matters)
-              ground[x+X*y] = 0; extras[x+X*y] = ASHES
+              ground[i] = 0; extras[i] = ASHES
             }
             ++tPeach
             break
@@ -691,7 +690,7 @@
               data[i].fsEnemy.draw(xcen-size/2, ycen-size/2, size,size, tCur/10)
             }
             else { // Enemy has become ashes, is now safe to walk on
-              ground[x+X*y] = 0; extras[x+X*y] = ASHES
+              ground[i] = 0; extras[i] = ASHES
             }
             ++data[i].time
             break
@@ -701,8 +700,7 @@
         }
       }
       //======== DRAW MARIO
-      if (winlose==MARIO_DIED) {
-        // Mario is burned (dead)
+      if (winlose==MARIO_DIED) { // Mario is burned (dead)
         const x=xCursor,y=yCursor
         const xcen=(x+.5)*a+xShaking,ycen=(y+.5)*a+yShaking,sx=a,sy=a
         ctx.drawImage(imgMarioDead, xcen-sx/2, ycen-sy/2, sx,sy);
@@ -715,11 +713,9 @@
         if (xCursor!=xCurNext||yCursor!=yCurNext) nWalk = Math.floor(((Date.now() - tWalk))/17) // 17 ms per frame
         if (nWalk>=maxWalkSteps) {xCursor=xCurNext; yCursor=yCurNext; nWalk=0} // go back to standing still
         xMario = xCursor + (xCurNext-xCursor)*nWalk/maxWalkSteps
-        yMario = yCursor + (yCurNext-yCursor)*nWalk/maxWalkSteps
-        
-        //let asp=imgMarioE.height/imgMarioE.width;
+        yMario = yCursor + (yCurNext-yCursor)*nWalk/maxWalkSteps     
         ctx.imageSmoothingEnabled = false
-        const xcen=(xMario+.5)*a,ycen=(yMario+.5)*a,sx=a,sy=a //,sy=a,sx=sy/asp
+        const xcen=(xMario+.5)*a,ycen=(yMario+.5)*a,sx=a,sy=a
         switch (marioOrientation) {
           case 0: animMarioE.draw(xcen-sx/2, ycen-sy/2, sx,sy, nWalk); break
           case 1: animMarioW.draw(xcen-sx/2, ycen-sy/2, sx,sy, nWalk); break
@@ -751,7 +747,7 @@
           data[i].yRel = 0
           // tBowser=0;
           soundBowsFall.play() // play Bowser death sound
-          extras[x+X*y]=ENEMY_BURNING
+          extras[i]=ENEMY_BURNING
 
           if (winlose==PLAYING) {
             setTimeout( ()=>soundWin.play(), 1000) // play victory sound
@@ -759,8 +755,8 @@
           }
           break
         }
-        if (winlose!=PEACH_DIED && extras[x+X*y]==PEACH && ground[x+X*y]&ON) {
-          extras[x+X*y]=PEACH_BURNING
+        if (winlose!=PEACH_DIED && extras[i]==PEACH && ground[i]&ON) {
+          extras[i]=PEACH_BURNING
           tPeach=0
           if (winlose==PLAYING) { // don't celebrate if mraio or peach is already dead
             soundLose.play(); 
@@ -813,13 +809,16 @@
     // HELP
     //=================================================
     function closeHelp() {helpDiv.style.display="none"}
-    function openHelp(nQuestion) {
+    function openHelp(nQuestion,xHelp,yHelp) {
       winWid=window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth
       winHei=window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight
       const wid=winWid - 64
       const hei=winHei - 64
       helpDiv.style.display = "block"
       helpDiv.innerHTML = helpTexts[nQuestion]
+      const imgHelp=data[xHelp+X*yHelp].img
+      if (imgHelp==imgBook) helpDiv.style.backgroundImage = 'url("book.webp")'
+      else helpDiv.style.backgroundImage = 'url("peach1E.webp")'
       helpDiv.onclick = closeHelp
       helpDiv.focus()
       // let utterance = new SpeechSynthesisUtterance(convertHtmlToText(helpText))
@@ -831,22 +830,16 @@
     // INTERACTIVITY
     //=================================================
     function keyDown(e) {
-      if (timeoutID) {clearTimeout(timeoutID); timeoutID=null}
-      
-      if (helpDiv.style.display=="block") {helpDiv.style.display="none"; return}
-
       if (e.ctrlKey||e.altKey) return // don't trap browser shortcuts involving Ctrl or Alt
+      if (timeoutID) {clearTimeout(timeoutID); timeoutID=null} // user has insisted on pressing key again; process immediately
+      if (helpDiv.style.display=="block") {helpDiv.style.display="none"; return} // close help panel
       let processed=true
       switch (e.key) {
-        case '[': prevLevel(); break
-        case ']': nextLevel(); break
-        // case 'h':case'H':if(cheating) selectLava(); break    // add hot burning
-        // case 'j':case'J':if(cheating) selectWater(); break    // add cold burning
-        // case 'k':case'K':if(cheating) selectCross(); break // toggle crossing
-        // case 'l':case'L':if(cheating) selectToad(); break    // add NOR gate (Toad)
-        // case ';':case';':if(cheating) selectGrass(); break // erase current ground  //case 'Backspace': case 'Delete':                 
+        case '[':case'<':case',': prevLevel(); break
+        case ']':case'>':case'.': nextLevel(); break
         case 'C': toggleCheating(); break
         case 'R': resetLevel(); break    // reset level
+        case 'ArrowUp':case'ArrowDown':e.preventDefault(); return // don't scroll window ; this is unusual
         default: processed=false
       }
       if (processed) {e.preventDefault(); e.stopPropagation(); }
@@ -858,67 +851,60 @@
     let joyAnchorX,joyAnchorY,joyX=0,joyY=0;
     function joyTouchStart(e) {
       e.preventDefault()
-      // joyAnchorX=event.touches[0].pageX // not appropriate
-      // joyAnchorY=event.touches[0].pageY
       const rect = joyring.getBoundingClientRect()
       joyAnchorX = (rect.left + rect.right)/2
       joyAnchorY = (rect.top + rect.bottom)/2
-      
-      // console.log([joyAnchorX,joyAnchorY])
-      // console.log([event.touches[0].clientX,event.touches[0].clientY])
-
       joyX=clamp(event.touches[0].clientX-joyAnchorX,-30,30)
       joyY=clamp(event.touches[0].clientY-joyAnchorY,-30,30)
-      // joystick.style.transform=`translate(${joyX}px,${joyY}px)`
-      joyForce = Math.hypot(joyX,joyY) // decide whether to walk ONE STEP
-      if (joyForce<5) { // weak force, do nothing
+      joyForce = Math.hypot(joyX,joyY)
+      if (joyForce>10) { //strong force, walk
+        if (Math.abs(joyX)>Math.abs(joyY)) joyX>0 ? walkE() : walkW()
+        else                               joyY>0 ? walkS() : walkN()
       }
-      else if (joyForce>10) { //strong force, walk
-        if (Math.abs(joyX)>Math.abs(joyY)) if (joyX>0) {walkE()} else walkW()
-        else                         if (joyY>0) {walkS()} else walkN()
-      }
-      else { // medium force, change direction only
-        if (Math.abs(joyX)>Math.abs(joyY)) if (joyX>0) {faceE()} else faceW()
-        else                         if (joyY>0) {faceS()} else faceN()
+      else if (joyForce>5) { // medium force, change direction only
+        if (Math.abs(joyX)>Math.abs(joyY)) joyX>0 ? faceE(): faceW()
+        else                               joyY>0 ? faceS() : faceN()
       }
     }
     function joyTouchMove(e) {
       e.preventDefault()
       joyX=clamp(event.touches[0].clientX-joyAnchorX,-30,30)
       joyY=clamp(event.touches[0].clientY-joyAnchorY,-30,30)
-      // joystick.style.transform=`translate(${joyX}px,${joyY}px)`
     }
-    function joyTouchEnd(e) {
-      joyX=0; joyY=0
-      // joystick.style.transform='translate(0,0)'
-      stalled=false
-    }
+    function joyTouchEnd(e) { joyX=0; joyY=0; stalled=false }
 
 
     function paint(x, y) { // overwrite cell using current brush
-      if(!cheating) return
+      if(!cheating) {// if we're not in cheat mode, just reveal help if user has clicked help text
+        if (x>=0&&x<X&&y>=0&&y<Y) {
+          const i=x+X*y
+          if (extras[i]>=QUESTION) openHelp(extras[i]-QUESTION,x,y)
+        }
+        return
+      }
       if (x>=0&&x<X&&y>=0&&y<Y) {
+        const i=x+X*y
         soundCoin.play()  // should add logic so that sound only plays if the map is actually changed
         switch (brush) {
-          case BRUSH_GRASS: subway[x+X*y]=extras[x+X*y]=0; ground[x+X*y]=0; break
-          case BRUSH_LAVA:  subway[x+X*y]=extras[x+X*y]=0; ground[x+X*y]=CONDUCTING|FRESH|ON; break
-          case BRUSH_WATER: subway[x+X*y]=extras[x+X*y]=0; ground[x+X*y]=CONDUCTING|FRESH; break
-          case BRUSH_WALL:  subway[x+X*y]=0; ground[x+X*y]=0; extras[x+X*y]=WALL; break
+          case BRUSH_GRASS: subway[i]=extras[i]=0; ground[i]=0; break
+          case BRUSH_LAVA:  subway[i]=extras[i]=0; ground[i]=CONDUCTING|FRESH|ON; break
+          case BRUSH_WATER: subway[i]=extras[i]=0; ground[i]=CONDUCTING|FRESH; break
+          case BRUSH_WALL:  subway[i]=0; ground[i]=0; extras[i]=WALL; break
           case BRUSH_TOAD:
-            if (ground[x+X*y] & GATE) {ground[x+X*y]^=ON}
-            else {subway[x+X*y]=extras[x+X*y]=0; ground[x+X*y]=GATE|ON}
+            if (ground[i] & GATE) {ground[i]^=ON}
+            else {subway[i]=extras[i]=0; ground[i]=GATE|ON}
             break
           case BRUSH_SWITCH:
-            if (ground[x+X*y] & SOURCE) {ground[x+X*y]^=ON}
-            else {subway[x+X*y]=0; ground[x+X*y]=SOURCE|FRESH;extras[x+X*y]=0;}     
+            if (ground[i] & SOURCE) {ground[i]^=ON}
+            else {subway[i]=0; ground[i]=SOURCE|FRESH;extras[i]=0;}     
             break
-          case BRUSH_PLATE: subway[x+X*y]=0; ground[x+X*y]=SOURCE|FRESH;extras[x+X*y]=PLATE; break
+          case BRUSH_PLATE: subway[i]=0; ground[i]=SOURCE|FRESH;extras[i]=PLATE; break
           case BRUSH_CROSS:
-            if(subway[x+X*y]) {subway[x+X*y]=0; if (!ground[x+X*y]) ground[x+X*y]=CONDUCTING} // REMOVE SUBWAY
-            else {subway[x+X*y]=CONDUCTING|FRESH; ground[x+X*y]|=CONDUCTING|FRESH}  // ADD SUBWAY
+            if(subway[i]) {subway[i]=0; if (!ground[i]) ground[i]=CONDUCTING} // REMOVE SUBWAY
+            else {subway[i]=CONDUCTING|FRESH; ground[i]|=CONDUCTING|FRESH}  // ADD SUBWAY
             break
-          case BRUSH_PEACH: subway[x+X*y]=0; ground[x+X*y]=CONDUCTING; extras[x+X*y]=PEACH; break
-          case BRUSH_QUESTION: subway[x+X*y]=0; ground[x+X*y]=0; extras[x+X*y]=QUESTION; break
+          case BRUSH_PEACH: subway[i]=0; ground[i]=CONDUCTING; extras[i]=PEACH; break
+          case BRUSH_QUESTION: subway[i]=0; ground[i]=0; extras[i]=QUESTION; break
         }
       }
     }
@@ -987,14 +973,11 @@
       canvas.style.display = 'block' // Show
       controls.style.display = 'block'
       sliderSpeed.oninput=()=>{
-        timeStepInMilliseconds=Number(sliderSpeed.value);
+        timeStepInMilliseconds=Number(sliderSpeed.value)
         divSpeed.innerText='DELAY '+timeStepInMilliseconds
       }
-
-      // window.addEventListener("beforeunload", function(e){
-      //   return "Are you sure to leave this page?";
-      // });
-
+      window.onbeforeunload = saveSandbox
+      //window.onbeforeunload=(e)=>{e.preventDefault(); e.returnValue=''; return ''}
       selectWater()
       requestAnimationFrame(animate)
     }

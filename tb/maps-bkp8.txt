@@ -1046,6 +1046,60 @@ W.....................................................W
 
 
 
+<levelmap> <timestep>0</timestep> <name> 4-10    WORLD 4 BOSS FIGHT </name>
+<help> HELP ME, MARIO!  MAKE THE UPPER STARS MATCH THE LOWER STARS! </help>
+<help> RIGHT=SHIFT, DOWN=TOGGLE </help>
+<help><p class="indepth">
+  This pulse extender converts the 2-tick button pulse to a 6-tick pulse.
+</p> </help>
+<help><p class="indepth">
+  You have reached the root of the clock tree.
+  This clock distribution network has a fractal structure
+  such that the 6-tick pulse arrives simultaneously at every D latch.
+</p> </help>
+<help><p class="indepth">
+  This is a synchronous shift register consisting of D latches in series.
+  A trigger pulse causes all latches to go transparent simultaneously.
+  The trigger pulse duration (6 ticks) is long enough to ensure each bit is shifted,
+    but short enough to prevent double shifting.
+</p> </help>
+<help> UPPER STARS = SHIFT REGISTER </help>
+<help><p class="indepth">
+  This is a row of 9 EQV gates in parallel.
+  The gates compare the shift register
+  with a random 9-bit passcode generated during level initialization.
+</p> </help>
+<help> LOWER STARS = PASSCODE </help>
+<help><p class="indepth">
+  The outputs of the EQV gates are fed to this chain of AND gates,
+  which forms a 9-input AND gate.  
+  The output is ON only if the two rows of stars match exactly.
+</p> </help>
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+W    ##                                            WWWW
+W  ###nn##                                         WWWW
+W??#"#+..####+#############"                       WWWW
+W..# ##      #++++++++++++#++++++++++#             WWWW
+W.Mo   #############           #############       WWWW
+W.sW   #           #           #           #       WWWW
+W.#W#++#++#     #++#++#     #++#++#     #++#++#    WWWW
+W.#Wn##WWWn##WWWn##WWWn##WWWn##WWWn##WWWn##WWWn##WWWWWW
+..#  ##    ##    ##    ##    ##    ##    ##    ##  WWWW
+W.###+n# ##+n# ##+n# ##+n# ##+n# ##+n# ##+n# ##+n# WWWW
+".##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn#WWWW
+W.#   #+#   #+#   #+#   #+#   #+#   #+#   #+#   #+#WWWW
+W.#WWWWW#WWWWW#WWWWW#WWWWW#WWWWW#WWWWW#WWWWW#WWWWW#WWWW
+W.#     #     #     #     #     #     #     #     #   W
+?.Ln#   Ln#   Ln#   Ln#   Ln#   Ln#   Ln#   Ln#   Ln# W
+".n#+   n#+   n#+   n#+   n#+   n#+   n#+   n#+   n#+ W
+?.Lnn#  Lnn#  Lnn#  Lnn#  Lnn#  Lnn#  Lnn#  Lnn#  Lnn#W
+W.r  #  r  #  r  #  r  #  r  #  r  #  r  #  r  #  r  #W
+W.   #     #     #     #     #     #     #     #     #W
+W.#+##  #+##  #+##  #+##  #+##  #+##  #+##  #+##  #+##W
+?.n#    n#    n#    n#    n#    n#    n#    n#    n#  W
+W..n####nn####nn####nn####nn####nn####nn####nn####nn#B
+W.....................................................W
+</levelmap>
 
 <levelmap> <timestep>100</timestep> <name></name>
 <help> SIX BIT, SEVEN BIT, EIGHT BIT MUNCH! </help>
@@ -1152,13 +1206,11 @@ W...................W
 <help>
   1101 IS THE CODE <br>
   TO KEEP THE LAVA OFF THE ROAD.
-</help>
-<help>
   <p class="indepth">
   When triggered, this 4-bit D latch lets all input bits flow through.
   </p>
 </help>
-W?"WWWWWWWWWWWWWWWW
+W?WWWWWWWWWWWWWWWWW
 .M................W
 W._#####n++HH    .W
 W.  #    ##+n#   .W
@@ -1411,9 +1463,8 @@ WW# #  #              nnLW
 W?##+##n###L## Lrn#   # #W
 WMs # #      N#+++n#nn# #W
 W.s###N####         #   #W
-W..W      #L## Lsn# #WWW#W
-...WWWWWWWW  N#+++n##W..b.
-W..WWWWWWWWWWWWWWWWWWW...W
+W..W      #L## Lsn# #   #W
+...WWWWWWWW  N#+++n## ..b.
 W........................W
 </levelmap>
 

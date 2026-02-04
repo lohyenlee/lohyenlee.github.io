@@ -66,6 +66,8 @@
 
     ctx.drawImage(imgBowser1234, 0, 0, 32, 32,    10.5, 200, 500, 500)
     
+    window.onbeforeunload = (e)=>{e.preventDefault(); e.returnValue="Are you sure you want to leave this page?"; return "Are you sure you want to leave this page?"}
+
     
   </script>
 </body>
