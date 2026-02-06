@@ -294,6 +294,19 @@
         localStorage.setItem('extras', JSON.stringify(extras))
       }
     }
+    function loadSandbox() {
+      //============================== load sandbox from Web Storage if appropriate
+      if (levelName.trim()=="SANDBOX") {
+        const _ground = localStorage.getItem("ground")
+        const _subway = localStorage.getItem("subway")
+        const _extras = localStorage.getItem("extras")
+        if (_ground) {
+          ground = JSON.parse(_ground)
+          subway = JSON.parse(_subway)
+          extras = JSON.parse(_extras)
+        } 
+      }
+    }
     function setLevel(newLevel) {
       saveSandbox() 
       //==============================
@@ -402,17 +415,7 @@
 
 
       //-------- SPECIAL CASE: IF WE'RE IN SANDBOX LEVEL, LOAD SAVED DATA
-      if (levelName.trim()=="SANDBOX") {
-        const _ground = localStorage.getItem("ground")
-        const _subway = localStorage.getItem("subway")
-        const _extras = localStorage.getItem("extras")
-        if (_ground) {
-          ground = JSON.parse(_ground)
-          subway = JSON.parse(_subway)
-          extras = JSON.parse(_extras)
-        } 
-      }
-      
+      loadSandbox()
     }
     //===============================================
     // evolve(): EVOLVE CELLULAR AUTOMATON
@@ -532,7 +535,7 @@
     let marioOrientation=2 // start game facing South
     let xCurNext,yCurNext  // variables associated with Mario's
     let xMario,yMario,nWalk=0,tWalk=0 // appearance (but not gameplay)
-    let tCur=0,tMario=0,tPeach=0,tBowser=0
+    let tCur=0,tMario=0
     let timeOfLastFrame=0
     let timeStepInMilliseconds = 1000/60.  //300.
     let level=0,levelName='' // current level
@@ -658,22 +661,22 @@
             animPeach.draw(xcen-sx/2, ycen-sy/2, sx,sy, tCur/41)                 
             break
           case PEACH_BURNING:
-            if (tPeach<80) {xShaking+=Math.cos(tPeach*.6)*2; yShaking=Math.sin(tPeach*.3)*10 }
-            else {xShaking=0; yShaking+=(tPeach-80)*.15}
-            if (tPeach<150) {
+            if (data[i].time<80) {data[i].xRel+=Math.cos(data[i].time*.6)*2; data[i].yRel=Math.sin(data[i].time*.3)*10 }
+            else {data[i].xRel=0; data[i].yRel+=(data[i].time-80)*.15}
+            if (data[i].time<150) {
               animLava.draw(x*a, y*a, a, a, frm)
               sy=a,sx=a/animPeach.aspect
-              xcen=(x+.5)*a + xShaking,ycen=(y+.5)*a + yShaking
+              xcen=(x+.5)*a + data[i].xRel,ycen=(y+.5)*a + data[i].yRel
               ctx.save(); // Save current canvas state
               ctx.translate(xcen,ycen); // Translate to the center of the image
-              ctx.rotate(tPeach*.1); // Rotate  by radians
+              ctx.rotate(data[i].time*.1); // Rotate  by radians
               animPeach.draw(-sx/2, -sy/2, sx, sy, tCur/17)
               ctx.restore(); // Restore the canvas to its original state
             }
             else { //Peach has become ashes, is now safe to walk on (not that it matters)
               ground[i] = 0; extras[i] = ASHES
             }
-            ++tPeach
+            ++data[i].time
             break
           case ENEMY:
             size=Math.trunc(data[i].sizeEnemy*a),xcen=(x+.5)*a,ycen=(y+.5)*a
@@ -745,23 +748,23 @@
           data[i].time = 0  // death animation time
           data[i].xRel = 0  // death animation position
           data[i].yRel = 0
-          // tBowser=0;
           soundBowsFall.play() // play Bowser death sound
           extras[i]=ENEMY_BURNING
 
-          if (winlose==PLAYING) {
+          if (winlose==PLAYING && data[i].fsEnemy==fsBowser) {
             setTimeout( ()=>soundWin.play(), 1000) // play victory sound
             winlose=BOWSER_DIED
           }
           break
         }
-        if (winlose!=PEACH_DIED && extras[i]==PEACH && ground[i]&ON) {
+        if (extras[i]==PEACH && ground[i]&ON) {
           extras[i]=PEACH_BURNING
-          tPeach=0
-          if (winlose==PLAYING) { // don't celebrate if mraio or peach is already dead
-            soundLose.play(); 
-            setTimeout(()=>btnReset.style.animation = 'flashingAnimation 0.5s step-start infinite', 500)
-          }
+          data[i].time = 0          
+          data[i].xRel = 0  // death animation position
+          data[i].yRel = 0
+          soundWin.stop()  // if you're celebrating, stop it!
+          soundLose.play()
+          setTimeout(()=>btnReset.style.animation = 'flashingAnimation 0.5s step-start infinite', 500)          
           winlose=PEACH_DIED
           break
         }
@@ -770,6 +773,7 @@
         ((ground[xCursor+X*yCursor]&ON) && extras[xCursor+X*yCursor]!=PLATE     // Mario got burned in lava
         || (extras[xCursor+X*yCursor]==ENEMY))   // Mario got spiked by Bowser
       ) {
+        soundWin.stop()  // if you're celebrating, stop it!
         soundLose.play()
         setTimeout(()=>btnReset.style.animation = 'flashingAnimation 0.5s step-start infinite', 500)
         tMario=0
@@ -878,7 +882,7 @@
       if(!cheating) {// if we're not in cheat mode, just reveal help if user has clicked help text
         if (x>=0&&x<X&&y>=0&&y<Y) {
           const i=x+X*y
-          if (extras[i]>=QUESTION) openHelp(extras[i]-QUESTION,x,y)
+          if (extras[i]>=QUESTION) {soundCoin.play();   openHelp(extras[i]-QUESTION,x,y)}
         }
         return
       }
@@ -896,7 +900,7 @@
             break
           case BRUSH_SWITCH:
             if (ground[i] & SOURCE) {ground[i]^=ON}
-            else {subway[i]=0; ground[i]=SOURCE|FRESH;extras[i]=0;}     
+            else {subway[i]=0; ground[i]=SOURCE|FRESH;extras[i]=SWITCH;}     
             break
           case BRUSH_PLATE: subway[i]=0; ground[i]=SOURCE|FRESH;extras[i]=PLATE; break
           case BRUSH_CROSS:
@@ -904,7 +908,7 @@
             else {subway[i]=CONDUCTING|FRESH; ground[i]|=CONDUCTING|FRESH}  // ADD SUBWAY
             break
           case BRUSH_PEACH: subway[i]=0; ground[i]=CONDUCTING; extras[i]=PEACH; break
-          case BRUSH_QUESTION: subway[i]=0; ground[i]=0; extras[i]=QUESTION; break
+          case BRUSH_QUESTION: subway[i]=0; ground[i]=0; extras[i]=QUESTION; data[i].img=imgQuestion; break
         }
       }
     }
@@ -1013,6 +1017,8 @@
     
     splashScreen.addEventListener('click', launchGame)
     document.body.addEventListener('keydown', launchGame, false)
+
+    // localStorage.clear() // factory reset
   </script>
 </body>
 </html> 

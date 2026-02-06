@@ -454,21 +454,12 @@ WWW...M............W
 </levelmap>
 
 
-
-<comment>
-<a href="https://en.wikipedia.org/wiki/Flip-flop_(electronics)">D latch</a> &mdash;
-</comment>
-
-
-
 <levelmap> <timestep> 10 </timestep> <name> 3-3    FLASH TO WRITE </name>
 <help>
   <p class="indepth"> 
-  Adding a few gates turns an
-  <a href="https://www.build-electronic-circuits.com/s-r-latch/"> SR latch</a>
-  into a 
-  <a href="https://www.build-electronic-circuits.com/d-latch/"> D latch</a>
-  with a DATA input D (the P switch) and a TRIGGER input T (the pressure plate).
+  This toad circuit implements a
+  <a href="https://en.wikipedia.org/wiki/Flip-flop_(electronics)">D latch</a> &mdash;
+  an SR latch with a data input D (the P switch) and a trigger T (the pressure plate).
   The data input is stored in the state of the SR latch ONLY when the trigger is on.
   </p>
 </help>
@@ -563,10 +554,6 @@ WWWWWWWWWWWWWWWWWWWWWWW
 <help> BUMP THE P SWITCH TO CHOOSE DARKNESS OR LIGHT;  </help>
 <help>
   <p class="indepth">
-  A pair of D latches forms a pulse-triggered 
-  <a href="https://www.build-electronic-circuits.com/d-flip-flop/">D flip flop</a>.
-  A chain of D flip flops forms a
-  <a href="https://www.build-electronic-circuits.com/shift-register/"> shift register</a>.
   This shift register consists of five D latches in series.
   The bottom switch controls the first star (x1).
   Switching off the right switch opens latches 1, 3, and 5, performing operations x2:=x1, x4:=x3, x6:=x5.
@@ -628,41 +615,47 @@ WWWWWWWWWWWWWWWWWWW...S##
   </p>
 </help>
 <help>
-  STEP HERE ONCE TO START THE FUN. <br>
+  <p class="indepth">
+  The three T flip flops in series form a 3-bit binary counter.
+  Triggering the counter causes it to cycle through the states
+  000, 001, 010, 011, 100, 101, 110, and 111, as indicated by the stars.
+  </p>
+</help>
+<help>
+  STEP HERE ONCE TO SHOOT THE GUN. <br>
   SEVEN STEPS GIVES 111! <br>
   AFTER KICKING BOWSER'S ASH, <br>
   STEP ONCE MORE, THEN YOU CAN PASS.
 </help>                
-<help>
-  <h4> BINARY COUNTER </h4>
-    <p class="indepth">
-    The three T flip flops in series form a 3-bit binary counter.
-    Triggering the counter causes it to cycle through the states
-    000, 001, 010, 011, 100, 101, 110, and 111, as indicated by the stars.
-    </p>
-</help>
-WWWWWWWWWWWWWWWWWWWWWWW
-W##N++##+n++##       WW
-W#  ##+n# ##+n#      WW
-W# n#NnNn##NnNn#L##  WW
-W# #   #+#   #+#  #  WW
-W# ####+++####    #  WW
-W##+++++++++++### #  WW
-W               # #  WW
-W##N++##+n++##  # #  WW
-W#  ##+n# ##+n# # n# WW
-W# n#NnNn##NnNn#L#nn#B.
-W# #   #+#   #+#  n#".W
-W# ####+++####    #  .W
-W##+++++++++++### #  .W
-WW..............#.#...W
-M.##++##+n++##  # #  WW
-?_# ##+n# ##+n# # #  WW
-W."n#NnNn##NnNn#L##  WW
-WWW#   #+#   #+#     WW
-WWW####+++####       WW
-WWWWWWWWWWWWWWWWWWWWWWW
+            WWWWWWWWWWWWWWWWWWWWWWW
+            W##N++##+n++##       WW
+            W#W ##+n# ##+n#      WW
+            W#Wn#NnNn##NnNn#L##  WW
+            W#W#   #+#   #+#  #  WW
+            W#W####+++####    #  WW
+            W#                #  WW
+            W################ #  WW
+            W               # #  WW
+            WWWWWWWWWWWWWWWW# #  WW
+            W##N++##+n++##  # #  WW
+            W#W ##+n# ##+n# # n# WW
+            W#Wn#NnNn##NnNn#L#nn#B.
+            W#W#   #+#   #+#  n#".W
+WWW         W#W####+++####    #  .W
+..WWWWWWWWW"W#                #  .W
+WM...........################.#...W
+W.?n# ##    WWWWWWWWWWWWWWWW# #  WW
+W_N#n##Nn######n++##+n++##  # #  WW
+W.W   #+    W W ##+n# ##+n# # #  WW
+WWW   ##    W Wn#NnNn##NnNn#L##  WW
+  WWWWWWWWWWW W#   #+#   #+#     WW
+            W W####+++####       WW
+            WWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
+
+
+
+
 
 <levelmap> <timestep>100</timestep> <name></name>
 <help>
@@ -727,7 +720,6 @@ WW"WWWWWWWWWWWWWWWWWW
   HOP ON THE PLATE &mdash; THE TIME IS RIGHT. <br>
 </help>
 <help>
-  <h4> PULSE GENERATOR </h4>
   <p class="indepth">
   This circuit contains 2-tick pulse generators.
   The goomba is protected by an AND gate.
@@ -778,47 +770,32 @@ W.Wn+ ##   # # # #    W
 WWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep> 30 </timestep> <name> 4-5    HOW LONG A PULSE? </name>
-<help> IF AT FIRST YOU DON'T SUCCEED... </help>
-<help> ... TRY, TRY AGAIN! </help>
-<help><p class="indepth">
-  The three pressure plates drive 2-tick, 4-tick, and 6-tick pulse generators.
-  To set the SR latch reliably, the SET input must be held high for 6 ticks or more.
-  </p>
-</help>
+<levelmap> <timestep> 20 </timestep> <name> 4-5    HOW LONG A PULSE? </name>
+<help> 2-TICK PULSE </help>
+<help> 4-TICK PULSE </help>
+<help> 6-TICK PULSE </help>
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 W...........................W
 .MWWWWWWWWWWWWWWWWWWWWWWWWW.W
-?._NHn#####++##########Nn#n#W
+?._NHn#################Nn#n#W
 W.W.n#.................#+#W.W
 W.W.......................W.W
-?._NHHn####++++########Nn#n#W
+?._NHHn################Nn#n#W
 W.W.n+#................#+#W.W
 W.W.......................W.W
-"._nHn#####++++++######Nn#n#W
-WWW.#+.................#+#W..
-  W.#+....................WWW
-  W.n#....................W  
-  WWWWWWWWWWWWWWWWWWWWWWWWW  
+?._NHHn################Nn#n#W
+W.W.# #................#+#W..
+W.W.# #...................WWW
+W.W.n##...................WWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep> 20 </timestep> <name> 4-6    REMOTE CONTROL </name>
-<help>
-  <h4> PULSE EXTENDER </h4>
-  <p class="indepth">
-  The button generates a 2-tick pulse.  
-  The pulse fans out along three paths with delays of 0, 2, and 4 ticks respectively.
-  The pulses are recombined with OR gates, producing a 6-tick pulse.
-  </p>
-</help>
-<help><p class="indepth">
-  The 6-tick pulses set or reset the SR latch as expected.
-  </p>
-</help>
+<levelmap> <timestep> 20 </timestep> <name> 4-6A    REMOTE CONTROL </name>
+<help> 6-TICK PULSE </help>
 WWWWWWWWWWWWWWWWWWWWWWWWWWWW
 M.W#+##..................##W
-W.W##"#..................##W
-W.o#nnnn#############"#+###W
+W.W## #..................##W
+W.o#nnnn#############.#+###W
 W...................##Nn##b.
 W.o#nnnn############+++#.##W
 W.W## #..................##W
@@ -826,7 +803,7 @@ W.W#+##..................##W
 WWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep> 200 </timestep> <name> 4-7    TOADER </name>
+<levelmap> <timestep> 200 </timestep> <name> 4-6    TOADER </name>
 <help> LET'S PLAY FROGGER... WITH TOADS! </help>
 <help>
   <p class="indepth">
@@ -876,7 +853,7 @@ W##         ################.W
 WWWWWWWWWWWWWWWWWWWWWWWWWWWW..
 </levelmap>
 
-<levelmap> <timestep>50</timestep> <name> 4-8    BLINKING IN SYNC </name>
+<levelmap> <timestep>50</timestep> <name> 4-7    BEWARE THE LIVE WIRES </name>
 <help>
   <p class="indepth">
   An H tree is a fractal network used to distribute a clock signal synchronously to all parts of a device.
@@ -885,23 +862,23 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWW..
 WWWWWWWWWWWWWWWWWWWWW
 W     .....   ..... W
 W     L###L   L###L W
-W     . # ..... # . W
-W     . ######### . W
-W     . #   #   # . W
-W.... L###L # L###L W
-M..S...     #     . W
-W  n#########     . W
-Wn##        #     . W
+W     . # .   . # . W
+W###  . ######### . W
+W# #  . # . # . # . W
 W# #  L###L # L###L W
-W# #    #   #   # . W
-W###    ######### . W
-W       #       # . W
-W     L###L   L###L W
-W                 ...
-WWWWWWWWWWWWWWWWWWWWW
+W# #  .   . # .   . W
+Wn##n######## .   . W
+W   # .   . # .   . W
+W   # L###L # L###L W
+W   # . # . # . # . W
+W   S . ######### . W
+M.... . # .   . # . W
+W.... L###L   L###L W
+W......   .....   ...
+WWWW"WWWWWWWWWWWWWWWW
 </levelmap>
 
-<levelmap> <timestep>0</timestep> <name> 4-9    THREE IN A ROW </name>
+<levelmap> <timestep>0</timestep> <name> 4-8    THREE IN A ROW </name>
 <help> 
   HELP ME!  HELP ME, MARIO! <br>
   LIGHT UP THREE STARS IN A ROW. <br><br>
@@ -956,7 +933,7 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 
-<levelmap> <timestep>0</timestep> <name> 4-10    THE CODE IS 10110101 </name>
+<levelmap> <timestep>0</timestep> <name> 4-9    THE CODE IS 10110101 </name>
 <help>
   LOAD THE DATA WITH THE SWITCH <br>
   SHIFT THE BITS FROM LEFT TO RIGHT <br>
@@ -993,142 +970,89 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 
 
 
-<levelmap> <timestep>0</timestep> <name> 4-12    WORLD 4 BOSS FIGHT V1 </name>
+<levelmap> <timestep>0</timestep> <name> 4-9    ENTER THE CODE [OUDATED EXCEPT FOR NICE DOUBLE PLATE ENTRY MECH] </name>
+<help> STEP HERE TO ENTER "1". </help>
+<help> STEP HERE TO ENTER "0". </help>
+<help> HELP ME, MARIO!  THE PASSWORD IS 1101, BUT YOU NEED TO ENTER IT IN REVERSE ORDER! <br> </help>
+<help><p class="indepth">
+  The two pressure plates are connected to the Set and Reset inputs of an
+  <a href="https://www.build-electronic-circuits.com/s-r-latch/"> SR latch</a>.
+  Pressing either plate also sends a pulse to the Trigger of a 
+  <a href="https://www.build-electronic-circuits.com/d-latch/"> D latch</a>.
+  Each pair of D latches forms a pulse-triggered 
+  <a href="https://www.build-electronic-circuits.com/d-flip-flop/">D flip flop</a>.
+  The chain of D flip flops forms a
+  <a href="https://www.build-electronic-circuits.com/shift-register/"> shift register</a>.
+</p></help>
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+W.?#+n####                                       W
+W._+##   ##+n++##+n++##+n++##+n++##+n++##+n++##  W
+W..# Nn##+N#.##+N#.##+N#.##+N#.##+N#.##+N#.##+N#.W
+W._# #+#NnNn##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn#W
+W.?##+#...#+#...#+#...#+#...#+#...#+#...#+#...#+#W
+W.........L...........L...........L...........LWWW
+WM.?......#...........#...........#......#+####WPW
+..........n#..........n#..........##.....n#....W#W
+W.........+nn#########+nn#########+nn####+n###B##.
+W"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+</levelmap>
+
+
+
+<levelmap> <timestep>0</timestep> <name> 4-10    WORLD 4 BOSS FIGHT </name>
 <help> HELP ME, MARIO!  MAKE THE UPPER STARS MATCH THE LOWER STARS! </help>
 <help> RIGHT=SHIFT, DOWN=TOGGLE </help>
-<help>
-  CLOCK TREE
-    <p class="indepth">
-    The fractal structure of this distribution network 
-    ensures that the trigger pulse arrives simultaneously at every D latch.
-    </p>
-</help><help>
-  PULSE EXTENDER
-    <p class="indepth">
-    This inverting pulse extender converts the 2-tick positive pulse (from the button) to a 6-tick negative pulse.
-    </p>
-</help><help>
-  SHIFT REGISTER
-    <p class="indepth">
-    This is a synchronous shift register consisting of 8 D latches in series.
-    A trigger pulse causes all latches to go transparent simultaneously.
-    The trigger pulse duration (6 ticks) is long enough to ensure each bit is shifted,
-      but short enough to prevent double shifting.
-    </p> 
-</help><help>
-  COMPARATORS
-    <p class="indepth">
-    These 9 parallel EQV gates compare the shift register with the passcode.
-    </p> 
-</help><help> 
-  PASSCODE 
-    <p class="indepth">
-    This 9-bit passcode is generated randomly.
-    </p>
-</help><help>
-  9-WAY AND GATE
-    <p class="indepth">
-    The EQV gate outputs are fed to this chain of AND gates
-    to check whether all 9 bits match.
-    </p> 
-</help>
+<help><p class="indepth">
+  You have reached the root of the clock tree.
+  This clock distribution network has a fractal structure
+  such that the 6-tick pulse arrives simultaneously at every D latch.
+</p> </help>
+<help><p class="indepth">
+  This inverting pulse extender converts the 2-tick positive pulse (from the button) to a 6-tick negative pulse.
+</p> </help>
+<help><p class="indepth">
+  This is a synchronous shift register consisting of D latches in series.
+  A trigger pulse causes all latches to go transparent simultaneously.
+  The trigger pulse duration (6 ticks) is long enough to ensure each bit is shifted,
+    but short enough to prevent double shifting.
+</p> </help>
+<help> UPPER STARS = SHIFT REGISTER </help>
+<help><p class="indepth">
+  This is a row of 9 EQV gates in parallel.
+  The gates compare the shift register
+  with a random 9-bit passcode generated during level initialization.
+</p> </help>
+<help> LOWER STARS = PASSCODE </help>
+<help><p class="indepth">
+  The outputs of the EQV gates are fed to this chain of AND gates,
+  which forms a 9-input AND gate.  
+  The output is ON only if the two rows of stars match exactly.
+</p> </help>
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-W##WW##WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-WPWW.#+...............................................W
-W??###n#######++++++++++++#?                       WW.W
-W..#?##       #+++++++++++#+++++++++++#            WW.W
-W.Mo    #+++######++#           #+++######++#      WW.W
-W.sW  ######      ######      ######      ######   WW.W
-..#WW##WWWW##WWWW##WWWW##WWWW##WWWW##WWWW##WWWW##WWWW.W
-W.###+n# ##+n# ##+n# ##+n# ##+n# ##+n# ##+n# ##+n# WW.W
-?.##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn#WW.W
-W.#   #+#   #+#   #+#   #+#   #+#   #+#   #+#   #+#WW.W
-W.#WWWWW#WWWWW#WWWWW#WWWWW#WWWWW#WWWWW#WWWWW#WWWWW#WW.W
-W.Ln#   Ln#   Ln#   Ln#   Ln#   Ln#   Ln#   Ln#   Ln#.W
-?.n#+   n#+   n#+   n#+   n#+   n#+   n#+   n#+   n#+.W
+W##W ##                                            WWWW
+WPWW.#+.....................                        WWW
+W??###n#######++++++++++++#"                       WWWW
+W..#"##       #+++++++++++#+++++++++++#            WWWW
+W.Mo    #+++######++#           #+++######++#       WWW
+W.sW  ######      ######      ######      ######   WWWW
+..#  ##    ##    ##    ##    ##    ##    ##    ##  WWWW
+W.###+n# ##+n# ##+n# ##+n# ##+n# ##+n# ##+n# ##+n# WWWW
+".##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn##NnNn#WWWW
+W.#   #+#   #+#   #+#   #+#   #+#   #+#   #+#   #+#WWWW
+W.#WWWWW#WWWWW#WWWWW#WWWWW#WWWWW#WWWWW#WWWWW#WWWWW#WWWW
+W.#     #     #     #     #     #     #     #     #   W
+?.Ln#   Ln#   Ln#   Ln#   Ln#   Ln#   Ln#   Ln#   Ln# W
+".n#+   n#+   n#+   n#+   n#+   n#+   n#+   n#+   n#+ W
 ?.Lnn#  Lnn#  Lnn#  Lnn#  Lnn#  Lnn#  Lnn#  Lnn#  Lnn#W
 W.r  #  r  #  r  #  r  #  r  #  r  #  r  #  r  #  r  #W
 W.   #     #     #     #     #     #     #     #     #W
 W.#+##  #+##  #+##  #+##  #+##  #+##  #+##  #+##  #+##W
-?.n#    n#    n#    n#    n#    n#    n#    n#    n# .W
+?.n#    n#    n#    n#    n#    n#    n#    n#    n#  W
 W..n####nn####nn####nn####nn####nn####nn####nn####nn#B.
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-</levelmap>
-
-
-<levelmap> <timestep>0</timestep> <name> 4-11    WORLD 4 BOSS FIGHT V2 </name>
-<help> HELP ME, MARIO!  MAKE THE UPPER STARS MATCH THE LOWER STARS! </help>
-<help> RIGHT=SHIFT, DOWN=TOGGLE </help>
-<help>
-  CLOCK TREE
-    <p class="indepth">
-    This signal distribution network has a tree-like fractal structure
-    such that the 6-tick pulse arrives simultaneously at the TRIGGER of every D latch.
-    </p> 
-</help><help>
-  PULSE EXTENDER
-    <p class="indepth">
-    This inverting pulse extender converts the 2-tick positive pulse (from the button) to a 6-tick negative pulse.
-    </p>
-</help><help>
-  INPUT PORT
-    <p class="indepth">
-    The DATA input to the shift register.
-    </p>
-</help><help>
-  SHIFT REGISTER
-    <p class="indepth">
-    This is a synchronous shift register consisting of 8 D latches in series.
-    A trigger pulse causes all latches to go transparent simultaneously.
-    The trigger pulse duration (6 ticks) is long enough to ensure each bit is shifted,
-      but short enough to prevent double shifting.
-    </p> 
-</help><help>
-  COMPARATORS
-    <p class="indepth">
-    These 8 parallel EQV gates compare the shift register with the passcode.
-    </p> 
-</help><help> 
-  PASSCODE 
-    <p class="indepth">
-    This 8-bit passcode is generated randomly.
-    </p>
-</help><help>
-  8-WAY AND GATE
-    <p class="indepth">
-    The EQV gate outputs are fed to this chain of AND gates
-    to determine if all 8 bits match.
-    </p> 
-</help>
-W#PWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-W??W##............................WWWWWWW
-W..o#n######+++++####.............WWWWWWW
-W.s.#+.....?#+++++++#+++++++#.....WWWWWWW
-W.#.##?.#####+++#.......#+++#+++#.WWWWWWW
-M.#....W#WWWWWWW#WWWWWWW#WWWWWWW#WWWWWWWW
-W.#  #+#+    #+#+    #+#+    #+#+    WWWW
-W.+NnNn#+  NnNn#+  NnNn#+  NnNn#+    WWWW
-W.##+n#++  #+n#++  #+n#++  #+n#++    WWWW
-W.?+##++#  +##++#  +##++#  +##++#    WWWW
-W. L   #+  #   #+  #   #+  #   #+    WWWW
-W.     +## +   +## +   +## +   +##   WWWW
-W.    ##+n#+  ##+n#+  ##+n#+  ##+n#  WWWW
-W.    +NnNn#  +NnNn#  +NnNn#  +NnNn# WWWW
-W....?#  #+#  #  #+#  #  #+#  #  #+# WWWW
-W.....#L...L..#L...L..#L...L..#L...L....W
-W....WW#WWW#n#W#WWW#n#W#WWW#n#W#WWW#n# .W
-W....W.#   n#+ #   n#+ #   n#+ #   n#+ .W
-W....W.+   #nn#+   #nn#+   #nn#+   #nn#.W
-W...?W.#n# #  +#n# #  +#n# #  +#n# #  +.W
-W....W.n#+ #  +n#+ #  +n#+ #  +n#+ #  +.W
-W....WW#nn#+  +#nn#+  +#nn#+  +#nn#+  +.W
-W....WWrWW+rWW+rWW+rWW+rWW+rWW+rWW+rWW+.W
-W...?W.L..+L..+L..+L..+L..+L..+L..+L..+.W
-W....WWWW##  ##  ##  ##  ##  ##  ##  ##.W
-W....W #+# #+# #+# #+# #+# #+# #+# #+# .W
-W...?W n#  n#  n#  n#  n#  n#  n#  n#  .W
-W....W  n##nn##nn##nn##nn##nn##nn##nn##B.
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+W.....................................................W
 </levelmap>
 
 
@@ -1360,7 +1284,7 @@ W..........................................."
   YOU CAN LOAD IT ANOTHER DAY!
 </help>
 <help>
-  <h4> DATA STORAGE AND RETRIEVAL </h4>
+  <h4>DATA STORAGE AND RETRIEVAL</h4>
   <p class="indepth">
   Writing data means copying bits from the <a href="https://en.wikipedia.org/wiki/Bus_(computing)">data bus</a> to memory.
   Reading data means copying bits from memory to the bus.
@@ -1642,41 +1566,8 @@ W"W####L##n#+n##nn####L#############n#       WWW
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
-
-<levelmap> <timestep>0</timestep> <name> 6-8    EIGHTFOLD WAY </name>
-<help>
-  <h4> BINARY DECODER </h4>
-  <p class="indepth">
-  This binary decoder maps a 3-bit address to one of 8 lines.
-  </p>
-</help>
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-W...##################++####....W
-W.Wn#                 ##+++n#L#bW
-W.W#                  # ###    .W
-W.W#                ##+#++n##L#bW
-W.W#                # # ##     .W
-W.W#              ##+#+#+n###L#bW
-W.W#              # # # #      .W
-W.W#            ##+#+#+#n####L#bW
-W.?# n###++#+#  # # # #        .W
-W.s# #   ##+#n#n+#+#+######n#L#bW
-W.s+##   # #    # # #      #   .W
-M.s+ # #+++n#+#n+#+#######n+#L#bW
-WW#+#+##n#+++#  # #       ##   .W
-WWW# # #++#  n#n+########n++#L#bW
-  W# #    n# #  #        ###   .W
-  W# #    +##+#n########n+++#L##.
-  W# ######++#          ####    W
-  W#           #############    W
-  W#############                W
-  WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-</levelmap>
-
-<levelmap> <timestep>0</timestep> <name> 6-9    SWITCHING HAZARDS </name>
-<help>
-  <h4> GRAY DECODER </h4>
-  <p class="indepth">
+<levelmap> <timestep>0</timestep> <name> 6-8    SWITCHING HAZARDS </name>
+<help><p class="indepth">
   This Gray decoder maps the 3-bit Gray code (000 001 011 010 110 111 101 100) <br>
   to the integers 0-7 (stars from bottom to top).  
   You need to address lines 0,3,4,6,7 in a suitable order,
@@ -1706,36 +1597,33 @@ W..........................W
 
 
 
-<levelmap> <timestep>0</timestep> <name> 6-10    GET 'EM IN YOUR CROSSHAIRS </name>
-<help>
-  WHERE THE RIVERS INTERSECT, THERE WILL BE A HOT SPOT.
-</help>
+<levelmap> <timestep>0</timestep> <name> 6-9    GET 'EM IN YOUR CROSSHAIRS </name>
 <help><p class="indepth">
   This toad circuit demonstrates row-and-column addressing. 
   </p>
 </help>
-WW?WWWWWWWWWWWWWWWWWWW
-W....................W
-M.  S   S   S   S   .W
-W.  #nb #nP #nb #nL .W
-W.S#+#+#+#+#+#+#+#  .W
-".  #   #   #   #   .W
-W.  #nP #nL #nb #nP .W
-W.S#+#+#+#+#+#+#+#  .W
-W.  #   #   #   # ...W
-W.  #nL #nP #nP #nB  W
-W.S#+#+#+#+#+#+#+#....
-W.  #   #   #   #    W
-W.  #nP #nb #nL #nP  W
-W.S#+#+#+#+#+#+#+#  .W
-WWWWWWWWWWWWWWWWWWWWWW
+WW"WWWWWWWWWWWWWWWWWWWWW
+M......................W
+W.    S   S   S   S   .W
+W.    #nb #nP #nb #nL .W
+W.o#n#+#+#+#+#+#+#+#  .W
+W.    #   #   #   #   .W
+W.    #nP #nL #nb #nP .W
+W.o#n#+#+#+#+#+#+#+#  .W
+W.    #   #   #   # ...W
+W.    #nL #nP #nP #nB  W
+W.o#n#+#+#+#+#+#+#+#....
+W.    #   #   #   #    W
+W.    #nP #nb #nL #nP  W
+W.o#n#+#+#+#+#+#+#+#  .W
+WWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 
 
 
 <levelmap> <timestep>0</timestep> <name> THE END... FOR NOW </name>
-<help><p style="white-space:pre; color:pink; font-size: 1.5rem;">
+<help><p style="white-space:pre; color:pink; font-size: 2rem;">
 THANK YOU, MARIO!  
 YOU HAVE SAVED THE MUSHROOM KINGDOM.
 CHECK OUT THE BONUS LEVELS AND SANDBOX AFTER THIS!
