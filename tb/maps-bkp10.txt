@@ -1784,9 +1784,7 @@ WWW# #    n# #  #        ###   .W
 
 
 <levelmap> <timestep>0</timestep> <name> 6-9    SWITCHING HAZARDS </name>
-<help>
-  LAVA FOR YOUR ENEMIES, WATER FOR YOUR MATES.<br>
-  FIND A SEQUENCE THAT AVOIDS THE THREE ILLEGAL STATES!
+<help>LAVA FOR YOUR ENEMIES, WATER FOR YOUR FRIENDS...
 </help>
 <help>
   <h4> HAZARDS </h4>
@@ -1833,40 +1831,72 @@ WWW# #    n# #  #        ###   .W
 <help>
   <h4> GRAY DECODER </h4>
     <p class="indepth">
-    The three switches address eight lines using a Gray code: <br>
-    000 001 011 010 110 111 101 100.
-    You can cycle through the eight states changing only one bit at a time!
+    This Gray decoder maps the 3-bit Gray code (000 001 011 010 110 111 101 100) <br>
+    to the integers 0-7 (address lines from bottom to top). <br>
     </p>
 </help>
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-Wn########++++++##  W........
-W#        ######n++#n#WWWWWWW
-W#        #      ## W......WW
-W#        # ####++n#n#W###SWW
-W#        # #   ##  W.....WWW
-W#        # # ##n++#n#W##SWWW
-W# n#++## # # #  ## W....WWWW
-W# # ##+nn+#+#+##+n#n#W#SWWWW
-W# # # #  # # # #   W...+++.W
-W# # # n#n+#+## #+n#n#Wb+++sW
-W# # # #  # # #  ## W......WW
-W# # #n#nn+## ##n++#n#W###SWW
-W# # #  # # #   ##  W.....WWW
-W# # ##N+n# ####++n#n#W##SWWW
-W# ##++## #      ## W....WWWW
-W# # #    ######n++#n#W#SWWWW
-W##+#+####++++++##  W.W.WWWWW
-W# # #              W......WW
-W##+++++++++++++++++++s...."W
-W  ##+++++++++++++++++s.M..WW
-WWWWW#++++++++++++++++s....WW
-........................WWWWW
+Wn########+++++++##  W.......
+W#        #######n++#n#WWWWWW
+W#        #       ## W......W
+W#        # #####++n#n#W###SW
+W#        # #    ##  W.....WW
+W#        # # ###n++#n#W##SWW
+W# n#++## # # #   ## W....WWW
+W# # ##+nn+#+#+###+n#n#W#SWWW
+W# # # #  # # # #    W...WWWW
+W# # # n#n+#+## ##+n#n#nbWWWW
+W# # # #  # # #   ## W......W
+W# # #n#nn+## ###n++#n#W###SW
+W# # #  # # #    ##  W.....WW
+W# # ##N+n# #####++n#n#W##SWW
+W# ##++## #       ## W....WWW
+W# # #    #######n++#n#W#SWWW
+W##+#+####+++++++##  W.W.WWWW
+W# # #WWWWWWWWWWWWWWWW.....WW
+W##++++++++++++++++++++s...WW
+W  ##++++++++++++++++++s.M.WW
+WWWWW#+++++++++++++++++s...WW
+.........................WWWW
 </levelmap>
+
+
+<levelmap> <timestep>0</timestep> <name> 6-10    ONE SWITCH AT A TIME </name>
+<help>
+  <h4> GRAY DECODER </h4>
+    <p class="indepth">
+    This Gray decoder maps the 3-bit Gray code (000 001 011 010 110 111 101 100) <br>
+    to the integers 0-7 (stars from bottom to top).  
+    You need to address lines 0,3,4,6,7 in a suitable order,
+    avoiding lines 1, 2, or 5!
+    </p>
+</help>
+W    WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+W    ...n########+++++++##  W.......
+W    ...#        #######n++#n#WWWWWW
+W    ...#        #       ## W......W
+W    ...#        # #####++n#n#W###SW
+W    ...#        # #    ##  W.....WW
+W    ...#        # # ###n++#n#W##SWW
+W    ...# n#++## # # #   ## W....WWW
+W    ...# # ##+nn+#+#+###+n#n#W#SWWW
+W    .WW# # # #  # # # #    W...WWWW
+W    ."W# # # n#n+#+## ##+n##bWWWWWW
+W    ..s# # # #  # # #   ## W......W
+W    ..s+## #n#nn+## ###n++#n#W###SW
+W    ..s+ # #  # # #    ##  W.....WW
+W    MW#+#+###N+n# #####++n#n#W##SWW
+W    .WW# #+++## #       ## W....WWW
+W    ...#        #######n++#n#W#SWWW
+W    ...#########+++++++##  W.W.WWWW
+W    ...........................WWWW
+</levelmap>
+
+
 
 <levelmap> <timestep>0</timestep> <name> 6-11    GET 'EM IN YOUR CROSSHAIRS </name>
 <help>
-  ROW AND COLUMN INTERSECTIONS SHOW YOUR POSSIBLE SELECTIONS. <br>
-  MAKE TWO STREAMS OF WATER CROSS &mdash; QUENCH A TOAD AND BURN THE BOSS!
+  WHERE THE RIVERS INTERSECT, THERE WILL BE A HOT SPOT.
 </help>
 <help><p class="indepth">
   This toad circuit demonstrates row-and-column addressing. 
