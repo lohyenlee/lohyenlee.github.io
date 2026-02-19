@@ -196,8 +196,8 @@
         c=Math.cos(Ay[iS]);s=-Math.sin(Ay[iS]); const uS=c*u[iS] - s*v[iS], vS=s*u[iS] + c*v[iS]
         const f = wx[i]*(uE - ui) + wx[iW]*(uW - ui) + wy[i]*(uN - ui) + wy[iS]*(uS - ui)
         const g = wx[i]*(vE - vi) + wx[iW]*(vW - vi) + wy[i]*(vN - vi) + wy[iS]*(vS - vi)
-        p[i] += f - (alpha[i] + beta[i]*u2v2) * ui // f and g are "Laplacian" force on real and imag components
-        q[i] += g - (alpha[i] + beta[i]*u2v2) * vi
+        p[i] += f - (alpha[i] + beta[i]*u2v2) * ui / 2 // f and g are "Laplacian" force on real and imag components
+        q[i] += g - (alpha[i] + beta[i]*u2v2) * vi / 2
       }
       for (let x=0; x<X; ++x) for (let y=0; y<Y; ++y) { // damp
         const i=x+X*y
