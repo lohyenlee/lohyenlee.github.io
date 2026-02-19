@@ -106,7 +106,7 @@ WWWWWWWWWWW
   PRESSURE PLATES EMIT LAVA AS LONG AS YOU ARE STANDING ON THEM. <br><br>
   P.S. YOU DON'T NEED TO WALK HERE TO READ THE QUESTION BLOCK. <br>
   JUST CLICK IT WITH YOUR MOUSE OR FINGER!<br><br>
-  P.P.S. IF YOU ARE STANDING ON THE PLATE NOW, SORRY AND MAY YOU REST IN PEACE...
+  P.P.S. IF YOU ARE STANDING ON THE PLATE NOW, TOO BAD FOR YOU :b
 </help>
               
               
@@ -1359,7 +1359,7 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
  
   
-<levelmap> <timestep>0</timestep> <name> 5-6    ADD 'EM UP BIT BY BIT </name>
+<levelmap> <timestep>0</timestep> <name> 5-6    BURN-ARY ARITHMETIC </name>
 <help>
   <h4> THREE-BIT ADDER </h4>
     <p class="indepth">
@@ -1374,36 +1374,40 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
     X+Y is displayed in the left column of stars.
     The right column of stars is a random integer Z.
     The EQV gates perform the comparison X+Y=Z.
-    To pass this level, you must choose Y so that X+Y=Z (mod 8)!
+    To pass this level, you must choose X so that X+Y=Z (mod 8)!
     </p>
 </help>
-<help> W = (X+Y) MOD 8. </help>
-<help> CHOOSE Y SO W EQUALS Z! </help>
-<help> REGISTER X IS SET BY ME. </help>
-<help> REGISTER Y IS UP TO THEE. </help>
-                                                   
-                                                   
-W"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-W.................................................W
-W.W  ##++++++++++++++++++++#####           .     .W
-W.W  #                         #           .     .W
-W.W  # ####################++# #           .     .W
-W.W  # #                   ##+#+###+#      .     .W
-W.W  # #                   # # #  n#+#     .     .W
-W.W### #        #######+#  # # #### nnL   ?.?    .W
-W.Wr   #        #     n#+# # #  # n#+#  ######nnn#W
-?MWr###+########+###### nn## ###+##+#   #    n#+ .W
-W.Wr   #        #   # n#+# # #  #     ####L Lrn# .W
-W.W### # #######+###+##+#  # #  ##n#  #          .W
-..W  # # #      # # #      # #   n#+  # ######nnn#W
-W.W##+## #      # # ##n#   # ##nn#nn# # #    n#+ .W
-W..r #   # n+n### #  n#+   #  n#+   # # ##L Lrn# .W
-?..r#+#### +n#  # #nn#nn#  ####n#   ### #        .W
-W..r #     +#   # n#+   #               # ####nnn#.
-WWW# ######+#n# ###n#   ################# #  n#+  W
-WWW#       +n#+                           L Lrn#  W
-WWW##########nnn###########################       W
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+<help>
+    <p class="indepth">
+    This is the overflow bit.
+    </p>
+</help>
+<help> REGISTER X IS UP TO THEE. </help>
+<help> W = (X+Y)     <span style="font-size:50%;">(modulo 8).</span> </help>
+<help> CHOOSE X SO W EQUALS Z! </help>
+<help> REGISTER Y IS SET BY ME. </help>
+    H H # WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+ W        "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+WWW # H H ....................................W
+ W        .##################                .W
+ ..........#                #                .W
+ .         # #############++++#              .W
+ .H # # H  # #            ##+#+##+# "        .W
+W.         # #            # # # n#+#   .......W
+W.?####++++# # #######+#  # # ### nnL ?.?    .W
+W.r#   #+++++# #     n#+# # # # n#+#  ####nnn#W
+W.r+++#+++++++#+###### nn## ##+##+#   #  n#+ .W
+W.r++# #       # #   n#+# # # #     ##L Lrn# .W
+M.   # # ######+#+####+#  # # ##n#  #        .W
+W?r+++## #     # # #      # #  n#+  # ####nnn#W
+W.r+++++##     # # ##n#   # #nn#nn### #  n#+ .W
+W.r# #    n+n### #  n#+   # n#+       L Lrn# .W
+WWW# #    +n#  # #nn#nn#  ###n#    ####      .W
+WWW# #    +#   # n#+   #           #   ###nnn#.
+WWW# #####+#n# ###n#   #############  ## n#+  W
+WWW#      +n#+                        L Lrn#  W
+WWW#########nnn########################       W
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 </levelmap>
 
 
@@ -1656,7 +1660,7 @@ W.................................W
 <help> LOAD TOP REGISTER </help>
 <help> LOAD BOTTOM REGISTER </help>
 W?WWWWWWWWWWWWWWWWWWWWWWW
- M       ###n++HH     W..
+.M       ###n++HH     W..
 W.       #   ##+n#    W.W
 W. ######+####NnNn#Ln###W
 W. #     #      #+#   W.W

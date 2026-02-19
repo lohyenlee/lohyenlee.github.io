@@ -40,6 +40,7 @@
       color:white; font-family:'gameFont',sans-serif; font-size: 1.5rem;
       background-image:url('peach1E.webp');background-size:2.5rem;background-repeat:no-repeat;background-position:1rem;
     }
+    #helpDiv h4 {margin:0;padding-top:1rem;}
     #helpDiv a { color: cyan; }
     #helpDiv a:visited { color: pink; }    
     #title {position:fixed; z-index:2; top:0;  
@@ -72,6 +73,7 @@
     <div id="statusBar" style="text-align: center; font-size:1.5rem; white-space:pre;">Click or press any key to start!</div>
   </div>
   <div id="preloadContainer" style="display:none;">
+<img id="imgBunny" src="bunny.webp"></img>
 <img id="imgQuestion" src="question.webp"></img>
 <img id="imgBook" src="book.webp"></img>
 <img id="imgMarioE" src="marioE2.webp"></img>
@@ -114,9 +116,10 @@
 <img id="imgBrick" src="brick.webp"></img>
 <img id="imgBridge" src="bridge.webp"></img>
 <img id="imgMask" src="mask.webp"></img>
-<audio id="audioBuzz"><source src="buzz.mp3"></audio>
 <audio id="audioBowsFall"><source src="bowsfall.mp3"></audio>
+<audio id="audioEnemyDefeat"><source src="enemy_defeat.mp3"></audio>
 <audio id="audioWin"><source src="win.mp3"></audio>
+<audio id="audioBuzz"><source src="buzz.mp3"></audio>
 <audio id="audioCoin"><source src="coin.mp3"></audio>
 <audio id="audioTock"><source src="tock.mp3"></audio>
 <audio id="audioLose"><source src="lose.mp3"></audio>
@@ -748,7 +751,8 @@
           data[i].time = 0  // death animation time
           data[i].xRel = 0  // death animation position
           data[i].yRel = 0
-          soundBowsFall.play() // play Bowser death sound
+          if (data[i].fsEnemy==fsBowser) soundBowsFall.play() // play Bowser death sound
+          else soundEnemyDefeat.play()
           extras[i]=ENEMY_BURNING
 
           if (winlose==PLAYING && data[i].fsEnemy==fsBowser) {
@@ -1010,6 +1014,7 @@
     let soundHoo = new Sound('hoo.mp3'); soundHoo.vol = .03
     let soundOw = new Sound('ow.mp3'); soundOw.vol = .03
     let soundBowsFall = new Sound('bowsfall.mp3')
+    let soundEnemyDefeat = new Sound('enemy_defeat.mp3'); soundEnemyDefeat.vol = .2
     let soundLose = new Sound('lose.mp3')
     let soundWin = new Sound('win.mp3')
     let levelMaps = await loadString('maps.txt') // clear browser cache if this file is edited

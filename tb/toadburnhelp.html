@@ -8,14 +8,32 @@
   <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@700&display=swap" rel="stylesheet">
   <style>    
     body {
-        font-family:'Titillium Web',sans-serif;
-        background-color:#333; color:#CCC;
+        /* font-family:'Titillium Web',sans-serif; */
+        font-family: Verdana,Helvetica,sans-serif;
+        background-color:#CCC; 
+        padding: 0rem 2rem; max-width: 50rem; font-size: 110%;
     }
-    h1 {color:white;}
+    .subtitle { font-style:italic; padding:0;margin:0;}
+    h1 {color:black; padding:0; margin:0;}
     h2 {
-        background-image:url('happy1.webp');background-size:contain;background-repeat: no-repeat;background-position:0px;
-        padding:0 0 0 48px; color:#fff;
+        background-image:url('peach1E.webp');background-size:contain;background-repeat: no-repeat;background-position:5px;
+        padding:0 0 0 2rem; color:#930;
     }
+    h3 {
+        background-image:url('happy1.webp');background-size:2rem;background-repeat: no-repeat;background-position:-5px 0;
+        padding:0 0 0.5rem 2rem; margin:0; font-size: 125%; color:#339;
+    }
+    p {
+        padding:0 0 0 2rem; margin:0 0 1rem 0;
+    }
+    dt {font-weight: bold; padding:0 0 0 2rem;}
+    dd {margin-bottom: 1em; padding:0 0 0 2rem;}
+
+    img {height: 1.7rem; padding: 0;margin:0;   vertical-align:middle;}
+    svg {height: 1.7rem; vertical-align:middle;}
+    table {border: 3px inset black; border-collapse:collapse; margin:0 2rem; background-color:#BBB;}
+    tr {border: 0px solid red; padding:0;margin:0;}
+    td {border: 0px solid blue; padding:1px 4px; text-align:center;}
     .table {width: 15em; margin-left: 3em;}
     .cell1 {width: 10em; display:inline-block; float:left;}
     .cell2 {width: 5em; display:inline-block; clear:both; font-family:monospace;} 
@@ -27,87 +45,209 @@
 <body>
 
 
+<!-- ======================================================= -->
 <h1>Toad Burn</h1>
-<p>By Yen Lee Loh and Isaac Hutchison (November 2025) </p>
+<p class="subtitle"> By Yen Lee Loh and Isaac Hutchison </p>
+<p class="subtitle"> Started November 2025; current version Feb 2026 </p>
 
-<!-- ############################ -->
+<!-- ======================================================= -->
 <h2>Summary</h2>
 
 <p>Toad Burn is an educational browser-based puzzle game 
-    designed to players of all ages learn about digital logic.</p>
+    designed to help players of all ages learn about digital logic.</p>
 
-<!-- ############################ -->
+<!-- ======================================================= -->
 <h2>Gameplay</h2>
-<p>Toad Burn consists of a series of levels.  
-Each level takes the form of a finite grid of squares (cells).
-The player (Mario) can walk East, West, North, or South.  
-Walking into a P Switch toggles it between OFF and ON states.
-The objective of each level is to defeat the enemy (Bowser) by flooding his square with lava.
-Mario is not able to attack Bowser directly.  
-Instead, he must use logic and ingenuity to channel lava into Bowser's square.
-Mario must also avoid flooding Princess Peach with lava!  
-If Peach gets burned, the level is lost and must be restarted.
+<!-- ----------------------- -->
+<h3>Levels</h3>
+<p>Toad Burn is a top-down game with similarities to Minecraft and RPGs.
+Mario begins each level near the left entrance.
+The player's goal is to move Mario to the right exit and progress to the next level.
+Mario must use logic and ingenuity to get rid of lava and enemies blocking the exit.
+</p>
+<!-- ----------------------- -->
+<h3>Movement and Actions</h3>
+<p>
+<img src="marioS1.webp" />
+Mario can walk East, West, North, or South on a finite grid of square cells.
+Mario can interact with switches, buttons, and pressure plates to control the flow of lava and water.
+</p>
+<!-- ----------------------- -->
+<h3>Friends and Enemies</h3>
+<p>
+To defeat Bowser or Goombas, Mario must manipulate the environment to channel lava into their squares.
+Flooding an enemy's location with lava causes the enemy to turn into ashes, which Mario can then walk over.
+</p><p>
+Princess Peach appears in some levels to give moral support to our hero, but she is also a liability!
+If Peach gets burned by lava, the level is lost and must be restarted.
 </p>
 
-<p>Toad Logic plays a central role in the game.
-A cell may be occupied by a toad.
+<!-- ----------------------- -->
+<h3>Toad Logic</h3>
+<p>
+Toads update every game tick based on their neighbors.
 If the cells to the north, south, and west are lava-free, the toad is happy (ON) and spews lava toward the east.
 If any of the three cells to the north, south, and west have lava, 
 the toad is crying (OFF) and emits no lava.
-</p>
-
-<p>Depending on how many input cells (N, S, or W) are active, 
-    a toad corresponds to a NOT, NOR, or 3-way NOR gate in digital electronics.
-</p>
-
-<p>Ordinarily, lava can spread in all directions.  
+</p><p>
+Depending on how many input cells (N, S, or W) are active, 
+a toad corresponds to a NOT, NOR, or 3-way NOR gate in digital electronics.
+</p><p>
+Lava and water blocks update their state every game tick based on the ON/OFF and FRESH/STALE state of their neighbors.
+Lava and water normally spread in all directions.  
 If a cell has 3 or 4 neighbors, it functions as a splitter or merge point.
-However, <em>grade separation</em> can be enabled on a cell by toggling on a subway.
-Then, the lava flow along ground level in the East-West direction
+</p><p>
+Bridges implement <em>grade separation</em>.  
+A cell with a bridge has two independent ON/OFF and FRESH/STALE variables, one for the GROUND level and one for the SUBWAY level.
+The lava flow along ground level in the East-West direction
 and the flow along the subway level in the North-South directions
 do not mix.
 This allows the level designer to route wires across each other without signal interference.
 This is necessary for creating complex circuits.
+</p><p>
+Stars are the equivalent of lamps or LEDs in electronics.
+They indicate ON/OFF state at key points in the circuit but have no impact on circuit behavior or gameplay.
 </p>
 
+<!-- ----------------------- -->
+<h3>Block types</h3>
+<p><table>
+<tr><td> <svg width="3rem" height="3rem"><rect x="0" y="0" width="3rem" height="3rem" fill="black" /></svg> </td><td> Void </td>
+<td> Impassable </td></tr>
+<tr><td> <img src="brick.webp"></img></td><td> Wall </td><td> Impassable </td></tr>
+<tr><td> <img src="grass.webp"></img></td><td> Grass </td><td> Walkable </td></tr>
+<tr><td> <img src="water1.webp"></img></td><td> Water </td><td> Walkable </td></tr>
+<tr><td> <img src="lava1.webp"></img></td><td> Lava </td><td> Fatal to Mario, Peach, and enemies </td></tr>
+<tr><td> <img src="sourceoff.webp"></img> <img src="sourceon.webp"></img></td><td> Switch </td><td> Has persistent ON/OFF state; toggled by bumping </td></tr>
+<tr><td> <img src="buttonoff.webp"></img> <img src="buttonon.webp"></img></td><td> Button </td><td> Bumping a button produces a 2-tick ON pulse </td></tr>
+<tr><td> <img src="plateoff.webp"></img> <img src="plateon.webp"></img></td><td> Pressure plate </td><td> ON while Mario is standing on it; OFF otherwise </td></tr>
+<tr><td> <img src="happy1.webp"></img> <img src="cry1.webp"></img></td><td> Toad </td><td> ON if all inputs are OFF; OFF if any input is ON </td></tr>
+<tr><td> <img src="bridge.webp"></img></td><td> Bridge </td><td> Separates horizontal and vertical channels </td></tr>
+<tr><td> <img src="question.webp"></img></td><td> Help </td><td> Gives concise help </td></tr>
+<tr><td> <img src="book.webp"></img></td><td> Book </td><td> Gives educational background </td></tr>
+<tr><td> <img src="staroff.webp"></img><img src="staron.webp"></img></td><td> Star </td><td> Walkable </td></tr>
+<tr><td> <img src="peach1.webp"></img></td><td> Peach </td><td> Lava must not enter her square </td></tr>
+<tr><td> <img src="goomba12.webp"></img></td><td> Goomba </td><td> Fatal to Mario </td></tr>
+<tr><td> <img src="bowser1234.webp"></img></td><td> Bowser </td><td> Fatal to Mario </td></tr>
+<tr><td> <img src="ash1.webp"></img></td><td> Ash </td><td> Walkable </td></tr>
+</table></p>
 
-<p>Stars are the equivalent of lamps or LEDs in electronics.
-They merely indicate ON/OFF state at key points in the circuit, with no impact on circuit behavior or gameplay.
-</p>
-
+<!-- ======================================================= -->
+<h2>Worlds</h2>
+<dl>
+<dt>World 1: Tutorial</dt>
+<dd>A gentle introduction to familiarize the player with toads as NOT gates and the behavior of lava circuits. </dd>
+<dt>World 2: Combinational Logic </dt>
+<dd>Toads (NOR gates) are combined to form other logic gates (AND, EQV, XOR) 
+    and more complex Boolean functions.
+    To pass each level, Mario must bump <b>the right switches</b>.</dd> 
+<dt>World 3: Sequential Logic </dt>
+<dd>Toad circuits such as SR latches, D latches, D flip flops, T flip flops, and shift registers retain a memory of their past.
+    To pass the levels, Mario must bump the right switches <b>in the right order</b>.</dd>
+<dt>World 4: Clocks and Synchronization </dt>
+<dd>Circuits in this world include clock generators, pulse generators, pulse extenders, signal distribution networks, 
+    and shift register designs with smaller footprints but precise timing requirements.
+    To succeed (or survive!), Mario must do <b>the right things in the right order at the right times</b>. 
+</dd>
+<dt>World 5: Registers</dt>
+<dd>This world explores operations on groups of bits, including bitwise, arithmetic, and copy operations. </dd>
+<dt>World 6: Data Storage and Retrieval</dt>
+<dd>This focuses on buses and addressing. </dd>
+</dl>
 
 
 <!-- ############################ -->
 <h2>Controls</h2>
 <p> Default keybindings are as follows.</p>
+
+<p><table>
+<tr><td>Walk north</td><td> W  </td><td> &#8593; </td></tr>
+<tr><td>Walk south</td><td> S </td><td> &#8595; </td></tr>
+<tr><td>Walk west</td><td> A </td><td> &#8592; </td></tr>
+<tr><td>Walk east</td><td> D </td><td> &#8594; </td></tr>
+<tr><td>Previous level</td><td> &lt;  </td><td> [ </td></tr>
+<tr><td>Next level</td><td>     &gt;  </td><td>] </td></tr>
+<tr><td>Reset level</td><td> Shift-R </td></tr>
+<tr><td>Toggle cheating</td><td>Shift-C </td></tr>
+</table></p>
+
+<!-- 
 <div class="table">
-<!-- <div class="cell1">Go north </div><div class="cell2">&#8593; or E </div>
-<div class="cell1">Go south </div><div class="cell2">&#8595; or D </div>
-<div class="cell1">Go west </div><div class="cell2">&#8592; or J </div>
-<div class="cell1">Go east </div><div class="cell2">&#8594; or L </div> -->
-<div class="cell1">Go north </div><div class="cell2"> E </div>
-<div class="cell1">Go south </div><div class="cell2"> D </div>
-<div class="cell1">Go west  </div><div class="cell2"> S </div>
-<div class="cell1">Go east  </div><div class="cell2"> F </div>
 <div class="cell1">Reset level </div><div class="cell2">Shift-R </div>
 <div class="cell1">Go to previous level </div><div class="cell2"> [ </div>
 <div class="cell1">Go to next level     </div><div class="cell2"> ] </div>
 <div class="cell1">Enter cheat mode     </div><div class="cell2"> Shift-C </div>
-</div>
-<p> In cheat mode (or sandbox mode), additional abilities are available: </p>
-<div class="table">
-<div class="cell1">Place lava     </div><div class="cell2"> H </div>
-<div class="cell1">Place trench   </div><div class="cell2"> J </div>
-<div class="cell1">Toggle subway  </div><div class="cell2"> K </div>
-<div class="cell1">Place toad     </div><div class="cell2"> L </div>
-<div class="cell1">Place grass    </div><div class="cell2"> ; </div>
-</div>
+</div> -->
+
+<!-- ############################ -->
+<h2>Cheat mode (a.k.a. sandbox mode)</h2>
+<p> Activating cheat mode allows the player to place most kinds of tiles/blocks.  This is useful for testing circuits. </p>
 
 
 <h2>Implementation</h2>
 <p>
-The circuit dynamics is modeled as a finite-state cellular automaton.
+Behind the scenes, Toad Burn is a finite-state cellular automaton on a square lattice.
 The state of each cell depends only on the states of five cells (Center, East, West, North, and South) at the previous timestep.
+Each cell is represented by a collection of bits 1-bit flags:</p>
+
+<dl>
+<dt>CONDUCTING</dt><dd>Only CONDUCTING cells take part in circuit dynamics.</dd> 
+<dt>ON</dt><dd>Whether the cell is occupied by lava (ON) or water (OFF).</dd> 
+<dt>FRESH</dt><dd>Whether a cell has been updated on the previous tick.  (We'll refer to non-FRESH cells as STALE.)</dd>
+<dt>SOURCE</dt><dd>Certain types of cells have the SOURCE bit set.  These include SWITCH, BUTTON, and PLATE. </dd>
+<dt>GATE</dt><dd>Represents a toad (NOR gate).  If the GATE is ON, its output is ON (and all inputs are off).</dd>
+<dt>SUBWAY_CONDUCTING</dt><dd>Indicates that a subway is present at this location.</dd> 
+<dt>SUBWAY_ON</dt><dd>Whether the subway is occupied by lava or water.</dd> 
+<dt>SUBWAY_FRESH</dt><dd>Whether the subway state was updated on the previous tick.</dd> 
+</dl>
+
+<p>
+As of Feb 2026, Toad Burn uses two unsigned 8-bit integer arrays to store the bits, called ground[x+X*y] and subway[x+X*y].</p>
+
+<p>CONDUCTING cells include water, lava, switches, buttons, plates, gates, and lamps.
+Non-CONDUCTING cells include void, wall, grass, help, and book cells.</p>
+
+<p>
+For each cell there is yet another 8-bit integer, extras[x+X*y], that marks the presence of special blocks.
+HELP, BOOK, PEACH, GOOMBA, BOWSER, and ASH cells are always non-CONDUCTING.
+LAMP (STAR) cells are always CONDUCTING.
+The value of extras[x+X*y] has no effect on circuit dynamics.  
+There is only one effect on gameplay: if GOOMBA or BOWSER is transformed into ASH,
+Mario can walk through the square without dying.
+</p>
+
+
+
+
+<p>The cellular automaton update algorithm is something like this.</p>
+
+<p>
+A CONDUCTING cell C evolves as follows.
+If C is FRESH|OFF, it decays to STALE|OFF.
+If C is FRESH|ON, it decays to STALE|ON.
+If C is STALE|OFF, then if any neighboring cell is FRESH|ON, C becomes FRESH|ON.
+If C is STALE|ON, then if any neighboring cell is FRESH|OFF, C becomes FRESH|OFF.
+If the WEST cell is GATE|FRESH|ON or GATE|FRESH|OFF, then C becomes FRESH|ON.  This rule takes precedence over others.
+</p>
+<p>
+A GATE cell evolves as follows.
+If there are no neighboring conducting cells, then the gate retains its previous state (i.e., behaving like a switch that can be kicked).
+If all neighboring cells are OFF, the cell becomes FRESH|ON.
+If any neighboring cells are ON, the cell becomes FRESH|OFF.
+The cell always remains FRESH. (?)
+</p>
+<p>
+A SWITCH cell is always FRESH.  It toggles its ON/OFF state immediately when Mario bumps into it.  This is done by the event handler.
+A PLATE cell is updated by the evolve() function to be FRESH|ON if Mario is standing on it, and FRESH|OFF otherwise.
+A BUTTON cell becomes FRESH|ON when Mario bumps into it.  This is done by the event handler.
+In the evolve() function, if the BUTTON cell is FRESH|ON it decays to ON, and ON decays to OFF.  ?
+</p>
+
+
+<p>Updating is synchronous.  At each game tick, the new values of each cell are computed.  After that, all cells are updated from the new values.</p>
+
+
+
 
 [ OLD FROM HERE ON]
 
@@ -428,32 +568,6 @@ A gate cannot accept input from this cell.
 Add two more states to the model.
 
 Alternatively, one could use 2 additional bits to represent the orientation of the gate.
-
-
-
-
-T flip flop?
-
-TXY -> TXY
-000    001   
-101    111   
-011    010 ????????
-110    100
-
-TAXY -> TAXY
-0000    0001
-1001 -> 1101 -> ????
-
-
-?????
-Y = (T==X) & !Y
-X = (T==Y) & X??
-
-T X Y   T==X T&Y Ynew  T==Y T&!X
-0 0 0   1    0   1     1    0
-
-
-
 
 </pre>
 </body>
