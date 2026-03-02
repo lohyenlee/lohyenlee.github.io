@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@700&display=swap" rel="stylesheet">
+  <title>Rubik's Cube Simulator by Yen Lee Loh </title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, height=device-height, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <style>
+    html,body {padding:0;margin:0;width:100vh;height:200vh;}
+  </style>
+</head>
+<body class="body">
+<script type="module">
+    //=================================================
+    // GAMEPLAY VARIABLES AND FUNCTIONS
+    //=================================================
+    let t=0
+    
+    //=================================================
+    // GRAPHICS VARIABLES AND FUNCTIONS
+    //=================================================
+    // import * as THREE from 'https://cdn.skypack.dev/three@0.129.0';
+    import * as THREE from './three.module.js'
+    const clock = new THREE.Clock()
+    const anchor = new THREE.Vector2()
+    const raycaster = new THREE.Raycaster()
+    const selectables=[]  // mouse, raycaster, and selectables pertain to mouse/touch selections
+    let selected,selPos   // this also pertains to selections
+    const camera=new THREE.PerspectiveCamera(30, 1, 1, 1000)
+    const scene=new THREE.Scene()
+    scene.background = new THREE.Color(0x666666)
+    const renderer=new THREE.WebGLRenderer({antialias: true})
+    renderer.setDrawingBufferSize(window.innerWidth, window.innerHeight, window.devicePixelRatio)
+    const ambientLight = new THREE.AmbientLight(0xCCCCCC)
+    const materialBlack = new THREE.MeshPhongMaterial({color:0x000000})
+    const rubikColors = [0xCC0000, 0xFF9900, 0x009900, 0x0000FF, 0xFFFF00, 0xFFFFFF]
+    const materials = new Array(rubikColors.length)
+    
+    const nTiles=54
+    const tiles=new Array(nTiles)
+    let colors=[0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5] // tile colors
+    let colorsNew=[0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5] // tile colors
+    // xi[i] and yi[i] are position coordinates of tile i=0,1,2,..,53
+    // jni[n][i] is the index j that represents the image of tile i=0,1,2,..,53 under operation n=0,1,2,..,11
+    const xi=[4,4,4,3,3,3,2,2,2,-4,-4,-4,-3,-3,-3,-2,-2,-2,-1,-1,-1,0,0,0,1,1,1,-1,-1,-1,0,0,0,1,1,1,-1,0,1,-1,0,1,-1,0,1,7,6,5,7,6,5,7,6,5]
+    const yi=[-1,0,1,-1,0,1,-1,0,1,-1,0,1,-1,0,1,-1,0,1,4,3,2,4,3,2,4,3,2,-4,-3,-2,-4,-3,-2,-4,-3,-2,-1,-1,-1,0,0,0,1,1,1,-1,-1,-1,0,0,0,1,1,1]
+    const jni=[
+[6,3,0,7,4,1,8,5,2,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,47,50,53,27,28,29,30,31,32,38,41,44,36,37,26,39,40,25,42,43,24,45,46,35,48,49,34,51,52,33],
+[2,5,8,1,4,7,0,3,6,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,44,41,38,27,28,29,30,31,32,53,50,47,36,37,33,39,40,34,42,43,35,45,46,24,48,49,25,51,52,26],
+[0,1,2,3,4,5,6,7,8,11,14,17,10,13,16,9,12,15,42,39,36,21,22,23,24,25,26,51,48,45,30,31,32,33,34,35,27,37,38,28,40,41,29,43,44,18,46,47,19,49,50,20,52,53],
+[0,1,2,3,4,5,6,7,8,15,12,9,16,13,10,17,14,11,45,48,51,21,22,23,24,25,26,36,39,42,30,31,32,33,34,35,20,37,38,19,40,41,18,43,44,29,46,47,28,49,50,27,52,53],
+[0,1,44,3,4,43,6,7,42,9,10,53,12,13,52,15,16,51,24,21,18,25,22,19,26,23,20,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,11,14,17,45,46,47,48,49,50,2,5,8],
+[0,1,51,3,4,52,6,7,53,9,10,42,12,13,43,15,16,44,20,23,26,19,22,25,18,21,24,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,8,5,2,45,46,47,48,49,50,17,14,11],
+[45,1,2,46,4,5,47,7,8,36,10,11,37,13,14,38,16,17,18,19,20,21,22,23,24,25,26,29,32,35,28,31,34,27,30,33,6,3,0,39,40,41,42,43,44,15,12,9,48,49,50,51,52,53],
+[38,1,2,37,4,5,36,7,8,47,10,11,46,13,14,45,16,17,18,19,20,21,22,23,24,25,26,33,30,27,34,31,28,35,32,29,9,12,15,39,40,41,42,43,44,0,3,6,48,49,50,51,52,53],
+[0,1,2,3,4,5,29,32,35,9,10,11,12,13,14,20,23,26,18,19,8,21,22,7,24,25,6,27,28,17,30,31,16,33,34,15,42,39,36,43,40,37,44,41,38,45,46,47,48,49,50,51,52,53],
+[0,1,2,3,4,5,26,23,20,9,10,11,12,13,14,35,32,29,18,19,15,21,22,16,24,25,17,27,28,6,30,31,7,33,34,8,38,41,44,37,40,43,36,39,42,45,46,47,48,49,50,51,52,53],
+[24,21,18,3,4,5,6,7,8,33,30,27,12,13,14,15,16,17,9,19,20,10,22,23,11,25,26,0,28,29,1,31,32,2,34,35,36,37,38,39,40,41,42,43,44,47,50,53,46,49,52,45,48,51],
+[27,30,33,3,4,5,6,7,8,18,21,24,12,13,14,15,16,17,2,19,20,1,22,23,0,25,26,11,28,29,10,31,32,9,34,35,36,37,38,39,40,41,42,43,44,51,48,45,52,49,46,53,50,47]]
+
+    function resetCamera() {
+      camera.aspect=window.innerWidth/window.innerHeight;camera.position.set(2,0,20)
+      camera.updateProjectionMatrix()
+    }
+    function resize() {
+      resetCamera()
+      renderer.setSize(window.innerWidth, window.innerHeight)
+    }
+    function render() {
+      renderer.render(scene, camera)
+    }
+    function animate() {
+      const dt=clock.getDelta(); t+=dt
+
+      if (degToTurn!=0) {
+        const f = 1 - Math.abs(degToTurn)/90.0
+        for (let i=0; i<54; ++i) {
+          const x0=xi[i], x1=xi[perm[i]], xcur=(1-f)*x0 + f*x1
+          const y0=yi[i], y1=yi[perm[i]], ycur=(1-f)*y0 + f*y1
+          tiles[i].position.set(xcur,ycur,0)
+        }
+        degToTurn -= 5  // ultimately this will be handled by the other code
+      }
+
+      if (degToTurn==0 && perm) {
+        for (let i=0; i<54; ++i) colorsNew[perm[i]] = colors[i] // apply permutation
+        for (let i=0; i<54; ++i) {
+          colors[i] = colorsNew[i] // update colors
+          tiles[i].children[1].material.color.setHex(rubikColors[colors[i]]) // reppaint colors
+          tiles[i].position.set(xi[i],yi[i],0) // restore positions
+        }
+        perm = null
+      }
+      render()
+      requestAnimationFrame(animate)
+    }
+    //==========================================
+    // INITIALIZE EVERYTHING FOR THE FIRST TIME
+    //==========================================
+    function newSquare(side) {
+      const sq=new THREE.Shape(); const a=side/2; sq.moveTo(-a,-a); sq.lineTo(+a,-a); sq.lineTo(+a,+a); sq.lineTo(-a,+a)
+      return new THREE.ShapeGeometry(sq)
+    }
+    function newTile() {
+      const meshBase=new THREE.Mesh(newSquare(1), materialBlack)
+      const meshSticker=new THREE.Mesh(newSquare(0.85), new THREE.MeshPhongMaterial())
+      meshSticker.position.set(0,0, 0.01)
+      const tile=new THREE.Group(); tile.add(meshBase); tile.add(meshSticker)
+      return tile
+    }
+    function launchGame() {
+      document.body.insertBefore(renderer.domElement, document.body.firstChild)
+      renderer.domElement.style.position = 'fixed'
+      //-------- LIGHTS
+      scene.add(ambientLight)
+      //-------- LAY DOWN TILES
+      for (let i=0; i<54; ++i) {
+        tiles[i]=newTile()
+        tiles[i].position.set(xi[i], yi[i], 0)
+        tiles[i].children[1].material.color.setHex(rubikColors[colors[i]])
+        scene.add(tiles[i])
+        selectables.push(tiles[i])
+      }
+      //-------- CONNECT EVENT HANDLERS AND BEGIN ANIMATION LOOP
+      window.addEventListener('resize', resize)
+      document.body.addEventListener('keydown', keyDown, false)
+      resize(); render(); requestAnimationFrame(animate)
+    }
+    //===============================================
+    // RUBIK'S CUBE CONTROLS
+    //===============================================
+    function turn(n) { // n=0,1,2,...11 is the type of operation
+      perm=jni[n]
+      degToTurn=90
+    }
+    let perm=null
+    let degToTurn=0  // degrees remaining
+    function keyDown(e) {
+      if (e.ctrlKey||e.altKey) return // don't trap browser shortcuts involving Ctrl or Alt
+      let processed=true
+      switch (e.key) {
+        case 'w': turn(0); break
+        case 's': turn(1); break
+        case 'a': turn(2); break
+        case 'q': turn(3); break
+        case 'e': turn(4); break
+        case 'r': turn(5); break
+        case 'f': turn(6); break
+        case 'd': turn(7); break
+        case 'h': turn(8); break
+        case 'g': turn(9); break
+        case 't': turn(10); break
+        case 'y': turn(11); break
+        case'ArrowUp':case'ArrowDown':case'ArrowLeft':case'ArrowRight':case' ':e.preventDefault(); return // prevent window from scrolling
+        default: processed=false
+      }
+      if(processed) e.preventDefault()  // allow Ctrl-R or Ctrl-Shift-R to reload browser window
+    }
+    //===============================================
+    // MAIN MODULE CODE
+    //===============================================
+    launchGame()
+  </script>
+</body>
+</html>

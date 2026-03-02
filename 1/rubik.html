@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@700&display=swap" rel="stylesheet">
+  <title>Rubik's Cube Simulator by Yen Lee Loh </title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, height=device-height, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <style>
+    html,body {background-color:#000;padding:0;margin:0;width:100vh;height:200vh;}
+    h1 {font-size: 16vmin;line-height: 16vmin;padding: 0px;margin: 3vmin;color:red;}
+    h2 {font-size: 10vmin;padding: 0px;margin: 0vmin;}
+    h3 {font-size: 6vmin;padding: 0px;margin: 0vmin;}
+    h4 {font-size: 3vmin;padding: 0px;margin: 0vmin;}
+    p  {font-size: 4vmin;text-align: center;width: 100%;}
+    #viewport1 {display:none;position:fixed;left:0;top:0%;width:40%;height:50%; z-index:2; border:white 5px outset;}
+    #viewport2 {display:none;position:fixed;right:0;top:0;width:100%;height:100%; z-index:1; border:black 5px bevel;}
+    #splash {
+      position:fixed;left:0;bottom:0;
+      width:100%;height:100%; text-align:center;color:white; border:1px solid black;
+      font-family:'Titillium Web',sans-serif;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black, 3px 3px 4px #999;
+    }
+    #msg1 {z-index:100;position:fixed;left:50%;top:2vmin;width:50%;text-align:center;color:white;display:none;font-family:'Titillium Web',sans-serif;font-size:6vmin;}
+    #msg2 {z-index:100;position:fixed;left:2%;top:55%;width:35%;text-align:left;color:white;display:block;font-family:'Titillium Web',sans-serif;font-size:2vmin;}
+    .button1 {z-index:100;font-family:'Titillium Web',sans-serif;font-size:4vmin;width:21%;text-align:center;margin:0;padding:0;border-radius:8px;background:#CCC;color:black;}
+  </style>
+</head>
+<body class="body">
+  <div id="splash">
+    <h1>Rubik's Cube Simulator </span></h1><h3> by </h3><h2> Yen Lee Loh</h2><br><p> Click, touch, or press a key to start!</p>
+  </div>
+  <div id="viewport1"></div>
+  <div id="viewport2"></div>
+  <div id="msg1">Loading ...</div>
+  <div id="msg2">
+    <h4>1-finger gestures</h4>
+    Swipe a row of cubies horizontally to rotate a cube face. <br>
+    Swipe a column of cubies vertically to rotate a cube face. <br>
+    This works on both 3D and 2D (unfolded) views.<br>
+    <h4>2-finger gestures</h4>
+    Pinch and twist to rotate a face.<br>
+    This works on both 3D and 2D views (ONLY SOME FACES IMPLEMENTED).<br>
+    <h4>Keyboard</h4>
+    You may also use QWERTYASDFGH keys.<br>
+  </div>
+  <div id="controls" style="z-index: 100; display: none;font-size: 24px; font-family: 'serif'; position: absolute; bottom: 8px; width: 100%; text-align: center;">
+  <button id="resetButton" class="button1">Reset</button>
+  </div>
+  <script type="module">
+    // import {loadString,Sound,Animation,isKeyDown,Filmstrip} from "./utils.js";
+    //=================================================
+    // GAMEPLAY VARIABLES AND FUNCTIONS
+    //=================================================
+    let t=0
+    
+    //==========================================
+    // COMMON GRAPHICS FUNCTIONS
+    //==========================================
+    // import * as THREE from 'https://cdn.skypack.dev/three@0.129.0';
+    import * as THREE from './three.module.js'
+    const clock = new THREE.Clock()
+    const materialBlack = new THREE.MeshPhongMaterial({color:0x000000})
+    const rubikColors = [0xCC0000, 0xFF9900, 0x009900, 0x0000FF, 0xFFFF00, 0xFFFFFF]
+    const materials = new Array(rubikColors.length)
+    function newSquare(side) {const s=new THREE.Shape(),a=side/2;s.moveTo(-a,-a);s.lineTo(+a,-a);s.lineTo(+a,+a);s.lineTo(-a,+a);return new THREE.ShapeGeometry(s)}
+    const raycaster = new THREE.Raycaster()
+    const anchor = new THREE.Vector2()
+    const anchor2 = new THREE.Vector2()
+    
+    //=================================================
+    // CUBIE GRAPHICS FUNCTIONS
+    //=================================================
+    const nCubies=27
+    const cubies=new Array(nCubies)
+
+    const renderer1=new THREE.WebGLRenderer({antialias: true})
+    const camera1=new THREE.PerspectiveCamera(30, 1, 1, 1000)
+    const scene1=new THREE.Scene(); scene1.background = new THREE.Color(0x666666)
+    renderer1.setPixelRatio(window.devicePixelRatio)
+    const selectables1=[]  // mouse, raycaster, and selectables pertain to mouse/touch selections
+    let selected1,selPos1=new THREE.Vector3()   // this also pertains to selections
+        
+    function newCubie() {
+      //-------- MAKE ONE CUBIE
+      const sq=new THREE.Shape()
+      const a=0.85 // the side of the square will be 2a
+      sq.moveTo(-a,-a); sq.lineTo(+a,-a); sq.lineTo(+a,+a); sq.lineTo(-a,+a)
+      const geomSq=new THREE.ShapeGeometry(sq)
+      const geomBox=new THREE.BoxGeometry(2,2,2)
+      const meshBox=new THREE.Mesh(geomBox, materialBlack) // basic black cubie      
+      const b=1.01 // stickers slightly raised from cubie faces
+      const face=new Array(6)
+      for (let i=0; i<6; ++i) face[i]=new THREE.Mesh(geomSq, new THREE.MeshPhongMaterial())
+      for (let i=0; i<6; ++i) face[i].material.color.set(rubikColors[i])
+      face[0].position.set(+b,0,0); face[0].rotation.y = +Math.PI/2
+      face[1].position.set(-b,0,0); face[1].rotation.y = -Math.PI/2
+      face[2].position.set(0,+b,0); face[2].rotation.x = -Math.PI/2
+      face[3].position.set(0,-b,0); face[3].rotation.x = +Math.PI/2
+      face[4].position.set(0,0,+b)
+      face[5].position.set(0,0,-b); face[5].rotation.x = +Math.PI
+      const cubie=new THREE.Group()
+      cubie.add(meshBox)
+      for (let f of face) cubie.add(f)
+      return cubie
+    }
+
+    //=================================================
+    // TILE GRAPHICS FUNCTIONS
+    //=================================================
+    const renderer2=new THREE.WebGLRenderer({antialias: true})
+    const camera2=new THREE.PerspectiveCamera(30, 1, 1, 1000)
+    const scene2=new THREE.Scene(); scene2.background = new THREE.Color(0x333333)
+    renderer2.setPixelRatio(window.devicePixelRatio)
+    const selectables2=[]  // mouse, raycaster, and selectables pertain to mouse/touch selections
+    let selected2,selPos2=new THREE.Vector3()
+
+    const nTiles=54
+    const tiles=new Array(nTiles)
+    let colors=[0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5] // tile colors
+    let colorsNew=[0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5] // tile colors
+    // xi[i] and yi[i] are position coordinates of tile i=0,1,2,..,53
+    // jni[n][i] is the index j that represents the image of tile i=0,1,2,..,53 under operation n=0,1,2,..,11
+    const xi=[4,4,4,3,3,3,2,2,2,-4,-4,-4,-3,-3,-3,-2,-2,-2,-1,-1,-1,0,0,0,1,1,1,-1,-1,-1,0,0,0,1,1,1,-1,0,1,-1,0,1,-1,0,1,7,6,5,7,6,5,7,6,5]
+    const yi=[-1,0,1,-1,0,1,-1,0,1,-1,0,1,-1,0,1,-1,0,1,4,3,2,4,3,2,4,3,2,-4,-3,-2,-4,-3,-2,-4,-3,-2,-1,-1,-1,0,0,0,1,1,1,-1,-1,-1,0,0,0,1,1,1]
+    const jni=[
+[6,3,0,7,4,1,8,5,2,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,47,50,53,27,28,29,30,31,32,38,41,44,36,37,26,39,40,25,42,43,24,45,46,35,48,49,34,51,52,33],
+[2,5,8,1,4,7,0,3,6,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,44,41,38,27,28,29,30,31,32,53,50,47,36,37,33,39,40,34,42,43,35,45,46,24,48,49,25,51,52,26],
+[0,1,2,3,4,5,6,7,8,11,14,17,10,13,16,9,12,15,42,39,36,21,22,23,24,25,26,51,48,45,30,31,32,33,34,35,27,37,38,28,40,41,29,43,44,18,46,47,19,49,50,20,52,53],
+[0,1,2,3,4,5,6,7,8,15,12,9,16,13,10,17,14,11,45,48,51,21,22,23,24,25,26,36,39,42,30,31,32,33,34,35,20,37,38,19,40,41,18,43,44,29,46,47,28,49,50,27,52,53],
+[0,1,44,3,4,43,6,7,42,9,10,53,12,13,52,15,16,51,24,21,18,25,22,19,26,23,20,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,11,14,17,45,46,47,48,49,50,2,5,8],
+[0,1,51,3,4,52,6,7,53,9,10,42,12,13,43,15,16,44,20,23,26,19,22,25,18,21,24,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,8,5,2,45,46,47,48,49,50,17,14,11],
+[45,1,2,46,4,5,47,7,8,36,10,11,37,13,14,38,16,17,18,19,20,21,22,23,24,25,26,29,32,35,28,31,34,27,30,33,6,3,0,39,40,41,42,43,44,15,12,9,48,49,50,51,52,53],
+[38,1,2,37,4,5,36,7,8,47,10,11,46,13,14,45,16,17,18,19,20,21,22,23,24,25,26,33,30,27,34,31,28,35,32,29,9,12,15,39,40,41,42,43,44,0,3,6,48,49,50,51,52,53],
+[0,1,2,3,4,5,29,32,35,9,10,11,12,13,14,20,23,26,18,19,8,21,22,7,24,25,6,27,28,17,30,31,16,33,34,15,42,39,36,43,40,37,44,41,38,45,46,47,48,49,50,51,52,53],
+[0,1,2,3,4,5,26,23,20,9,10,11,12,13,14,35,32,29,18,19,15,21,22,16,24,25,17,27,28,6,30,31,7,33,34,8,38,41,44,37,40,43,36,39,42,45,46,47,48,49,50,51,52,53],
+[24,21,18,3,4,5,6,7,8,33,30,27,12,13,14,15,16,17,9,19,20,10,22,23,11,25,26,0,28,29,1,31,32,2,34,35,36,37,38,39,40,41,42,43,44,47,50,53,46,49,52,45,48,51],
+[27,30,33,3,4,5,6,7,8,18,21,24,12,13,14,15,16,17,2,19,20,1,22,23,0,25,26,11,28,29,10,31,32,9,34,35,36,37,38,39,40,41,42,43,44,51,48,45,52,49,46,53,50,47]]
+
+    function newTile() {
+      const meshBase=new THREE.Mesh(newSquare(1), materialBlack)
+      const meshSticker=new THREE.Mesh(newSquare(0.85), new THREE.MeshPhongMaterial())
+      meshSticker.position.set(0,0, 0.01)
+      const tile=new THREE.Group(); tile.add(meshBase); tile.add(meshSticker)
+      return tile
+    }
+
+    //=================================================
+    // CAMERA STUFF AND RENDER STUFF
+    //=================================================
+    function resetCamera() {
+      camera1.aspect = viewport1.clientWidth/viewport1.clientHeight
+      camera1.position.set(6,-14,10);camera1.up.set(0,0,1);camera1.lookAt(0,0,0)
+      camera1.updateProjectionMatrix()
+      camera2.aspect=viewport2.clientWidth/viewport2.clientHeight
+      camera2.position.set(-1,2,26)
+      camera2.updateProjectionMatrix()
+    }
+    function resize() {
+      resetCamera()
+      // console.log(viewport1.width)
+      renderer1.setSize(viewport1.clientWidth, viewport1.clientHeight)
+      renderer2.setSize(viewport2.clientWidth, viewport2.clientHeight)
+    }
+    function render() {
+      renderer1.render(scene1, camera1)
+      renderer2.render(scene2, camera2)
+    }
+    function animate() {
+      const dt=clock.getDelta(); t+=dt; //if(controls) controls.update(dt)
+      //============ IF TURNING IS IN PROGRESS
+      if (degToTurn!=0) {
+        //------------ ROTATE THE ACTIVE FACE INCREMENTALLY
+        const degsStep = 5 * Math.sign(degToTurn)
+        activeFace.rotateOnWorldAxis (activeAxis, degsStep*Math.PI/180)
+        degToTurn -= degsStep
+        //------------ REPOSITION EVERY TILE ALONG OLD-TO-NEW PATH
+        const f = 1 - Math.abs(degToTurn)/90.0
+        for (let i=0; i<54; ++i) {
+          const x0=xi[i], x1=xi[perm[i]], xcur=(1-f)*x0 + f*x1
+          const y0=yi[i], y1=yi[perm[i]], ycur=(1-f)*y0 + f*y1
+          tiles[i].position.set(xcur,ycur,0)
+        }
+      }
+      //============ IF TURNING HAS COMPLETED
+      if (degToTurn==0 && perm) {
+        //------------ REATTACH CUBIES TO SCENE AND DISPOSE OF ROTATING GROUP
+        // MAKE SHALLOW COPY OF CHILDREN-LIST BEFORE DETACHING! CANNOT JUST DO for (const child of activeFace.children)!          
+        for (const child of [...activeFace.children]) scene1.attach(child)
+        scene1.remove(activeFace)
+        activeFace=null          
+        //------------ RESTORE TILES TO ORIGINAL POSITIONS, BUT RECOLOR THEM ACCORDING TO PERMUTATION
+        for (let i=0; i<54; ++i) colorsNew[perm[i]] = colors[i] // apply permutation
+        for (let i=0; i<54; ++i) {
+          colors[i] = colorsNew[i] // update colors
+          tiles[i].children[1].material.color.setHex(rubikColors[colors[i]]) // update colors
+          tiles[i].position.set(xi[i],yi[i],0) // restore positions
+        }
+        perm = null
+      }
+      render()
+      requestAnimationFrame(animate)
+    }
+
+    //==========================================
+    // LAUNCH GAME
+    //==========================================
+    function launchGame() {
+      //-------- DISCONNECT SPLASH SCREEN EVENT HANDLERS
+      console.log ('launchGame()')
+      splash.style.display = 'none'
+      splash.removeEventListener('click', launchGame)
+      document.body.removeEventListener('keydown', launchGame, false)
+      //-------- INSTALL RENDERERS INTO THE DOM
+      viewport1.appendChild(renderer1.domElement)
+      viewport2.appendChild(renderer2.domElement)
+      //-------- ADD LIGHTS
+      scene1.add(new THREE.AmbientLight(0xFFFFFF))
+      scene2.add(new THREE.AmbientLight(0xFFFFFF))
+      //-------- ADD 27 CUBIES
+      for(let x=0; x<3; ++x) for(let y=0; y<3; ++y) for(let z=0; z<3; ++z) {const i=(z*3+y)*3+x
+        cubies[i]=newCubie()
+        cubies[i].position.set(2*x-2., 2*y-2., 2*z-2.)
+        scene1.add(cubies[i])
+        selectables1.push(cubies[i])
+      }      
+      //-------- ADD 54 TILES
+      for (let i=0; i<54; ++i) {
+        tiles[i]=newTile()
+        tiles[i].position.set(xi[i], yi[i], 0)
+        tiles[i].children[1].material.color.setHex(rubikColors[colors[i]])
+        scene2.add(tiles[i])
+        selectables2.push(tiles[i])
+      }
+      //-------- CONNECT EVENT HANDLERS AND BEGIN ANIMATION LOOP
+      viewport1.style.display = 'block'
+      viewport2.style.display = 'block'
+      window.addEventListener('resize', resize)
+      document.body.addEventListener('keydown', keyDown, false)
+      // viewport1.addEventListener('mousedown', mouseDown, false)
+      // viewport1.addEventListener('mousemove', mouseMove, false)
+      // viewport1.addEventListener('mouseup', mouseUp, false)
+      viewport1.addEventListener('touchstart', touchStart1, true)
+      viewport1.addEventListener('touchmove', touchMove1, true)
+      viewport1.addEventListener('touchend', touchEnd1, true)
+      viewport2.addEventListener('touchstart', touchStart2, true)
+      viewport2.addEventListener('touchmove', touchMove2, true)
+      viewport2.addEventListener('touchend', touchEnd2, true)
+      msg1.style.display = 'block'
+      msg1.innerHTML = 'QWAS ERDF TYGH'
+      resize(); render(); requestAnimationFrame(animate)
+    }
+
+    
+    //===============================================
+    // KEYBOARD CONTROLS
+    //===============================================
+    let perm=null
+    let degToTurn=0  // degrees remaining
+    let activeAxis=null
+    let activeFace=null
+    const axisList = [[1,0,0],[1,0,0],[-1,0,0],[-1,0,0],[0,1,0],[0,1,0],[0,-1,0],[0,-1,0],[0,0,1],[0,0,1],[0,0,-1],[0,0,-1]]
+    const degsList = [-90,+90,-90,+90,-90,+90,-90,+90,-90,+90,-90,+90]
+    function turn(n) { // n=0,1,2,...11 is the type of operation
+      if (degToTurn != 0) return   // don't start if already busy
+      perm=jni[n]
+      degToTurn = degsList[n]
+      activeAxis = new THREE.Vector3(...axisList[n])
+      activeFace = new THREE.Group()
+      for (let i=0; i<nCubies; ++i) if(cubies[i].position.dot(activeAxis) >= 1.5) activeFace.attach(cubies[i])
+      scene1.add(activeFace)
+    }
+    function keyDown(e) {
+      if (e.ctrlKey||e.altKey) return // don't trap browser shortcuts involving Ctrl or Alt
+      let processed=true
+      switch (e.key) {
+        case 'w': turn(0); break
+        case 's': turn(1); break
+        case 'a': turn(2); break
+        case 'q': turn(3); break
+        case 'e': turn(4); break
+        case 'r': turn(5); break
+        case 'f': turn(6); break
+        case 'd': turn(7); break
+        case 'h': turn(8); break
+        case 'g': turn(9); break
+        case 't': turn(10); break
+        case 'y': turn(11); break
+        case'ArrowUp':case'ArrowDown':case'ArrowLeft':case'ArrowRight':case' ':e.preventDefault(); return // prevent window from scrolling
+        default: processed=false
+      }
+      if(processed) e.preventDefault()  // allow Ctrl-R or Ctrl-Shift-R to reload browser window
+    }
+
+    //===============================================
+    // MOUSE/TOUCH CONTROLS
+    //===============================================
+    // function mouseDown(e) {
+    //   e.preventDefault()
+    //   // if (isDragging == true) return;// need to somehow catch thi.. before .. or just do it on mousedown
+    //   anchor.x = (e.offsetX/viewport1.clientWidth)*2-1  //clientX is bad
+    //   anchor.y = -(e.offsetY/viewport1.clientHeight)*2+1 //offsetX is exptal
+    
+    function touchStart1(e) {
+      if (e.touches.length==1) {
+        e.preventDefault(); e.stopPropagation();
+        anchor.x =  (e.touches[0].clientX/viewport1.clientWidth)*2-1
+        anchor.y = -(e.touches[0].clientY/viewport1.clientHeight)*2+1
+        raycaster.setFromCamera(anchor, camera1)
+        const intersections = raycaster.intersectObjects(selectables1, true)
+        if (intersections.length > 0) {
+          selected1=intersections[0].object
+          // selected1.material.emissive.set(0xFFFFFF)
+          selected1.getWorldPosition(selPos1)
+        }
+      }
+      else if (e.touches.length==2) {
+        e.preventDefault(); e.stopPropagation();
+        anchor.x =  (e.touches[0].clientX/viewport1.clientWidth)*2-1
+        anchor.y = -(e.touches[0].clientY/viewport1.clientHeight)*2+1
+        anchor2.x =  (e.touches[1].clientX/viewport1.clientWidth)*2-1
+        anchor2.y = -(e.touches[1].clientY/viewport1.clientHeight)*2+1
+        raycaster.setFromCamera(anchor, camera1)
+        const intersections = raycaster.intersectObjects(selectables1, true)
+        if (intersections.length > 0) {
+          selected1=intersections[0].object
+          // selected1.material.emissive.set(0xFFFFFF)
+          selected1.getWorldPosition(selPos1)
+        }
+      }
+    }
+    function touchMove1(e) {
+      if (e.touches.length==1) {
+        e.preventDefault(); e.stopPropagation();
+        const X =  (e.touches[0].clientX/viewport1.clientWidth)*2-1
+        const Y = -(e.touches[0].clientY/viewport1.clientHeight)*2+1 
+        const xd = X - anchor.x
+        const yd = Y - anchor.y
+        const vert=(Math.abs(yd) > Math.abs(xd)), horz=!vert
+        if      (selPos1.y > .5 && horz)                   { if (xd>0) turn(5); else if (xd<0) turn(4)}   // back face
+        else if (selPos1.y > .5 && selPos1.x > .5 && vert ){ if (yd>0) turn(4); else if (yd<0) turn(5) } 
+        else if (selPos1.y <-.5 && selPos1.x > .5 && vert) { if (yd>0) turn(0); else if (yd<0) turn(1) } 
+        else if (selPos1.y <-.5 && selPos1.x <-.5 && vert) { if (yd>0) turn(3); else if (yd<0) turn(2) }
+        else if (selPos1.z > .5 && horz) { if (xd>0) turn(9); else if (xd<0) turn(8) }
+        else if (selPos1.z <-.5 && horz) { if (xd>0) turn(10);else if (xd<0) turn(11)}
+        else if (selPos1.y <-.5 && horz) { if (xd>0) turn(6); else if (xd<0) turn(7)}
+      }
+      else if (e.touches.length==2) {
+        e.preventDefault(); e.stopPropagation();
+        const X0 =  (e.touches[0].clientX/viewport1.clientWidth)*2-1
+        const Y0 = -(e.touches[0].clientY/viewport1.clientHeight)*2+1 
+        const X1 =  (e.touches[1].clientX/viewport1.clientWidth)*2-1
+        const Y1 = -(e.touches[1].clientY/viewport1.clientHeight)*2+1 
+        const xd0 = X0 - anchor.x
+        const yd0 = Y0 - anchor.y
+        const xd1 = X1 - anchor2.x
+        const yd1 = Y1 - anchor2.y
+        const xa=X1-X0, ya=Y1-Y0, xb=xd1-xd0, yb=yd1-yd0
+        const adotb = xa*xb + ya*yb
+        const acrsb = xa*yb - ya*xb
+        if (Math.abs(acrsb) > Math.abs(adotb)) { if (acrsb>0) turn(7); else turn(6) } //rotational gesture
+      }
+    }
+    function touchEnd1(e) { if(selected1) {selected1.material.emissive.set(0); selected1=null} }
+    function touchStart2(e) {
+      if (e.touches.length==1) {
+        e.preventDefault(); e.stopPropagation();
+        anchor.x =  (e.touches[0].clientX/viewport2.clientWidth)*2-1
+        anchor.y = -(e.touches[0].clientY/viewport2.clientHeight)*2+1
+        raycaster.setFromCamera(anchor, camera2)
+        const intersections = raycaster.intersectObjects(selectables2, true)
+        if (intersections.length > 0) {
+          selected2 = intersections[0].object // topmost object under click
+          // selected2.material.emissive.set(0xFFFFFF)
+          selected2.getWorldPosition(selPos2) // where in the world did the user click/touch?
+        }
+      }
+      else if (e.touches.length==2) {
+        e.preventDefault(); e.stopPropagation();
+        anchor.x =  (e.touches[0].clientX/viewport2.clientWidth)*2-1
+        anchor.y = -(e.touches[0].clientY/viewport2.clientHeight)*2+1
+        anchor2.x =  (e.touches[1].clientX/viewport2.clientWidth)*2-1
+        anchor2.y = -(e.touches[1].clientY/viewport2.clientHeight)*2+1
+        raycaster.setFromCamera(anchor, camera2)
+        const intersections = raycaster.intersectObjects(selectables2, true)
+        if (intersections.length > 0) {
+          selected2=intersections[0].object
+          // selected2.material.emissive.set(0xFFFFFF)
+          selected2.getWorldPosition(selPos2)
+        }
+      }
+    }
+    function touchMove2(e) {
+      if (e.touches.length==1) {
+        e.preventDefault(); e.stopPropagation();
+        const X =  (e.touches[0].clientX/viewport2.clientWidth)*2-1
+        const Y = -(e.touches[0].clientY/viewport2.clientHeight)*2+1
+        const xd = X - anchor.x
+        const yd = Y - anchor.y
+        const vert=(Math.abs(yd) > Math.abs(xd)), horz=!vert
+        if      (Math.round(selPos2.y)==1 && horz)  { if (xd>0) turn(5); else if (xd<0) turn(4)}
+        else if (Math.round(selPos2.y)==-1 && horz) { if (xd>0) turn(6); else if (xd<0) turn(7)}
+        else if (Math.round(selPos2.x)==1 && vert)  { if (yd>0) turn(0); else if (yd<0) turn(1)}
+        else if (Math.round(selPos2.x)==-1 && vert) { if (yd>0) turn(3); else if (yd<0) turn(2)}      
+      }
+      else if (e.touches.length==2) {
+        console.log("2");
+        
+        e.preventDefault(); e.stopPropagation();
+        const X0 =  (e.touches[0].clientX/viewport2.clientWidth)*2-1
+        const Y0 = -(e.touches[0].clientY/viewport2.clientHeight)*2+1 
+        const X1 =  (e.touches[1].clientX/viewport2.clientWidth)*2-1
+        const Y1 = -(e.touches[1].clientY/viewport2.clientHeight)*2+1 
+        const xd0 = X0 - anchor.x
+        const yd0 = Y0 - anchor.y
+        const xd1 = X1 - anchor2.x
+        const yd1 = Y1 - anchor2.y
+        const xa=X1-X0, ya=Y1-Y0, xb=xd1-xd0, yb=yd1-yd0
+        const adotb = xa*xb + ya*yb
+        const acrsb = xa*yb - ya*xb
+        if (Math.abs(acrsb) > Math.abs(adotb)) {  //rotational gesture
+          if (Math.abs(selPos2.x)<2 && Math.abs(selPos2.y)<2)    if (acrsb>0) turn(9); else turn(8) 
+          else if (Math.abs(selPos2.x-6)<2 && Math.abs(selPos2.y)<2)  if (acrsb>0) turn(10); else turn(11) 
+        }
+      }
+    }
+    function touchEnd2(e) { if(selected2) {selected2.material.emissive.set(0); selected2=null} }
+
+    //===============================================
+    // MAIN MODULE CODE
+    //===============================================
+    splash.addEventListener('click', launchGame)
+    document.body.addEventListener('keydown', launchGame, false)
+  </script>
+</body>
+</html>

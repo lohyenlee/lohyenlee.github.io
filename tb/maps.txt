@@ -5,7 +5,7 @@
 MOVE MARIO USING JOYSTICK OR ARROW KEYS. <br>
 ADVANCE THROUGH GAP IN WALL <br>
 OR CLICK "NEXT" TO GO TO WORLD 1-1. <br>
-<a href="toadburnhelp.html" style="color:cyan;">Click here to learn more about Toad Burn </a>
+<a href="about.html" style="color:cyan;">Click here to learn more about Toad Burn </a>
 </help>
 WWWWWWWWWWWWWWWWWWW
 W.................W

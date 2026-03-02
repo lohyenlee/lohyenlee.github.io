@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@700&display=swap" rel="stylesheet">
+  <title>Rubik's Cube Simulator by Yen Lee Loh </title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, height=device-height, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <style>
+    html,body {background-color:#000;padding:0;margin:0;width:100vh;height:200vh;}
+    h1 {font-size: 16vmin;line-height: 16vmin;padding: 0px;margin: 3vmin;}
+    h2 {font-size: 10vmin;padding: 0px;margin: 0vmin;}
+    h3 {font-size: 6vmin;padding: 0px;margin: 0vmin;}
+    p  {font-size: 4vmin;text-align: center;width: 100%;}
+    #splash {
+      position:fixed;left:0;bottom:0;
+      width:100%;height:100%; text-align:center;color:white; border:1px solid black;
+      font-family:'Titillium Web',sans-serif;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black, 3px 3px 4px #999;
+    }
+    #msg1 {z-index:100;position:absolute;top:2vmin;width:100%;text-align:center;color:white;display:none;font-family:'Titillium Web',sans-serif;font-size:6vmin;}
+    .button1 {z-index:100;font-family:'Titillium Web',sans-serif;font-size:4vmin;width:21%;text-align:center;margin:0;padding:0;border-radius:8px;background:#CCC;color:black;}
+  </style>
+</head>
+<body class="body">
+  <div id="splash">
+    <h1><span style="color:red;">Rubik's Cube Simulator </span></h1>
+    <h3> by </h3>
+    <h2> Yen Lee Loh</h2><br>
+    <p> Click, touch, or press a key to start!</p>
+  </div>
+  <div id="msg1">Loading ...</div>
+  <div id="controls" style="z-index: 100; display: none;font-size: 24px; font-family: 'serif'; position: absolute; bottom: 8px; width: 100%; text-align: center;">
+  <button id="resetButton" class="button1">Reset</button>
+  </div>
+  <script type="module">
+    // import {loadString,Sound,Animation,isKeyDown,Filmstrip} from "./utils.js";
+    //=================================================
+    // GAMEPLAY VARIABLES AND FUNCTIONS
+    //=================================================
+    let t=0
+    
+    //=================================================
+    // GRAPHICS VARIABLES AND FUNCTIONS
+    //=================================================
+    //-------- Load THREE.js from CDN
+    // import * as THREE from 'https://cdn.skypack.dev/three@0.129.0';
+    // import { OrbitControls } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/OrbitControls.js';
+    //-------- Load THREE.js from current directory on a HTTP server (python3 -m http.server 8000)
+    // Note that you should reload using Shift-Command-R or Shift-Ctrl-R to ensure non-caching
+    import * as THREE from './three.module.js'
+    import { OrbitControls } from './OrbitControls.js'    
+    const groundColors = [0x999999, 0x888888, 0x777777]
+    const clock = new THREE.Clock()
+    const mouse = new THREE.Vector2()
+    const raycaster = new THREE.Raycaster()
+    const selectables = []  // mouse, raycaster, and selectables pertain to mouse selections
+    const gameSpeed = 12 //1,2,3,...;  // game time corresponding to one second of wall time
+    const camera=new THREE.PerspectiveCamera(30, 1, 1, 1000)
+    const scene=new THREE.Scene()
+    scene.background = new THREE.Color(0x666666)
+    const renderer=new THREE.WebGLRenderer({ antialias: true })
+    renderer.setPixelRatio(window.devicePixelRatio)
+    renderer.setSize(window.innerWidth, window.innerHeight)
+    const controls=new OrbitControls(camera, renderer.domElement)
+    controls.autoForward = false
+    controls.dragToLook = false
+    controls.movementSpeed = 10
+    controls.rollSpeed = Math.PI/72
+    
+    const phongMaterial = new THREE.MeshPhongMaterial()
+    const ambientLight = new THREE.AmbientLight(0xCCCCCC)
+    const materialBlack = phongMaterial.clone(); materialBlack.color.set(0x000000)
+    const rubikColors = [0xFF0000, 0xFF9900, 0xFFFF00, 0x009900, 0x0000FF, 0xFFFFFF]
+    const materials = new Array(rubikColors.length)
+    for (let i=0; i<rubikColors.length; ++i) {materials[i]=phongMaterial.clone(); materials[i].color.set(rubikColors[i])}
+
+    let cubePosOrig = new THREE.Vector3(99, 99, 99)   // for animation purposes
+    let cubeRotOrig = new THREE.Euler(0, 0, 0, 'XYZ')
+    
+    
+
+    //================================
+    // WINDOW RESIZING AND CAMERA SETTING
+    //================================
+    // function fitCameraAroundRectangle(cameraFoV, cameraDownwardTilt, cameraAspect, xmin, xmax, ymin, ymax) {
+    //   const theta=cameraFoV/2*Math.PI/180
+    //   const alpha=cameraDownwardTilt*Math.PI/180 // camera direction wrt horizontal
+    //   const xc=(xmin+xmax)/2,w=xmax-xmin
+    //   const yc=(ymin+ymax)/2,h=ymax-ymin
+    //   const Y=h/2*Math.sin(2*alpha)/Math.sin(2*theta)
+    //   const Z=(Y-h/2)*Math.tan(alpha+theta)
+    //   const d1=Math.sqrt(Y**2+Z**2)
+    //   const d2=w*cameraAspect/2/Math.tan(theta)
+    //   const d=Math.max(d1,d2) 
+    //   const alphaTrue = (d1<d2) ? alpha : Math.atan(Z/Y)
+    //   camera.fov = cameraFoV
+    //   camera.aspect = 1/cameraAspect
+    //   camera.rotation.x = Math.PI/2-alpha
+    //   camera.position.set(xc, yc-d*Math.cos(alphaTrue), d*Math.sin(alphaTrue))
+    // }
+    function resetCamera() {
+      let xmin=-3,xmax=3,ymin=-3,ymax=3
+      // fitCameraAroundRectangle(50, 50, window.innerHeight/window.innerWidth, xmin*1.5,xmax*1.5,ymin*1.5,ymax*1.5)
+      camera.aspect = window.innerWidth/window.innerHeight
+      camera.position.set(13,11,14);camera.lookAt(0,0,0)
+      camera.updateProjectionMatrix()
+    }
+    function onResize() {
+      resetCamera()
+      renderer.setSize(window.innerWidth, window.innerHeight)
+    }
+    function render() {
+      renderer.render(scene, camera)
+    }
+    function animate() {
+      let dt = clock.getDelta()
+      controls.update(dt)
+      t += dt
+      // box.rotation.z += 1.0 * dt;
+      // tube.rotation.y += 1.0 * dt;
+      //spotLight.target.position.y = 1.0 * Math.sin(0.3 * t);
+      render()
+      requestAnimationFrame(animate)
+    }
+
+
+    //==========================================
+    // INITIALIZE EVERYTHING FOR THE FIRST TIME
+    //==========================================
+    const cubies=new Array(27)
+
+    function launchGame() {
+      splash.style.display = 'none'
+      document.removeEventListener("click", launchGame)
+      document.body.insertBefore(renderer.domElement, document.body.firstChild)
+      window.addEventListener('resize', onResize)
+      //-------- LIGHTS
+      scene.add(ambientLight)
+      //-------- MAKE ONE CUBIE
+      const sq=new THREE.Shape()
+      const a=0.9 // the side of the square will be 2a
+      sq.moveTo(-a,-a); sq.lineTo(+a,-a); sq.lineTo(+a,+a); sq.lineTo(-a,+a)
+      const geometrySquare=new THREE.ShapeGeometry(sq)
+      const geometryBox = new THREE.BoxGeometry(2,2,2)
+      const meshBox = new THREE.Mesh(geometryBox, materialBlack) // basic black cubie      
+      const face=new Array(6)
+      for (let i=0; i<6; ++i) face[i]=new THREE.Mesh(geometrySquare, materials[i])
+      face[0].position.set(+1.01, 0, 0); face[0].rotation.y = +Math.PI / 2
+      face[1].position.set(-1.01, 0, 0); face[1].rotation.y = -Math.PI / 2
+      face[2].position.set(0, +1.01, 0); face[2].rotation.x = -Math.PI / 2
+      face[3].position.set(0, -1.01, 0); face[3].rotation.x = +Math.PI / 2
+      face[4].position.set(0, 0, +1.01)
+      face[5].position.set(0, 0, -1.01); face[5].rotation.x = +Math.PI
+      const cubie=new THREE.Group()
+      cubie.add(meshBox)
+      for (let i=0; i<6; ++i) cubie.add(face[i])
+      //-------- BUILD 3x3x3 CUBE
+      for (let x=0; x<3; ++x) for (let y=0; y<3; ++y) for (let z=0; z<3; ++z) {
+        const i=(z*3+y)*3+x
+        cubies[i]=cubie.clone()
+        cubies[i].position.set(2*x-2, 2*y-2, 2*z-2)
+        scene.add(cubies[i])
+      }
+      // object.material.color.setHex(0xff0000);
+  
+      //-------- START STUFF
+      msg1.style.display = 'block'
+      msg1.innerHTML = 'Started'
+      onResize()
+      render()
+      requestAnimationFrame(animate) // start animation (for FlyControls to work)
+    }
+    //===============================================
+    // MAIN MODULE CODE
+    //===============================================
+    function keyDown(e) {
+      let processed=true
+      switch (e.key) {
+        case'ArrowUp':case'ArrowDown':case'ArrowLeft':case'ArrowRight':case' ':e.preventDefault(); return // prevent window from scrolling
+        default: processed=false
+      }
+      if(processed) e.preventDefault()  // allow Ctrl-R or Ctrl-Shift-R to reload browser window
+    }
+    splash.addEventListener('click', launchGame)
+    document.body.addEventListener('keydown', launchGame, false)
+    document.body.addEventListener('keydown', keyDown, false)
+    // controls.listenToKeyEvents(window)    
+  </script>
+
+
+</body>
+</html>

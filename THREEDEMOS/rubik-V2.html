@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@700&display=swap" rel="stylesheet">
+  <title>Rubik's Cube Simulator by Yen Lee Loh </title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, height=device-height, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <style>
+    html,body {background-color:#000;padding:0;margin:0;width:100vh;height:200vh;}
+    h1 {font-size: 16vmin;line-height: 16vmin;padding: 0px;margin: 3vmin;}
+    h2 {font-size: 10vmin;padding: 0px;margin: 0vmin;}
+    h3 {font-size: 6vmin;padding: 0px;margin: 0vmin;}
+    p  {font-size: 4vmin;text-align: center;width: 100%;}
+    #splash {
+      position:fixed;left:0;bottom:0;
+      width:100%;height:100%; text-align:center;color:white; border:1px solid black;
+      font-family:'Titillium Web',sans-serif;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black, 3px 3px 4px #999;
+    }
+    #msg1 {z-index:100;position:absolute;top:2vmin;width:100%;text-align:center;color:white;display:none;font-family:'Titillium Web',sans-serif;font-size:6vmin;}
+    .button1 {z-index:100;font-family:'Titillium Web',sans-serif;font-size:4vmin;width:21%;text-align:center;margin:0;padding:0;border-radius:8px;background:#CCC;color:black;}
+  </style>
+</head>
+<body class="body">
+  <div id="splash">
+    <h1><span style="color:red;">Rubik's Cube Simulator </span></h1>
+    <h3> by </h3>
+    <h2> Yen Lee Loh</h2><br>
+    <p> Click, touch, or press a key to start!</p>
+  </div>
+  <div id="msg1">Loading ...</div>
+  <div id="controls" style="z-index: 100; display: none;font-size: 24px; font-family: 'serif'; position: absolute; bottom: 8px; width: 100%; text-align: center;">
+  <button id="resetButton" class="button1">Reset</button>
+  </div>
+  <script type="module">
+    // import {loadString,Sound,Animation,isKeyDown,Filmstrip} from "./utils.js";
+    //=================================================
+    // GAMEPLAY VARIABLES AND FUNCTIONS
+    //=================================================
+    let t=0
+    
+    //=================================================
+    // GRAPHICS VARIABLES AND FUNCTIONS
+    //=================================================
+    //-------- Load THREE.js from CDN
+    // import * as THREE from 'https://cdn.skypack.dev/three@0.129.0';
+    // import { OrbitControls } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/OrbitControls.js';
+    //-------- Load THREE.js from current directory on a HTTP server (python3 -m http.server 8000)
+    // Note that you should reload using Shift-Command-R or Shift-Ctrl-R to ensure non-caching
+    import * as THREE from './three.module.js'
+    import { OrbitControls } from './OrbitControls.js'    
+    const groundColors = [0x999999, 0x888888, 0x777777]
+    const clock = new THREE.Clock()
+    const mouse = new THREE.Vector2()
+    const raycaster = new THREE.Raycaster()
+    const selectables = []  // mouse, raycaster, and selectables pertain to mouse selections
+    const gameSpeed = 12 //1,2,3,...;  // game time corresponding to one second of wall time
+    const camera=new THREE.PerspectiveCamera(30, 1, 1, 1000)
+    const scene=new THREE.Scene()
+    scene.background = new THREE.Color(0x666666)
+    const renderer=new THREE.WebGLRenderer({antialias: true})
+    renderer.setDrawingBufferSize(window.innerWidth, window.innerHeight, window.devicePixelRatio)
+    const controls=null
+    // const controls=new OrbitControls(camera, renderer.domElement)
+    // controls.autoForward = false
+    // controls.dragToLook = false
+    // controls.movementSpeed = 10
+    // controls.rollSpeed = Math.PI/72
+  
+    const ambientLight = new THREE.AmbientLight(0xCCCCCC)
+    const materialBlack = new THREE.MeshPhongMaterial({color:0x000000})
+    const rubikColors = [0xCC0000, 0xFF9900, 0x009900, 0x0000FF, 0xFFFF00, 0xFFFFFF]
+    const materials = new Array(rubikColors.length)
+    const nCubies=27
+    const cubies=new Array(nCubies)
+
+    function resetCamera() {
+      let xmin=-3,xmax=3,ymin=-3,ymax=3
+      camera.aspect = window.innerWidth/window.innerHeight
+      camera.position.set(8,-25,15);camera.up.set(0,0,1);camera.lookAt(0,0,0)
+      camera.updateProjectionMatrix()
+    }
+    function resize() {
+      resetCamera()
+      renderer.setSize(window.innerWidth, window.innerHeight)
+    }
+    function render() {
+      renderer.render(scene, camera)
+    }
+    function animate() {
+      const dt=clock.getDelta(); t+=dt; if(controls) controls.update(dt)
+    
+      if (activeFace) {
+          
+        const degsStep = 10
+        if (degToTurn>0) {activeFace.rotateOnWorldAxis (activeAxis, degsStep*Math.PI/180); degToTurn -= degsStep}
+        else if (degToTurn<0) {activeFace.rotateOnWorldAxis (activeAxis, -degsStep*Math.PI/180); degToTurn += degsStep}
+
+        if (degToTurn==0) {
+          // MAKE SHALLOW COPY OF CHILDREN-LIST BEFORE DETACHING! CANNOT JUST DO for (const child of activeFace.children)!
+          for (const child of [...activeFace.children]) scene.attach(child)
+          scene.remove(activeFace)
+          activeFace=null          
+        }
+      }
+      render()
+      requestAnimationFrame(animate)
+    }
+
+
+    //==========================================
+    // INITIALIZE EVERYTHING FOR THE FIRST TIME
+    //==========================================
+    function launchGame() {
+      console.log ('launchGame()')
+      splash.style.display = 'none'
+      splash.removeEventListener('click', launchGame)
+      document.body.removeEventListener('keydown', launchGame, false)
+      document.body.insertBefore(renderer.domElement, document.body.firstChild)
+      renderer.domElement.style.position = 'fixed'
+      //-------- LIGHTS
+      scene.add(ambientLight)
+      //-------- MAKE ONE CUBIE
+      for (let i=0; i<rubikColors.length; ++i) {materials[i]=new THREE.MeshPhongMaterial(); materials[i].color.set(rubikColors[i])}
+      const sq=new THREE.Shape()
+      const a=0.85 // the side of the square will be 2a
+      sq.moveTo(-a,-a); sq.lineTo(+a,-a); sq.lineTo(+a,+a); sq.lineTo(-a,+a)
+      const geomSq=new THREE.ShapeGeometry(sq)
+      const geomBox=new THREE.BoxGeometry(2,2,2)
+      const meshBox=new THREE.Mesh(geomBox, materialBlack) // basic black cubie      
+      const b=1.01 // stickers slightly raised from cubie faces
+      const face=new Array(6)
+      for (let i=0; i<6; ++i) face[i]=new THREE.Mesh(geomSq, materials[i])
+      face[0].position.set(+b, 0, 0); face[0].rotation.y = +Math.PI/2
+      face[1].position.set(-b, 0, 0); face[1].rotation.y = -Math.PI/2
+      face[2].position.set(0, +b, 0); face[2].rotation.x = -Math.PI/2
+      face[3].position.set(0, -b, 0); face[3].rotation.x = +Math.PI/2
+      face[4].position.set(0, 0, +b)
+      face[5].position.set(0, 0, -b); face[5].rotation.x = +Math.PI
+      const cubie=new THREE.Group()
+      cubie.add(meshBox)
+      for (let f of face) cubie.add(f)
+      //-------- BUILD 3x3x3 CUBE
+      for(let x=0; x<3; ++x) for(let y=0; y<3; ++y) for(let z=0; z<3; ++z) {const i=(z*3+y)*3+x
+        cubies[i]=cubie.clone()
+        cubies[i].position.set(2*x-2., 2*y-2., 2*z-2.)
+        scene.add(cubies[i])
+
+        selectables.push(cubies[i])
+      }      
+      
+      //-------- CONNECT EVENT HANDLERS AND BEGIN ANIMATION LOOP
+      window.addEventListener('resize', resize)
+      document.body.addEventListener('keydown', keyDown, false)
+      
+      document.body.addEventListener('mousedown', mouseDown, false)
+      
+      msg1.style.display = 'block'
+      msg1.innerHTML = 'Use QWAS ERDF TYGH to rotate'
+      resize(); render(); requestAnimationFrame(animate)
+    }
+
+    
+    //===============================================
+    // RUBIK'S CUBE CONTROLS
+    //===============================================
+    let degToTurn=0  // degrees remaining
+    let activeAxis
+    let activeFace
+    function startTurn(axis, degrees) {
+      if (degToTurn != 0) return   // don't start if already busy
+      activeAxis = axis; degToTurn=degrees; activeFace=new THREE.Group()
+      for (let i=0; i<nCubies; ++i) if(cubies[i].position.dot(axis) >= 1.5) activeFace.attach(cubies[i])
+      scene.add(activeFace)
+    }
+    function keyDown(e) {
+      if (e.ctrlKey||e.altKey) return // don't trap browser shortcuts involving Ctrl or Alt
+      let processed=true
+      switch (e.key) {
+        case 'q': startTurn(new THREE.Vector3(-1,0,0), 90); break
+        case 'a': startTurn(new THREE.Vector3(-1,0,0),-90); break
+        case 's': startTurn(new THREE.Vector3(1,0,0), 90); break
+        case 'w': startTurn(new THREE.Vector3(1,0,0),-90); break
+
+        case 'd': startTurn(new THREE.Vector3(0,-1,0), 90); break
+        case 'f': startTurn(new THREE.Vector3(0,-1,0),-90); break
+        case 'r': startTurn(new THREE.Vector3(0,1,0), 90); break
+        case 'e': startTurn(new THREE.Vector3(0,1,0),-90); break
+        
+        case 'h': startTurn(new THREE.Vector3(0,0,-1), 90); break
+        case 'g': startTurn(new THREE.Vector3(0,0,-1),-90); break
+        case 't': startTurn(new THREE.Vector3(0,0,1), 90); break
+        case 'y': startTurn(new THREE.Vector3(0,0,1),-90); break
+        
+        case'ArrowUp':case'ArrowDown':case'ArrowLeft':case'ArrowRight':case' ':e.preventDefault(); return // prevent window from scrolling
+        default: processed=false
+      }
+      if(processed) e.preventDefault()  // allow Ctrl-R or Ctrl-Shift-R to reload browser window
+    }
+
+    
+    function mouseDown(e) {
+      e.preventDefault();
+      // if (isDragging == true) return;// need to somehow catch thi.. before .. or just do it on mousedown
+      mouse.x = (e.offsetX/window.innerWidth)*2-1;  //clientX is bad
+      mouse.y = -(e.offsetY/window.innerHeight)*2+1; //offsetX is exptal
+      raycaster.setFromCamera(mouse, camera);
+      const intersections = raycaster.intersectObjects(selectables, true);
+      if (intersections.length > 0) {
+        const object = intersections[0].object; // topmost object under click
+        object.material.color.set(0x7FFFFF - object.material.color.getHex());  //.emissive.set
+        object.position.x += 3
+      }
+      render();
+    }
+    //===============================================
+    // MAIN MODULE CODE
+    //===============================================
+    
+    splash.addEventListener('click', launchGame)
+    document.body.addEventListener('keydown', launchGame, false)
+  </script>
+</body>
+</html>

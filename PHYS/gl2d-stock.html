@@ -92,14 +92,17 @@
       addRectangle(.6*X, .1*X, .65*X, .15*X, 4, 400, -14)  // moat
       addRectangle(.7*X, .1*X, .75*X, .15*X, 4, 400, -14)  // moat
       addRectangle(.8*X, .1*X, .85*X, .15*X, 4, 400, -14)  // moat
+
       // addRectangle(0, 0,   X, Y,             +1, +1, 0)  // insulating substrate
       // addEllipse  (.5*Y, .5*Y, .49*Y, .49*Y, -1, +1, +4) // superconducting disk
       // addRectangle(.7*X, .0*Y, .78*X, 1.*Y,   -1, +1, +4) // superconducting strip
       // addRectangle(.8*X, .1*Y, 1.0*X, .9*Y,   -1, +1, +4) // superconducting strip
       updatewxwy()
       for (let x=0; x<X; ++x) for (let y=0; y<Y; ++y) {const i=x+X*y
+        // if (alpha[i] < 0) {
         u[i]=(2*Math.random()-1) * 1e-2
         v[i]=(2*Math.random()-1) * 1e-2
+        // }
         // let xc,yc,theta=0
         // xc=.3*X; yc=.5*Y; theta += Math.atan2(y-yc, x-xc) // add vortex
         // xc=.6*X; yc=.6*Y; theta -= Math.atan2(y-yc, x-xc) // add antivortex
@@ -175,6 +178,7 @@
       for (let x=0; x<X; ++x) for (let y=0; y<Y; ++y) {const i=x+X*y
         const [aaa,bbb,www] = calcPars(xi0[i], lam0[i], Tc[i], T)
         alpha[i]=aaa; beta[i]=bbb; w[i]=www
+        // console.log([aaa,bbb,www])
       }
       updatewxwy()
     }
@@ -206,6 +210,12 @@
         v[i] += q[i]*dt2
       }
     }
+    // function rgb2hsv(r,g,b) { //h in [0,360] and s,v in [0,1]; r,g,b in [0,1]
+    //   let v=Math.max(r,g,b), c=v-Math.min(r,g,b)
+    //   let h= c && ((v==r) ? (g-b)/c : ((v==g) ? 2+(b-r)/c : 4+(r-g)/c))
+    //   return [60*(h<0?h+6:h), v&&c/v, v]
+    // }
+    // let f= (n,k=(n+h*3/Math.PI)%6) => v - v*s*Math.max( Math.min(k,4-k,1), 0) 
     function hsv2rgb(h,s,v) { //h in [0,2*pi] and s,v in [0,1]; r,g,b in [0,255]
       let f= (n,k=(n+h*3/Math.PI)%6) => Math.floor(255*(v - v*s*Math.max( Math.min(k,4-k,1), 0)))
       return [f(5),f(3),f(1)]
@@ -224,6 +234,12 @@
         const [r,g,b] = hsv2rgb(arg, 1, mag/(1+mag))
         ctx.fillStyle= `rgb(${r}, ${g}, ${b})`
         ctx.fillRect(x,y,1,1)
+
+        // if (x==3 && y==3) {
+        // ctx.fillStyle='#333'
+        // ctx.font = "1px serif"
+        // ctx.fillText(''+u[i], x,y)
+        // }
       }
       requestAnimationFrame(animate)
     }
