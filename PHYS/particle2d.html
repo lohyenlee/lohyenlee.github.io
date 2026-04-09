@@ -3,19 +3,20 @@
 <head>
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <style>
-    body {margin:0;padding:0; width:100vh; height:200vh;}
+    body {margin:0;padding:0; width:100vh; height:200vh; font-family:monospace;font-size:2rem;}
     canvas {position:fixed;left:0;top:0;margin:0;padding:0;background:black;}
-    .label {display:inline-block;width:6rem;height:10px;font-family:monospace;font-size:16px;}
-    input {display:inline-block;width:80vh;height:10px;}
+    .label {display:inline-block;width:16rem;height:2rem;}
+    input {display:inline-block;width:40vh;height:2rem;vertical-align: middle;}
     #controls {position:fixed;left:0;top:0;color:white;width:100vh;height:20vh;z-index:1;padding:16px;}
   </style>
 </head>
 <body>
   <div id="controls">
-  <label id="labelT" class="label" for="sliderT">Temperature T</label>
+  <label id="labelT" class="label" for="sliderT">Thermostat T</label>
   <input id="sliderT" class="slider" type="range" min="0.000" max="1.000" step="0.001" value="0.100">
+  <br>
+  <label id="labelTMeter" class="label">T</div>
   </div>
-
   <canvas id="canvas"> </canvas>
 
   <script type="module">
@@ -75,7 +76,7 @@
 
     //================ GLOBAL SIMULATION VARIABLES
     const ctx=canvas.getContext("2d")
-    const ntmax=100,nmax=900,dmax=2
+    const ntmax=100,nmax=2500,dmax=2
     const rnd=new Float32Array(nmax*dmax)
     const vnd=new Float32Array(nmax*dmax)
     const m=1
@@ -116,15 +117,21 @@
       setAxes()
       ctx.strokeStyle="#CCCCCC"; ctx.fillStyle="#CCCCCC66"; ctx.lineWidth=1
       drawAxes(ctx)
-      ctx.strokeStyle="#0000FF";ctx.fillStyle="#FFFF33"; ctx.lineWidth=1;
-      for (let n=0; n<nmax; ++n) {drawCircle(ctx, XFromx(rnd[n*dmax]), YFromy(rnd[n*dmax+1]), 3, true, true)}
+      // ctx.strokeStyle="#0000FF";
+      ctx.fillStyle="#FFFF0033"; ctx.lineWidth=1;
+      for (let n=0; n<nmax; ++n) {drawCircle(ctx, XFromx(rnd[n*dmax]), YFromy(rnd[n*dmax+1]), 3, false, true)}
+
+      let s=0; for (let i=0; i<nmax*2; ++i) s+=vnd[i]**2
+      const Tmeter = m*s/(nmax*2)
+      labelTMeter.innerHTML = `Tmeter = ${Tmeter.toFixed(2)}`
+      
       requestAnimationFrame(animate)
     }
     
 
     function setT(e) {
       kBT = Number(sliderT.value)
-      labelT.innerHTML = `T = ${kBT}`
+      labelT.innerHTML = `Tstat = ${kBT.toFixed(2)}`
       gamma=(2*kBT/m/trelax)**.5      
     }
     function resize() {
