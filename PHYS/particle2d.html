@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <style>
+    body {margin:0;padding:0; width:100vh; height:200vh;}
+    canvas {position:fixed;left:0;top:0;margin:0;padding:0;background:black;}
+    .label {display:inline-block;width:6rem;height:10px;font-family:monospace;font-size:16px;}
+    input {display:inline-block;width:80vh;height:10px;}
+    #controls {position:fixed;left:0;top:0;color:white;width:100vh;height:20vh;z-index:1;padding:16px;}
+  </style>
+</head>
+<body>
+  <div id="controls">
+  <label id="labelT" class="label" for="sliderT">Temperature T</label>
+  <input id="sliderT" class="slider" type="range" min="0.000" max="1.000" step="0.001" value="0.100">
+  </div>
+
+  <canvas id="canvas"> </canvas>
+
+  <script type="module">
+    /*=======================================
+    MATH UTILITY FUNCTIONS
+    =======================================*/
+    const clamp=(x,a,b)=>Math.min(Math.max(x,a),b)
+    const norm=(dx,dy)=>Math.sqrt(dx*dx + dy*dy)
+    function rangauss() {
+      return Math.sqrt(-2.0*Math.log(1-Math.random())) * Math.cos(2.0*Math.PI*Math.random())
+    } 
+    /*=======================================
+    GRAPHICS UTILITY FUNCTIONS: GRAPHICS PRIMITIVES
+    =======================================*/
+    function drawLine(ctx, r1, r2) {
+      ctx.beginPath()
+      ctx.moveTo(...r1); ctx.lineTo(...r2);
+      ctx.stroke()
+    }
+    function drawCircle(ctx, x, y, r, s=false, f=false) {
+      ctx.beginPath()
+      ctx.arc(x, y, r, 0, 2 * Math.PI);
+      if (s) ctx.stroke()
+      if (f) ctx.fill()
+    }
+    /*=======================================
+    GRAPHICS UTILITY FUNCTIONS: PLOTTING FUNCTIONS AND ASSOCIATED GLOBAL VARIABLES
+    If we were serious about this, we would store these global variables in an object
+    to encapsulate it so that they don't interact with user-defined code.
+    Or we would define a class.
+    =======================================*/
+    var xmin,xmax,ymin,ymax,Xmin,Xmax,Ymin,Ymax;
+    var Xorg,Yorg,xscal,yscal;
+
+    function rescale(x, x1, x2, y1, y2) {return y1+(y2-y1)/(x2-x1)*(x-x1); }
+    function setAxes() { //xmin, xmax, ymin, ymax, Xmin, Xmax, Ymin, Ymax) {
+      xscal=(Xmax-Xmin)/(xmax-xmin); Xorg=Xmin-xscal*xmin;
+      yscal=(Ymax-Ymin)/(ymax-ymin); Yorg=Ymin-yscal*ymin;
+    }
+    function XFromx(x) { return Xorg+xscal*x; }
+    function YFromy(y) { return Yorg+yscal*y; }
+    function drawAxes(ctx) {
+      drawLine(ctx, [0,Yorg], [ctx.canvas.width, Yorg])
+      drawLine(ctx, [Xorg,0], [Xorg, ctx.canvas.height])
+    }
+    function plotList(ctx, xx, yy) {
+      ctx.beginPath()
+      const X=xx.length;
+      for (let n=0; n<X; ++n) {
+        let x=xx[n], y=yy[n];
+        if (n==0) ctx.moveTo(XFromx(x), YFromy(y))
+        else ctx.lineTo(XFromx(x), YFromy(y))
+      }
+      ctx.stroke()
+      for (let n=0; n<X; ++n) {drawCircle(ctx, XFromx(xx[n]), YFromy(yy[n]), 3, false, true)}
+    }
+
+    //================ GLOBAL SIMULATION VARIABLES
+    const ctx=canvas.getContext("2d")
+    const ntmax=100,nmax=900,dmax=2
+    const rnd=new Float32Array(nmax*dmax)
+    const vnd=new Float32Array(nmax*dmax)
+    const m=1
+    const trelax=0.1
+    let kBT=0.2
+    let gamma=(2*kBT/m/trelax)**.5
+    const tstep=0.01
+    const frameSkip=10
+    
+    // const fFunc = (x,y)=>[-x+.1*y,-y-.1*x]
+    const a=0.2
+    const fFunc = (x,y)=>[-y-4*x*(x*x+a*y-1), -x-2*y-2*a*(x*x+a*y-1)]
+
+    for (let n=0; n<nmax; ++n) for (let d=0; d<dmax; ++d) rnd[n*dmax+d] = 0
+    
+    function evolve(timeCurrent) {
+      for (let frame=0; frame<frameSkip; ++frame) {
+        for (let n=0; n<nmax; ++n) {
+          const x = rnd[n*dmax]
+          const y = rnd[n*dmax+1]
+          const [fx,fy] = fFunc(x,y)
+          const vx = vnd[n*dmax]
+          const vy = vnd[n*dmax+1]
+          vnd[n*dmax  ] = vx - vx/trelax*tstep + fx*tstep + gamma*tstep**.5*rangauss()
+          vnd[n*dmax+1] = vy - vy/trelax*tstep+ fy*tstep + gamma*tstep**.5*rangauss()
+        }
+        for (let n=0; n<nmax; ++n) for (let d=0; d<dmax; ++d) rnd[n*dmax+d] += vnd[n*dmax+d]*tstep
+      }
+    }
+
+    function animate(timeCurrent) {
+      evolve()
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      Xmin=0; Xmax=canvas.width; Ymin=canvas.height; Ymax=0
+      ymin=-2; ymax=+2
+      xmin=ymin*canvas.width/canvas.height
+      xmax=ymax*canvas.width/canvas.height
+      setAxes()
+      ctx.strokeStyle="#CCCCCC"; ctx.fillStyle="#CCCCCC66"; ctx.lineWidth=1
+      drawAxes(ctx)
+      ctx.strokeStyle="#0000FF";ctx.fillStyle="#FFFF33"; ctx.lineWidth=1;
+      for (let n=0; n<nmax; ++n) {drawCircle(ctx, XFromx(rnd[n*dmax]), YFromy(rnd[n*dmax+1]), 3, true, true)}
+      requestAnimationFrame(animate)
+    }
+    
+
+    function setT(e) {
+      kBT = Number(sliderT.value)
+      labelT.innerHTML = `T = ${kBT}`
+      gamma=(2*kBT/m/trelax)**.5      
+    }
+    function resize() {
+      canvas.width=visualViewport.width||window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth
+      canvas.height=visualViewport.height||window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight
+    }
+    //================ MAIN CODE
+    document.body.addEventListener('dblclick', function (e) { e.preventDefault() })
+    window.visualViewport.addEventListener('resize', resize)
+    sliderT.addEventListener('input', setT)
+    setT(); resize()
+    requestAnimationFrame(animate)
+
+  </script>
+</body>
+</html>
