@@ -5,17 +5,24 @@
   <style>
     body {margin:0;padding:0; width:100vh; height:200vh; font-family:monospace;font-size:2rem;}
     canvas {position:fixed;left:0;top:0;margin:0;padding:0;background:black;}
-    .label {display:inline-block;width:16rem;height:2rem;}
-    input {display:inline-block;width:40vh;height:2rem;vertical-align: middle;}
+    label {display:inline-block;width:18rem;height:2rem;}
+    input {display:inline-block;width:20vh;height:2rem;vertical-align: middle;}
     #controls {position:fixed;left:0;top:0;color:white;width:100vh;height:20vh;z-index:1;padding:16px;}
   </style>
 </head>
 <body>
   <div id="controls">
-  <label id="labelT" class="label" for="sliderT">Thermostat T</label>
-  <input id="sliderT" class="slider" type="range" min="0.000" max="1.000" step="0.001" value="0.100">
+  <label id="labelframeskip" for="sliderframeskip">Frameskip</label>
+  <input id="sliderframeskip" type="range" min="1" max="100" step="1" value="1">
   <br>
-  <label id="labelTMeter" class="label">T</div>
+  <label id="labeltrelax" for="slidertrelax">Relaxtime trelax</label>
+  <input id="slidertrelax" type="range" min="0" max="4" step="0.01" value="4.">
+  <br>
+  <label id="labelT" for="sliderT">Thermostat T</label>
+  <input id="sliderT" type="range" min="0.000" max="1.000" step="0.001" value="0.100">
+  <br>
+  <label id="labelTMeter">T</label>
+  <input id="sliderTMeter" type="range" min="0.000" max="1.000" step="0.001" value="0.100">
   </div>
   <canvas id="canvas"> </canvas>
 
@@ -76,15 +83,12 @@
 
     //================ GLOBAL SIMULATION VARIABLES
     const ctx=canvas.getContext("2d")
-    const ntmax=100,nmax=2500,dmax=2
+    const nmax=10000,dmax=2
     const rnd=new Float32Array(nmax*dmax)
     const vnd=new Float32Array(nmax*dmax)
     const m=1
-    const trelax=0.1
-    let kBT=0.2
-    let gamma=(2*kBT/m/trelax)**.5
     const tstep=0.01
-    const frameSkip=10
+    let trelax,kBT,gamma,frameSkip
     
     // const fFunc = (x,y)=>[-x+.1*y,-y-.1*x]
     const a=0.2
@@ -115,22 +119,26 @@
       xmin=ymin*canvas.width/canvas.height
       xmax=ymax*canvas.width/canvas.height
       setAxes()
-      ctx.strokeStyle="#CCCCCC"; ctx.fillStyle="#CCCCCC66"; ctx.lineWidth=1
-      drawAxes(ctx)
+      // ctx.strokeStyle="#CCCCCC"; ctx.fillStyle="#CCCCCC"; ctx.lineWidth=1
+      // drawAxes(ctx)
       // ctx.strokeStyle="#0000FF";
-      ctx.fillStyle="#FFFF0033"; ctx.lineWidth=1;
-      for (let n=0; n<nmax; ++n) {drawCircle(ctx, XFromx(rnd[n*dmax]), YFromy(rnd[n*dmax+1]), 3, false, true)}
+      ctx.fillStyle="#FFFF00FF" //; ctx.lineWidth=1;
+      for (let n=0; n<nmax; ++n) {drawCircle(ctx, XFromx(rnd[n*dmax]), YFromy(rnd[n*dmax+1]), 1, false, true)}
 
       let s=0; for (let i=0; i<nmax*2; ++i) s+=vnd[i]**2
       const Tmeter = m*s/(nmax*2)
       labelTMeter.innerHTML = `Tmeter = ${Tmeter.toFixed(2)}`
+      sliderTMeter.value = Tmeter
       
       requestAnimationFrame(animate)
     }
     
-
-    function setT(e) {
+    function setPars(e) {
+      frameSkip = Number(sliderframeskip.value)
+      trelax = 10**Number(slidertrelax.value)   // logarithmic!
       kBT = Number(sliderT.value)
+      labelframeskip.innerHTML = `Frameskip = ${frameSkip}`
+      labeltrelax.innerHTML = `trelax = ${trelax.toFixed(1)}`
       labelT.innerHTML = `Tstat = ${kBT.toFixed(2)}`
       gamma=(2*kBT/m/trelax)**.5      
     }
@@ -141,8 +149,11 @@
     //================ MAIN CODE
     document.body.addEventListener('dblclick', function (e) { e.preventDefault() })
     window.visualViewport.addEventListener('resize', resize)
-    sliderT.addEventListener('input', setT)
-    setT(); resize()
+    sliderT.addEventListener('input', setPars)
+    slidertrelax.addEventListener('input', setPars)
+    sliderframeskip.addEventListener('input', setPars)
+    // DON'T listen for events on the thermometer
+    setPars(); resize()
     requestAnimationFrame(animate)
 
   </script>
