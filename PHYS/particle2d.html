@@ -65,38 +65,22 @@
     }
     function XFromx(x) { return Xorg+xscal*x; }
     function YFromy(y) { return Yorg+yscal*y; }
-    function drawAxes(ctx) {
-      drawLine(ctx, [0,Yorg], [ctx.canvas.width, Yorg])
-      drawLine(ctx, [Xorg,0], [Xorg, ctx.canvas.height])
-    }
-    function plotList(ctx, xx, yy) {
-      ctx.beginPath()
-      const X=xx.length;
-      for (let n=0; n<X; ++n) {
-        let x=xx[n], y=yy[n];
-        if (n==0) ctx.moveTo(XFromx(x), YFromy(y))
-        else ctx.lineTo(XFromx(x), YFromy(y))
-      }
-      ctx.stroke()
-      for (let n=0; n<X; ++n) {drawCircle(ctx, XFromx(xx[n]), YFromy(yy[n]), 3, false, true)}
-    }
-
+    
     //================ GLOBAL SIMULATION VARIABLES
     const ctx=canvas.getContext("2d")
     const nmax=10000,dmax=2
-    const rnd=new Float32Array(nmax*dmax)
-    const vnd=new Float32Array(nmax*dmax)
+    const rnd=new Float32Array(nmax*dmax) // init to zeros
+    const vnd=new Float32Array(nmax*dmax) // init to zeros
     const m=1
     const tstep=0.01
     let trelax,kBT,gamma,frameSkip
-    
-    // const fFunc = (x,y)=>[-x+.1*y,-y-.1*x]
     const a=0.2
     const fFunc = (x,y)=>[-y-4*x*(x*x+a*y-1), -x-2*y-2*a*(x*x+a*y-1)]
 
-    for (let n=0; n<nmax; ++n) for (let d=0; d<dmax; ++d) rnd[n*dmax+d] = 0
-    
     function evolve(timeCurrent) {
+      let zetaDamp = Math.exp(-tstep/trelax)
+      let zetaKick = trelax*(1 - zetaDamp)
+      let zetaDiffuse = gamma * Math.sqrt(trelax/2*(1-zetaDamp**2))
       for (let frame=0; frame<frameSkip; ++frame) {
         for (let n=0; n<nmax; ++n) {
           const x = rnd[n*dmax]
@@ -104,10 +88,12 @@
           const [fx,fy] = fFunc(x,y)
           const vx = vnd[n*dmax]
           const vy = vnd[n*dmax+1]
-          vnd[n*dmax  ] = vx - vx/trelax*tstep + fx*tstep + gamma*tstep**.5*rangauss()
-          vnd[n*dmax+1] = vy - vy/trelax*tstep+ fy*tstep + gamma*tstep**.5*rangauss()
+          // vnd[n*dmax  ] = vx - vx/trelax*tstep + fx*tstep + gamma*tstep**.5*rangauss()
+          // vnd[n*dmax+1] = vy - vy/trelax*tstep+ fy*tstep + gamma*tstep**.5*rangauss()
+          vnd[n*dmax  ] = zetaDamp*vx + zetaKick*fx + zetaDiffuse*rangauss()
+          vnd[n*dmax+1] = zetaDamp*vy + zetaKick*fy + zetaDiffuse*rangauss()
         }
-        for (let n=0; n<nmax; ++n) for (let d=0; d<dmax; ++d) rnd[n*dmax+d] += vnd[n*dmax+d]*tstep
+        for (let nd=0; nd<nmax*dmax; ++nd) rnd[nd] += vnd[nd]*tstep
       }
     }
 
@@ -119,15 +105,12 @@
       xmin=ymin*canvas.width/canvas.height
       xmax=ymax*canvas.width/canvas.height
       setAxes()
-      // ctx.strokeStyle="#CCCCCC"; ctx.fillStyle="#CCCCCC"; ctx.lineWidth=1
-      // drawAxes(ctx)
-      // ctx.strokeStyle="#0000FF";
       ctx.fillStyle="#FFFF00FF" //; ctx.lineWidth=1;
       for (let n=0; n<nmax; ++n) {drawCircle(ctx, XFromx(rnd[n*dmax]), YFromy(rnd[n*dmax+1]), 1, false, true)}
 
-      let s=0; for (let i=0; i<nmax*2; ++i) s+=vnd[i]**2
+      let s=0; for (let i=0; i<nmax*dmax; ++i) s+=vnd[i]**2
       const Tmeter = m*s/(nmax*2)
-      labelTMeter.innerHTML = `Tmeter = ${Tmeter.toFixed(2)}`
+      labelTMeter.innerHTML = `Tmeter = ${Tmeter.toFixed(3)}`
       sliderTMeter.value = Tmeter
       
       requestAnimationFrame(animate)
@@ -139,7 +122,7 @@
       kBT = Number(sliderT.value)
       labelframeskip.innerHTML = `Frameskip = ${frameSkip}`
       labeltrelax.innerHTML = `trelax = ${trelax.toFixed(1)}`
-      labelT.innerHTML = `Tstat = ${kBT.toFixed(2)}`
+      labelT.innerHTML = `Tstat = ${kBT.toFixed(3)}`
       gamma=(2*kBT/m/trelax)**.5      
     }
     function resize() {
