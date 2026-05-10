@@ -18,8 +18,8 @@
     <input id="sliderB" type="range" min="-50" max="50" step=".1" value="0.0"><br>
     <label id="labelT" for="sliderT">Thermostat T</label>
     <input id="sliderT" type="range" min="4.000" max="15.000" step="0.001" value="11.00"><br>
-    <!-- <label id="labelTMeter">Thermometer T</label>
-    <input id="sliderTMeter" type="range" min="4.000" max="15.000" step="0.001" value="11.00"> -->
+    <label id="labelTMeter">Thermometer T</label>
+    <input id="sliderTMeter" type="range" min="4.000" max="15.000" step="0.001" value="11.00">
     </div>
   </div>
   <canvas id="canvas"></canvas>
@@ -40,49 +40,53 @@
     //================ GLOBAL SIMULATION VARIABLES
     const ctx=canvas.getContext("2d")
     var frameSkip,B,T
-    //-------- PHYSICAL CONSTANTS
+    //-------- PHYSICAL CONSTANTS AND UNITS
     const pi   = 3.141592653589793238
     const gam  = 0.577215664901532861
     const kB   = 1.380649e-23    
     const hbar = 1.054571817e-34
     const mu0  = 1.25663706127e-6
-    const M    = 2 * 9.1093837e-31
-    const Q    = 2 * 1.60217663e-19
-    const Phi0 = 2*pi*hbar/Q // superconducting flux quantum
+    const M    = 2 * 9.1093837e-31  // Cooper pair mass
+    const Q    = 2 * 1.60217663e-19 // Cooper pair charge
+    const PhiQ = 2*pi*hbar/Q        // superconducting flux quantum in Wb
     const nm   = 1e-9
+    const ps   = 1e-12
     const Kelvin=1
-    const x0   = 1.e-9 // length unit (nanometer)
-    const E0   = kB*1.0 // energy unit (kB*K)
+    const xUnit   = 1.e-9 // length unit (nanometer)
+    const EUnit   = kB*1.0 // energy unit (kB*K)
+    const tUnit = hbar/EUnit
+    const mUnit = EUnit*tUnit**2/xUnit**2
     //-------- SIMULATION CONSTANTS
-    const X=160,Y=100
-    const I=X*Y
-    const a=10.e-9 // grid spacing?)
-    const tstep=0.0005
-    const trelax=0.02
-    const mfict=1
-    const zetaDamp=Math.exp(-tstep/trelax)
-    const zetaKick=mfict*trelax*(1-zetaDamp)
-    var zetaDiffuse
+    const X=160,Y=100,I=X*Y  // grid size
+    const a=10*nm            // grid spacing
+    const hThickness = 7*nm// 7nm
+    const tRelax = 1.00*ps
+    const tOsc   = 0.50*ps
+    const tStep  = 0.05*ps
+    const mFict  = 7.7e-72   // hardwire????????????  this depends on thckness....???!1
+// const mFict  = 7.7e-72   // hardwire????????????  this depends on thckness....???!1
+
+    // const tstep=0.0005 *2
+    // const trelax=0.02 *2
+    // const mfict=1
+
+    const zetaDamp=Math.exp(-tStep/tRelax)
+    const zetaKick=tRelax*(1-zetaDamp) / tUnit
     //-------- SIMULATION ARRAYS
-    const xi0=new Float32Array(I)   // physical parameters
-    const lam0=new Float32Array(I)
+    const xi0=new Float32Array(I),lam0=new Float32Array(I)
     const Tc=new Float32Array(I)
     const alpha=new Float32Array(I) // GL parameters
     const beta=new Float32Array(I)
-    const u=new Float32Array(I)     // simulation variables
-    const v=new Float32Array(I)
-    const p=new Float32Array(I)
-    const q=new Float32Array(I)
     const w=new Float32Array(I)
-    const wx=new Float32Array(I)
-    const wy=new Float32Array(I)
-    const Ax=new Float32Array(I)
-    const Ay=new Float32Array(I)
+    const wx=new Float32Array(I),wy=new Float32Array(I)
+    const Ax=new Float32Array(I),Ay=new Float32Array(I)
+    const u=new Float32Array(I),v=new Float32Array(I)
+    const p=new Float32Array(I),q=new Float32Array(I)
     
     //================ FUNCTDIONS
-    function addRectangle(x0, y0, x1, y1, xi0_, lam0_, Tc_) {
+    function addRectangle(xUnit, y0, x1, y1, xi0_, lam0_, Tc_) {
       for (let x=0; x<X; ++x) for (let y=0; y<Y; ++y) {const i=x+X*y
-        if (x0<x && x<x1 && y0<y && y<y1) {xi0[i]=xi0_; lam0[i]=lam0_; Tc[i]=Tc_;}
+        if (xUnit<x && x<x1 && y0<y && y<y1) {xi0[i]=xi0_; lam0[i]=lam0_; Tc[i]=Tc_;}
       }
     }
     function addEllipse(xc, yc, a, b, xi0_, lam0_, Tc_) {
@@ -108,102 +112,91 @@
         wy[i]=y<Y-1? harmonicMean(w[i], w[iN]) : 0
       }
     }
-    function init() {
+    function initMatter() {
       addRectangle(-1, -1, X, Y,             4*nm, 400*nm, -14*Kelvin)  // insulating substrate by default!  
-      addRectangle(0, 0,   X-1, Y-1,         4*nm, 400*nm, +14*Kelvin)  // NbTiN everywhere      
-      
-      updatewxwy()
+      addRectangle(0, 0,   X-1, Y-1,         4*nm, 400*nm, +14*Kelvin)  // NbTiN everywhere        
+    }
+    function initWF() {
       for (let x=0; x<X; ++x) for (let y=0; y<Y; ++y) {const i=x+X*y
-        // u and v are in simulation units
-        u[i]=(2*Math.random()-1) * 1
-        v[i]=(2*Math.random()-1) * 1        
+        const psi0 = beta[i]==0 ? 0 : (Math.abs(alpha[i])/beta[i])**.5
+        u[i]=(Math.random()-.5) * psi0   // u and v are in simulation units
+        v[i]=(Math.random()-.5) * psi0        
         p[i]=0.
         q[i]=0.
+        // console.log(psi0)
       }
     }
 
   
     function calcPars(xi0, lam0, Tc, T, h) { // convert material & simulation parameters to GL parameters in SI units
-      const thickness = h // thickness of the film in SI units (meters)
-
+      let w,alpha,beta
       if (Tc<0) { // MATERIAL IS INSULATOR
-        const w = 0
-        const alpha = (hbar**2) / (4*M*xi0**2) * thickness  // metal with CP decay length xi
-        const beta = 0
-        return [alpha,beta,w]
+        w    = 0
+        alpha= (hbar**2)/(4*M*xi0**2) * h  // metal with CP decay length xi
+        beta = 0
       }
       else if (T>=Tc) { // SUPERCONDUCTOR ABOVE ITS Tc
-        const w = hbar**2/M * thickness        // warning: would overflow if single precision
-        const alpha = (hbar**2) / (4*M*xi0**2) * 3*(T/Tc-1) * thickness
-        const beta = 0
-        return [alpha,beta,w]
+        w    = hbar**2/M * h        // warning: would overflow if single precision
+        alpha= (hbar**2)/(4*M*xi0**2) * 3*(T/Tc-1) * h
+        beta = 0
       }
       else { // SUPERCONDUCTOR
-        const w = hbar**2/M  * thickness
-
-        const Delta0 = pi/Math.exp(gam) * kB * Tc
-        const Delta = Delta0 * bcsGapEquation(T/Tc)        
-        const vF = pi * Delta0 * xi0 / hbar
-        const xi = hbar * vF / (pi*Delta)
-        // const alpha = -(hbar**2) / (4*M*xi**2) * thickness
-        const alpha = -(hbar**2) / (4*M*xi0**2) * thickness * bcsGapEquation(T/Tc)**2
-        
-        const Ups0 = 1/(mu0*lam0**2)
-        const Ups = Ups0 * bcsSuperfluidStiffness(T/Tc)
-        const lam = (mu0*Ups)**(-0.5)
-        const beta = +mu0*Q**2*hbar**2*lam**2/(4*M**2*xi**2) * thickness
-
-        return [alpha,beta,w]        
+        const xi =xi0/bcsGapEquation(T/Tc)
+        const lam=lam0/bcsSuperfluidStiffness(T/Tc)**.5
+        w    = hbar**2/M  * h
+        alpha= -(hbar**2)/(4*M*xi**2) * h
+        beta = +mu0*Q**2*hbar**2*lam**2/(4*M**2*xi**2) * h
       }
+      return [alpha,beta,w]
     }
     function setB(e) {
       B = Number(sliderB.value)*1e-3
       labelB.innerHTML = 'B = '+B/1e-3+'mT'
-      const piaBOverPhi0=pi*a*B/Phi0, xcen=(X-1)/2, ycen=(Y-1)/2
+      const piaBOverPhiQ=pi*a*B/PhiQ, xcen=(X-1)/2, ycen=(Y-1)/2
       for (let x=0; x<X; ++x) for (let y=0; y<Y; ++y) {const i=x+X*y
-        Ax[i]=piaBOverPhi0*(ycen-y)*a
-        Ay[i]=piaBOverPhi0*(x-xcen)*a
+        Ax[i]=piaBOverPhiQ*(ycen-y)*a
+        Ay[i]=piaBOverPhiQ*(x-xcen)*a
       }
     }
     function setT(e) {
       T = Number(sliderT.value)
       labelT.innerHTML = `T = ${T} K`
       for (let x=0; x<X; ++x) for (let y=0; y<Y; ++y) {const i=x+X*y
-        const [aaa,bbb,www] = calcPars(xi0[i], lam0[i], Tc[i], T, 100*nm) // these are in SI units        
-        alpha[i]=aaa/(E0*x0)    * (a/x0)**2  // include these stepszie factors
-        beta[i] =bbb/(E0*x0**4) * (a/x0)**2
-        w[i]    =www/(E0*x0**3)        
+        const [aaa,bbb,www] = calcPars(xi0[i], lam0[i], Tc[i], T, hThickness) // these are in SI units        
+        alpha[i]=aaa/(EUnit*xUnit)    * (a/xUnit)**2  // include these stepszie factors
+        beta[i] =bbb/(EUnit*xUnit**4) * (a/xUnit)**2
+        w[i]    =www/(EUnit*xUnit**3)        
       }
+      updatewxwy()
       // console.log(alpha[345], beta[345], w[345])
       // console.log(Tc[345], T, alpha[345])
-      updatewxwy()
     }
     function setMisc(e) {
       frameSkip = Number(sliderframeskip.value)
       labelframeskip.innerHTML = `Frameskip = ${frameSkip}`
     }
-    function evolve(t) {
-      zetaDiffuse = Math.sqrt(mfict*T*(1-zetaDamp**2))
+    function evolve() {
+      const zetaDiffuse = Math.sqrt(mFict*kB*T*(1-zetaDamp**2))   / (mUnit*xUnit**5*EUnit)**.5
       for (let x=0; x<X; ++x) for (let y=0; y<Y; ++y) { // calculate forces
         const xp=(x+1)%X,xm=(x+X-1)%X
         const yp=(y+1)%Y,ym=(y+Y-1)%Y
         const i=x+X*y,iE=xp+X*y,iW=xm+X*y,iN=x+X*yp,iS=x+X*ym
         let c,s,ui=u[i],vi=v[i]
-        const Zi = (alpha[i] + beta[i]*(ui**2 + vi**2)/2)
+        const Zi = -alpha[i] - beta[i]*(ui**2 + vi**2)/2
         // need to check sense
         c=Math.cos(Ax[i]) ;s= Math.sin(Ax[i]) ; const uE=c*u[iE] - s*v[iE] - ui, vE=s*u[iE] + c*v[iE] - vi
         c=Math.cos(Ax[iW]);s=-Math.sin(Ax[iW]); const uW=c*u[iW] - s*v[iW] - ui, vW=s*u[iW] + c*v[iW] - vi
         c=Math.cos(Ay[i]) ;s= Math.sin(Ay[i]) ; const uN=c*u[iN] - s*v[iN] - ui, vN=s*u[iN] + c*v[iN] - vi
         c=Math.cos(Ay[iS]);s=-Math.sin(Ay[iS]); const uS=c*u[iS] - s*v[iS] - ui, vS=s*u[iS] + c*v[iS] - vi
-        const f = (wx[i]*uE + wx[iW]*uW + wy[i]*uN + wy[iS]*uS)/2 - Zi*ui
-        const g = (wx[i]*vE + wx[iW]*vW + wy[i]*vN + wy[iS]*vS)/2 - Zi*vi              
+        const f = wx[i]*uE + wx[iW]*uW + wy[i]*uN + wy[iS]*uS + Zi*ui
+        const g = wx[i]*vE + wx[iW]*vW + wy[i]*vN + wy[iS]*vS + Zi*vi              
         // kick+damp+diffuse
         p[i] = zetaKick*f + zetaDamp*p[i] + zetaDiffuse*rangauss()
         q[i] = zetaKick*g + zetaDamp*q[i] + zetaDiffuse*rangauss()
       }
       for (let x=0; x<X; ++x) for (let y=0; y<Y; ++y) {const i=x+X*y
-        u[i] += p[i]*tstep/mfict
-        v[i] += q[i]*tstep/mfict
+        u[i] += p[i]*tStep/mFict     * (mUnit*xUnit**5)/tUnit
+        v[i] += q[i]*tStep/mFict     * (mUnit*xUnit**5)/tUnit
       }
     }
     function hsv2rgb(h,s,v) { //h in [0,2*pi] and s,v in [0,1]; r,g,b in [0,255]
@@ -214,15 +207,20 @@
       for (let i=0; i<frameSkip; ++i) evolve()
       const a = Math.min(Math.floor(canvas.width/X),Math.floor(canvas.height/Y))
       ctx.setTransform(a, 0, 0, -a, 0, canvas.height)
-      const magTypical = 0.05
-      for (let x=0; x<X; ++x) for (let y=0; y<Y; ++y) {
-        const i=x+X*y
+      const magTypical = 0.05 
+      for (let x=0; x<X; ++x) for (let y=0; y<Y; ++y) {const i=x+X*y
         const arg=Math.atan2(v[i],u[i])
         const mag=(u[i]**2+v[i]**2) / magTypical
         const [r,g,b] = hsv2rgb(arg, 1, mag/(1+mag))
         ctx.fillStyle= `rgb(${r}, ${g}, ${b})`
         ctx.fillRect(x,y,1,1)
       }
+
+      //======== Thermometer based on KE
+      let TMeter = 0
+      for (let x=0; x<X; ++x) for (let y=0; y<Y; ++y) {const i=x+X*y; TMeter+=p[i]**2+q[i]**2}
+      TMeter *= 1/(2*X*Y*kB*mFict) * EUnit**2*tUnit**2*xUnit**3
+      sliderTMeter.value = TMeter
       requestAnimationFrame(animate)
     }
     function resize() {
@@ -235,7 +233,7 @@
     sliderB.addEventListener('input', setB)
     sliderT.addEventListener('input', setT)
     sliderframeskip.addEventListener('input', setMisc)
-    init(); setB(); setT(); setMisc(); resize(); requestAnimationFrame(animate);
+    initMatter(); setB(); setT(); initWF(); setMisc(); resize(); requestAnimationFrame(animate);
 
   </script>
 </body>
