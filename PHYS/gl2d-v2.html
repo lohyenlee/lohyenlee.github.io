@@ -3,11 +3,11 @@
 <head>
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <style>
-    body {margin:0;padding:0; width:100vh; height:200vh; font-family:monospace; font-size:1rem;}
+    body {margin:0;padding:0; width:100vh; height:200vh; font-family:monospace; font-size:1.5rem;}
     canvas {position:fixed;left:0;top:0;margin:0;padding:0;background:black;}
-    label {display:inline-block;width:20%;height:1rem;}
-    input {display:inline-block;width:75%;height:1rem;vertical-align: middle;}
-    #controls {position:fixed;left:0;top:0;color:white;width:100vh;height:auto;z-index:1;padding:8px;background-color:#0009;}
+    label {display:inline-block;width:20%;height:2rem;}
+    input {display:inline-block;width:75%;height:2rem;vertical-align: middle;}
+    #controls {position:fixed;left:0;top:0;color:white;width:100vh;height:16vh;z-index:1;padding:16px;background-color:#0009;}
   </style>
 </head>
 <body>
@@ -19,11 +19,7 @@
     <label id="labelT" for="sliderT">Thermostat T</label>
     <input id="sliderT" type="range" min="4.000" max="15.000" step="0.001" value="11.00"><br>
     <label id="labelTMeter">Thermometer T</label>
-    <input id="sliderTMeter" type="range" min="4.000" max="15.000" step="0.001" value="11.00"><br>
-    <button id="button1">Bare film</button>
-    <button id="button2">Strips</button>
-    <button id="button3">Rings</button>
-    <button id="button4">Moats</button>
+    <input id="sliderTMeter" type="range" min="4.000" max="15.000" step="0.001" value="11.00">
     </div>
   </div>
   <canvas id="canvas"></canvas>
@@ -68,6 +64,12 @@
     const tOsc   = 0.50*ps
     const tStep  = 0.05*ps
     const mFict  = 7.7e-72   // hardwire????????????  this depends on thckness....???!1
+// const mFict  = 7.7e-72   // hardwire????????????  this depends on thckness....???!1
+
+    // const tstep=0.0005 *2
+    // const trelax=0.02 *2
+    // const mfict=1
+
     const zetaDamp=Math.exp(-tStep/tRelax)
     const zetaKick=tRelax*(1-zetaDamp) / tUnit
     //-------- SIMULATION ARRAYS
@@ -130,20 +132,20 @@
       let w,alpha,beta
       if (Tc<0) { // MATERIAL IS INSULATOR
         w    = 0
-        alpha= (hbar**2)/(4*M*xi0**2) * h  // hmmmmmmmmmmmm
-        beta = mu0*Q**2*hbar**2*lam0**2/(4*M**2*xi0**2) * (1.5) * h // hmmm
+        alpha= (hbar**2)/(4*M*xi0**2) * h  // metal with CP decay length xi
+        beta = 0
       }
       else if (T>=Tc) { // SUPERCONDUCTOR ABOVE ITS Tc
         w    = hbar**2/M * h        // warning: would overflow if single precision
         alpha= (hbar**2)/(4*M*xi0**2) * 3*(T/Tc-1) * h
-        beta = mu0*Q**2*hbar**2*lam0**2/(4*M**2*xi0**2) * (0.5 + T/Tc) * h
+        beta = 0
       }
       else { // SUPERCONDUCTOR
         const xi =xi0/bcsGapEquation(T/Tc)
         const lam=lam0/bcsSuperfluidStiffness(T/Tc)**.5
         w    = hbar**2/M  * h
         alpha= -(hbar**2)/(4*M*xi**2) * h
-        beta = mu0*Q**2*hbar**2*lam**2/(4*M**2*xi**2) * h
+        beta = +mu0*Q**2*hbar**2*lam**2/(4*M**2*xi**2) * h
       }
       return [alpha,beta,w]
     }
@@ -213,6 +215,7 @@
         ctx.fillStyle= `rgb(${r}, ${g}, ${b})`
         ctx.fillRect(x,y,1,1)
       }
+
       //======== Thermometer based on KE
       let TMeter = 0
       for (let x=0; x<X; ++x) for (let y=0; y<Y; ++y) {const i=x+X*y; TMeter+=p[i]**2+q[i]**2}
@@ -230,53 +233,8 @@
     sliderB.addEventListener('input', setB)
     sliderT.addEventListener('input', setT)
     sliderframeskip.addEventListener('input', setMisc)
-    
+    initMatter(); setB(); setT(); initWF(); setMisc(); resize(); requestAnimationFrame(animate);
 
-    button1.addEventListener('click', (e)=>{
-      addRectangle(-1, -1, X, Y,             4*nm, 400*nm, -14*Kelvin)  // insulating substrate by default!  
-      addRectangle(0, 0,   X-1, Y-1,         4*nm, 400*nm, +14*Kelvin)  // NbTiN everywhere        
-      setB(); setT(); initWF(); setMisc(); resize();}
-    ) 
-    button2.addEventListener('click', (e)=>{
-      addRectangle(-1, -1, X, Y,             4*nm, 400*nm, -30*Kelvin)  // insulating substrate by default!  
-      addRectangle(.1*X, .1*Y, .2*X, .9*Y, 4*nm, 400*nm, +14*Kelvin)  // moat
-      addRectangle(.3*X, .1*Y, .5*X, .9*Y, 4*nm, 400*nm, +14*Kelvin)  // moat
-      addRectangle(.6*X, .1*Y, .9*X, .9*Y, 4*nm, 400*nm, +14*Kelvin)  // moat
-      setB(); setT(); initWF(); setMisc(); resize();}
-    ) 
-    button3.addEventListener('click', (e)=>{
-      addRectangle(-1, -1, X, Y,             4*nm, 400*nm, -14*Kelvin)  // insulating substrate by default!  
-      addEllipse  (.2*X,.25*Y, .20*Y, .20*Y, 4*nm, 400*nm, +14*Kelvin) // NbTiN disk
-      addEllipse  (.2*X,.25*Y, .18*Y, .18*Y, 4*nm, 400*nm, -14*Kelvin) // make into annulus
-      addEllipse  (.2*X, .7*Y, .20*Y, .20*Y, 4*nm, 400*nm, +14*Kelvin) // NbTiN disk
-      addEllipse  (.2*X, .7*Y, .15*Y, .15*Y, 4*nm, 400*nm, -14*Kelvin) // make into annulus
-      addEllipse  (.5*X, .5*Y, .20*Y, .20*Y, 4*nm, 400*nm, +14*Kelvin) // NbTiN disk
-      addEllipse  (.5*X, .5*Y, .12*Y, .12*Y, 4*nm, 400*nm, -14*Kelvin) // make into annulus
-      addEllipse  (.8*X,.25*Y, .20*Y, .20*Y, 4*nm, 400*nm, +14*Kelvin) // NbTiN disk
-      addEllipse  (.8*X,.25*Y, .06*Y, .06*Y, 4*nm, 400*nm, -14*Kelvin) // make into annulus
-      addEllipse  (.8*X, .7*Y, .20*Y, .20*Y, 4*nm, 400*nm, +14*Kelvin) // NbTiN disk
-      addEllipse  (.8*X, .7*Y, .02*Y, .02*Y, 4*nm, 400*nm, -14*Kelvin) // make into annulus
-      setB(); setT(); initWF(); setMisc(); resize();}
-    ) 
-    button4.addEventListener('click', (e)=>{
-      addRectangle(-1, -1, X, Y,             4*nm, 400*nm, -14*Kelvin)  // insulating substrate by default!  
-      addRectangle(0, 0,   X-1, Y-1,         4*nm, 400*nm, +14*Kelvin)  // NbTiN everywhere
-      const moatSpacing=.25*X     // center-to-center spacing
-      const a=.08*X               // moat side
-      for (let i=-2; i<=2; i+=2) {
-        for (let j=-1; j<=1; j+=2) {
-          const x1=.5*X+i*moatSpacing/2, y1=.5*Y+j*moatSpacing/2, side=.1*X
-          addRectangle(x1-a/2, y1-a/2, x1+a/2, y1+a/2, 4*nm, 400*nm, -14*Kelvin)  // moat
-        }
-      }
-      setB(); setT(); initWF(); setMisc(); resize();}
-    ) 
-  
-
-    // initMatter(); setB(); setT(); initWF(); setMisc(); resize(); 
-    button1.click(); requestAnimationFrame(animate);
-
-  
   </script>
 </body>
 </html>
