@@ -146,14 +146,14 @@
         beta = mu0*Q**2*hbar**2*lam0**2/(4*M**2*xi0**2) * (0.5 + 25/14.) * h // !!!!!!!!!
       }
       else if (T>=Tc) { // SUPERCONDUCTOR ABOVE ITS Tc
-        w    = hbar**2/M * h        // warning: would overflow if single precision
+        w    = hbar**2/(2*M) * h        // warning: would overflow if single precision
         alpha= (hbar**2)/(4*M*xi0**2) * 3*(T/Tc-1) * h
         beta = mu0*Q**2*hbar**2*lam0**2/(4*M**2*xi0**2) * (0.5 + T/Tc) * h
       }
       else { // SUPERCONDUCTOR
         const xi =xi0/bcsGapEquation(T/Tc)
         const lam=lam0/bcsSuperfluidStiffness(T/Tc)**.5
-        w    = hbar**2/M  * h
+        w    = hbar**2/(2*M)  * h
         alpha= -(hbar**2)/(4*M*xi**2) * h
         beta = mu0*Q**2*hbar**2*lam**2/(4*M**2*xi**2) * h
       }
