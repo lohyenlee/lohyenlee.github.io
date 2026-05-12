@@ -4,28 +4,31 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <style>
     body {margin:0;padding:0; width:100vh; height:200vh; font-family:monospace; font-size:1rem;}
-    canvas {position:fixed;left:0;top:0;margin:0;padding:0;background:black;}
+    canvas {position:fixed;left:0;top:0;margin:0;padding:0;background:black;cursor:crosshair;}
     label {display:inline-block;width:20%;height:1rem;}
     input {display:inline-block;width:75%;height:1rem;vertical-align: middle;}
     #controls {position:fixed;left:0;top:0;color:white;width:100vh;height:auto;z-index:1;padding:8px;background-color:#0009;}
+    #statusDiv {position:fixed;left:0;bottom:0;color:white;width:100vh;height:auto;z-index:1;padding:8px;background-color:#0009;}
   </style>
 </head>
 <body>
   <div id="controls">
     <label id="labelframeskip" for="sliderframeskip">Frameskip</label>
-    <input id="sliderframeskip" type="range" min="1" max="100" step="1" value="20"><br>
+    <input id="sliderframeskip" type="range" min="0" max="100" step="1" value="20"><br>
     <label id="labelB" for="sliderB">Field B</label>
     <input id="sliderB" type="range" min="-50" max="50" step=".1" value="0.0"><br>
     <label id="labelT" for="sliderT">Thermostat T</label>
-    <input id="sliderT" type="range" min="4.000" max="15.000" step="0.001" value="11.00"><br>
+    <input id="sliderT" type="range" min="4.000" max="20.000" step="0.001" value="11.00"><br>
     <label id="labelTMeter">Thermometer T</label>
-    <input id="sliderTMeter" type="range" min="4.000" max="15.000" step="0.001" value="11.00"><br>
+    <input id="sliderTMeter" type="range" min="4.000" max="20.000" step="0.001" value="11.00"><br>
     <button id="button1">Bare film</button>
     <button id="button2">Strips</button>
     <button id="button3">Rings</button>
     <button id="button4">Moats</button>
     </div>
   </div>
+  <div id="statusDiv">status bar</div>
+    
   <canvas id="canvas"></canvas>
 
   <script type="module">
@@ -33,14 +36,23 @@
     const clamp=(x,a,b)=>Math.min(Math.max(x,a),b)
     const norm=(dx,dy)=>Math.sqrt(dx*dx + dy*dy)
     const harmonicMean=(x,y)=>2*x*y/(x+y+1e-17)
-    function interp(x, y, X) {
+    function interp(x,y,X) {
       const n=x.length, Q=[...y];
       for(let i=1; i<n; ++i) for(let j=0; j<n-i; ++j) Q[j]=((X-x[j])*Q[j+1] - (X-x[j+i])*Q[j])/(x[j+i]-x[j])
       return Q[0]
     }
-    function rangauss() {
-      return Math.sqrt(-2.0*Math.log(1-Math.random())) * Math.cos(2.0*Math.PI*Math.random())
-    } 
+    // function rangauss() { // Box-Muller
+    //   return Math.sqrt(-2.0*Math.log(1-Math.random())) * Math.cos(2.0*Math.PI*Math.random())
+    // } 
+    let spare
+    function rangauss() { // Marsaglia
+        if(spare) {let res=spare; spare=null; return res}
+        let u,v,s
+        do {u=Math.random()*2-1;v=Math.random()*2-1;s=u*u+v*v} while (s>= 1||s===0)
+        let mul=Math.sqrt(-2.*Math.log(s)/s)
+        spare=v*mul
+        return u*mul
+    }
     //================ GLOBAL SIMULATION VARIABLES
     const ctx=canvas.getContext("2d")
     var frameSkip,B,T
@@ -130,8 +142,8 @@
       let w,alpha,beta
       if (Tc<0) { // MATERIAL IS INSULATOR
         w    = 0
-        alpha= (hbar**2)/(4*M*xi0**2) * h  // hmmmmmmmmmmmm
-        beta = mu0*Q**2*hbar**2*lam0**2/(4*M**2*xi0**2) * (1.5) * h // hmmm
+        alpha= (hbar**2)/(4*M*xi0**2) *3*(25/14.-1)* h  // HARDWIRE QUESTIONABLE FORMULA !!!!!!!!!!
+        beta = mu0*Q**2*hbar**2*lam0**2/(4*M**2*xi0**2) * (0.5 + 25/14.) * h // !!!!!!!!!
       }
       else if (T>=Tc) { // SUPERCONDUCTOR ABOVE ITS Tc
         w    = hbar**2/M * h        // warning: would overflow if single precision
@@ -166,8 +178,6 @@
         w[i]    =www/(EUnit*xUnit**3)        
       }
       updatewxwy()
-      // console.log(alpha[345], beta[345], w[345])
-      // console.log(Tc[345], T, alpha[345])
     }
     function setMisc(e) {
       frameSkip = Number(sliderframeskip.value)
@@ -238,7 +248,7 @@
       setB(); setT(); initWF(); setMisc(); resize();}
     ) 
     button2.addEventListener('click', (e)=>{
-      addRectangle(-1, -1, X, Y,             4*nm, 400*nm, -30*Kelvin)  // insulating substrate by default!  
+      addRectangle(-1, -1, X, Y,             4*nm, 400*nm, -14*Kelvin)  // insulating substrate by default!  
       addRectangle(.1*X, .1*Y, .2*X, .9*Y, 4*nm, 400*nm, +14*Kelvin)  // moat
       addRectangle(.3*X, .1*Y, .5*X, .9*Y, 4*nm, 400*nm, +14*Kelvin)  // moat
       addRectangle(.6*X, .1*Y, .9*X, .9*Y, 4*nm, 400*nm, +14*Kelvin)  // moat
@@ -273,6 +283,20 @@
     ) 
   
 
+
+    function reportCellProperties(e) {
+      if (!(e.buttons&1)) return
+      e.preventDefault(); e.stopPropagation()
+      const rect=canvas.getBoundingClientRect()      
+      const pt=ctx.getTransform().invertSelf().transformPoint({x:e.clientX-rect.left,y:e.clientY-rect.top})
+      const x=Math.floor(pt.x),y=Math.floor(pt.y),i=x+X*y
+      statusDiv.innerHTML = 
+        `(x,y)=(${x},${y})  alpha=${alpha[i].toFixed(0)}   beta=${beta[i].toFixed(0)}   w=${w[i].toFixed(0)}
+        |psi|=${Math.sqrt(u[i]**2+v[i]**2).toFixed(3)}    `
+    }
+    canvas.addEventListener('mousedown', reportCellProperties)
+    canvas.addEventListener('mousemove', reportCellProperties)
+    
     // initMatter(); setB(); setT(); initWF(); setMisc(); resize(); 
     button1.click(); requestAnimationFrame(animate);
 
