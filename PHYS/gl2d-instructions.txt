@@ -1,0 +1,68 @@
+Bare film simulation (default)
+
+This simulation represents a NbTiN-like superconducting film with xi0=4 nm, lambda0=400 nm, Tc=14 K, and thickness h=7 nm.
+The grid spacing is a=10 nm.  The grid size is 160x100; the film dimensions are 1600 nm x 1000 nm.
+xi(T) and lambda(T) are assumed to change with T according to clean BCS theory.
+Screening is ignored.
+The timestep is 0.05 ps.
+The condensate wavefunction relaxation time is tau=1 ps.
+Temperature is controlled using a Langevin thermostat with damping, noise, and inertia (momentum & fictitious mass).
+  The damping is dictated by the relaxation time, tau.
+  The noise strength is dictated by the temperature, T.
+  The fictitious mass is a tunable parameter affecting whether ψ oscillations are under- or over-damped.
+Temperature is monitored based on the fictitious kinetic energy per degree of freedom.
+
+1. Ramp the thermostat temperature TStat up and down.  Observe the following:
+    - TMeter follows TStat with a thermalization time of tau=1 ps.  
+    - TMeter tends to hover slightly above TStat due to cheap-and-dirty numerics and timestep error.
+    - As T increases, colors darken as |ψ| decreases.
+    - For T>Tc=14K, mean-field theory predicts |ψ|=0, but thermal fluctuations produce finite |ψ|^2.
+    - Quenching (cooling quickly from 16K to 4K) produces vortices and antivortices, which tend to annihilate.
+2. Try zero-field cooling.  Set B=0 and anneal gradually from T=16K to T=4K.  Ramp field to B=50mT.  Observe:
+    - The film develops strong Meissner currents around the edges.  No vortices enter.
+3. Do field-cooling instead.  Set B=50mT and anneal gradually from T=16K to T=4K.  Observe that:
+    - The vector potential imprints a phase pattern even above Tc (14.01K) and certainly below Tc (13.9K),
+      visible as rainbow-colored stripes within superconducting puddles.
+    - As T decreases to 12K, vortices emerge naturally from the pattern.
+    - As T decreases to 4K, xi(T) decreases, and the vortex cores shrink.
+4. Set TStat=10K.  Then set Frameskip=0 to pause the simulation.  Mouseover a vortex core.  
+    - On the status bar at the bottom, observe that |ψ| is small in the vortex core.
+
+--------------------------------------------
+Strips
+
+This simulation has three 800-nm-long strips of widths 160nm, 320nm, and 480nm, embedded in insulator.
+
+1. Reload (Ctrl-R) and click "Strips".  Set T=16K (above Tc).  Observe that:
+    - Superconducting fluctuations in the SC are more pronounced than in the insulator.
+      (I had to choose the internal Ginzburg-Landau parameters alpha, beta, M in a sensible way
+       for the normal-state SC as well as for the insulator.)
+2. Set B=40mT.  Anneal slowly from T=16K to T=10K.  You'll probably see that:
+    - 160-nm strip is vortex-free. 
+    - 320-nm strip has 1 vortex.  
+    - 480-nm strip has 3 or 4 vortices.
+   In principle, we could do TDGL field-cooling experiments and compare with "Bronson" strip theory,
+   and see whether we need r_c to be strip-width-dependent.  We could add disorder in this simulation.
+3. Mouse over the insulator.  In this simulation, "Tc<0" represents an insulator (for now).
+
+--------------------------------------------
+Rings
+
+1. Reload and click "Rings".  Repeat zero-field quenches (T=16K to 4K).  Observe that:
+    - Sometimes spontaneous fluxoids are generated (due to Kibble-Zurek or thermal activation mechanism).
+2. Quenching in B=50mT almost always results in 1 or more trapped fluxoids, as expected.
+
+TBD: NOTCHED RINGS.
+QUENTIN SAID SOMETHING ABOUT THE NOTCH "LETTING THE FLUXOID ESCAPE" DURING COOLING....
+
+--------------------------------------------
+Moats
+
+1. Reload and click "Moats".  Try zero-field cooling.  
+    - There is a significant probability of spontaneous flux generation IN THE MOATS!
+    - You probably cooled the system over a duration of 10 ps or 1000 ps at most.
+    - In the real systems, cooldown is much longer, but moats are also much bigger.
+      Should we be worried?
+2. Set 20mT and cool slowly. 
+    - This tends to give about 1 fluxoid per moat.  There might be an interstitial vortex.
+

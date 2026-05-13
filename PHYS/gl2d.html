@@ -8,7 +8,7 @@
     label {display:inline-block;width:20%;height:1rem;}
     input {display:inline-block;width:75%;height:1rem;vertical-align: middle;}
     #controls {position:fixed;left:0;top:0;color:white;width:100vh;height:auto;z-index:1;padding:8px;background-color:#0009;}
-    #statusDiv {position:fixed;left:0;bottom:0;color:white;width:100vh;height:auto;z-index:1;padding:8px;background-color:#0009;}
+    #statusDiv {position:fixed;left:0;bottom:0;color:white;width:100vh;height:auto;z-index:1;padding:8px;background-color:#0009;white-space:pre;}
   </style>
 </head>
 <body>
@@ -18,16 +18,16 @@
     <label id="labelB" for="sliderB">Field B</label>
     <input id="sliderB" type="range" min="-50" max="50" step=".1" value="0.0"><br>
     <label id="labelT" for="sliderT">Thermostat T</label>
-    <input id="sliderT" type="range" min="4.000" max="20.000" step="0.001" value="11.00"><br>
+    <input id="sliderT" type="range" min="4.00" max="16.00" step="0.01" value="11.00"><br>
     <label id="labelTMeter">Thermometer T</label>
-    <input id="sliderTMeter" type="range" min="4.000" max="20.000" step="0.001" value="11.00"><br>
+    <input id="sliderTMeter" type="range" min="4.00" max="16.00" step="0.01" value="11.00"><br>
     <button id="button1">Bare film</button>
     <button id="button2">Strips</button>
     <button id="button3">Rings</button>
     <button id="button4">Moats</button>
     </div>
   </div>
-  <div id="statusDiv">status bar</div>
+  <div id="statusDiv">Status bar</div>
     
   <canvas id="canvas"></canvas>
 
@@ -41,21 +41,15 @@
       for(let i=1; i<n; ++i) for(let j=0; j<n-i; ++j) Q[j]=((X-x[j])*Q[j+1] - (X-x[j+i])*Q[j])/(x[j+i]-x[j])
       return Q[0]
     }
-    // function rangauss() { // Box-Muller
-    //   return Math.sqrt(-2.0*Math.log(1-Math.random())) * Math.cos(2.0*Math.PI*Math.random())
-    // } 
-    let spare
+    // const rangauss=()=>Math.sqrt(-2.0*Math.log(1-Math.random())) * Math.cos(2.0*Math.PI*Math.random()) //Box-Muller
     function rangauss() { // Marsaglia
-        if(spare) {let res=spare; spare=null; return res}
-        let u,v,s
-        do {u=Math.random()*2-1;v=Math.random()*2-1;s=u*u+v*v} while (s>= 1||s===0)
-        let mul=Math.sqrt(-2.*Math.log(s)/s)
-        spare=v*mul
-        return u*mul
+        if(rangauss.y) {const x=rangauss.y;rangauss.y=null; return x}
+        let u,v,s; do {u=Math.random()*2-1;v=Math.random()*2-1;s=u*u+v*v} while (s>= 1||s===0)
+        let f=Math.sqrt(-2.*Math.log(s)/s); rangauss.y=f*v; return f*u
     }
     //================ GLOBAL SIMULATION VARIABLES
     const ctx=canvas.getContext("2d")
-    var frameSkip,B,T
+    var frameSkip,B,T,tPresent
     //-------- PHYSICAL CONSTANTS AND UNITS
     const pi   = 3.141592653589793238
     const gam  = 0.577215664901532861
@@ -122,18 +116,14 @@
         wy[i]=y<Y-1? harmonicMean(w[i], w[iN]) : 0
       }
     }
-    function initMatter() {
-      addRectangle(-1, -1, X, Y,             4*nm, 400*nm, -14*Kelvin)  // insulating substrate by default!  
-      addRectangle(0, 0,   X-1, Y-1,         4*nm, 400*nm, +14*Kelvin)  // NbTiN everywhere        
-    }
     function initWF() {
+      tPresent = 0.
       for (let x=0; x<X; ++x) for (let y=0; y<Y; ++y) {const i=x+X*y
         const psi0 = beta[i]==0 ? 0 : (Math.abs(alpha[i])/beta[i])**.5
         u[i]=(Math.random()-.5) * psi0   // u and v are in simulation units
         v[i]=(Math.random()-.5) * psi0        
         p[i]=0.
         q[i]=0.
-        // console.log(psi0)
       }
     }
 
@@ -143,7 +133,7 @@
       if (Tc<0) { // MATERIAL IS INSULATOR
         w    = 0
         alpha= (hbar**2)/(4*M*xi0**2) *3*(25/14.-1)* h  // HARDWIRE QUESTIONABLE FORMULA !!!!!!!!!!
-        beta = mu0*Q**2*hbar**2*lam0**2/(4*M**2*xi0**2) * (0.5 + 25/14.) * h // !!!!!!!!!
+        beta = mu0*Q**2*hbar**2*lam0**2/(4*M**2*xi0**2) * (0.5 + 25/14.) * h // QUESTIONABLE!!!
       }
       else if (T>=Tc) { // SUPERCONDUCTOR ABOVE ITS Tc
         w    = hbar**2/(2*M) * h        // warning: would overflow if single precision
@@ -170,7 +160,7 @@
     }
     function setT(e) {
       T = Number(sliderT.value)
-      labelT.innerHTML = `T = ${T} K`
+      labelT.innerHTML = `TStat = ${T} K`
       for (let x=0; x<X; ++x) for (let y=0; y<Y; ++y) {const i=x+X*y
         const [aaa,bbb,www] = calcPars(xi0[i], lam0[i], Tc[i], T, hThickness) // these are in SI units        
         alpha[i]=aaa/(EUnit*xUnit)    * (a/xUnit)**2  // include these stepszie factors
@@ -206,6 +196,7 @@
         u[i] += p[i]*tStep/mFict     * (mUnit*xUnit**5)/tUnit
         v[i] += q[i]*tStep/mFict     * (mUnit*xUnit**5)/tUnit
       }
+      tPresent += tStep
     }
     function hsv2rgb(h,s,v) { //h in [0,2*pi] and s,v in [0,1]; r,g,b in [0,255]
       const f= (n,k=(n+h*3/Math.PI)%6) => Math.floor(255*(v - v*s*Math.max( Math.min(k,4-k,1), 0)))
@@ -213,9 +204,10 @@
     }
     function animate(timeCurrent) {
       for (let i=0; i<frameSkip; ++i) evolve()
-      const a = Math.min(Math.floor(canvas.width/X),Math.floor(canvas.height/Y))
-      ctx.setTransform(a, 0, 0, -a, 0, canvas.height)
+      const pixScale = Math.min(Math.floor(canvas.width/X),Math.floor(canvas.height/Y))
+      ctx.setTransform(pixScale, 0, 0, -pixScale, 0, canvas.height)
       const magTypical = 0.05 
+      //======== Wave function amplitude & phase heatmap
       for (let x=0; x<X; ++x) for (let y=0; y<Y; ++y) {const i=x+X*y
         const arg=Math.atan2(v[i],u[i])
         const mag=(u[i]**2+v[i]**2) / magTypical
@@ -223,11 +215,22 @@
         ctx.fillStyle= `rgb(${r}, ${g}, ${b})`
         ctx.fillRect(x,y,1,1)
       }
+      //======== Scale bar
+      const scaleBarLen=50*nm,scaleBarText='50 nm'
+      const X1=X-8-scaleBarLen/a, X2=X-8, Y1=Y-8, Y2=Y-8
+      ctx.beginPath();ctx.moveTo(X1,Y1); ctx.lineTo(X2,Y2); ctx.strokeStyle='#FFFFFF'; ctx.stroke()
+      const pt = ctx.getTransform().transformPoint({x:X1,y:Y2})
+      ctx.resetTransform()
+      ctx.font = '12px Arial'; ctx.textBaseline = "bottom"; ctx.fillStyle='#FFF'
+      ctx.fillText(scaleBarText, pt.x, pt.y-4)
       //======== Thermometer based on KE
       let TMeter = 0
       for (let x=0; x<X; ++x) for (let y=0; y<Y; ++y) {const i=x+X*y; TMeter+=p[i]**2+q[i]**2}
       TMeter *= 1/(2*X*Y*kB*mFict) * EUnit**2*tUnit**2*xUnit**3
       sliderTMeter.value = TMeter
+      labelTMeter.innerHTML = `TMeter= ${TMeter.toFixed(2)} K`
+      //======== Report properties of simulation cell at crosshair
+      reportCellProperties()
       requestAnimationFrame(animate)
     }
     function resize() {
@@ -282,20 +285,31 @@
       setB(); setT(); initWF(); setMisc(); resize();}
     ) 
   
-
-
-    function reportCellProperties(e) {
-      if (!(e.buttons&1)) return
-      e.preventDefault(); e.stopPropagation()
-      const rect=canvas.getBoundingClientRect()      
-      const pt=ctx.getTransform().invertSelf().transformPoint({x:e.clientX-rect.left,y:e.clientY-rect.top})
-      const x=Math.floor(pt.x),y=Math.floor(pt.y),i=x+X*y
-      statusDiv.innerHTML = 
-        `(x,y)=(${x},${y})  alpha=${alpha[i].toFixed(0)}   beta=${beta[i].toFixed(0)}   w=${w[i].toFixed(0)}
-        |psi|=${Math.sqrt(u[i]**2+v[i]**2).toFixed(3)}    `
+    let mouseX=-1,mouseY=-1;
+    function recordMousePosition(e) {
+      // if (!(e.buttons&1)) return
+      // e.preventDefault(); e.stopPropagation()
+      const rect=canvas.getBoundingClientRect()
+      mouseX=e.clientX-rect.left; mouseY=e.clientY-rect.top
     }
-    canvas.addEventListener('mousedown', reportCellProperties)
-    canvas.addEventListener('mousemove', reportCellProperties)
+    function reportCellProperties() {
+      const pixScale = Math.min(Math.floor(canvas.width/X),Math.floor(canvas.height/Y)) // blah, redo this
+      ctx.setTransform(pixScale, 0, 0, -pixScale, 0, canvas.height)    
+      const pt=ctx.getTransform().invertSelf().transformPoint({x:mouseX,y:mouseY})
+      const x=Math.floor(pt.x),y=Math.floor(pt.y)
+      if (x<0||x>=X||y<0||y>=Y) {
+        statusDiv.innerHTML = 'Move crosshair to examine'
+        return
+      }
+      const i=x+X*y
+      statusDiv.innerHTML = 
+        `Tc=${Tc[i]}  xi0=${(xi0[i]/nm).toFixed(0)}nm  lam0=${(lam0[i]/nm).toFixed(0)}nm  `+
+        `|&psi;|=${Math.sqrt(u[i]**2+v[i]**2).toFixed(3)}  t=${(tPresent/ps).toFixed(2)}ps`
+        // `(x,y)=(${x},${y})   alpha=${alpha[i].toFixed(0)}   beta=${beta[i].toFixed(0)}   w=${w[i].toFixed(0)}
+        
+    }
+    // canvas.addEventListener('mousedown', reportCellProperties)
+    canvas.addEventListener('mousemove', recordMousePosition)
     
     // initMatter(); setB(); setT(); initWF(); setMisc(); resize(); 
     button1.click(); requestAnimationFrame(animate);
