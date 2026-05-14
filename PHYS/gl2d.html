@@ -25,6 +25,7 @@
     <button id="button2">Strips</button>
     <button id="button3">Rings</button>
     <button id="button4">Moats</button>
+    <button id="button5">Notched rings</button>
     </div>
   </div>
   <div id="statusDiv">Status bar</div>
@@ -284,7 +285,18 @@
       }
       setB(); setT(); initWF(); setMisc(); resize();}
     ) 
-  
+    button5.addEventListener('click', (e)=>{
+      addRectangle(-1, -1, X, Y,             4*nm, 400*nm, -14*Kelvin)  // insulating substrate by default!  
+      const x1=.36*X,x2=.64*X,b=.20*Y
+      addEllipse  (x1, .5*Y, .20*Y, .20*Y, 4*nm, 400*nm, +14*Kelvin) // NbTiN disk
+      addEllipse  (x1, .5*Y, .12*Y, .12*Y, 4*nm, 400*nm, -14*Kelvin) // make into annulus
+      addEllipse  (x2, .5*Y, b, b, 4*nm, 400*nm, +14*Kelvin) // NbTiN disk
+      addEllipse  (x2, .5*Y, .12*Y, .12*Y, 4*nm, 400*nm, -14*Kelvin) // make into annulus
+      addEllipse  (x2+b, .5*Y, .03*X, .03*Y, 4*nm, 400*nm, -14*Kelvin) // notch
+      setB(); setT(); initWF(); setMisc(); resize();}
+    ) 
+
+    
     let mouseX=-1,mouseY=-1;
     function recordMousePosition(e) {
       // if (!(e.buttons&1)) return
