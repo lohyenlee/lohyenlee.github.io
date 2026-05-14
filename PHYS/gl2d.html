@@ -287,12 +287,12 @@
     ) 
     button5.addEventListener('click', (e)=>{
       addRectangle(-1, -1, X, Y,             4*nm, 400*nm, -14*Kelvin)  // insulating substrate by default!  
-      const x1=.36*X,x2=.64*X,b=.20*Y
-      addEllipse  (x1, .5*Y, .20*Y, .20*Y, 4*nm, 400*nm, +14*Kelvin) // NbTiN disk
-      addEllipse  (x1, .5*Y, .12*Y, .12*Y, 4*nm, 400*nm, -14*Kelvin) // make into annulus
+      const x1=.36*X,x2=.64*X,b=.20*Y,a=.16*Y
+      addEllipse  (x1, .5*Y, b, b, 4*nm, 400*nm, +14*Kelvin) // NbTiN disk
+      addEllipse  (x1, .5*Y, a, a, 4*nm, 400*nm, -14*Kelvin) // make into annulus
       addEllipse  (x2, .5*Y, b, b, 4*nm, 400*nm, +14*Kelvin) // NbTiN disk
-      addEllipse  (x2, .5*Y, .12*Y, .12*Y, 4*nm, 400*nm, -14*Kelvin) // make into annulus
-      addEllipse  (x2+b, .5*Y, .03*X, .03*Y, 4*nm, 400*nm, -14*Kelvin) // notch
+      addEllipse  (x2, .5*Y, a, a, 4*nm, 400*nm, -14*Kelvin) // make into annulus
+      addEllipse  (x2+b, .5*Y, .02*X, .03*Y, 4*nm, 400*nm, -14*Kelvin) // notch
       setB(); setT(); initWF(); setMisc(); resize();}
     ) 
 
